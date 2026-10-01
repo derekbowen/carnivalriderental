@@ -11,6 +11,8 @@ const CACHE_MS = 10 * 60 * 1000;
 export interface SharetribeConnection {
   state: "connected-readonly" | "not-configured" | "error";
   marketplaceName: string | null;
+  /** Marketplace API (customer-facing) client: verified with an anonymous public read. */
+  marketplaceApi: "verified" | "not-configured" | "error";
   detail: string;
   checkedAt: string;
 }
@@ -41,14 +43,33 @@ export async function integrationGet<T = unknown>(path: string, query: Record<st
   return res.json() as Promise<T>;
 }
 
+async function checkMarketplaceApi(): Promise<SharetribeConnection["marketplaceApi"]> {
+  const clientId = process.env.SHARETRIBE_CLIENT_ID;
+  if (!clientId) return "not-configured";
+  try {
+    const res = await fetch(AUTH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
+      body: new URLSearchParams({ client_id: clientId, grant_type: "client_credentials", scope: "public-read" }),
+      signal: AbortSignal.timeout(8000),
+      cache: "no-store",
+    });
+    return res.ok ? "verified" : "error";
+  } catch {
+    return "error";
+  }
+}
+
 export async function sharetribeConnection(force = false): Promise<SharetribeConnection> {
   if (!force && cache && Date.now() - cache.at < CACHE_MS) return cache.value;
+  const marketplaceApi = await checkMarketplaceApi();
   let value: SharetribeConnection;
   try {
     const body = await integrationGet<{ data: { attributes: { name: string } } }>("/marketplace/show");
     value = {
       state: "connected-readonly",
       marketplaceName: body.data.attributes.name,
+      marketplaceApi,
       detail: "Integration API credentials verified with a read-only call. Requests and transactions still use the local development store.",
       checkedAt: new Date().toISOString(),
     };
@@ -56,8 +77,8 @@ export async function sharetribeConnection(force = false): Promise<SharetribeCon
     const msg = (e as Error).message;
     value =
       msg === "not-configured"
-        ? { state: "not-configured", marketplaceName: null, detail: "No Integration API credentials configured.", checkedAt: new Date().toISOString() }
-        : { state: "error", marketplaceName: null, detail: `Check failed: ${msg}`, checkedAt: new Date().toISOString() };
+        ? { state: "not-configured", marketplaceName: null, marketplaceApi, detail: "No Integration API credentials configured.", checkedAt: new Date().toISOString() }
+        : { state: "error", marketplaceName: null, marketplaceApi, detail: `Check failed: ${msg}`, checkedAt: new Date().toISOString() };
   }
   cache = { at: Date.now(), value };
   return value;

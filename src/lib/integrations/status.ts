@@ -19,12 +19,12 @@ export async function integrationStatuses(): Promise<IntegrationStatus[]> {
       name: "Sharetribe",
       label:
         st.state === "connected-readonly"
-          ? `read-only connected · ${st.marketplaceName}`
+          ? `read-only connected · ${st.marketplaceName}${st.marketplaceApi === "verified" ? " · both APIs" : ""}`
           : st.state === "not-configured"
             ? "not configured"
             : "check failed",
       tone: st.state === "connected-readonly" ? "ok" : st.state === "error" ? "bad" : "neutral",
-      detail: `${st.detail} (checked ${st.checkedAt.slice(0, 16).replace("T", " ")} UTC)`,
+      detail: `${st.detail} Marketplace API client: ${st.marketplaceApi}. (checked ${st.checkedAt.slice(0, 16).replace("T", " ")} UTC)`,
     },
     {
       name: "Payments",

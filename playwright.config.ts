@@ -28,6 +28,7 @@ export default defineConfig({
       PUBLIC_INDEXING: "false",
       // Keep e2e offline: never call the real Sharetribe marketplace from tests.
       SHARETRIBE_INTEGRATION_CLIENT_ID: "",
+      SHARETRIBE_CLIENT_ID: "",
       SHARETRIBE_INTEGRATION_CLIENT_SECRET: "",
     },
   },

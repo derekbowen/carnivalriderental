@@ -3,7 +3,7 @@ import { integrationGet, sharetribeConnection } from "../src/lib/integrations/sh
 
 (async () => {
   const c = await sharetribeConnection(true);
-  console.log(`Sharetribe: ${c.state}${c.marketplaceName ? ` — marketplace "${c.marketplaceName}"` : ""}`);
+  console.log(`Sharetribe: ${c.state}${c.marketplaceName ? ` — marketplace "${c.marketplaceName}"` : ""} · Marketplace API client: ${c.marketplaceApi}`);
   if (c.state !== "connected-readonly") {
     console.log(c.detail);
     process.exit(1);
