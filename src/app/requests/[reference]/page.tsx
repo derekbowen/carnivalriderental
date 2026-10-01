@@ -41,20 +41,25 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_320px]">
         <div className="space-y-8">
           <section className="card p-6">
-            <h3 className="text-lg">Fulfilment</h3>
+            <h3 className="text-2xl">Fulfilment</h3>
             {closed ? (
               <p className="mt-3 text-sm text-ink-soft">This request is closed: {label.title.toLowerCase()}.</p>
             ) : (
-              <ol className="mt-4 space-y-3">
+              <ol className="mt-6">
                 {FULFILMENT_STEPS.map((s, i) => {
                   const state = i < stepIdx ? "done" : i === stepIdx ? "current" : "todo";
+                  const last = i === FULFILMENT_STEPS.length - 1;
                   return (
-                    <li key={s} className="flex items-start gap-3">
-                      <span aria-hidden className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${state === "done" ? "bg-ok text-white" : state === "current" ? "bg-accent text-ink" : "border border-line bg-paper text-muted"}`}>{state === "done" ? "✓" : i + 1}</span>
-                      <span className={state === "todo" ? "text-muted" : ""}>
-                        <span className="font-medium">{FULFILMENT_LABELS[s].title}</span>
-                        {state === "current" && <span className="sr-only"> (current)</span>}
+                    <li key={s} className="relative flex gap-4 pb-6 last:pb-0" aria-current={state === "current" ? "step" : undefined}>
+                      {!last && <span aria-hidden className={`absolute left-[11px] top-7 h-[calc(100%-24px)] w-px ${state === "done" ? "bg-ink" : "bg-line-strong"}`} />}
+                      <span className={`relative z-10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] ${state === "done" ? "bg-ink text-canvas" : state === "current" ? "border-2 border-accent bg-surface" : "border border-line-strong bg-surface"}`}>
+                        {state === "done" ? "✓" : state === "current" ? <span className="h-2 w-2 rounded-full bg-accent" /> : null}
+                        <span className="sr-only">{state === "done" ? "Completed" : state === "current" ? "In progress" : "Not started"}</span>
                       </span>
+                      <div className="min-w-0 flex-1">
+                        <p className={`font-medium ${state === "todo" ? "text-muted" : ""}`}>{FULFILMENT_LABELS[s].title}</p>
+                        {state === "current" && <p className="mt-0.5 text-sm text-muted">{FULFILMENT_LABELS[s].detail}</p>}
+                      </div>
                     </li>
                   );
                 })}
@@ -63,7 +68,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
           </section>
 
           <section className="card p-6">
-            <h3 className="text-lg">Quotes</h3>
+            <h3 className="text-2xl">Quotes</h3>
             {view.quotes.length === 0 ? (
               <p className="mt-3 text-sm text-ink-soft">No quote yet. We send one after matching your event to an operator.</p>
             ) : (
@@ -88,7 +93,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
           </section>
 
           <section className="card p-6">
-            <h3 className="text-lg">Your event brief</h3>
+            <h3 className="text-2xl">Your event brief</h3>
             <dl className="mt-4 grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
               <div><dt className="text-muted">Ride</dt><dd>{b.rideSlug ? getRide(b.rideSlug)?.name ?? b.rideSlug : "Need advice"} · {OPTION_LABELS.rideFlexibility[b.rideFlexibility]}</dd></div>
               <div><dt className="text-muted">Dates</dt><dd>{briefDates(b)} · {OPTION_LABELS.dateFlexibility[b.dateFlexibility]}</dd></div>
@@ -104,7 +109,7 @@ export default async function StatusPage({ params, searchParams }: { params: Pro
 
         <aside className="space-y-4">
           <section className="card p-6" data-testid="payment-panel">
-            <h3 className="text-lg">Payment</h3>
+            <h3 className="text-2xl">Payment</h3>
             <p className="mt-2 font-medium" data-testid="payment-status">{PAYMENT_LABELS[view.paymentStatus]}</p>
             <p className="mt-3 rounded-lg bg-demo-wash p-3 text-xs text-demo">Demo mode: no card details are collected and no money moves in this build. Payment terms will be set out in your quote.</p>
           </section>

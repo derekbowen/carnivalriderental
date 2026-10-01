@@ -1,31 +1,36 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — direction from the Magic Patterns brief:
- * warm off-white canvas, deep ink text, one confident marigold accent,
- * serif display headings, clean sans body. Not a ticket site, not a toy.
+ * Design tokens from the Magic Patterns design (design/magic-patterns, see its README).
+ * Cool canvas, navy ink, marigold accent, red "pop" + awning stripe.
  */
 @theme {
-  --color-canvas: #faf7f2;
+  --color-canvas: #f3f5fa;
   --color-paper: #ffffff;
-  --color-ink: #14213d;
-  --color-ink-soft: #3d4a66;
-  --color-muted: #6b7280;
-  --color-line: #e7e1d6;
-  --color-accent: #e8a33d;
-  --color-accent-strong: #c47f14;
-  --color-accent-wash: #fdf3e2;
-  --color-ok: #2f6b4f;
-  --color-ok-wash: #e8f3ec;
-  --color-warn: #8a5a00;
-  --color-warn-wash: #fff6e0;
-  --color-danger: #9b2c2c;
-  --color-danger-wash: #fdecec;
+  --color-surface: #ffffff;
+  --color-ink: #0b1b3f;
+  --color-ink-soft: #2e3b5c;
+  --color-muted: #56627d;
+  --color-line: #e1e5ee;
+  --color-line-strong: #c9d0de;
+  --color-accent: #ffc629;
+  --color-accent-hover: #f5b700;
+  --color-accent-wash: #fff2cc;
+  --color-accent-strong: #7a5200; /* readable accent text */
+  --color-pop: #e5352b;
+  --color-pop-wash: #fde4e2;
+  --color-placeholder: #d4d9e3;
+  --color-ok: #1f7a4d;
+  --color-ok-wash: #dff3e8;
+  --color-warn: #7a5200;
+  --color-warn-wash: #fff2cc;
+  --color-danger: #c2281f;
+  --color-danger-wash: #fde4e2;
   --color-demo: #6d28d9;
   --color-demo-wash: #f1ebfe;
 
-  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
 html {
@@ -40,32 +45,54 @@ h2,
 h3,
 .font-display {
   font-family: var(--font-display);
-  letter-spacing: -0.01em;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Red-and-white tent awning stripe */
+.awning {
+  background-image: repeating-linear-gradient(90deg, #e5352b 0, #e5352b 28px, #ffffff 28px, #ffffff 56px);
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-accent);
+  outline: 2px solid var(--color-pop);
   outline-offset: 2px;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Component classes live in the components layer so utilities (e.g. pl-9) can override them. */
+@layer components {
 .input {
-  @apply w-full rounded-lg border border-line bg-paper px-3 py-2.5 text-ink placeholder:text-muted focus:border-ink focus:outline-none;
+  @apply w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-[15px] text-ink transition-[border-color,box-shadow] duration-150 placeholder:text-muted focus:border-ink focus:ring-2 focus:ring-accent/40 focus:outline-none;
 }
 .label {
-  @apply mb-1.5 block text-sm font-medium text-ink;
+  @apply mb-1.5 block text-sm font-semibold text-ink;
 }
+/* Primary action: marigold with navy text */
 .btn-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white transition hover:bg-ink-soft disabled:cursor-not-allowed disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-ink transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
 }
 .btn-accent {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-ink transition hover:bg-accent-strong hover:text-white disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-ink transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] disabled:opacity-60;
+}
+.btn-dark {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 text-[15px] font-semibold text-white transition hover:bg-ink-soft disabled:opacity-60;
 }
 .btn-ghost {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border border-line bg-paper px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-ink disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line-strong bg-surface px-5 py-2.5 text-[15px] font-medium text-ink transition-[border-color] duration-150 hover:border-ink disabled:opacity-60;
 }
 .card {
-  @apply rounded-2xl border border-line bg-paper;
+  @apply rounded-2xl border border-line bg-surface;
 }
 .eyebrow {
-  @apply text-xs font-semibold uppercase tracking-[0.14em] text-accent-strong;
+  @apply text-xs font-semibold uppercase tracking-[0.14em] text-pop;
+}
 }

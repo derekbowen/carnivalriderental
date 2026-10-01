@@ -112,13 +112,20 @@ function toPayload(f: FormState, idempotencyKey: string) {
 
 function Choice<T extends string>({ name, value, options, onChange }: { name: string; value: T; options: Record<T, string>; onChange: (v: T) => void }) {
   return (
-    <div role="radiogroup" aria-label={name} className="flex flex-wrap gap-2">
-      {(Object.keys(options) as T[]).map((k) => (
-        <label key={k} className={`cursor-pointer rounded-full border px-3.5 py-2 text-sm transition ${value === k ? "border-ink bg-ink text-white" : "border-line bg-paper hover:border-ink"}`}>
-          <input type="radio" name={name} value={k} checked={value === k} onChange={() => onChange(k)} className="sr-only" />
-          {options[k]}
-        </label>
-      ))}
+    <div role="radiogroup" aria-label={name} className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      {(Object.keys(options) as T[]).map((k) => {
+        const selected = value === k;
+        const unsure = k === "not_sure" || k === "need_advice";
+        return (
+          <label
+            key={k}
+            className={`flex cursor-pointer items-center gap-2.5 rounded-lg border bg-surface px-3.5 py-3 text-[15px] transition-[border-color] duration-150 ${selected ? "border-ink text-ink shadow-[inset_0_0_0_1px_#0B1B3F]" : "border-line-strong text-ink-soft hover:border-muted"} ${unsure && !selected ? "border-dashed" : ""}`}
+          >
+            <input type="radio" name={name} value={k} checked={selected} onChange={() => onChange(k)} className="h-4 w-4 accent-ink" />
+            <span className="flex-1">{options[k]}</span>
+          </label>
+        );
+      })}
     </div>
   );
 }
@@ -193,11 +200,11 @@ export function EventRequestForm({ rides, prefill }: { rides: RideOption[]; pref
   const rideName = rides.find((r) => r.slug === f.rideSlug)?.name ?? "Not sure — need advice";
 
   return (
-    <div className="card p-6 sm:p-8">
+    <div className="rounded-2xl border border-line bg-surface p-6 shadow-[0_12px_32px_-20px_rgba(20,33,61,0.25)] sm:p-8">
       <ol className="mb-8 grid grid-cols-5 gap-2" aria-label="Progress">
         {STEPS.map((s, i) => (
           <li key={s} className="text-center">
-            <div className={`h-1.5 rounded-full ${i <= step ? "bg-ink" : "bg-line"}`} />
+            <div className={`h-1 rounded-full ${i <= step ? "bg-ink" : "bg-line-strong"}`} />
             <div className={`mt-2 hidden text-xs sm:block ${i === step ? "font-semibold text-ink" : "text-muted"}`}>{s}</div>
           </li>
         ))}
@@ -280,7 +287,7 @@ export function EventRequestForm({ rides, prefill }: { rides: RideOption[]; pref
                 <div key={k} className="grid grid-cols-[130px_1fr] gap-3 px-4 py-3"><dt className="font-medium">{k}</dt><dd className="text-ink-soft">{v}</dd></div>
               ))}
             </dl>
-            <div className="rounded-xl bg-accent-wash p-4 text-sm text-warn">
+            <div className="rounded-xl bg-accent-wash p-4 text-sm text-accent-strong">
               <strong>What happens next:</strong> we review your brief and contact operators. You will not be charged and nothing is booked by submitting this request.
               No payment details are collected at this stage.
             </div>

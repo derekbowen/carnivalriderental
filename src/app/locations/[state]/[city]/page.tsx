@@ -72,7 +72,7 @@ export default async function CityPage({ params }: { params: Promise<P> }) {
           {rides.map((r) => (
             <li key={r.slug} className="card flex flex-col gap-3 p-5">
               <Link href={paths.rideCity(r.slug, l.stateSlug, l.citySlug)} className="font-display text-lg hover:underline">{r.name} in {l.cityName}</Link>
-              <EstimateLabel estimate={r.estimate} compact />
+              <EstimateLabel estimate={r.estimate} />
               <Link href={paths.request(r.slug, l.stateSlug, l.citySlug)} className="mt-auto text-sm font-semibold text-accent-strong hover:underline">Request this ride →</Link>
             </li>
           ))}

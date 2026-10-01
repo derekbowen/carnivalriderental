@@ -11,7 +11,7 @@
 |---|---|
 | Sharetribe | Not connected (development adapter). The founder pasted a UUID and two 40-hex values mid-session, probably a client ID and secrets. They are stored only in the gitignored `.env.local` and are **unused and unverified**. A read-only check of which marketplace they belong to was blocked by the session's permission policy. |
 | Stripe / payments | Demo adapter only. No Stripe keys, no card fields. |
-| Magic Patterns | Connected. Design generated: https://www.magicpatterns.com/c/nl7azuhaqeazotvxqdbyka (preview: https://project-blissful-ketchup-438.magicpatterns.app). Its component code has **not yet been pulled** into the repo: reading it was blocked by the session's permission policy. The repo UI follows the same written design direction. |
+| Magic Patterns | Connected. Design: https://www.magicpatterns.com/c/nl7azuhaqeazotvxqdbyka (preview: https://project-blissful-ketchup-438.magicpatterns.app). The founder uploaded the export; it is committed unchanged in `design/magic-patterns/` as a reference, and its visual system and layouts are ported into `src/`. Invented inventory, specs, prices and payment promises in the export were **not** adopted — see `design/magic-patterns/README.md`. |
 | Email / SMS | None. No outreach. |
 | Cloudflare | Founder asked to run Cloudflare agent setup: the `cloudflare` plugin marketplace and plugin are installed for this (temporary) session. `/reload-plugins` and the optional `cf` CLI are pending the founder. Nothing deployed. |
 | Domain | Founder named `carnivalriderental.us` as the candidate domain. Recorded only; no DNS changes, no deployment, indexing still off. |
@@ -19,8 +19,11 @@
 ## Decisions needed before real transactions
 See `SHARETRIBE_MAPPING.md` → "Decisions needed". In short: seller-of-record entity; payment option (full / deposit+balance / saved card + off-session / pay after supplier commits); deposit %, cancellation and refund policy; handling for events > 75–90 days out; commission lines on our own listings; supplier payment terms; what makes an operator `verified_supplier` (insurance, contract); whether committing should also require a *verified unit* (today it requires a verified supplier and an identified unit).
 
+## Hosting (asked, not done)
+No AWS or DigitalOcean server is reachable from this environment. The only AWS-related item is a proxy credential scoped to poolrentalnearme.com (PRNM infrastructure — off-limits). Connected options: Vercel (three teams named "Derekbowencorp 5352") and Cloudflare (three unrelated Workers). Recommended: a new Vercel project plus hosted Postgres (Supabase or Vercel Postgres), password-protected preview, indexing off. Awaiting the founder's choice of team and database.
+
 ## Next small milestone
 1. Founder confirms which Sharetribe marketplace/environment the pasted credentials belong to (must be a **new** marketplace for this business, Dev environment), or creates one.
 2. Read-only connection check (`marketplace/show`) → replace the Sharetribe "not connected" status with a verified one.
 3. Create the house seller account in Dev, onboard Stripe **test mode**, create one Ferris wheel offering listing via the Integration API, and sync it into the content layer.
-4. Pull the Magic Patterns components into `src/components` and reconcile with the current UI.
+4. Decide on the export's operator-procurement ideas (closest-unit-first call sheet, yes/no answers, listed-unit catalogue). The call sheet fits the internal console once real, verified unit records with locations exist.
