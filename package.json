@@ -15,7 +15,8 @@
     "test:e2e": "playwright test",
     "content:check": "tsx scripts/check-content.ts",
     "setup": "tsx scripts/setup.ts",
-    "db:seed-demo": "tsx --env-file-if-exists=.env.local scripts/seed-demo.ts"
+    "db:seed-demo": "tsx --env-file-if-exists=.env.local scripts/seed-demo.ts",
+    "sharetribe:check": "tsx --env-file-if-exists=.env.local scripts/sharetribe-check.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

@@ -1,33 +1,37 @@
 import { paymentsMode } from "../config";
+import { sharetribeConnection } from "./sharetribe";
 
 /**
- * Honest integration status for display in the internal console.
- * Nothing here calls an external service. Presence of an env var is NOT reported
- * as "connected" — only a verified round-trip could justify that, and none exists yet.
+ * Honest integration status for the internal console. "Connected" is reported only
+ * after a verified API round-trip, never from the mere presence of env vars.
  */
 export interface IntegrationStatus {
   name: string;
-  state: "development-adapter" | "not-configured";
+  label: string;
+  tone: "ok" | "neutral" | "bad";
   detail: string;
 }
 
-export function integrationStatuses(): IntegrationStatus[] {
+export async function integrationStatuses(): Promise<IntegrationStatus[]> {
+  const st = await sharetribeConnection();
   return [
     {
       name: "Sharetribe",
-      state: "development-adapter",
-      detail:
-        "Not connected. Requests, quotes and statuses live in the local development store. See docs/SHARETRIBE_MAPPING.md for the planned mapping.",
+      label:
+        st.state === "connected-readonly"
+          ? `read-only connected · ${st.marketplaceName}`
+          : st.state === "not-configured"
+            ? "not configured"
+            : "check failed",
+      tone: st.state === "connected-readonly" ? "ok" : st.state === "error" ? "bad" : "neutral",
+      detail: `${st.detail} (checked ${st.checkedAt.slice(0, 16).replace("T", " ")} UTC)`,
     },
     {
-      name: "Payments (Stripe via Sharetribe)",
-      state: "development-adapter",
-      detail: `Mode: ${paymentsMode()}. Payment states are recorded manually for demonstration; no card data is collected and no money moves.`,
+      name: "Payments",
+      label: `${paymentsMode()} adapter (not connected)`,
+      tone: "neutral",
+      detail: "Payment states are recorded manually for demonstration; no card data is collected and no money moves.",
     },
-    {
-      name: "Email / customer notifications",
-      state: "not-configured",
-      detail: "No messages are sent to customers or operators from this build.",
-    },
+    { name: "Email / notifications", label: "not configured", tone: "neutral", detail: "No messages are sent to customers or operators from this build." },
   ];
 }

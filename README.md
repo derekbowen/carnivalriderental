@@ -2,7 +2,7 @@
 
 A managed national carnival ride rental marketplace. Customers request rides through **us**; **we** quote, manage the transaction and source fulfilment from carnival operators. See [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md).
 
-> **Development only.** Not public, not indexed. Demo data. Payments are a demo adapter — no card details are collected and no money moves. Sharetribe is **not connected** yet.
+> **Development only.** Not public, not indexed. Demo data. Payments are a demo adapter — no card details are collected and no money moves. Sharetribe is connected **read-only** (Dev marketplace); transactions are not yet routed through it.
 
 ## Run it
 
@@ -41,7 +41,7 @@ Playwright uses the preinstalled Chromium at `/opt/pw-browsers/chromium` (overri
 | Customer status page (fulfilment + payment tracks, quotes, accept quote) | Working (capability link) |
 | Internal console: queue, brief, supplier candidates, supplier cost quotes, versioned customer quotes, commit supplier, demo payment states, confirm booking, margin projection, history | Working |
 | Canonicals, noindex, robots, sitemap gates | Working; sitemap intentionally empty |
-| Sharetribe | **Not connected** — development adapter; mapping designed in `docs/SHARETRIBE_MAPPING.md` |
+| Sharetribe | **Read-only connected** to "CarnivalRental Dev" (`npm run sharetribe:check`). No writes; transactions still use the dev store. Mapping in `docs/SHARETRIBE_MAPPING.md` |
 | Payments (Stripe) | **Not connected** — demo state adapter only |
 | Email / notifications | Not implemented |
 

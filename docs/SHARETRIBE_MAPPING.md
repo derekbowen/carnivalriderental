@@ -1,7 +1,7 @@
 # Sharetribe mapping for a managed marketplace
 
 Status: **design, verified against official Sharetribe documentation on 2026-10-01. Not connected.**
-No Sharetribe marketplace, client ID or Integration API credentials were available in this session, so nothing below has been exercised against a live environment.
+Update 2026-10-01: Integration API read access to the new **CarnivalRental Dev** marketplace is verified (empty marketplace). The transaction mapping below is still unexercised.
 
 ## The question
 

@@ -26,6 +26,9 @@ export default defineConfig({
       SITE_URL: `http://localhost:${PORT}`,
       ALLOW_DEMO_CONTENT: "true",
       PUBLIC_INDEXING: "false",
+      // Keep e2e offline: never call the real Sharetribe marketplace from tests.
+      SHARETRIBE_INTEGRATION_CLIENT_ID: "",
+      SHARETRIBE_INTEGRATION_CLIENT_SECRET: "",
     },
   },
 });
