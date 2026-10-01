@@ -49,5 +49,6 @@ Playwright uses the preinstalled Chromium at `/opt/pw-browsers/chromium` (overri
 
 - [`docs/PROJECT_BRIEF.md`](docs/PROJECT_BRIEF.md) — business model, entities, rules
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — layers, sources of truth, guarantees
+- [`docs/DATA_CONTRACT.md`](docs/DATA_CONTRACT.md) — listing data contract (proposed), Test findings, Console worksheet
 - [`docs/SHARETRIBE_MAPPING.md`](docs/SHARETRIBE_MAPPING.md) — verified Sharetribe facts, recommended mapping, payment options, decisions needed
 - [`docs/HANDOFF.md`](docs/HANDOFF.md) — session log, open decisions, next milestone

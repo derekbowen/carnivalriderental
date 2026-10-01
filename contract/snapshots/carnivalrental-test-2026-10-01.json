@@ -1,0 +1,141 @@
+{
+  "capturedAt": "2026-10-01T19:08:20.689Z",
+  "marketplaceName": "CarnivalRental Test",
+  "marketplaceApiClient": "verified",
+  "counts": {
+    "listingsPublished": 0,
+    "listingsDraft": 0,
+    "listingsClosed": 0,
+    "listingsPendingApproval": 0,
+    "users": 0,
+    "transactions": 0
+  },
+  "assets": {
+    "listings/listing-types.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "listingTypes": [
+          {
+            "transactionProcess": {
+              "name": "default-booking",
+              "alias": "default-booking/release-1"
+            },
+            "id": "daily-booking",
+            "label": "Daily booking",
+            "unitType": "day",
+            "defaultListingFields": {
+              "description": true,
+              "availability": true,
+              "payoutDetails": true,
+              "images": true,
+              "pickup": true,
+              "title": true,
+              "shipping": true,
+              "location": true,
+              "price": true,
+              "stock": true
+            }
+          }
+        ]
+      }
+    },
+    "listings/listing-categories.json": {
+      "status": "not-configured"
+    },
+    "listings/listing-fields.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "listingFields": [
+          {
+            "enumOptions": [
+              {
+                "label": "Example option 1",
+                "option": "option1"
+              },
+              {
+                "option": "option2",
+                "label": "Example option 2"
+              },
+              {
+                "option": "option3",
+                "label": "Example option 3"
+              }
+            ],
+            "filterConfig": {
+              "indexForSearch": true,
+              "group": "primary"
+            },
+            "scope": "public",
+            "label": "Example field",
+            "key": "exampleField",
+            "schemaType": "enum"
+          }
+        ]
+      }
+    },
+    "listings/listing-search.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "mainSearch": {
+          "searchType": "location"
+        },
+        "dateRangeFilter": {
+          "enabled": false,
+          "schemaType": "dates",
+          "dateRangeMode": "day",
+          "availability": "time-full"
+        },
+        "priceFilter": {
+          "enabled": true,
+          "schemaType": "price",
+          "min": 0,
+          "max": 500
+        },
+        "keywordsFilter": {
+          "enabled": false
+        },
+        "categoryFilter": {
+          "enabled": true,
+          "schemaType": "category"
+        }
+      }
+    },
+    "transactions/commission.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "providerCommission": {
+          "percentage": 10
+        }
+      }
+    },
+    "transactions/minimum-transaction-size.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "listingMinimumPrice": {
+          "amount": 500,
+          "type": "subunit"
+        }
+      }
+    },
+    "users/user-types.json": {
+      "status": "ok",
+      "version": "HcfpYPi1fu1-SUT7jRmJKw",
+      "data": {
+        "userTypes": []
+      }
+    },
+    "users/user-fields.json": {
+      "status": "not-configured"
+    }
+  },
+  "notReadableWithTheseCredentials": [
+    "transaction processes (Sharetribe CLI)",
+    "CLI-defined search schemas (Sharetribe CLI)",
+    "Stripe configuration (Console)"
+  ]
+}
