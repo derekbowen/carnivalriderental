@@ -50,5 +50,5 @@ export const BRAND = {
   name: process.env.NEXT_PUBLIC_BRAND_NAME || "Book a Carnival",
   isPlaceholder: true,
   // Legal owner/operator and seller of record (confirmed by the founder 2026-10-01).
-  legalEntity: "Ten Thousand Solutions LLC",
+  legalEntity: "10000 Solutions LLC",
 };

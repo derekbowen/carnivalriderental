@@ -21,7 +21,7 @@ Long-term goal: make every carnival ride in the US discoverable and sourceable t
 
 ## Ownership
 
-The business is **owned and operated by Ten Thousand Solutions LLC** (parent company). It is the seller of record: customers contract with and pay Ten Thousand Solutions LLC (via its own Sharetribe seller account and Stripe Connect onboarding), and operators are its subcontracted suppliers.
+The business is **owned and operated by 10000 Solutions LLC** (parent company). It is the seller of record: customers contract with and pay 10000 Solutions LLC (via its own Sharetribe seller account and Stripe Connect onboarding), and operators are its subcontracted suppliers.
 
 ## Origin
 

@@ -28,7 +28,7 @@ How do we represent our managed rental offerings, the legitimate seller / paymen
 
 **One real seller account: our own company.**
 
-- Create **one Sharetribe user that represents our operating company**: **Ten Thousand Solutions LLC** (display name can be the brand), onboarded to Stripe Connect **in our company's legal name** with our real KYC. This is not a fake provider: it is the legitimate seller of record, matching F1/F2 — the customer buys from us, and the receipt shows us.
+- Create **one Sharetribe user that represents our operating company**: **10000 Solutions LLC** (display name can be the brand), onboarded to Stripe Connect **in our company's legal name** with our real KYC. This is not a fake provider: it is the legitimate seller of record, matching F1/F2 — the customer buys from us, and the receipt shows us.
 - **All ride rental offerings are listings authored by that account**, created/updated by our backend via the Integration API (F4). Public fields describe the *offering* (ride type, what's included, planning estimate). No listing claims a specific physical unit or date availability.
 - **Operators are NOT Sharetribe users.** Suppliers, ride units, supplier quotes and costs live in our own fulfilment store (today: dev SQLite; later: a single Postgres). Supplier payment is **accounts payable from our company**, designed explicitly later — not routed through Sharetribe.
 - **Customer transaction:** customer signs up (F5), our backend links their event request, and the customer initiates a quote request on the offering listing. We respond with versioned offers (line items set server-side). Recommended: a **custom process derived from default-negotiation** where offers are made by an **operator transition via the Integration API** (F4), so no staff need to log in as the house account to quote.
@@ -54,7 +54,7 @@ Session one implements **none** of these against Stripe. The UI and state machin
 
 ## Decisions needed from the founder before real transactions
 
-1. ~~Legal entity that will be seller of record~~ — **decided 2026-10-01: Ten Thousand Solutions LLC** (owner/operator; holds the house seller account and its Stripe Connect onboarding/KYC).
+1. ~~Legal entity that will be seller of record~~ — **decided 2026-10-01: 10000 Solutions LLC** (owner/operator; holds the house seller account and its Stripe Connect onboarding/KYC).
 2. Payment option (A–D or combination), deposit %, timing of balance, cancellation & refund policy, and the wording customers consent to.
 3. Whether far-future events (> 75–90 days) use option C/D or a different mechanism; confirm the US hold limit with Stripe.
 4. Commission line items on our own listings (likely 0%) — accountant.
