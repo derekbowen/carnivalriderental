@@ -43,6 +43,12 @@ This repository is **separate** from PRNM. It must never touch PRNM code, infras
 
 $22,000 for a Ferris wheel is an illustrative example, not an approved price.
 
+## Transaction model — intent vs. current Test scaffold
+
+**Intended model:** the customer makes a **meaningful payment commitment before we invest in sourcing**, and the booking is confirmed only after an operator commits and the approved payment step is complete. Policy (deposit, timing, capture, refunds) is **not yet decided** — see `docs/PAYMENT_STATES.md`.
+
+**Current Test scaffold:** listing type `managed-ride-rental` is bound to Sharetribe's regular `default-negotiation` process (quote request → offer → accept & pay) **only to prove catalog creation, retrieval and search in Test**. That flow is *not* equivalent to the intended model (payment comes after sourcing) and is **not approved as the final process**. A quote-only path may exist later, but not as the only path without founder approval. The process binding lives in `contract/listing-contract.json → processBinding`, separate from offering and category identity.
+
 ## Core entities
 
 | Entity | Meaning | Source of truth (session one) |

@@ -22,6 +22,9 @@ See `SHARETRIBE_MAPPING.md` → "Decisions needed". In short: ~~seller-of-record
 ## Hosting (asked, not done)
 No AWS or DigitalOcean server is reachable from this environment. The only AWS-related item is a proxy credential scoped to poolrentalnearme.com (PRNM infrastructure — off-limits). Connected options: Vercel (three teams named "Derekbowencorp 5352") and Cloudflare (three unrelated Workers). Recommended: a new Vercel project plus hosted Postgres (Supabase or Vercel Postgres), password-protected preview, indexing off. Awaiting the founder's choice of team and database.
 
+## Catalog foundation (contract v1.1.0)
+Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED config verifier with negative tests, read-side catalog adapter, preview listing page + city pSEO preview, duplicate-safe seed planner, live search-proof script, payment-state doc. **Not yet proven on real Sharetribe data** — blocked on (1) Console changes in Test (`docs/DATA_CONTRACT.md` §7; no API can make them) and (2) a founder-approved seller account email. See `docs/DATA_CONTRACT.md` §8 for exact evidence status.
+
 ## Next small milestone
 1. ~~Confirm the marketplace~~ — done: "CarnivalRental Dev".
 2. ~~Read-only connection check~~ — done; the console shows the live status (cached 10 min).

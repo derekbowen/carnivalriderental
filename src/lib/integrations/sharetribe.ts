@@ -60,6 +60,22 @@ async function checkMarketplaceApi(): Promise<SharetribeConnection["marketplaceA
   }
 }
 
+/** POST to an Integration API command. Used only by explicitly approved write scripts. */
+export async function integrationPost<T = unknown>(path: string, body: Record<string, unknown>, query: Record<string, string> = {}): Promise<T> {
+  const token = await integrationToken();
+  const url = `${INTEG_URL}${path}${Object.keys(query).length ? `?${new URLSearchParams(query)}` : ""}`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json", "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(15000),
+    cache: "no-store",
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(`POST ${path} failed (HTTP ${res.status}): ${JSON.stringify(json?.errors?.map((e: { title?: string; code?: string }) => e.code ?? e.title) ?? [])}`);
+  return json as T;
+}
+
 export async function sharetribeConnection(force = false): Promise<SharetribeConnection> {
   if (!force && cache && Date.now() - cache.at < CACHE_MS) return cache.value;
   const marketplaceApi = await checkMarketplaceApi();

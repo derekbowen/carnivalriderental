@@ -18,7 +18,9 @@
     "db:seed-demo": "tsx --env-file-if-exists=.env.local scripts/seed-demo.ts",
     "sharetribe:check": "tsx --env-file-if-exists=.env.local scripts/sharetribe-check.ts",
     "sharetribe:inspect": "tsx --env-file-if-exists=.env.local scripts/sharetribe-inspect.ts",
-    "contract:diff": "tsx scripts/contract-diff.ts"
+    "contract:diff": "tsx scripts/contract-diff.ts",
+    "catalog:seed": "tsx --env-file-if-exists=.env.local scripts/catalog-seed.ts",
+    "catalog:search-proof": "tsx --env-file-if-exists=.env.local scripts/catalog-search-proof.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

@@ -25,6 +25,9 @@ export const paths = {
   rides: () => "/rides",
   ride: (ride: string) => `/rides/${seg(ride)}`,
   rideCity: (ride: string, state: string, city: string) => `/rides/${seg(ride)}/${seg(state)}/${seg(city)}`,
+  /** Development previews of Sharetribe-backed catalog records (always noindex). */
+  previewRide: (ride: string) => `/preview/rides/${seg(ride)}`,
+  previewRideCity: (ride: string, state: string, city: string) => `/preview/rides/${seg(ride)}/${seg(state)}/${seg(city)}`,
   category: (category: string) => `/categories/${seg(category)}`,
   city: (state: string, city: string) => `/locations/${seg(state)}/${seg(city)}`,
   request: (ride?: string, state?: string, city?: string) => {

@@ -27,6 +27,7 @@ export default defineConfig({
       ALLOW_DEMO_CONTENT: "true",
       PUBLIC_INDEXING: "false",
       // Keep e2e offline: never call the real Sharetribe marketplace from tests.
+      CATALOG_SOURCE_FILE: "data/e2e-catalog.json",
       SHARETRIBE_INTEGRATION_CLIENT_ID: "",
       SHARETRIBE_CLIENT_ID: "",
       SHARETRIBE_INTEGRATION_CLIENT_SECRET: "",

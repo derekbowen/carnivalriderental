@@ -1,20 +1,14 @@
 {
-  "$comment": "Listing data contract. PROPOSED \u2014 not yet created in any Sharetribe environment. Changing an id/key/option value after it is created in Sharetribe is not possible; review before approval. Human-readable companion: docs/DATA_CONTRACT.md. Console 'Single-line text' fields are limited to 70 characters (Sharetribe help: listing field types).",
-  "contractVersion": "1.0.0-proposed",
-  "status": "proposed",
+  "$comment": "Listing data contract. IDs below were APPROVED by the founder for the Test catalog foundation (2026-10-01). Approval covers catalog identity and fields only; the transaction-process binding is a TEMPORARY TEST SCAFFOLD (see processBinding). Console 'Single-line text' fields are limited to 70 characters. Human-readable companion: docs/DATA_CONTRACT.md.",
+  "contractVersion": "1.1.0",
+  "status": "approved-for-test",
   "configurationSourceOfTruth": "Sharetribe Test environment (Console), copied to Dev via Console 'Copy changes to\u2026'",
   "listingTypes": [
     {
       "id": "managed-ride-rental",
       "label": "Managed ride rental",
-      "transactionProcess": {
-        "name": "default-negotiation",
-        "alias": "default-negotiation/release-1",
-        "flow": "regular"
-      },
-      "unitType": "offer",
       "createInPhase": "1",
-      "notes": "One listing type for every ride family. Categories describe the ride; the listing type describes how the customer transacts. Process choice is pending founder approval \u2014 see docs/DATA_CONTRACT.md \u00a72."
+      "notes": "Stable listing-type identity. The process it binds to is recorded separately in processBinding and may change."
     }
   ],
   "categories": {
@@ -52,7 +46,9 @@
         "label": "Thrill rides",
         "createInPhase": "1"
       }
-    ]
+    ],
+    "primaryCategoryRule": "Each offering has exactly one primary category: the ride family a customer would name first when asking for it (e.g. a kiddie-sized Ferris wheel is 'ferris-wheels' unless it is marketed and operated only as a kiddie ride, then 'kiddie-rides'). Never create a second listing to appear in another category; cross-browsing is handled by links and eventTypes, not duplicates.",
+    "taxonomyNote": "Initial taxonomy, not closed. New categories are added in Test Console, with an approved id, then copied to Dev."
   },
   "nativeAttributes": [
     {
@@ -126,7 +122,7 @@
     {
       "key": "offeringScope",
       "label": "Offering scope",
-      "meaning": "Whether the offering is a general ride family ('we source a Ferris wheel') or one specific manufacturer model.",
+      "meaning": "Whether the offering is a general ride family ('we source a Ferris wheel') or one specific manufacturer model. In phase 1 only 'ride-family' is publishable; 'specific-model' needs the deferred model/spec fields.",
       "consoleField": true,
       "scope": "metadata",
       "type": "enum",
@@ -150,49 +146,13 @@
       "frontend": "Controls whether model and spec sections render at all.",
       "pseo": "Ride-family offerings may appear on city pages; specific-model offerings only where their coverage allows.",
       "unknown": "Not allowed.",
-      "createInPhase": "1"
-    },
-    {
-      "key": "manufacturer",
-      "label": "Manufacturer",
-      "meaning": "Ride manufacturer for a specific-model offering.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "shortText",
-      "required": false,
-      "requiredWhen": "offeringScope = specific-model",
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Shown on the offering page when present.",
-      "pseo": "May appear in copy only when present; never inferred.",
-      "unknown": "Omit the key. Never AI-guessed. A provenance record is required in our catalog store.",
-      "createInPhase": "1b (with the first specific-model offering)",
-      "maxLength": 70
-    },
-    {
-      "key": "model",
-      "label": "Model",
-      "meaning": "Manufacturer model name for a specific-model offering.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "shortText",
-      "required": false,
-      "requiredWhen": "offeringScope = specific-model",
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Shown on the offering page when present.",
-      "pseo": "May appear in copy only when present; never inferred.",
-      "unknown": "Omit the key. Never AI-guessed. Provenance required.",
-      "createInPhase": "1b (with the first specific-model offering)",
-      "maxLength": 70
+      "createInPhase": "1",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "enum",
+        "indexForSearch": true
+      }
     },
     {
       "key": "requestableStates",
@@ -214,28 +174,40 @@
       "frontend": "Event-state filter: selecting TX shows offerings whose list contains TX. Selecting TX and AZ shows offerings covering TX OR AZ.",
       "pseo": "A city/ride+city page lists an offering only if the city's state is in this list. Copy: 'we arrange requests for events in {city}, subject to availability'.",
       "unknown": "Not allowed \u2014 an offering must state where we accept requests. 'Nationwide' is expressed as all 51 values.",
-      "createInPhase": "1"
+      "createInPhase": "1",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "multi-enum",
+        "indexForSearch": true
+      }
     },
     {
       "key": "eventTypes",
       "label": "Suited event types",
-      "meaning": "General guidance on event types this offering usually suits. Not a guarantee of fit.",
+      "meaning": "Event types staff have REVIEWED as suitable. Optional: omit until reviewed \u2014 never filled to look complete.",
       "consoleField": true,
       "scope": "metadata",
       "type": "multi-enum",
       "optionsRef": "eventTypes",
-      "required": true,
-      "minItems": 1,
+      "required": false,
       "read": "public",
       "write": "operator only",
       "search": {
-        "indexed": true,
-        "mode": "has_any"
+        "indexed": false,
+        "mode": "display-only",
+        "note": "No customer event-type filter in the first catalog proof."
       },
-      "frontend": "Suitability chips; optional event-type filter (ANY semantics). Same option IDs as the request form's eventType.",
+      "frontend": "Display-only suitability chips. Option IDs identical to the request form eventType.",
       "pseo": "May be listed on pages; never used to generate per-event-type page families in v1.",
-      "unknown": "Not allowed.",
-      "createInPhase": "1"
+      "unknown": "Omit the key. The page shows no suitability chips.",
+      "createInPhase": "1",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "multi-enum",
+        "indexForSearch": false
+      }
     },
     {
       "key": "pricingMode",
@@ -263,7 +235,13 @@
       "frontend": "quote-required: 'Tailored quote'. indicative-range: 'Planning estimate $X\u2013$Y \u2014 not a quote'. Neither ever becomes the charge.",
       "pseo": "Same labels; estimate figures only when indicative-range and approved.",
       "unknown": "Not allowed.",
-      "createInPhase": "1"
+      "createInPhase": "1",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "enum",
+        "indexForSearch": false
+      }
     },
     {
       "key": "estimateLowUsd",
@@ -285,7 +263,14 @@
       "frontend": "Estimate label only.",
       "pseo": "Estimate label only.",
       "unknown": "Omit; pricingMode must then be quote-required.",
-      "createInPhase": "1"
+      "createInPhase": "1",
+      "publication": "Shown only when the catalog record holds an approved estimate provenance entry for this offerKey; otherwise withheld.",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "long",
+        "indexForSearch": false
+      }
     },
     {
       "key": "estimateHighUsd",
@@ -307,7 +292,14 @@
       "frontend": "Estimate label only.",
       "pseo": "Estimate label only.",
       "unknown": "Omit; pricingMode must then be quote-required.",
-      "createInPhase": "1"
+      "createInPhase": "1",
+      "publication": "Shown only when the catalog record holds an approved estimate provenance entry for this offerKey; otherwise withheld.",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "long",
+        "indexForSearch": false
+      }
     },
     {
       "key": "estimateBasis",
@@ -328,111 +320,15 @@
       "pseo": "Shown under the estimate.",
       "unknown": "Omit; pricingMode must then be quote-required.",
       "createInPhase": "1",
-      "maxLength": 300
-    },
-    {
-      "key": "specHeightFt",
-      "label": "Height (ft)",
-      "meaning": "Verified overall height of the specific model.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "long",
-      "unit": "feet",
-      "min": 1,
-      "required": false,
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Specs table; absent = 'Not yet verified'.",
-      "pseo": "Only when present.",
-      "unknown": "Omit the key. Never a default. Provenance record required in our catalog store.",
-      "createInPhase": "1b"
-    },
-    {
-      "key": "specRidersPerCycle",
-      "label": "Riders per cycle",
-      "meaning": "Verified maximum riders per ride cycle. A specification \u2014 never bookable inventory.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "long",
-      "unit": "riders",
-      "min": 1,
-      "required": false,
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Specs table; absent = 'Not yet verified'.",
-      "pseo": "Only when present.",
-      "unknown": "Omit the key. Never a default. Provenance required.",
-      "createInPhase": "1b"
-    },
-    {
-      "key": "specFootprintLengthFt",
-      "label": "Footprint length (ft)",
-      "meaning": "Verified site footprint length including required clearance, per manufacturer/operator documentation.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "long",
-      "unit": "feet",
-      "min": 1,
-      "required": false,
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Specs table.",
-      "pseo": "Only when present.",
-      "unknown": "Omit. Provenance required.",
-      "createInPhase": "1b"
-    },
-    {
-      "key": "specFootprintWidthFt",
-      "label": "Footprint width (ft)",
-      "meaning": "Verified site footprint width including required clearance.",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "long",
-      "unit": "feet",
-      "min": 1,
-      "required": false,
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Specs table.",
-      "pseo": "Only when present.",
-      "unknown": "Omit. Provenance required.",
-      "createInPhase": "1b"
-    },
-    {
-      "key": "specPower",
-      "label": "Power requirement",
-      "meaning": "Verified electrical requirement as documented (e.g. '208V 3-phase, 100A' or 'self-powered (diesel generator)').",
-      "consoleField": true,
-      "scope": "metadata",
-      "type": "shortText",
-      "required": false,
-      "forbiddenWhen": "offeringScope = ride-family",
-      "read": "public",
-      "write": "operator only",
-      "search": {
-        "indexed": false
-      },
-      "frontend": "Specs table.",
-      "pseo": "Only when present.",
-      "unknown": "Omit. Provenance required.",
-      "createInPhase": "1b",
-      "maxLength": 70
+      "maxLength": 300,
+      "publication": "Shown only when the catalog record holds an approved estimate provenance entry for this offerKey; otherwise withheld.",
+      "consoleExpect": {
+        "console": true,
+        "scope": "metadata",
+        "schemaType": "text",
+        "indexForSearch": false,
+        "consoleType": "Long text"
+      }
     }
   ],
   "optionSets": {
@@ -518,5 +414,90 @@
     "privateData": "Readable by the listing author and operator. NOT used for procurement data \u2014 anyone holding the house-account login could read it.",
     "transactionMetadata": "Visible to transaction participants (the customer). Never holds costs or margins.",
     "procurement": "Our own database only (suppliers, units, supplier quotes, margins)."
+  },
+  "approvals": {
+    "approvedBy": "founder",
+    "date": "2026-10-01",
+    "approved": [
+      "listingType id managed-ride-rental",
+      "six category ids",
+      "phase-1 field ids",
+      "offerKey as API-managed identity",
+      "lowercase state codes",
+      "request-form event-type ids",
+      "catalog fields in operator-written metadata"
+    ],
+    "notApproved": [
+      "default-negotiation as the final transaction process",
+      "payment, deposit, capture, cancellation or refund policy",
+      "spec/dimension fields (deferred)"
+    ]
+  },
+  "processBinding": {
+    "status": "temporary-test-scaffold",
+    "listingTypeId": "managed-ride-rental",
+    "transactionProcess": {
+      "name": "default-negotiation",
+      "alias": "default-negotiation/release-1",
+      "flow": "regular"
+    },
+    "unitType": "offer",
+    "negotiationSettings": {
+      "customerCounterOffers": false,
+      "providerCanUpdateOffer": true
+    },
+    "rationale": "Used ONLY in Test to prove catalog creation, retrieval and search. The intended business model requires a meaningful customer payment commitment before sourcing, which this quote \u2192 offer \u2192 payment process does not provide. Not approved as the final process.",
+    "changeRule": "Before changing the binding, inspect existing listings and transactions: a Console change does not migrate listings' publicData.transactionProcessAlias, and existing transactions stay on the process version they started with. Never derive offering or category identity from the alias."
+  },
+  "deferredFields": {
+    "status": "deferred \u2014 not created; first specific-model offering triggers review",
+    "unitProposal": {
+      "lengths": "integer inches (e.g. 65 ft 6 in = 786). Display converts to ft/in; the stored source measurement never changes.",
+      "separation": "Equipment dimensions (as manufactured) are separate from required site clearances, when the source distinguishes them.",
+      "power": "structured: volts, phase, amps per service, number of services; or 'self-powered' with generator note \u2014 free text only as a fallback."
+    },
+    "proposedKeys": [
+      "manufacturer",
+      "model",
+      "specHeightIn",
+      "specEquipmentLengthIn",
+      "specEquipmentWidthIn",
+      "specSiteClearanceLengthIn",
+      "specSiteClearanceWidthIn",
+      "specRidersPerCycle",
+      "specPowerVolts",
+      "specPowerPhase",
+      "specPowerAmps",
+      "specPowerServices",
+      "specSelfPowered"
+    ],
+    "rule": "Every value requires an approved provenance record (document, page, date). Never inferred, never AI-generated, never defaulted."
+  },
+  "searchConfiguration": {
+    "status": "approved-for-test",
+    "expect": {
+      "listings/listing-search.json": {
+        "mainSearch.searchType": "keywords",
+        "keywordsFilter.enabled": true,
+        "priceFilter.enabled": false,
+        "dateRangeFilter.enabled": false,
+        "categoryFilter.enabled": true
+      },
+      "transactions/commission.json": {
+        "providerCommission.percentage": 0,
+        "customerCommission.percentage": 0
+      }
+    },
+    "notes": [
+      "Location-first search would require map coordinates; national offerings never get geolocation, so discovery is keyword + category + event-state coverage.",
+      "Commission 0%/0% is a TEST setting for a company-controlled catalog proof \u2014 not an accounting decision, not a processor-fee waiver, not a statement that we earn no margin."
+    ],
+    "outOfCoverage": [
+      "transaction process definition and its timers (Sharetribe CLI)",
+      "negotiation settings unless exposed in listing-types.json",
+      "CLI-created search schemas",
+      "Stripe configuration",
+      "email templates"
+    ]
   }
 }

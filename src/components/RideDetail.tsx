@@ -13,12 +13,17 @@ export function RideDetail({
   location,
   coverage = [],
   otherLocations,
+  links = { ride: paths.ride, rideCity: paths.rideCity },
+  sampleLabel,
 }: {
   ride: RideOffering;
   category: RideCategory | undefined;
   location?: ServiceLocation;
   coverage?: VerifiedCoverage[];
   otherLocations: ServiceLocation[];
+  links?: { ride: (slug: string) => string; rideCity: (slug: string, state: string, city: string) => string };
+  /** Overrides the demo badge text, e.g. "Test sample". */
+  sampleLabel?: string;
 }) {
   const where = location ? ` in ${location.cityName}, ${location.stateCode}` : "";
   const requestHref = paths.request(ride.slug, location?.stateSlug, location?.citySlug);
@@ -29,7 +34,7 @@ export function RideDetail({
         <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
         <Link href={paths.rides()} className="hover:text-ink">All rides</Link>
         {category && <>/<Link href={paths.category(category.slug)} className="hover:text-ink">{category.name}</Link></>}
-        {location && <>/<Link href={paths.ride(ride.slug)} className="hover:text-ink">{ride.name}</Link></>}
+        {location && <>/<Link href={links.ride(ride.slug)} className="hover:text-ink">{ride.name}</Link></>}
       </nav>
 
       <div className="mt-6 grid gap-12 lg:grid-cols-12">
@@ -43,7 +48,7 @@ export function RideDetail({
               <div className="flex flex-wrap items-center gap-2">
                 <p className="text-sm font-medium text-muted">{category?.name}</p>
                 <AvailabilityBadge verified={verified} />
-                {ride.isDemo && <DemoBadge />}
+                {ride.isDemo && <DemoBadge label={sampleLabel} />}
               </div>
               <h1 className="mt-2 text-5xl">{ride.name}{where}</h1>
               <p className="mt-4 max-w-2xl text-lg text-ink-soft">{ride.summary}</p>
@@ -67,6 +72,7 @@ export function RideDetail({
             </section>
           )}
 
+          {ride.suitability.length > 0 && (
           <section aria-labelledby="suitability-heading">
             <h2 id="suitability-heading" className="text-3xl">Event suitability</h2>
             <ul className="mt-6 flex flex-wrap gap-2">
@@ -74,10 +80,14 @@ export function RideDetail({
             </ul>
             <p className="mt-3 text-sm text-muted">General guidance only. Fit for your site is confirmed with the operator.</p>
           </section>
+          )}
 
           <section aria-labelledby="specs-heading">
             <h2 id="specs-heading" className="text-3xl">Specifications</h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">Specifications depend on the specific unit sourced for your event. We only show values we have verified.</p>
+            {ride.specs.length === 0 ? (
+              <p data-testid="specs-unknown" className="mt-4 text-sm text-muted">No verified specifications on file for this offering. They are confirmed for the specific unit sourced for your event.</p>
+            ) : (
             <div className="mt-6 overflow-hidden rounded-xl border border-line bg-surface">
               <table className="w-full text-left text-[15px]">
                 <caption className="sr-only">Ride specifications</caption>
@@ -97,6 +107,7 @@ export function RideDetail({
                 </tbody>
               </table>
             </div>
+            )}
           </section>
 
           {otherLocations.length > 0 && (
@@ -104,7 +115,7 @@ export function RideDetail({
               <h2 id="locations-heading" className="text-2xl">Request this ride in other locations</h2>
               <ul className="mt-4 flex flex-wrap gap-2 text-sm">
                 {otherLocations.map((l) => (
-                  <li key={l.citySlug}><Link className="inline-block rounded-full border border-line-strong bg-surface px-3 py-1.5 hover:border-ink" href={paths.rideCity(ride.slug, l.stateSlug, l.citySlug)}>{l.cityName}, {l.stateCode}</Link></li>
+                  <li key={l.citySlug}><Link className="inline-block rounded-full border border-line-strong bg-surface px-3 py-1.5 hover:border-ink" href={links.rideCity(ride.slug, l.stateSlug, l.citySlug)}>{l.cityName}, {l.stateCode}</Link></li>
                 ))}
               </ul>
             </section>
