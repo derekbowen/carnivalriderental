@@ -17,7 +17,7 @@
 | Domain | Founder named `carnivalriderental.us` as the candidate domain. Recorded only; no DNS changes, no deployment, indexing still off. |
 
 ## Decisions needed before real transactions
-See `SHARETRIBE_MAPPING.md` → "Decisions needed". In short: seller-of-record entity; payment option (full / deposit+balance / saved card + off-session / pay after supplier commits); deposit %, cancellation and refund policy; handling for events > 75–90 days out; commission lines on our own listings; supplier payment terms; what makes an operator `verified_supplier` (insurance, contract); whether committing should also require a *verified unit* (today it requires a verified supplier and an identified unit).
+See `SHARETRIBE_MAPPING.md` → "Decisions needed". In short: ~~seller-of-record entity~~ (decided: **Ten Thousand Solutions LLC**); payment option (full / deposit+balance / saved card + off-session / pay after supplier commits); deposit %, cancellation and refund policy; handling for events > 75–90 days out; commission lines on our own listings; supplier payment terms; what makes an operator `verified_supplier` (insurance, contract); whether committing should also require a *verified unit* (today it requires a verified supplier and an identified unit).
 
 ## Hosting (asked, not done)
 No AWS or DigitalOcean server is reachable from this environment. The only AWS-related item is a proxy credential scoped to poolrentalnearme.com (PRNM infrastructure — off-limits). Connected options: Vercel (three teams named "Derekbowencorp 5352") and Cloudflare (three unrelated Workers). Recommended: a new Vercel project plus hosted Postgres (Supabase or Vercel Postgres), password-protected preview, indexing off. Awaiting the founder's choice of team and database.

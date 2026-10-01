@@ -19,6 +19,10 @@ It is **not**: a directory that sends customers away, a lead-selling site, an ow
 
 Long-term goal: make every carnival ride in the US discoverable and sourceable through this business. That is an ambition, **not** a claim that we have rides under contract.
 
+## Ownership
+
+The business is **owned and operated by Ten Thousand Solutions LLC** (parent company). It is the seller of record: customers contract with and pay Ten Thousand Solutions LLC (via its own Sharetribe seller account and Stripe Connect onboarding), and operators are its subcontracted suppliers.
+
 ## Origin
 
 Founder: Derek Bowen (operates Pool Rental Near Me; previously rented carnival rides as Ferris Wheel Rental U.S.). A single Ferris wheel rental, sold from a WordPress site, out-earned a full year of PRNM. The earlier mistake was positioning as a connector between owner and customer. This project corrects that.

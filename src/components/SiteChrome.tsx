@@ -85,7 +85,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          “{BRAND.name}” is a working name. Prices are planning estimates unless labelled “Accepted quote”. Availability is confirmed per event.
+          {BRAND.name} is owned and operated by {BRAND.legalEntity}. “{BRAND.name}” is a working name. Prices are planning estimates unless labelled “Accepted quote”. Availability is confirmed per event.
         </p>
       </div>
     </footer>
