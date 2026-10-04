@@ -9,3 +9,5 @@ the hero layout (`src/app/page.tsx`), and `RideGlyph` / `PlaceholderImage` (`src
 
 Its demo data (`data/*.ts`) is design filler — it may include invented prices, specs or names and must never be
 copied into `src/data/production/`.
+
+Screenshots of the five designed screens (A homepage, B browse, C ride detail, D request + status, E internal queue + detail) are in `screenshots/`.
