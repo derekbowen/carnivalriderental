@@ -199,6 +199,18 @@
       "email": "candyland-amusements@carnivalriderental.us",
       "companyId": "candyland-amusements",
       "createdAt": "2026-10-04T12:36:13.831Z"
+    },
+    "cw-1093": {
+      "userId": "6ac248c0-1aa1-4f6f-8042-b6391dc55e45",
+      "email": "carnival-midway-attractions@carnivalriderental.us",
+      "companyId": "carnival-midway-attractions",
+      "createdAt": "2026-10-04T12:38:25.197Z"
+    },
+    "cw-12643": {
+      "userId": "6ac2490f-0b72-4346-9b43-856e711c89c8",
+      "email": "badgerland-midways@carnivalriderental.us",
+      "companyId": "badgerland-midways",
+      "createdAt": "2026-10-04T12:39:43.270Z"
     }
   }
 }
