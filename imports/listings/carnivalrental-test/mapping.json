@@ -7,6 +7,258 @@
       "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
       "companyId": "a-and-a-attractions",
       "createdAt": "2026-10-04T13:28:48.821Z"
+    },
+    "a-and-a-attractions--bounce": {
+      "listingId": "6ac25519-0695-4912-8af4-b29133f2950b",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:05.210Z"
+    },
+    "a-and-a-attractions--bumper-cars": {
+      "listingId": "6ac2551b-bf38-4a73-8478-80ae66d76080",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:07.345Z"
+    },
+    "a-and-a-attractions--dragon-wagon": {
+      "listingId": "6ac2551d-7802-49d4-8897-3f58e837cc2a",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:09.395Z"
+    },
+    "a-and-a-attractions--eagle-16-wheel": {
+      "listingId": "6ac2551f-cfa3-41f6-8155-0167b33408de",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:11.497Z"
+    },
+    "a-and-a-attractions--gee-whiz": {
+      "listingId": "6ac25521-bc26-49b5-b1d7-760c932e02d4",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:13.594Z"
+    },
+    "a-and-a-attractions--great-western-train": {
+      "listingId": "6ac25523-b9bf-4c0d-997c-12e0d172a0ea",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:15.700Z"
+    },
+    "a-and-a-attractions--jolly-choo-choo": {
+      "listingId": "6ac25525-f170-443f-a547-368ffb841ca6",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:17.794Z"
+    },
+    "a-and-a-attractions--kiddiepilllar": {
+      "listingId": "6ac25527-e9e8-47dc-b964-e9cefb45e454",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:19.896Z"
+    },
+    "a-and-a-attractions--kite-flyer": {
+      "listingId": "6ac2552a-c4ca-4730-a2bc-1e16dd342813",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:21.993Z"
+    },
+    "a-and-a-attractions--merry-go-round": {
+      "listingId": "6ac2552c-52c3-4cb7-a7ca-3638ae0f858a",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:24.103Z"
+    },
+    "a-and-a-attractions--mini-disco": {
+      "listingId": "6ac2552e-88e4-4788-891f-1f5ed6079788",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:26.198Z"
+    },
+    "a-and-a-attractions--motorcycle-jump": {
+      "listingId": "6ac25530-2827-4da0-8d66-907a8edc7ac3",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:28.292Z"
+    },
+    "a-and-a-attractions--octopus": {
+      "listingId": "6ac25532-b40d-4f2d-b1dd-a53f5c1ecac2",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:30.392Z"
+    },
+    "a-and-a-attractions--pony-cart": {
+      "listingId": "6ac25534-5a97-462f-8015-cd49c2af6ffa",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:32.501Z"
+    },
+    "a-and-a-attractions--safari-train": {
+      "listingId": "6ac25536-63ff-4844-967b-863987280c84",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:34.594Z"
+    },
+    "a-and-a-attractions--sea-ray": {
+      "listingId": "6ac25538-d2f3-4f1a-a864-361033d49f65",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:36.695Z"
+    },
+    "a-and-a-attractions--space-age": {
+      "listingId": "6ac2553a-5d88-478a-a854-29a5f0a8df0f",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:38.819Z"
+    },
+    "a-and-a-attractions--super-sizzler": {
+      "listingId": "6ac2553c-b607-42cc-b929-af512bd0eb81",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:40.896Z"
+    },
+    "a-and-a-attractions--super-slide": {
+      "listingId": "6ac2553f-fd84-416f-9b77-08d30586e426",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:42.999Z"
+    },
+    "a-and-a-attractions--swinger": {
+      "listingId": "6ac25541-2dd1-4490-9738-bcbe7fd4592a",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:45.096Z"
+    },
+    "a-and-a-attractions--tea-cups": {
+      "listingId": "6ac25543-28d0-4e92-995f-63f38176340d",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:47.195Z"
+    },
+    "a-and-a-attractions--tilt-a-whirl": {
+      "listingId": "6ac25545-fb0f-4a40-b7ab-95141fe59e3f",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:49.292Z"
+    },
+    "a-and-a-attractions--tornado": {
+      "listingId": "6ac25547-933f-444e-99d3-b00555223b5e",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:51.394Z"
+    },
+    "a-and-a-attractions--vortex-ii": {
+      "listingId": "6ac25549-74a0-4485-8c1c-f32b611bf34b",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:53.492Z"
+    },
+    "a-and-a-attractions--zipper": {
+      "listingId": "6ac2554b-4c58-4197-8349-a3d212c7ce49",
+      "authorId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T13:31:55.600Z"
+    },
+    "a-great-northern-afair--funhouse": {
+      "listingId": "6ac2554d-50d0-45d1-8e8a-1ac10a0e7c9c",
+      "authorId": "6ac2427c-64ea-4d4a-b777-fc483e644722",
+      "companyId": "a-great-northern-afair",
+      "createdAt": "2026-10-04T13:31:57.690Z"
+    },
+    "a-great-northern-afair--funslide": {
+      "listingId": "6ac2554f-42fa-4f5b-abb8-244c7df7e2dc",
+      "authorId": "6ac2427c-64ea-4d4a-b777-fc483e644722",
+      "companyId": "a-great-northern-afair",
+      "createdAt": "2026-10-04T13:31:59.794Z"
+    },
+    "a-great-northern-afair--theas-zoo": {
+      "listingId": "6ac25551-ff40-42c7-a4f9-b9ca70d3047a",
+      "authorId": "6ac2427c-64ea-4d4a-b777-fc483e644722",
+      "companyId": "a-great-northern-afair",
+      "createdAt": "2026-10-04T13:32:01.892Z"
+    },
+    "acp-entertainment--40ft-ferris-wheel": {
+      "listingId": "6ac25554-07c5-4e55-a9fe-14575ddc0459",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:03.994Z"
+    },
+    "acp-entertainment--ballistic": {
+      "listingId": "6ac25556-8768-4d36-9d8a-aeee15cacaf4",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:06.093Z"
+    },
+    "acp-entertainment--carnival-funhouse": {
+      "listingId": "6ac25558-b943-4adf-9a86-95aa012d7faa",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:08.194Z"
+    },
+    "acp-entertainment--carnival-trackless-train": {
+      "listingId": "6ac2555a-862e-4fe4-9f65-aa45a569d031",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:10.300Z"
+    },
+    "acp-entertainment--classic-trackless-train": {
+      "listingId": "6ac2555c-173c-4f49-ab64-11acbacc3d03",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:12.393Z"
+    },
+    "acp-entertainment--cruisin-classics": {
+      "listingId": "6ac2555e-aae6-4a1f-8b1c-2f65338832ef",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:14.492Z"
+    },
+    "acp-entertainment--cyclone-swing": {
+      "listingId": "6ac25560-9ef1-41a9-aa48-92da9230f470",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:16.593Z"
+    },
+    "acp-entertainment--face-to-face-race": {
+      "listingId": "6ac25562-172d-4e2e-802a-6618df583188",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:18.697Z"
+    },
+    "acp-entertainment--frog-hopper": {
+      "listingId": "6ac25564-5092-4ae2-8e40-dc88a1d87e41",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:20.796Z"
+    },
+    "acp-entertainment--gyro-extreme": {
+      "listingId": "6ac25566-1ff1-4029-bee9-ef93f3625745",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:22.892Z"
+    },
+    "acp-entertainment--little-wheel": {
+      "listingId": "6ac25569-18a6-425f-b336-6009d63bc3a5",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:24.997Z"
+    },
+    "acp-entertainment--lost-treasures-playport": {
+      "listingId": "6ac2556b-fece-4bd1-8147-91cb1ed5c441",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:27.092Z"
+    },
+    "acp-entertainment--mechanical-bull": {
+      "listingId": "6ac2556d-9b39-40cd-9660-6e2842c55b13",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:29.194Z"
+    },
+    "acp-entertainment--mechanical-shark": {
+      "listingId": "6ac2556f-93f8-4368-92a5-47f15cbd3777",
+      "authorId": "6ac24286-e33f-4c53-b447-d8015fa9c347",
+      "companyId": "acp-entertainment",
+      "createdAt": "2026-10-04T13:32:31.292Z"
     }
   }
 }
