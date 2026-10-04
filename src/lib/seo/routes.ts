@@ -44,12 +44,13 @@ export const paths = {
   occasions: () => "/events",
   occasion: (occasion: string) => `/events/${seg(occasion)}`,
   occasionState: (occasion: string, state: string) => `/${seg(state)}/${seg(occasion)}`,
-  request: (ride?: string, state?: string, city?: string, occasion?: string) => {
+  request: (ride?: string, state?: string, city?: string, occasion?: string, category?: string) => {
     const q = new URLSearchParams();
     if (ride) q.set("ride", seg(ride));
     if (state) q.set("state", seg(state));
     if (city) q.set("city", seg(city));
     if (occasion) q.set("occasion", seg(occasion));
+    if (category) q.set("category", seg(category));
     const s = q.toString();
     return s ? `/request?${s}` : "/request";
   },

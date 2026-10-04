@@ -84,6 +84,17 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/*
+ * Category hub themes (src/lib/content/category-pages.ts). Hero + accents only; header, footer,
+ * type scale, buttons and cards stay the brand's. Text/background pairs meet WCAG AA.
+ */
+[data-cat-theme] { --cat-hero-bg: var(--color-ink); --cat-hero-ink: #fff; --cat-hero-muted: rgba(255,255,255,.8); --cat-accent: var(--color-accent); --cat-wash: var(--color-canvas); --cat-rule: var(--color-line); }
+[data-cat-theme="ferris"] { --cat-hero-bg: #121f4d; --cat-hero-ink: #fff; --cat-hero-muted: #d9dcef; --cat-accent: #ffc629; --cat-wash: #fff8e6; --cat-rule: #f1d78c; }
+[data-cat-theme="carousel"] { --cat-hero-bg: #f8efdd; --cat-hero-ink: #5a1625; --cat-hero-muted: #6b3b3f; --cat-accent: #b08d3c; --cat-wash: #fbf5ea; --cat-rule: #d9c08a; }
+[data-cat-theme="swing"] { --cat-hero-bg: #dff0fb; --cat-hero-ink: #0b1b3f; --cat-hero-muted: #2e3b5c; --cat-accent: #2f7fc1; --cat-wash: #eff7fd; --cat-rule: #a9d0ee; }
+[data-cat-theme="thrill"] { --cat-hero-bg: #140f24; --cat-hero-ink: #fff; --cat-hero-muted: #d8d3e8; --cat-accent: #e5352b; --cat-wash: #f4f2f8; --cat-rule: #c9c2dc; }
+[data-cat-theme="kiddie"] { --cat-hero-bg: #fff4c7; --cat-hero-ink: #0b1b3f; --cat-hero-muted: #2e3b5c; --cat-accent: #1f9d8b; --cat-wash: #fffaf0; --cat-rule: #f3d779; }
+
 /* Component classes live in the components layer so utilities (e.g. pl-9) can override them. */
 @layer components {
 .input {

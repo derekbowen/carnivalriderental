@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EventRequestForm } from "@/components/request/EventRequestForm";
 import { getContent, getLocation, getRide } from "@/lib/content";
 import { BRAND } from "@/lib/config";
+import { categoryPageById } from "@/lib/content/category-pages";
 import { occasionById, stateBySlug } from "@/lib/taxonomy";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string; occasion?: string };
+type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string; occasion?: string; category?: string };
 
 export default async function RequestPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -22,12 +23,15 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   // From state and occasion pages: state slug alone, occasion id → contract eventType.
   const stateOnly = !loc && sp.state ? stateBySlug(sp.state) : undefined;
   const occasion = sp.occasion ? occasionById(sp.occasion) : undefined;
+  // From category hubs: the ride type goes into the notes (the ride picker lists offerings, not categories).
+  const category = sp.category ? categoryPageById(sp.category) : undefined;
+  const noteLines = [category && `Ride type: ${category.name}`, occasion && `Occasion: ${occasion.name}`].filter(Boolean);
   const prefill = {
     rideSlug: ride?.slug,
     city: loc?.cityName ?? m?.[1],
     state: loc?.stateCode ?? stateOnly?.abbr ?? m?.[2]?.toUpperCase(),
     eventType: occasion?.eventType,
-    notes: occasion ? `Occasion: ${occasion.name}` : undefined,
+    notes: noteLines.length ? noteLines.join("\n") : undefined,
     date: sp.date && /^\d{4}-\d{2}-\d{2}$/.test(sp.date) ? sp.date : undefined,
   };
   return (

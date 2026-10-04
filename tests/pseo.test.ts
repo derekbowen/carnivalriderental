@@ -4,7 +4,8 @@ import type { CatalogSnapshot } from "@/lib/catalog/source";
 import { occasionGate, occasionStateGate, PSEO_THRESHOLDS, pseoRoutes, stateGate, supplyFor } from "@/lib/seo/pseo";
 import { checkSlugNamespaces, RESERVED_TOP_LEVEL } from "@/lib/seo/namespaces";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, offeringList, rentalService, serializeJsonLd } from "@/lib/seo/structured-data";
+import { cardFromCatalog } from "@/lib/catalog/card";
+import { breadcrumbs, graph, itemList, rentalService, serializeJsonLd } from "@/lib/seo/structured-data";
 import occasionsJson from "@/lib/taxonomy/occasions.json";
 import rideTypesJson from "@/lib/taxonomy/ride-types.json";
 import { checkTaxonomies, occasionById, OCCASIONS, RIDE_TYPES, schemas, stateBySlug, US_STATES, type Occasion } from "@/lib/taxonomy";
@@ -118,7 +119,7 @@ describe("live supply + gates", () => {
 
   it("enumerates every state, occasion and combination with canonical paths", () => {
     const routes = pseoRoutes(snap([]));
-    expect(routes).toHaveLength(51 + OCCASIONS.length + OCCASIONS.length * 51);
+    expect(routes).toHaveLength(5 + 51 + OCCASIONS.length + OCCASIONS.length * 51); // 5 pilot category hubs
     expect(routes.some((r) => r.path === "/new-york/bar-mitzvahs")).toBe(true);
     expect(routes.every((r) => !r.gate.indexable)).toBe(true);
   });
@@ -141,11 +142,11 @@ describe("routes + structured data", () => {
   });
 
   it("emits no ratings or prices and cannot break out of the script tag", () => {
-    const data = [
+    const data = graph([
       breadcrumbs([{ name: "Home", path: "/" }]),
       rentalService({ name: "x", description: "y", path: "/texas", areaServed: { type: "State", name: "Texas" } }),
-      offeringList("rides", [rec({ title: "</script><b>" })], () => "/preview/rides/x"),
-    ];
+      itemList({ path: "/texas", name: "rides", cards: [cardFromCatalog(rec({ title: "</script><b>" }), { production: false })] }),
+    ]);
     const json = serializeJsonLd(data);
     expect(json).not.toMatch(/aggregateRating|"price"|"review"/i);
     expect(json).not.toContain("</script>");

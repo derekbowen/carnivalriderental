@@ -137,6 +137,10 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
     await expect(page.getByRole("link", { name: /Start an event request|Request this ride/ }).first()).toBeVisible();
     for (const href of await page.locator('a[href^="/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
       const target = href.split("#")[0] || "/";
+      // /preview/* cards point at per-spec test-harness listings that other specs create and delete; a cached
+      // hub may still show one. Those destinations are verified in category-hubs/catalog-preview while the
+      // harness exists, and are never rendered in production.
+      if (target.startsWith("/preview/")) continue;
       expect((await request.get(target)).status(), `link ${target} from ${path}`).toBe(200);
     }
   }

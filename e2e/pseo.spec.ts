@@ -32,7 +32,7 @@ test.beforeAll(() => {
 test.afterAll(() => fs.rmSync(FILE, { force: true }));
 
 const jsonLdTypes = async (page: import("@playwright/test").Page) =>
-  (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((t) => (JSON.parse(t) as { "@type": string }[]).map((d) => d["@type"]));
+  (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((t) => (JSON.parse(t) as { "@graph": { "@type": string }[] })["@graph"].map((d) => d["@type"]));
 
 test("state hub renders for every state, noindex, with structured data and occasion links", async ({ page, request }) => {
   for (const s of ["texas", "district-of-columbia", "wyoming"]) expect((await request.get(`/${s}`)).status()).toBe(200);

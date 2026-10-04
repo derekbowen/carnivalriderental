@@ -1,12 +1,13 @@
 import { notFound } from "next/navigation";
 import { HOW_IT_WORKS, RequestCta } from "@/components/RequestCta";
-import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, offeringPath, SupplyList, SupplySource } from "@/components/pseo";
+import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "@/components/pseo";
+import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
 import { getCatalog } from "@/lib/catalog/source";
 import { getContent } from "@/lib/content";
 import { seoMetadata } from "@/lib/seo/metadata";
 import { stateGate, supplyFor } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, offeringList, rentalService } from "@/lib/seo/structured-data";
+import { breadcrumbs, faqPage, itemList, rentalService, webPage } from "@/lib/seo/structured-data";
 import { COMMON_FAQ, OCCASION_GROUPS, OCCASIONS, stateBySlug, US_STATES } from "@/lib/taxonomy";
 
 export const dynamicParams = false;
@@ -34,6 +35,8 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
   if (!s) notFound();
   const snap = await getCatalog();
   const supply = supplyFor(snap, { stateCode: s.code });
+  const cards = supply.map((r) => cardFromCatalog(r));
+  const ldCards = structuredDataCards(cards, snap);
   const cities = getContent().locations.filter((l) => l.stateSlug === s.slug);
   const path = paths.state(s.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: s.name, path }];
@@ -42,11 +45,12 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd
-        data={[
+        nodes={[
+          webPage({ path, name: title, description, hasItemList: ldCards.length > 0, hasService: true }),
           breadcrumbs(crumbs),
-          rentalService({ name: title, description, path, areaServed: { type: "State", name: s.name } }),
-          ...(supply.length ? [offeringList(`Carnival rides available to request in ${s.name}`, supply, offeringPath)] : []),
-          faqPage(COMMON_FAQ),
+          rentalService({ path, name: title, description, areaServed: { type: "State", name: s.name } }),
+          ...(ldCards.length ? [itemList({ path, name: `Carnival rides available to request in ${s.name}`, cards: ldCards })] : []),
+          faqPage(COMMON_FAQ, path),
         ]}
       />
       <Breadcrumbs items={crumbs} />
@@ -59,7 +63,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       <section className="mt-10">
         <h2 className="text-2xl">Rides you can request in {s.name}</h2>
         <div className="mt-4">
-          <SupplyList records={supply} requestHref={paths.request(undefined, s.slug)} emptyText={`We have not published ride offerings for ${s.name} yet. You can still send a request and we will look for an operator.`} />
+          <SupplyList cards={cards} requestHref={paths.request(undefined, s.slug)} emptyText={`We have not published ride offerings for ${s.name} yet. You can still send a request and we will look for an operator.`} />
         </div>
         <SupplySource snap={snap} />
       </section>

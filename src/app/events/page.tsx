@@ -1,7 +1,7 @@
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { seoMetadata } from "@/lib/seo/metadata";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs } from "@/lib/seo/structured-data";
+import { breadcrumbs, webPage } from "@/lib/seo/structured-data";
 import { OCCASION_GROUPS, OCCASIONS } from "@/lib/taxonomy";
 
 export const revalidate = 3600;
@@ -20,7 +20,7 @@ export default function EventsIndex() {
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "Events", path: paths.occasions() }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd data={[breadcrumbs(crumbs)]} />
+      <JsonLd nodes={[webPage({ path: paths.occasions(), name: title, description: "Carnival ride rentals by event type.", type: "WebPage" }), breadcrumbs(crumbs)]} />
       <Breadcrumbs items={crumbs} />
       <h1 className="mt-6 text-4xl">{title}</h1>
       {OCCASION_GROUPS.map((g) => (

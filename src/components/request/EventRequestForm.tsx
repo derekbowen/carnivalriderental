@@ -144,7 +144,7 @@ export function EventRequestForm({ rides, prefill }: { rides: RideOption[]; pref
   useEffect(() => {
     try {
       const draft = sessionStorage.getItem(DRAFT_KEY);
-      if (draft && !prefill.rideSlug && !prefill.city && !prefill.state && !prefill.eventType) setF({ ...initial(prefill), ...JSON.parse(draft), acknowledged: false });
+      if (draft && !prefill.rideSlug && !prefill.city && !prefill.state && !prefill.eventType && !prefill.notes) setF({ ...initial(prefill), ...JSON.parse(draft), acknowledged: false });
       keyRef.current = sessionStorage.getItem(KEY_KEY) || crypto.randomUUID();
       sessionStorage.setItem(KEY_KEY, keyRef.current);
     } catch {

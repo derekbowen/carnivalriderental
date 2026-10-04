@@ -1,6 +1,7 @@
 import type { CatalogRecord } from "../catalog/normalize";
 import type { CatalogSnapshot } from "../catalog/source";
 import { publicIndexingEnabled } from "../config";
+import { CATEGORY_PAGES, type CategoryPage } from "../content/category-pages";
 import { OCCASIONS, US_STATES, type Occasion, type UsState } from "../taxonomy";
 import type { GateResult } from "./publication";
 import { paths } from "./routes";
@@ -20,6 +21,8 @@ export const PSEO_THRESHOLDS = {
   occasionMinOfferings: 3,
   /** Live offerings in the occasion's suggested categories that accept requests in the state. */
   occasionStateMinOfferings: 3,
+  /** Live (non-test) offerings in the category. Theme or copy alone never qualifies a hub. */
+  categoryMinOfferings: 3,
 } as const;
 
 export interface SupplyFilter {
@@ -75,9 +78,19 @@ export function occasionStateGate(o: Occasion, state: UsState, snap: CatalogSnap
   return result(reasons);
 }
 
-/** Every taxonomy-driven route with its gate (51 + 75 + 75×51 today). */
+/** Category hub (/categories/{id}): approved copy + enough real supply. Visual theme plays no part. */
+export function categoryHubGate(page: CategoryPage, snap: CatalogSnapshot): GateResult {
+  const reasons = common(snap);
+  if (page.reviewStatus !== "approved") reasons.push("category copy not approved");
+  const n = countable(snap, { categories: [page.id] });
+  if (n < PSEO_THRESHOLDS.categoryMinOfferings) reasons.push(`${n} live offerings in ${page.id} (need ${PSEO_THRESHOLDS.categoryMinOfferings})`);
+  return result(reasons);
+}
+
+/** Every catalog-driven route with its gate (5 category hubs + 51 + 75 + 75×51 today). */
 export function pseoRoutes(snap: CatalogSnapshot): { path: string; family: string; gate: GateResult }[] {
   const out: { path: string; family: string; gate: GateResult }[] = [];
+  for (const c of CATEGORY_PAGES) out.push({ path: paths.category(c.id), family: "category", gate: categoryHubGate(c, snap) });
   for (const s of US_STATES) out.push({ path: paths.state(s.slug), family: "state", gate: stateGate(s, snap) });
   for (const o of OCCASIONS) out.push({ path: paths.occasion(o.id), family: "occasion", gate: occasionGate(o, snap) });
   for (const o of OCCASIONS)

@@ -34,6 +34,7 @@ Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED co
 6. **Email + SMS provider** for booking communication.
 7. **Operator research** — coworker fills `research/operator-research-template.xlsx`; send it to Claude directly (not into the repo).
 8. **pSEO copy review** — approve occasion intros and ride types (`docs/PSEO_TEMPLATES.md` §6).
+10. **Category hub pilot** — review the five previews and approve or edit their copy (`src/lib/content/category-pages.ts`, `reviewStatus`). Optional: add Magic Patterns credits and run `design/magic-patterns/CATEGORY_PILOT_PROMPT.md`.
 9. **Operator program decisions** — who pays the fee and the rate, far-out events, updated-price path, operator requirements, cancellations (`docs/OPERATOR_MARKETPLACE.md` §6). Then approve the `/operators` copy.
 
 ## Mobile apps (2026-10-04)

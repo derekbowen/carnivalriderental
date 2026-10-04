@@ -1,17 +1,16 @@
 import { ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import type { CatalogRecord } from "@/lib/catalog/normalize";
+import type { ListingCardModel } from "@/lib/catalog/card";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
-import { CONTRACT } from "@/lib/contract";
-import { paths } from "@/lib/seo/routes";
-import { serializeJsonLd } from "@/lib/seo/structured-data";
+import { graph, serializeJsonLd, type Json } from "@/lib/seo/structured-data";
 import type { Faq } from "@/lib/taxonomy";
-import { AvailabilityBadge, DemoBadge, EstimateLabel } from "./badges";
+import { ListingCard } from "./ListingCard";
 
 /** Shared building blocks for the taxonomy-driven page families (state, occasion, occasion + state). */
 
-export function JsonLd({ data }: { data: Record<string, unknown>[] }) {
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(data) }} />;
+/** One connected @graph per page (Organization node added automatically). */
+export function JsonLd({ nodes }: { nodes: Json[] }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(graph(nodes)) }} />;
 }
 
 export function Breadcrumbs({ items }: { items: { name: string; path: string }[] }) {
@@ -29,18 +28,14 @@ export function Breadcrumbs({ items }: { items: { name: string; path: string }[]
   );
 }
 
-const CATEGORY_LABEL: Record<string, string> = Object.fromEntries(CONTRACT.categories.items.map((c) => [c.id, c.label]));
-export const categoryLabel = (id: string) => CATEGORY_LABEL[id] ?? id;
-
-/** Detail page for a live catalog offering. Public ride pages read the catalog in a later step. */
-export const offeringPath = (r: CatalogRecord) => paths.previewRide(r.slug);
+export { categoryLabel } from "@/lib/catalog/card";
 
 /**
- * Live supply: offerings from the Sharetribe catalog. Nothing here is invented — an empty list says so.
+ * Supply grid: the shared ListingCard for every card. Nothing here is invented — an empty list says so.
  * Every offering is "sourcing on request": we confirm an operator and unit per event.
  */
-export function SupplyList({ records, emptyText, requestHref }: { records: CatalogRecord[]; emptyText: string; requestHref: string }) {
-  if (records.length === 0) {
+export function SupplyList({ cards, emptyText, requestHref }: { cards: ListingCardModel[]; emptyText: string; requestHref: string }) {
+  if (cards.length === 0) {
     return (
       <div data-testid="supply-empty" className="card p-6 text-sm text-ink-soft">
         <p>{emptyText}</p>
@@ -49,22 +44,8 @@ export function SupplyList({ records, emptyText, requestHref }: { records: Catal
     );
   }
   return (
-    <ul data-testid="supply-list" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {records.map((r) => (
-        <li key={r.offerKey} className="card relative flex flex-col gap-3 p-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <AvailabilityBadge />
-            {r.isTestSample && <DemoBadge label="Test sample" />}
-          </div>
-          <p className="text-xs font-semibold text-muted">{categoryLabel(r.categoryId)}</p>
-          <h3 className="text-xl leading-tight">
-            <Link href={offeringPath(r)} className="after:absolute after:inset-0 hover:underline">{r.title}</Link>
-          </h3>
-          <div className="mt-auto border-t border-line pt-3">
-            <EstimateLabel estimate={r.pricing.mode === "indicative-range" ? { lowUsd: r.pricing.lowUsd, highUsd: r.pricing.highUsd, basis: r.pricing.basis, isDemoValue: false } : null} />
-          </div>
-        </li>
-      ))}
+    <ul data-testid="supply-list" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {cards.map((c) => <li key={c.key}><ListingCard card={c} /></li>)}
     </ul>
   );
 }

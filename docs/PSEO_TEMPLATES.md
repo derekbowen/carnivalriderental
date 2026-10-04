@@ -75,6 +75,49 @@ Local URLs hang directly off the domain (founder decision 2026-10-04). City slug
 
 Never in markup: ratings, reviews, prices, "available", supplier counts.
 
+## 3b. Category hubs — pilot (2026-10-04)
+
+`/categories/{id}` for **ferris-wheels, carousels, swing-rides, thrill-rides, kiddie-rides**: ONE template
+(`src/components/CategoryHub.tsx`) + per-category config (`src/lib/content/category-pages.ts`: copy, theme,
+illustration alt). `family-rides` has no page yet (404). Merry-go-round is covered inside the carousel page only.
+
+Section order: breadcrumbs → themed hero (H1, intro, illustration, request CTA) → listing cards → planning guidance
+(venue access, setup space, power, audience, quote checklist) → how sourcing and quotes work → FAQs → related
+categories + locations → final request CTA.
+
+Themes (`[data-cat-theme]` tokens in `globals.css`) change hero colours, a decorative motif and the illustration
+only. Header, footer, type scale, buttons, cards and the request flow stay the brand's.
+
+**Shared listing card** (`src/lib/catalog/card.ts` → `src/components/ListingCard.tsx`), used by category hubs and
+the state/occasion supply grids:
+- Live catalog records are the only supply.
+- Development fixtures render only outside production, in a separate "Demo records" block, and never count as supply.
+- A card shows: photo (or a labelled category illustration), name, description, up to two verified specs, and the
+  approved estimate with its basis (otherwise "Request pricing").
+- "Sourcing on request" appears as quiet text, and test or demo labels stay visible.
+- Detail links: catalog cards link to `/preview/rides/…` (labelled "dev preview") outside production and render
+  **no link** in production. The preview routes 404 in production.
+
+**Gate** (`categoryHubGate`): production + live catalog + `reviewStatus: approved` + at least 3 real offerings in
+the category. Theme and copy alone never qualify a hub.
+
+**Structured data**: one `@graph` per page, with stable `@id`s:
+- Organization `{site}/#organization`;
+- CollectionPage `#webpage`, which links breadcrumb, mainEntity → ItemList and about → Service;
+- BreadcrumbList `#breadcrumb`, matching the visible crumbs;
+- Service `#service`, with provider → Organization;
+- ItemList `#itemlist`: the displayed cards, in order, with the displayed URLs (no `url` when no link is shown);
+- FAQPage `#faq`, matching the visible FAQs.
+
+No Offer, price, rating, review, address or Event. Production keeps real supply only (`structuredDataCards`).
+The state and occasion pages now emit the same graph.
+
+Rendering: the hubs render on first request and are cached with ISR (10 minutes), so supply is never frozen at
+build time.
+
+Example render (development, carousel hub): `docs/examples/category-hub-carousels.jsonld.json`. It includes the
+labelled Test sample and the demo fixture, because previews show the shape; production keeps real supply only.
+
 ## 4. Gates — when a page may be indexed (`src/lib/seo/pseo.ts`)
 
 All pages: production + `PUBLIC_INDEXING=true` + supply source is the live catalog. Test samples never count.

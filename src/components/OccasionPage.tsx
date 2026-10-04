@@ -2,9 +2,10 @@ import type { CatalogSnapshot } from "@/lib/catalog/source";
 import { getContent } from "@/lib/content";
 import { supplyFor } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, offeringList, rentalService } from "@/lib/seo/structured-data";
+import { breadcrumbs, faqPage, itemList, rentalService, webPage } from "@/lib/seo/structured-data";
+import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
 import { COMMON_FAQ, groupOf, occasionById, US_STATES, type Occasion, type UsState } from "@/lib/taxonomy";
-import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, offeringPath, SupplyList, SupplySource } from "./pseo";
+import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
 import { RequestCta } from "./RequestCta";
 
 export function occasionCopy(o: Occasion, s?: UsState) {
@@ -30,6 +31,10 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
   ];
   const suggested = supplyFor(snap, { stateCode: s?.code, categories: o.suggestedCategories });
   const other = supplyFor(snap, { stateCode: s?.code }).filter((r) => !o.suggestedCategories.includes(r.categoryId));
+  const suggestedCards = suggested.map((r) => cardFromCatalog(r));
+  const otherCards = other.map((r) => cardFromCatalog(r));
+  // ItemList = every card shown, in display order (suggested first, then other rides).
+  const ldCards = structuredDataCards([...suggestedCards, ...otherCards], snap);
   const requestHref = paths.request(undefined, s?.slug, undefined, o.id);
   const group = groupOf(o);
   const related = o.related.map(occasionById).filter((x): x is Occasion => !!x);
@@ -38,11 +43,12 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd
-        data={[
+        nodes={[
+          webPage({ path, name: title, description, hasItemList: ldCards.length > 0, hasService: true }),
           breadcrumbs(crumbs),
-          rentalService({ name: title, description, path, areaServed: s ? { type: "State", name: s.name } : undefined }),
-          ...(suggested.length ? [offeringList(`Rides for ${o.plural}${s ? ` in ${s.name}` : ""}`, suggested, offeringPath)] : []),
-          faqPage(COMMON_FAQ),
+          rentalService({ path, name: title, description, areaServed: s ? { type: "State", name: s.name } : undefined }),
+          ...(ldCards.length ? [itemList({ path, name: `Rides for ${o.plural}${s ? ` in ${s.name}` : ""}`, cards: ldCards })] : []),
+          faqPage(COMMON_FAQ, path),
         ]}
       />
       <Breadcrumbs items={crumbs} />
@@ -55,7 +61,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
         <h2 className="text-2xl">Rides for {o.plural}{s ? ` in ${s.name}` : ""}</h2>
         <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Every ride is sourced for your date; nothing is booked until you accept a quote.</p>
         <div className="mt-4">
-          <SupplyList records={suggested} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Send a request and we will look for an operator.`} />
+          <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Send a request and we will look for an operator.`} />
         </div>
         <SupplySource snap={snap} />
       </section>
@@ -63,7 +69,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
       {other.length > 0 && (
         <section className="mt-10">
           <h2 className="text-2xl">Other rides you can request{s ? ` in ${s.name}` : ""}</h2>
-          <div className="mt-4"><SupplyList records={other} requestHref={requestHref} emptyText="" /></div>
+          <div className="mt-4"><SupplyList cards={otherCards} requestHref={requestHref} emptyText="" /></div>
         </section>
       )}
 

@@ -69,10 +69,10 @@ export function operatorPageGate(): GateResult {
 
 /** Every renderable SEO route with its gate. Used by sitemap, tests and the internal SEO view. */
 export function allSeoRoutes(): { path: string; family: string; gate: GateResult }[] {
-  const { rides, categories, locations } = getContent();
+  const { rides, locations } = getContent();
   const out: { path: string; family: string; gate: GateResult }[] = [];
   out.push({ path: paths.operators(), family: "operators", gate: operatorPageGate() });
-  for (const c of categories) out.push({ path: paths.category(c.slug), family: "category", gate: categoryGate(c) });
+  // Category hubs moved to pseoRoutes(): they read the live catalog (categoryHubGate).
   for (const r of rides) out.push({ path: paths.ride(r.slug), family: "ride", gate: rideGate(r) });
   for (const l of locations) out.push({ path: paths.city(l.stateSlug, l.citySlug), family: "city", gate: cityGate(l) });
   for (const r of rides)

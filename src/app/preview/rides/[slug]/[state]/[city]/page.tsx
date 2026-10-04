@@ -6,6 +6,7 @@ import { coversState } from "@/lib/catalog/normalize";
 import { getCatalogRecordBySlug } from "@/lib/catalog/source";
 import { eligibleLocations, toRideViewModel } from "@/lib/catalog/view";
 import { getCategory, getContent, getLocation } from "@/lib/content";
+import { appEnv } from "@/lib/config";
 import { paths } from "@/lib/seo/routes";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,8 @@ export const metadata: Metadata = { title: "Catalog preview (city)", robots: { i
 
 export default async function PreviewRideCityPage({ params }: { params: Promise<{ slug: string; state: string; city: string }> }) {
   const p = await params;
+  // Development previews only: never served in production (cards link nowhere there instead).
+  if (appEnv() === "production") notFound();
   const { snap, record } = await getCatalogRecordBySlug(p.slug);
   const location = getLocation(p.state, p.city);
   // Only eligible coverage renders: an offering never appears for a state it does not cover.

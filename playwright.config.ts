@@ -23,7 +23,8 @@ export default defineConfig({
       INTERNAL_USER: E2E_INTERNAL.username,
       INTERNAL_PASSWORD: E2E_INTERNAL.password,
       REQUEST_TOKEN_SECRET: "e2e-token-secret-e2e-token-secret",
-      SITE_URL: `http://localhost:${PORT}`,
+      // SITE_URL is NOT overridden: request-time pages (ISR on demand) must use the same origin as
+      // build-time pages, exactly as in a real deployment.
       ALLOW_DEMO_CONTENT: "true",
       PUBLIC_INDEXING: "false",
       // Keep e2e offline: never call the real Sharetribe marketplace from tests.
