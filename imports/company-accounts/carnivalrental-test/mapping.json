@@ -319,6 +319,48 @@
       "email": "dayton-area-amusements@carnivalriderental.us",
       "companyId": "dayton-area-amusements",
       "createdAt": "2026-10-04T13:16:15.809Z"
+    },
+    "cw-863": {
+      "userId": "6ac25224-4351-45c1-99e7-2dbe9cd75738",
+      "email": "deggeller-attractions@carnivalriderental.us",
+      "companyId": "deggeller-attractions",
+      "createdAt": "2026-10-04T13:18:28.909Z"
+    },
+    "disc-doolan-amusements": {
+      "userId": "6ac2526b-403c-462a-8df8-bf5da97dff9b",
+      "email": "doolan-amusements@carnivalriderental.us",
+      "companyId": "doolan-amusements",
+      "createdAt": "2026-10-04T13:19:39.219Z"
+    },
+    "cw-1143": {
+      "userId": "6ac252ee-1e6a-4524-b052-d1024c8a7fed",
+      "email": "dreamland-amusements@carnivalriderental.us",
+      "companyId": "dreamland-amusements",
+      "createdAt": "2026-10-04T13:21:50.427Z"
+    },
+    "disc-dreamland-carnival-co": {
+      "userId": "6ac25371-dc92-4e5f-a75d-78fef56cd238",
+      "email": "dreamland-carnival-co@carnivalriderental.us",
+      "companyId": "dreamland-carnival-co",
+      "createdAt": "2026-10-04T13:24:01.848Z"
+    },
+    "cw-869": {
+      "userId": "6ac253f3-8a03-4a0f-8c01-73eeac3732bf",
+      "email": "drew-exposition@carnivalriderental.us",
+      "companyId": "drew-exposition",
+      "createdAt": "2026-10-04T13:26:11.388Z"
+    },
+    "cw-870": {
+      "userId": "6ac25477-b5fa-408f-be70-05b33e6b7e99",
+      "email": "durant-amusements@carnivalriderental.us",
+      "companyId": "durant-amusements",
+      "createdAt": "2026-10-04T13:28:23.486Z"
+    },
+    "cw-880": {
+      "userId": "6ac254fb-769d-43d5-9f75-6f12ec1aff38",
+      "email": "e-k-fernandez-shows@carnivalriderental.us",
+      "companyId": "e-k-fernandez-shows",
+      "createdAt": "2026-10-04T13:30:35.555Z"
     }
   }
 }

@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-10-04",
+  "held": [
+    {
+      "externalId": "campy-amusements--ferris-wheel",
+      "issue": "description contains a scraped website footer"
+    },
+    {
+      "externalId": "caseys-rides-inc--raiders",
+      "issue": "description contains a scraped website footer; public text contains a ZIP code; public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "caseys-rides-inc--sizzler",
+      "issue": "description contains a scraped website footer; public text contains a ZIP code; public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "dreamland-amusements--fire-engine",
+      "issue": "public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "sunshine-shows--dragon-wagon",
+      "issue": "description contains a research note; public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "sunshine-shows--gondola-wheel",
+      "issue": "description contains a research note; public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "sunshine-shows--rock-star",
+      "issue": "description contains a research note; public text names a person from the company's private contacts"
+    }
+  ]
+}

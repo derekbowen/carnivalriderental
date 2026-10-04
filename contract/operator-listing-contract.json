@@ -1,0 +1,56 @@
+{
+  "$comment": "Operator-owned ride listings (operator marketplace track). Separate from listing-contract.json (managed listings under the house account). Field keys are permanent once listings use them.",
+  "contractVersion": "0.1.0",
+  "status": "approved-for-test-import",
+  "approvals": {
+    "approvedBy": "founder",
+    "date": "2026-10-04",
+    "approved": [
+      "listing type id operator-ride-rental, authored by the operator's (company) account",
+      "ride class stored as a listing field (rideClass), not in the shared Console category tree",
+      "public fields: rideClass, manufacturer and rideModel (only when printed on the operator's site, high confidence), minRiderHeightIn, riderRules, homeState, serviceStates",
+      "dimensions public only when taken from the operator's own website (footprintSource operator_website); type-typical and model-typical values kept private, never on the listing",
+      "no photo uploads before the company claims its account and approves its photos; source photo links kept private",
+      "created in state pendingApproval only; publishing needs a separate founder go"
+    ],
+    "notApproved": [
+      "transaction process for operator listings (no transactionProcessAlias/unitType set; listings cannot be transacted)",
+      "operator fees, payouts, publishing",
+      "public use of operator-written descriptions before claim (copied from operator sites; listings stay unpublished)"
+    ]
+  },
+  "listingType": { "id": "operator-ride-rental", "label": "Operator ride rental", "author": "operator company account (imported, unclaimed until claimed)" },
+  "initialState": "pendingApproval",
+  "rideClass": {
+    "storage": "publicData.rideClass",
+    "options": [
+      { "option": "kiddie", "label": "Kiddie ride" },
+      { "option": "family", "label": "Family ride" },
+      { "option": "major", "label": "Major ride" },
+      { "option": "spectacular", "label": "Spectacular" },
+      { "option": "coaster", "label": "Roller coaster" },
+      { "option": "funhouse", "label": "Fun house / walk-through" },
+      { "option": "dark-ride", "label": "Dark ride" },
+      { "option": "water", "label": "Water ride" },
+      { "option": "other", "label": "Other attraction" }
+    ]
+  },
+  "publicFields": [
+    { "key": "listingType", "type": "native", "value": "operator-ride-rental" },
+    { "key": "rideClass", "type": "enum", "consoleField": true, "filter": true },
+    { "key": "manufacturer", "type": "text", "consoleField": true, "rule": "only when mfrConfidence is high (as printed on the operator's site)" },
+    { "key": "rideModel", "type": "text", "consoleField": true, "rule": "only when mfrConfidence is high" },
+    { "key": "minRiderHeightIn", "type": "long", "consoleField": true },
+    { "key": "riderRules", "type": "text", "consoleField": true },
+    { "key": "homeState", "type": "enum", "consoleField": true, "rule": "lowercase state code, same codes as requestableStates" },
+    { "key": "serviceStates", "type": "multi-enum", "consoleField": true, "filter": true, "rule": "lowercase state codes" },
+    { "key": "footprintLengthFt", "type": "long", "consoleField": true, "rule": "only when footprintSource is operator_website" },
+    { "key": "footprintWidthFt", "type": "long", "consoleField": true, "rule": "only when footprintSource is operator_website" },
+    { "key": "rideHeightFt", "type": "long", "consoleField": true, "rule": "only when footprintSource is operator_website" },
+    { "key": "location", "type": "native-template", "rule": "{ address: 'City, ST' } only" }
+  ],
+  "geolocation": "company HQ rounded to 1 decimal place (~11 km): listing locations are public and some HQ coordinates are street-precise",
+  "metadata": ["claimStatus", "importBatch", "companyId", "importExternalId", "footprintSource"],
+  "privateData": ["sourceRidePage", "sourceImageUrl", "sourceThumbUrl", "mfrConfidence", "manufacturerUnverified", "rideModelUnverified", "footprintTypical (range or model-typical L/W/H, not shown)", "specModelKey", "specModelName", "specPower", "specTransport", "operatorDimensionText"],
+  "neverInListingData": ["owner/contact names, emails, phones", "street addresses or exact HQ coordinates", "research notes", "uploaded operator photos (before claim)"]
+}

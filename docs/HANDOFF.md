@@ -53,6 +53,9 @@ State hubs (51), occasion hubs (75) and occasion × state (3,825) are built and 
 ## Company-account import (2026-10-04)
 `npm run import:companies` imports the 184 eligible companies (A_ready + B_account_only) as unclaimed accounts. 135 are held and 11 excluded. Dry run verified; **no accounts created yet**: blocked on a claim-email domain (`IMPORT_CLAIM_EMAIL_DOMAIN`). See `docs/COMPANY_IMPORT.md`.
 
+## Operator listings import (2026-10-04)
+`npm run import:listings` loads 3,714 operator rides (7 held for review) as pendingApproval listings under the imported company accounts. Proven on Test with one listing. Founder to-do: add listing type `operator-ride-rental` and its fields in Console (`docs/LISTING_IMPORT.md`).
+
 ## Next small milestone
 1. ~~Confirm the marketplace~~ — done: "CarnivalRental Dev".
 2. ~~Read-only connection check~~ — done; the console shows the live status (cached 10 min).

@@ -36,11 +36,20 @@ def main(path: str) -> None:
     ci, ti = h.index("Company ID"), h.index("Import tier")
     companies = [{"companyId": r[ci], "importTier": r[ti]} for r in crows[1:] if r[ci] is not None]
 
+    LISTINGS_HEADER = ["externalId", "authorExternalId", "title", "description", "lat", "lng", "image URL",
+                       "publicData (JSON)", "privateData (JSON)", "metadata (JSON)"]
+    LISTINGS_KEYS = ["externalId", "authorExternalId", "title", "description", "lat", "lng", "imageUrl",
+                     "publicData", "privateData", "metadata"]
+    lrows = list(wb["Sharetribe Listings"].iter_rows(values_only=True))
+    if list(lrows[0][: len(LISTINGS_HEADER)]) != LISTINGS_HEADER:
+        sys.exit(f"Sharetribe Listings header changed: {lrows[0]}")
+    listings = [dict(zip(LISTINGS_KEYS, r[: len(LISTINGS_KEYS)])) for r in lrows[1:] if any(c is not None for c in r)]
+
     out = os.path.join("imports", "company-accounts", "source", "workbook.json")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
-        json.dump({"source": {"file": os.path.basename(path), "sha256": digest}, "users": users, "companies": companies}, f)
-    print(f"Wrote {out}: {len(users)} user rows, {len(companies)} companies (sha256 {digest[:12]}…)")
+        json.dump({"source": {"file": os.path.basename(path), "sha256": digest}, "users": users, "companies": companies, "listings": listings}, f)
+    print(f"Wrote {out}: {len(users)} user rows, {len(companies)} companies, {len(listings)} listings (sha256 {digest[:12]}…)")
 
 
 if __name__ == "__main__":
