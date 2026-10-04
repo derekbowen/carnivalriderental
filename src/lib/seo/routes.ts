@@ -8,7 +8,11 @@ import { siteUrl } from "../config";
  *   /rides/{ride}                           ride rental offering
  *   /rides/{ride}/{state}/{city}            ride + location page
  *   /categories/{category}                  ride category
+ *   /locations/{state}                      state hub (cities, occasions, live supply)
  *   /locations/{state}/{city}               city service page
+ *   /events                                 occasion index (navigation, noindex)
+ *   /events/{occasion}                      occasion hub ("carnival rides for bar mitzvahs")
+ *   /events/{occasion}/{state}              occasion + state
  *
  * Rules: lowercase, hyphenated slugs, no trailing slash, no query strings in
  * canonicals (filtered /rides?category=… views canonicalise to /rides).
@@ -29,12 +33,17 @@ export const paths = {
   previewRide: (ride: string) => `/preview/rides/${seg(ride)}`,
   previewRideCity: (ride: string, state: string, city: string) => `/preview/rides/${seg(ride)}/${seg(state)}/${seg(city)}`,
   category: (category: string) => `/categories/${seg(category)}`,
+  state: (state: string) => `/locations/${seg(state)}`,
   city: (state: string, city: string) => `/locations/${seg(state)}/${seg(city)}`,
-  request: (ride?: string, state?: string, city?: string) => {
+  occasions: () => "/events",
+  occasion: (occasion: string) => `/events/${seg(occasion)}`,
+  occasionState: (occasion: string, state: string) => `/events/${seg(occasion)}/${seg(state)}`,
+  request: (ride?: string, state?: string, city?: string, occasion?: string) => {
     const q = new URLSearchParams();
     if (ride) q.set("ride", seg(ride));
     if (state) q.set("state", seg(state));
     if (city) q.set("city", seg(city));
+    if (occasion) q.set("occasion", seg(occasion));
     const s = q.toString();
     return s ? `/request?${s}` : "/request";
   },

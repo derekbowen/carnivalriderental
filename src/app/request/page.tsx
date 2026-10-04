@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { EventRequestForm } from "@/components/request/EventRequestForm";
 import { getContent, getLocation, getRide } from "@/lib/content";
 import { BRAND } from "@/lib/config";
+import { occasionById, stateBySlug } from "@/lib/taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string };
+type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string; occasion?: string };
 
 export default async function RequestPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -18,10 +19,15 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   const loc = sp.state && sp.city ? getLocation(sp.state, sp.city) : undefined;
   // Homepage free-text "City, ST"
   const m = sp.cityName?.match(/^\s*([^,]+?)\s*(?:,\s*([A-Za-z]{2}))?\s*$/);
+  // From state and occasion pages: state slug alone, occasion id → contract eventType.
+  const stateOnly = !loc && sp.state ? stateBySlug(sp.state) : undefined;
+  const occasion = sp.occasion ? occasionById(sp.occasion) : undefined;
   const prefill = {
     rideSlug: ride?.slug,
     city: loc?.cityName ?? m?.[1],
-    state: loc?.stateCode ?? m?.[2]?.toUpperCase(),
+    state: loc?.stateCode ?? stateOnly?.abbr ?? m?.[2]?.toUpperCase(),
+    eventType: occasion?.eventType,
+    notes: occasion ? `Occasion: ${occasion.name}` : undefined,
     date: sp.date && /^\d{4}-\d{2}-\d{2}$/.test(sp.date) ? sp.date : undefined,
   };
   return (

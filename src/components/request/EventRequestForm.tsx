@@ -6,7 +6,7 @@ import { OPTION_LABELS } from "@/lib/requests/labels";
 import { interpretCreateResponse } from "@/lib/requests/submit";
 
 type RideOption = { slug: string; name: string };
-type Prefill = { rideSlug?: string; city?: string; state?: string; date?: string };
+type Prefill = { rideSlug?: string; city?: string; state?: string; date?: string; eventType?: string; notes?: string };
 
 const STEPS = ["Ride & dates", "Location & venue", "Site details", "Contact & budget", "Review"] as const;
 const DRAFT_KEY = "bac:request-draft";
@@ -47,14 +47,14 @@ const initial = (p: Prefill): FormState => ({
   city: p.city ?? "",
   state: p.state ?? "",
   venueName: "",
-  eventType: "",
+  eventType: p.eventType && p.eventType in OPTION_LABELS.eventType ? (p.eventType as FormState["eventType"]) : "",
   expectedAttendance: "not_sure",
   budget: "not_sure",
   siteSurface: "not_sure",
   availableSpace: "",
   power: "not_sure",
   siteAccess: "",
-  notes: "",
+  notes: p.notes ?? "",
   name: "",
   email: "",
   phone: "",
@@ -144,7 +144,7 @@ export function EventRequestForm({ rides, prefill }: { rides: RideOption[]; pref
   useEffect(() => {
     try {
       const draft = sessionStorage.getItem(DRAFT_KEY);
-      if (draft && !prefill.rideSlug && !prefill.city) setF({ ...initial(prefill), ...JSON.parse(draft), acknowledged: false });
+      if (draft && !prefill.rideSlug && !prefill.city && !prefill.state && !prefill.eventType) setF({ ...initial(prefill), ...JSON.parse(draft), acknowledged: false });
       keyRef.current = sessionStorage.getItem(KEY_KEY) || crypto.randomUUID();
       sessionStorage.setItem(KEY_KEY, keyRef.current);
     } catch {

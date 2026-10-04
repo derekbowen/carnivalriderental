@@ -25,6 +25,19 @@ No AWS or DigitalOcean server is reachable from this environment. The only AWS-r
 ## Catalog foundation (contract v1.1.0)
 Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED config verifier with negative tests, read-side catalog adapter, preview listing page + city pSEO preview, duplicate-safe seed planner, live search-proof script, payment-state doc. **Not yet proven on real Sharetribe data** — blocked on (1) Console changes in Test (`docs/DATA_CONTRACT.md` §7; no API can make them) and (2) a founder-approved seller account email. See `docs/DATA_CONTRACT.md` §8 for exact evidence status.
 
+## Founder to-do (blocked on you — do these from a computer or Cowork)
+1. **Sharetribe Console (Test)** — apply `docs/DATA_CONTRACT.md` §7, then tell Claude to run `npm run sharetribe:inspect && npm run contract:diff`.
+2. **Seller account email** for 10000 Solutions LLC (company-controlled; needed to create listings).
+3. **Dev Marketplace API client ID + secret** (Console → Build → Applications, Dev environment).
+4. **Hosting** — pick the Vercel team and database (Supabase or Vercel Postgres).
+5. **Payment policy** — deposit %, refunds, events > 75 days out (`docs/PAYMENT_STATES.md`).
+6. **Email + SMS provider** for booking communication.
+7. **Operator research** — coworker fills `research/operator-research-template.xlsx`; send it to Claude directly (not into the repo).
+8. **pSEO copy review** — approve occasion intros and ride types (`docs/PSEO_TEMPLATES.md` §6).
+
+## pSEO families (2026-10-04)
+State hubs (51), occasion hubs (75) and occasion × state (3,825) are built and noindex. They show live catalog supply only and become indexable per `docs/PSEO_TEMPLATES.md` §4.
+
 ## Next small milestone
 1. ~~Confirm the marketplace~~ — done: "CarnivalRental Dev".
 2. ~~Read-only connection check~~ — done; the console shows the live status (cached 10 min).
