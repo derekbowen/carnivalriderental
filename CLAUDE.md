@@ -4,6 +4,7 @@ Read `docs/PROJECT_BRIEF.md` first. It is the business model; do not drift from 
 
 - This is a **managed marketplace with operator procurement**. We sell to the customer; operators are our fulfilment suppliers. Do **not** make "List your ride", provider onboarding or operator Stripe enrolment a launch dependency.
 - The operator program (`/operators`, `docs/OPERATOR_MARKETPLACE.md`) is a founder-approved second track: early access only. Its page must never claim a feature that isn't live or a fee that isn't decided; numbers come from `src/lib/operators/program.ts`.
+- ARCHITECTURE SPLIT (founder, 2026-10-04, `docs/ARCHITECTURE_SPLIT.md`): Sharetribe/Console is the system of record. The transactional "ATM" (accounts, listings, payments, import scripts, Integration/Stripe secrets) is kept separate and locked down; the pSEO layer runs as a separate deployment with no secrets and no write access. Never give pSEO code Integration API or payment credentials.
 - This repo is separate from Pool Rental Near Me. Never touch PRNM code, infrastructure, its Sharetribe marketplace, or any other business.
 - PAY FIRST: no sourcing, operator contact or customer quote before payment (`OUTREACH_POLICY`). Never weaken it. Prices shown are estimates: use `src/lib/pricing/policy.ts` wording, never "free to request" or a final-price claim.
 - Keep fulfilment status and payment status separate. Never show "booked/confirmed" unless `confirmBooking` succeeded.
