@@ -101,7 +101,27 @@ the state/occasion supply grids:
 **Gate** (`categoryHubGate`): production + live catalog + `reviewStatus: approved` + at least 3 real offerings in
 the category. Theme and copy alone never qualify a hub.
 
-**Structured data**: one `@graph` per page, with stable `@id`s:
+**Structured data, every public page.** Every page builds its markup with `pageGraph()` in
+`src/lib/seo/structured-data.ts`, inside one `@graph` with stable `@id`s.
+
+Site-wide nodes on every page:
+- Organization `/#organization`;
+- WebSite `/#website`;
+- the operator-side Service `/operators#service` ("List your carnival rides", `BusinessAudience`). This is the small
+  provider-side snippet. It is mirrored by the visible footer strip "Own a carnival ride?" and referenced from each
+  WebPage via `mentions`.
+
+Customer side on each page:
+- WebPage, CollectionPage or ItemPage, with `isPartOf` WebSite and `about` the customer Service;
+- the customer Service (`audience: Event organizers`, provider = Organization, `areaServed` Country, State or City);
+- BreadcrumbList only where breadcrumbs are visible, and identical to them;
+- ItemList only for the cards shown;
+- FAQPage only for visible FAQs.
+
+Covered templates: home, /rides, ride, ride + city, state, city, occasion, occasion + state, category hubs, /events,
+/operators and /request. `e2e/structured-data.spec.ts` checks all of them.
+
+Category hub detail:
 - Organization `{site}/#organization`;
 - CollectionPage `#webpage`, which links breadcrumb, mainEntity → ItemList and about → Service;
 - BreadcrumbList `#breadcrumb`, matching the visible crumbs;
@@ -115,7 +135,7 @@ The state and occasion pages now emit the same graph.
 Rendering: the hubs render on first request and are cached with ISR (10 minutes), so supply is never frozen at
 build time.
 
-Example render (development, carousel hub): `docs/examples/category-hub-carousels.jsonld.json`. It includes the
+Example renders (development): `docs/examples/category-hub-carousels.jsonld.json` and `docs/examples/ride-page-ferris-wheel.jsonld.json`. It includes the
 labelled Test sample and the demo fixture, because previews show the shape; production keeps real supply only.
 
 ## 4. Gates — when a page may be indexed (`src/lib/seo/pseo.ts`)

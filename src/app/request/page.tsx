@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { EventRequestForm } from "@/components/request/EventRequestForm";
 import { getContent, getLocation, getRide } from "@/lib/content";
+import { PricingNotice } from "@/components/PricingNotice";
+import { JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
+import { paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { categoryPageById } from "@/lib/content/category-pages";
 import { occasionById, stateBySlug } from "@/lib/taxonomy";
 
@@ -37,6 +41,7 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_320px]">
       <div>
+        <JsonLd nodes={pageGraph({ path: paths.request(), name: "Start an event request", description: "Tell us about your event so we can source a carnival ride and crew.", type: "WebPage" })} />
         <p className="eyebrow">Event request</p>
         <h1 className="mt-2 text-4xl">Tell us about your event</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">About three minutes. We use this brief to find a suitable ride and operating crew, then send you a written quote.</p>
@@ -45,11 +50,12 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
         </div>
       </div>
       <aside className="space-y-4 text-sm lg:pt-28">
+        <PricingNotice compact />
         <div className="card p-5">
           <h2 className="text-lg">What a request is</h2>
           <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
             <li>A brief our team works from — not a booking.</li>
-            <li>No payment details are collected now.</li>
+            <li>No payment details are collected yet — online payment is not open.</li>
             <li>You get a private status page to follow progress.</li>
           </ul>
         </div>

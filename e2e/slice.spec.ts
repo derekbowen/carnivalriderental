@@ -89,6 +89,12 @@ test("internal console is protected, and status updates reach the customer witho
   await team.getByRole("row").filter({ hasText: "Statusburg" }).getByRole("link").click();
   await team.getByRole("button", { name: "→ Reviewing your brief" }).click();
   await expect(team.getByText("Reviewing your brief").first()).toBeVisible();
+  // Pay first: nothing is sourced or sent until the customer has paid.
+  await expect(team.getByTestId("pay-first-lock")).toBeVisible();
+  await team.getByRole("button", { name: "→ Sourcing an operator" }).click();
+  await expect(team.getByText(/Pay-first policy: cannot start sourcing/)).toBeVisible();
+  await team.getByRole("button", { name: "Demo: Funds authorized (not yet collected)" }).click();
+  await expect(team.getByTestId("pay-first-lock")).toHaveCount(0);
   await team.getByRole("button", { name: "→ Sourcing an operator" }).click();
   await expect(team.getByRole("button", { name: "→ Unable to source" })).toBeVisible();
 
@@ -157,7 +163,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
   expect((await request.get("/rides/not-a-ride")).status()).toBe(404);
 });
 
-test("full managed flow: quote → customer accepts → supplier commits → demo payment → confirmed", async ({ page }) => {
+test("full managed flow: pay first → quote → customer accepts → supplier commits → payment collected → confirmed", async ({ page }) => {
   page.on("dialog", (d) => d.accept());
   await page.goto("/request?ride=ferris-wheel-rental");
   await fillRequest(page, "Confirmton");
@@ -170,6 +176,8 @@ test("full managed flow: quote → customer accepts → supplier commits → dem
   await team.goto("/internal");
   await team.getByRole("row").filter({ hasText: "Confirmton" }).getByRole("link").click();
   await team.getByRole("button", { name: "→ Reviewing your brief" }).click();
+  await team.getByRole("button", { name: "Demo: Funds authorized (not yet collected)" }).click();
+  await expect(team.getByTestId("pay-first-lock")).toHaveCount(0);
   await team.getByRole("button", { name: "→ Sourcing an operator" }).click();
   await expect(team.getByRole("button", { name: "→ Unable to source" })).toBeVisible();
   await team.locator("select").first().selectOption({ label: "DEMO Operator A (fictional) — verified supplier" });
@@ -201,15 +209,13 @@ test("full managed flow: quote → customer accepts → supplier commits → dem
   await team.getByRole("button", { name: "Record commitment" }).click();
   await expect(team.getByText("Stage for this event: committed")).toBeVisible();
 
-  // Saved card is not enough to confirm.
-  await team.getByRole("button", { name: "Demo: Payment method saved (no money reserved)" }).click();
-  await expect(team.getByText("Payment method saved (no money reserved)").first()).toBeVisible();
+  // An authorization (the pay-first hold) is not enough to confirm.
   await team.getByRole("button", { name: "Confirm booking" }).click();
   await expect(team.getByText(/Confirmation requires payment status "payment_captured"/)).toBeVisible();
 
   await page.goto(statusUrl);
   await expect(page.getByTestId("fulfilment-title")).toHaveText("Operator committed");
-  await expect(page.getByTestId("payment-status")).toHaveText("Payment method saved (no money reserved)");
+  await expect(page.getByTestId("payment-status")).toHaveText("Funds authorized (not yet collected)");
 
   await team.getByRole("button", { name: "Demo: Payment collected" }).click();
   await expect(team.getByRole("button", { name: "Demo: Refunded" })).toBeVisible();

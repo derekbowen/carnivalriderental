@@ -6,7 +6,39 @@
       "@id": "http://localhost:3000/#organization",
       "name": "Book a Carnival",
       "legalName": "10000 Solutions LLC",
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "http://localhost:3000/#website",
+      "url": "http://localhost:3000",
+      "name": "Book a Carnival",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@id": "http://localhost:3000/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "http://localhost:3000/operators#service",
+      "name": "List your carnival rides",
+      "serviceType": "Marketplace listing for carnival ride operators",
+      "url": "http://localhost:3000/operators",
+      "provider": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Carnival ride owners and operators"
+      }
     },
     {
       "@type": "CollectionPage",
@@ -15,6 +47,9 @@
       "name": "Carousel and merry-go-round rentals",
       "description": "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event. We source the carousel and operating crew and send one written quote.",
       "inLanguage": "en-US",
+      "isPartOf": {
+        "@id": "http://localhost:3000/#website"
+      },
       "publisher": {
         "@id": "http://localhost:3000/#organization"
       },
@@ -26,6 +61,9 @@
       },
       "about": {
         "@id": "http://localhost:3000/categories/carousels#service"
+      },
+      "mentions": {
+        "@id": "http://localhost:3000/operators#service"
       }
     },
     {
@@ -58,6 +96,7 @@
       "name": "Carousel and merry-go-round rentals",
       "description": "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event. We source the carousel and operating crew and send one written quote.",
       "serviceType": "Carousel rental",
+      "category": "Carnival ride rental",
       "url": "http://localhost:3000/categories/carousels",
       "provider": {
         "@id": "http://localhost:3000/#organization"
@@ -65,6 +104,10 @@
       "areaServed": {
         "@type": "Country",
         "name": "United States"
+      },
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Event organizers"
       }
     },
     {

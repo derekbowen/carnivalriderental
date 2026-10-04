@@ -37,6 +37,9 @@ Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED co
 10. **Category hub pilot** — review the five previews and approve or edit their copy (`src/lib/content/category-pages.ts`, `reviewStatus`). Optional: add Magic Patterns credits and run `design/magic-patterns/CATEGORY_PILOT_PROMPT.md`.
 9. **Operator program decisions** — who pays the fee and the rate, far-out events, updated-price path, operator requirements, cancellations (`docs/OPERATOR_MARKETPLACE.md` §6). Then approve the `/operators` copy.
 
+## Pay-first + pricing wording (2026-10-04)
+No contact before payment is enforced in the request service and console. "Estimated price — not the final price" wording appears on every priced template. Payout timing and big-ticket card/ACH answers are in `docs/PAYMENT_STATES.md`.
+
 ## Mobile apps (2026-10-04)
 Web build is app-shell ready for a Capacitor wrapper (iOS + Android); see `docs/MOBILE_APP.md` for the wrapper must-dos.
 

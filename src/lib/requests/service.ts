@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import type { Db } from "./db";
 import type { CreateRequestInput } from "./schema";
-import { canTransition, canTransitionPayment, PAYMENT_POLICY } from "./state";
+import { canTransition, canTransitionPayment, outreachAllowed, PAYMENT_POLICY } from "./state";
 import type {
   CandidateStage,
   CustomerQuote,
@@ -19,7 +19,7 @@ import type {
 export class DomainError extends Error {
   constructor(
     message: string,
-    public readonly code: "not_found" | "conflict" | "invalid_state" | "forbidden",
+    public readonly code: "not_found" | "conflict" | "invalid_state" | "forbidden" | "payment_required",
   ) {
     super(message);
   }
@@ -285,12 +285,20 @@ export class RequestService {
   /** Statuses the team may set directly. Others are reached only through their dedicated actions. */
   static readonly TEAM_DIRECT: FulfilmentStatus[] = ["in_review", "sourcing", "unable_to_source", "declined"];
 
+  /** Pay-first gate (OUTREACH_POLICY): throws unless the customer has paid. */
+  private assertPaid(req: EventRequest, action: string) {
+    if (!outreachAllowed(req.paymentStatus)) {
+      throw new DomainError(`Pay-first policy: cannot ${action} until the customer has paid (payment is "${req.paymentStatus}")`, "payment_required");
+    }
+  }
+
   teamTransition(requestId: string, to: FulfilmentStatus, note: string | null): EventRequest {
     if (!RequestService.TEAM_DIRECT.includes(to)) {
       throw new DomainError(`"${to}" can only be reached through its dedicated action`, "forbidden");
     }
     return this.tx(() => {
       const req = this.mustGet(requestId);
+      if (to === "sourcing") this.assertPaid(req, "start sourcing");
       if (to === "sourcing" && req.fulfilmentStatus === "quote_sent") {
         // Re-opening sourcing withdraws the outstanding quote so the customer cannot accept stale terms.
         this.db.prepare(`UPDATE customer_quotes SET status = 'withdrawn' WHERE request_id = ? AND status = 'sent'`).run(requestId);
@@ -325,6 +333,7 @@ export class RequestService {
       if (!quote) throw new DomainError("Quote not found", "not_found");
       if (quote.status !== "draft") throw new DomainError("Only draft quotes can be sent", "invalid_state");
       const req = this.mustGet(quote.requestId);
+      this.assertPaid(req, "send a quote to the customer");
       if (req.fulfilmentStatus !== "sourcing" && req.fulfilmentStatus !== "quote_sent") {
         throw new DomainError(`Quotes can be sent while sourcing, not in ${req.fulfilmentStatus}`, "invalid_state");
       }
@@ -362,7 +371,7 @@ export class RequestService {
 
   addCandidate(requestId: string, supplierId: string, unitId: string | null, notes: string | null): RequestSupplier {
     return this.tx(() => {
-      this.mustGet(requestId);
+      this.assertPaid(this.mustGet(requestId), "contact operators");
       if (!this.db.prepare(`SELECT 1 FROM suppliers WHERE id = ?`).get(supplierId)) {
         throw new DomainError("Supplier not found", "not_found");
       }
@@ -389,6 +398,8 @@ export class RequestService {
   /** Commitment is NOT settable here — use commitSupplier, which enforces its preconditions. */
   setCandidateStage(candidateId: string, stage: Exclude<CandidateStage, "committed">): void {
     if ((stage as string) === "committed") throw new DomainError("Use commitSupplier", "forbidden");
+    const owner = this.db.prepare(`SELECT request_id FROM request_suppliers WHERE id = ?`).get(candidateId) as Row | undefined;
+    if (owner) this.assertPaid(this.mustGet(String(owner.request_id)), "contact operators");
     const res = this.db
       .prepare(`UPDATE request_suppliers SET stage = ?, updated_at = ? WHERE id = ? AND stage != 'committed'`)
       .run(stage, now(), candidateId);
@@ -405,6 +416,7 @@ export class RequestService {
         .prepare(`SELECT * FROM request_suppliers WHERE request_id = ? AND supplier_id = ?`)
         .get(q.requestId, q.supplierId) as Row | undefined;
       if (!cand) throw new DomainError("Add the supplier as a candidate before recording a quote", "invalid_state");
+      this.assertPaid(this.mustGet(q.requestId), "record an operator quote");
       const id = uuid();
       this.db
         .prepare(

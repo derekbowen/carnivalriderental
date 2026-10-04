@@ -83,6 +83,9 @@ The "0% / keep 100%" headline is only true if the fee is charged to the **custom
 
 ## 6. Decisions for the founder
 
+Decided 2026-10-04: **pay first** (no contact before payment), **estimates are not final** (wording in `src/lib/pricing/policy.ts`), **no phone-number sign-in** (an operator is identified through Stripe Connect onboarding). Payout timing and big-ticket payments: `PAYMENT_STATES.md`.
+
+
 1. Who pays the percentage: the customer (keeps "0% for operators" true) or the operator (headline changes)? Also the rate (at least ~3.3% to cover card costs).
 2. Events far out: save the card and charge later, or deposit plus balance?
 3. Updated-price path: build it (recommended), or start with decline-and-rebook?

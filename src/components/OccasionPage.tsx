@@ -2,10 +2,11 @@ import type { CatalogSnapshot } from "@/lib/catalog/source";
 import { getContent } from "@/lib/content";
 import { supplyFor } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, itemList, rentalService, webPage } from "@/lib/seo/structured-data";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
 import { COMMON_FAQ, groupOf, occasionById, US_STATES, type Occasion, type UsState } from "@/lib/taxonomy";
 import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
+import { PricingNotice } from "./PricingNotice";
 import { RequestCta } from "./RequestCta";
 
 export function occasionCopy(o: Occasion, s?: UsState) {
@@ -43,13 +44,16 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd
-        nodes={[
-          webPage({ path, name: title, description, hasItemList: ldCards.length > 0, hasService: true }),
-          breadcrumbs(crumbs),
-          rentalService({ path, name: title, description, areaServed: s ? { type: "State", name: s.name } : undefined }),
-          ...(ldCards.length ? [itemList({ path, name: `Rides for ${o.plural}${s ? ` in ${s.name}` : ""}`, cards: ldCards })] : []),
-          faqPage(COMMON_FAQ, path),
-        ]}
+        nodes={pageGraph({
+          path,
+          name: title,
+          description,
+          type: "CollectionPage",
+          crumbs,
+          service: { areaServed: s ? { type: "State", name: s.name } : undefined },
+          list: { name: `Rides for ${o.plural}${s ? ` in ${s.name}` : ""}`, cards: ldCards },
+          faq: COMMON_FAQ,
+        })}
       />
       <Breadcrumbs items={crumbs} />
       <p className="eyebrow mt-6">{group.name}</p>
@@ -64,6 +68,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
           <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Send a request and we will look for an operator.`} />
         </div>
         <SupplySource snap={snap} />
+        <PricingNotice className="mt-6" />
       </section>
 
       {other.length > 0 && (

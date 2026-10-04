@@ -1,5 +1,6 @@
 import { CalendarClockIcon, ShieldCheckIcon } from "lucide-react";
 import type { PlanningEstimate } from "@/lib/content/types";
+import { PRICE_COPY } from "@/lib/pricing/policy";
 import { formatUsd } from "@/lib/requests/labels";
 
 /** Availability is "Sourcing on request" unless a verified coverage record exists. */
@@ -43,14 +44,14 @@ export function EstimateLabel({ estimate, size = "sm" }: { estimate: PlanningEst
   const demo = estimate.isDemoValue && <span className="ml-1 font-semibold text-demo">· DEMO VALUE</span>;
   return size === "lg" ? (
     <div>
-      <p className="text-sm text-muted">Planning estimate{demo}</p>
+      <p className="text-sm text-muted">{PRICE_COPY.estimateLabel}{demo}</p>
       <p className="mt-1 font-display text-[34px] leading-tight">{range}</p>
-      <p className="mt-1 text-sm text-muted">Not a quote. {estimate.basis}</p>
+      <p className="mt-1 text-sm text-muted">{PRICE_COPY.notFinal} {estimate.basis}</p>
     </div>
   ) : (
     <div>
-      <p className="text-[15px]"><span className="text-muted">Estimate </span><span className="font-semibold">{range}</span></p>
-      <p className="text-xs text-muted">(planning estimate, not a quote){demo}</p>
+      <p className="text-[15px]"><span className="text-muted">{PRICE_COPY.estimateLabel} </span><span className="font-semibold">{range}</span></p>
+      <p className="text-xs text-muted">{PRICE_COPY.notFinal}{demo}</p>
     </div>
   );
 }

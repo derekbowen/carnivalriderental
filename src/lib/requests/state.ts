@@ -52,3 +52,20 @@ export const PAYMENT_POLICY = {
   decided: false as boolean,
   demoConfirmationRequires: "payment_captured" as PaymentStatus,
 };
+
+/**
+ * PAY FIRST (founder decision, 2026-10-04): nobody — operator or customer — is contacted about a
+ * request until the customer has paid. No sourcing, no operator outreach, no supplier quotes, no
+ * customer quote. Enforced in RequestService; the UI only reflects it.
+ *
+ * "Paid" here means funds authorized (held) or captured. In the live Sharetribe flow this is the card
+ * authorization taken at request time (see docs/PAYMENT_STATES.md); in development it is the demo track.
+ */
+export const OUTREACH_POLICY = {
+  decidedOn: "2026-10-04",
+  requiresPaymentStatus: ["funds_authorized", "payment_captured"] as PaymentStatus[],
+};
+
+export function outreachAllowed(p: PaymentStatus): boolean {
+  return OUTREACH_POLICY.requiresPaymentStatus.includes(p);
+}

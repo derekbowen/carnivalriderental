@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { outreachAllowed } from "@/lib/requests/state";
 import { notFound } from "next/navigation";
 import { ActionButton } from "@/components/internal/ActionButton";
 import { AddCandidateForm, CustomerQuoteForm, SupplierQuoteForm } from "@/components/internal/Forms";
@@ -47,6 +48,12 @@ export default async function InternalRequestPage({ params }: { params: Promise<
           <div className="card p-3"><div className="text-xs text-muted">Payment <span className="text-demo">(demo)</span></div><div className="font-semibold">{PAYMENT_LABELS[r.paymentStatus]}</div></div>
         </div>
       </div>
+
+      {!outreachAllowed(r.paymentStatus) && (
+        <p data-testid="pay-first-lock" role="status" className="rounded-xl border border-danger/30 bg-danger-wash px-4 py-3 text-sm text-danger">
+          <strong>Awaiting payment — pay-first policy.</strong> Sourcing, operator contact and quotes are locked until the customer has paid (funds authorized or collected). Do not contact anyone about this request yet.
+        </p>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="space-y-6">

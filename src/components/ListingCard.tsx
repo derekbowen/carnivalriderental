@@ -1,6 +1,7 @@
 import { ArrowRightIcon, ImageOffIcon } from "lucide-react";
 import Link from "next/link";
 import { categoryIllustration, categoryLabel, type ListingCardModel } from "@/lib/catalog/card";
+import { PRICE_COPY } from "@/lib/pricing/policy";
 import { formatUsd } from "@/lib/requests/labels";
 import { DemoBadge } from "./badges";
 
@@ -44,11 +45,14 @@ export function ListingCard({ card }: { card: ListingCardModel }) {
         <div className="mt-auto border-t border-line pt-4">
           {card.estimate ? (
             <div data-testid="card-estimate">
-              <p className="text-[15px]"><span className="text-muted">Planning estimate </span><span className="font-semibold">{formatUsd(card.estimate.lowUsd * 100)} – {formatUsd(card.estimate.highUsd * 100)}</span></p>
-              <p className="text-xs text-muted">Not a quote. {card.estimate.basis}</p>
+              <p className="text-[15px]"><span className="text-muted">{PRICE_COPY.estimateLabel} </span><span className="font-semibold">{formatUsd(card.estimate.lowUsd * 100)} – {formatUsd(card.estimate.highUsd * 100)}</span></p>
+              <p className="text-xs text-muted">{PRICE_COPY.notFinal} {card.estimate.basis}</p>
             </div>
           ) : (
-            <p data-testid="card-request-pricing" className="text-[15px] font-semibold">Request pricing</p>
+            <>
+              <p data-testid="card-request-pricing" className="text-[15px] font-semibold">Request pricing</p>
+              <p className="text-xs text-muted">The final price is set with the operator.</p>
+            </>
           )}
           <p className="mt-1 text-xs text-muted">Sourcing on request</p>
           {card.detail ? (

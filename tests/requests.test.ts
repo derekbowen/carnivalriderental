@@ -4,10 +4,10 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { verifyCustomerToken, customerToken } from "@/lib/requests/access";
 import { openDb } from "@/lib/requests/db";
-import { handleCreateRequest } from "@/lib/requests/http";
+import { errorResult, handleCreateRequest } from "@/lib/requests/http";
 import { toPublicView } from "@/lib/requests/projection";
 import type { CreateRequestInput } from "@/lib/requests/schema";
-import { RequestService } from "@/lib/requests/service";
+import { DomainError, RequestService } from "@/lib/requests/service";
 import { interpretCreateResponse } from "@/lib/requests/submit";
 import { memoryService, seedToCommitted, validBody } from "./helpers";
 
@@ -109,10 +109,7 @@ describe("customer access and data exposure", () => {
 describe("fulfilment and payment are separate, and confirmation is guarded", () => {
   it("a saved card or authorization never confirms a booking", () => {
     const { svc } = memoryService();
-    const { request } = seedToCommitted(svc);
-    svc.recordDemoPayment(request.id, "payment_method_saved", null);
-    expect(() => svc.confirmBooking(request.id)).toThrow(/payment_captured/);
-    svc.recordDemoPayment(request.id, "funds_authorized", null);
+    const { request } = seedToCommitted(svc); // funds authorized (pay first), supplier committed
     expect(() => svc.confirmBooking(request.id)).toThrow(/payment_captured/);
     svc.recordDemoPayment(request.id, "payment_captured", null);
     expect(svc.confirmBooking(request.id).fulfilmentStatus).toBe("confirmed");
@@ -129,6 +126,7 @@ describe("fulfilment and payment are separate, and confirmation is guarded", () 
   it("a researched prospect cannot be committed", () => {
     const { svc } = memoryService();
     const { request } = svc.createRequest(validBody() as CreateRequestInput);
+    svc.recordDemoPayment(request.id, "funds_authorized", null);
     const s = svc.addSupplier({ name: "Prospect", relationship: "researched_prospect", region: null, notes: null, isDemo: true });
     const u = svc.addUnit({ supplierId: s.id, rideSlug: "ferris-wheel-rental", description: "x", homeBase: null, verification: "unverified", isDemo: true });
     svc.teamTransition(request.id, "in_review", null);
@@ -153,6 +151,7 @@ describe("fulfilment and payment are separate, and confirmation is guarded", () 
   it("a superseded or withdrawn quote cannot be accepted", () => {
     const { svc } = memoryService();
     const { request } = svc.createRequest(validBody() as CreateRequestInput);
+    svc.recordDemoPayment(request.id, "funds_authorized", null);
     svc.teamTransition(request.id, "in_review", null);
     svc.teamTransition(request.id, "sourcing", null);
     const v1 = svc.createQuoteDraft(request.id, 100, "v1");
@@ -162,6 +161,31 @@ describe("fulfilment and payment are separate, and confirmation is guarded", () 
     expect(() => svc.acceptQuote(request.id, v1.id)).toThrow(/no longer open/);
     svc.teamTransition(request.id, "sourcing", "re-sourcing");
     expect(() => svc.acceptQuote(request.id, v2.id)).toThrow(/no longer open/);
+  });
+
+  it("pay first: no sourcing, operator contact or quotes until the customer has paid", () => {
+    const { svc } = memoryService();
+    const { request } = svc.createRequest(validBody() as CreateRequestInput);
+    const s = svc.addSupplier({ name: "Op", relationship: "verified_supplier", region: null, notes: null, isDemo: true });
+    svc.teamTransition(request.id, "in_review", null); // internal review is allowed: no one is contacted
+    expect(() => svc.teamTransition(request.id, "sourcing", null)).toThrow(/Pay-first/);
+    expect(() => svc.addCandidate(request.id, s.id, null, null)).toThrow(/Pay-first/);
+    // A saved card is not payment.
+    svc.recordDemoPayment(request.id, "payment_method_saved", null);
+    expect(() => svc.teamTransition(request.id, "sourcing", null)).toThrow(/Pay-first/);
+    svc.recordDemoPayment(request.id, "funds_authorized", null);
+    expect(svc.teamTransition(request.id, "sourcing", null).fulfilmentStatus).toBe("sourcing");
+    const cand = svc.addCandidate(request.id, s.id, null, null);
+    // If the hold is released (e.g. expiry), outreach locks again.
+    svc.recordDemoPayment(request.id, "none", "authorization expired");
+    expect(() => svc.setCandidateStage(cand.id, "contacted")).toThrow(/Pay-first/);
+    expect(() => svc.recordSupplierQuote({ requestId: request.id, supplierId: s.id, supplierPriceCents: 1, transportCents: null, crewCents: null, otherCents: null, notes: null })).toThrow(/Pay-first/);
+    const q = svc.createQuoteDraft(request.id, 100, "draft is internal");
+    expect(() => svc.sendQuote(q.id)).toThrow(/Pay-first/);
+  });
+
+  it("pay-first errors map to HTTP 402", () => {
+    expect(errorResult(new DomainError("x", "payment_required")).status).toBe(402);
   });
 
   it("records an audit trail on both tracks", () => {

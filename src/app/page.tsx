@@ -5,7 +5,9 @@ import { HOW_IT_WORKS } from "@/components/RequestCta";
 import { RideCard } from "@/components/RideCard";
 import { PlaceholderImage } from "@/components/RideImage";
 import { getContent } from "@/lib/content";
+import { JsonLd } from "@/components/pseo";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
 
 export function generateMetadata() {
   return { alternates: { canonical: canonicalUrl("/") } };
@@ -30,6 +32,15 @@ export default function HomePage() {
   const catName = (slug: string) => categories.find((c) => c.slug === slug)?.name ?? "";
   return (
     <>
+      <JsonLd
+        nodes={pageGraph({
+          path: paths.home(),
+          name: "Carnival ride rentals for events",
+          description: "Request a carnival ride for your event. We source the ride and operating crew and manage the booking.",
+          type: "WebPage",
+          service: { name: "Carnival ride rentals" },
+        })}
+      />
       <section className="bg-ink text-white">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-20 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-14 lg:px-10 lg:pb-24 lg:pt-16">
           <div className="lg:col-span-6">
@@ -67,7 +78,7 @@ export default function HomePage() {
                 </label>
               </div>
               <button className="btn-primary mt-4 w-full">Start an event request <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></button>
-              <p className="mt-3 text-center text-sm text-muted">Free to request. Nothing is booked by submitting.</p>
+              <p className="mt-3 text-center text-sm text-muted">Estimated prices are not final. Nothing is booked by submitting a request.</p>
             </form>
           </div>
           <div className="lg:col-span-6">

@@ -1,8 +1,13 @@
-import { ArrowLeftIcon, ArrowRightIcon, CircleDashedIcon, InfoIcon } from "lucide-react";
+import { ArrowRightIcon, CircleDashedIcon, InfoIcon } from "lucide-react";
 import Link from "next/link";
 import type { RideCategory, RideOffering, ServiceLocation, VerifiedCoverage } from "@/lib/content/types";
+import { categoryPageById } from "@/lib/content/category-pages";
 import { paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
+import { Breadcrumbs, JsonLd } from "./pseo";
 import { AvailabilityBadge, DemoBadge, EstimateLabel } from "./badges";
+import { PRICE_COPY, PRICING_POLICY } from "@/lib/pricing/policy";
+import { PricingNotice } from "./PricingNotice";
 import { RequestCta } from "./RequestCta";
 import { RideImage } from "./RideImage";
 
@@ -28,14 +33,30 @@ export function RideDetail({
   const where = location ? ` in ${location.cityName}, ${location.stateCode}` : "";
   const requestHref = paths.request(ride.slug, location?.stateSlug, location?.citySlug);
   const verified = coverage.length > 0;
+  const ridePath = links.ride(ride.slug);
+  const currentPath = location ? links.rideCity(ride.slug, location.stateSlug, location.citySlug) : ridePath;
+  // Visible breadcrumbs and BreadcrumbList are the same list. Category hubs exist only for configured categories.
+  const hub = category && categoryPageById(category.slug);
+  const crumbs = [
+    { name: "Home", path: paths.home() },
+    { name: "Rides", path: paths.rides() },
+    ...(hub ? [{ name: hub.name, path: paths.category(hub.id) }] : []),
+    { name: ride.name, path: ridePath },
+    ...(location ? [{ name: `${location.cityName}, ${location.stateCode}`, path: currentPath }] : []),
+  ];
   return (
     <div className="mx-auto max-w-7xl px-4 pb-28 pt-8 sm:px-6 lg:px-10 lg:pb-10">
-      <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-sm text-muted">
-        <ArrowLeftIcon className="h-4 w-4" aria-hidden="true" />
-        <Link href={paths.rides()} className="hover:text-ink">All rides</Link>
-        {category && <>/<Link href={paths.category(category.slug)} className="hover:text-ink">{category.name}</Link></>}
-        {location && <>/<Link href={links.ride(ride.slug)} className="hover:text-ink">{ride.name}</Link></>}
-      </nav>
+      <JsonLd
+        nodes={pageGraph({
+          path: currentPath,
+          name: `${ride.name}${where}`,
+          description: ride.summary,
+          type: "ItemPage",
+          crumbs,
+          service: { name: `${ride.name}${where}`, serviceType: ride.name, areaServed: location ? { type: "City", name: `${location.cityName}, ${location.stateName}` } : undefined },
+        })}
+      />
+      <Breadcrumbs items={crumbs} />
 
       <div className="mt-6 grid gap-12 lg:grid-cols-12">
         <div className="space-y-16 lg:col-span-8">
@@ -81,6 +102,8 @@ export function RideDetail({
             <p className="mt-3 text-sm text-muted">General guidance only. Fit for your site is confirmed with the operator.</p>
           </section>
           )}
+
+          <PricingNotice compact />
 
           <section aria-labelledby="specs-heading">
             <h2 id="specs-heading" className="text-3xl">Specifications</h2>
@@ -132,7 +155,7 @@ export function RideDetail({
               <p>Your quote depends on the unit sourced, transport distance, dates, operating hours and site conditions — it may fall outside any estimate.</p>
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
-              <li className="flex justify-between gap-3"><span>Cost to request</span><span className="font-medium text-ink">Free</span></li>
+              <li className="flex justify-between gap-3"><span>Payment</span><span className="text-right font-medium text-ink">Paid first — we source only after your request is paid{PRICING_POLICY.paymentsLive ? "" : " (online payment not open yet)"}</span></li>
               <li className="flex justify-between gap-3"><span>Booked</span><span className="text-right font-medium text-ink">After operator commits and the agreed payment step</span></li>
             </ul>
           </div>
@@ -143,7 +166,7 @@ export function RideDetail({
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 py-3 lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <p className="min-w-0 truncate text-sm font-semibold">{ride.estimate ? "Planning estimate shown above — not a quote" : "Priced per event"}</p>
+          <p className="min-w-0 truncate text-sm font-semibold">{ride.estimate ? PRICE_COPY.notFinal : "Priced per event — set with the operator"}</p>
           <Link href={requestHref} aria-label="Request (mobile)" className="btn-primary shrink-0 !px-4 !py-2.5 text-sm">Request</Link>
         </div>
       </div>

@@ -72,8 +72,8 @@ test("empty state: thrill rides has no supply and says so", async ({ page }) => 
 test("JSON-LD graph mirrors the visible page: breadcrumbs, cards (order + URLs) and FAQs", async ({ page }) => {
   await page.goto("/categories/carousels");
   const g = await graphOf(page);
-  const byType = (t: string) => g.find((n) => n["@type"] === t)!;
-  expect(g.map((n) => n["@type"]).sort()).toEqual(["BreadcrumbList", "CollectionPage", "FAQPage", "ItemList", "Organization", "Service"]);
+  const byType = (t: string) => g.find((n) => n["@type"] === t && !String(n["@id"]).endsWith("/operators#service"))!;
+  expect(g.map((n) => n["@type"]).sort()).toEqual(["BreadcrumbList", "CollectionPage", "FAQPage", "ItemList", "Organization", "Service", "Service", "WebSite"]); // customer + operator Service
 
   const crumbs = (byType("BreadcrumbList").itemListElement as { name: string }[]).map((i) => i.name);
   expect(crumbs).toEqual(await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("listitem").allInnerTexts());

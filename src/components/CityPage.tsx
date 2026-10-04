@@ -2,7 +2,9 @@ import Link from "next/link";
 import { RequestCta } from "@/components/RequestCta";
 import { DemoBadge, EstimateLabel } from "@/components/badges";
 import { getContent, type ServiceLocation } from "@/lib/content";
+import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
 
 export function cityCopy(l: ServiceLocation) {
   return {
@@ -15,9 +17,14 @@ export function cityCopy(l: ServiceLocation) {
 export function CityPage({ l }: { l: ServiceLocation }) {
   const { rides, coverage } = getContent();
   const verifiedHere = coverage.filter((c) => c.stateSlug === l.stateSlug && c.citySlug === l.citySlug);
+  const path = paths.city(l.stateSlug, l.citySlug);
+  const crumbs = [{ name: "Home", path: paths.home() }, { name: l.stateName, path: paths.state(l.stateSlug) }, { name: l.cityName, path }];
+  const { title, description } = cityCopy(l);
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <p className="eyebrow">Service area</p>
+      <JsonLd nodes={pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { areaServed: { type: "City", name: `${l.cityName}, ${l.stateName}` } } })} />
+      <Breadcrumbs items={crumbs} />
+      <p className="eyebrow mt-6">Service area</p>
       <div className="mt-2 flex flex-wrap items-center gap-3"><h1 className="text-4xl">Carnival ride rentals in {l.cityName}, {l.stateCode}</h1>{l.isDemo && <DemoBadge />}</div>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
         We arrange carnival ride requests for events in {l.cityName}, {l.stateName}, subject to availability. Tell us about your event and our team will contact operators who may be able to serve your site.

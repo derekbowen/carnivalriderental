@@ -45,6 +45,8 @@ export function validBody(overrides: Partial<CreateRequestInput["brief"]> = {}) 
 /** Drive a request to supplier_committed via the real service rules. */
 export function seedToCommitted(svc: RequestService) {
   const { request } = svc.createRequest(validBody() as CreateRequestInput, { isTestData: true });
+  // Pay first: the estimate is authorized before anyone is contacted (OUTREACH_POLICY).
+  svc.recordDemoPayment(request.id, "funds_authorized", "estimate authorized at request");
   const supplier = svc.addSupplier({ name: "Fictional Verified Operator", relationship: "verified_supplier", region: null, notes: null, isDemo: true });
   const unit = svc.addUnit({ supplierId: supplier.id, rideSlug: "ferris-wheel-rental", description: "Fictional unit", homeBase: null, verification: "unverified", isDemo: true });
   svc.teamTransition(request.id, "in_review", null);

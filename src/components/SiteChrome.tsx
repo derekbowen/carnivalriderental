@@ -1,6 +1,7 @@
 import { FerrisWheelIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
+import { OPERATOR_PROGRAM } from "@/lib/operators/program";
 import { paths } from "@/lib/seo/routes";
 
 export function EnvBanner() {
@@ -57,6 +58,14 @@ export function SiteFooter() {
   return (
     <footer className="safe-bottom mt-24 bg-ink text-white">
       <div className="awning h-3" aria-hidden="true" />
+      {/* Operator side, on every page (mirrored by operatorProgramNode in every JSON-LD graph). */}
+      <div data-testid="operator-strip" className="border-b border-white/10">
+        <p className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-4 text-sm text-white/80 sm:px-6 lg:px-10">
+          <strong className="text-white">Own a carnival ride?</strong>
+          <span>List it on {BRAND.name}. Operators set their own price and pay {OPERATOR_PROGRAM.operatorCommissionPct}% commission.</span>
+          <Link href={paths.operators()} className="font-semibold text-accent hover:underline">Apply for early access →</Link>
+        </p>
+      </div>
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-12 lg:px-10">
         <div className="md:col-span-5">
           <Logo dark />

@@ -6,11 +6,12 @@ import type { CategoryPage, CategoryTheme } from "@/lib/content/category-pages";
 import { categoryPageById } from "@/lib/content/category-pages";
 import type { ServiceLocation } from "@/lib/content/types";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, itemList, rentalService, webPage } from "@/lib/seo/structured-data";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { stateByCode } from "@/lib/taxonomy";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
 import { HOW_IT_WORKS, RequestCta } from "./RequestCta";
 import { ListingCard } from "./ListingCard";
+import { PricingNotice } from "./PricingNotice";
 
 /**
  * THE category hub template (/categories/{id}). Five pilot categories share it; only the config
@@ -98,13 +99,16 @@ export function CategoryHub({
   return (
     <div data-cat-theme={page.theme}>
       <JsonLd
-        nodes={[
-          webPage({ path, name: page.h1, description: page.metaDescription, hasItemList: ldCards.length > 0, hasService: true }),
-          breadcrumbs(crumbs),
-          rentalService({ path, name: page.h1, description: page.metaDescription, serviceType: `${page.singular.charAt(0).toUpperCase()}${page.singular.slice(1)} rental` }),
-          ...(ldCards.length ? [itemList({ path, name: `${page.name} you can request`, cards: ldCards })] : []),
-          faqPage(page.faqs, path),
-        ]}
+        nodes={pageGraph({
+          path,
+          name: page.h1,
+          description: page.metaDescription,
+          type: "CollectionPage",
+          crumbs,
+          service: { serviceType: `${page.singular.charAt(0).toUpperCase()}${page.singular.slice(1)} rental` },
+          list: { name: `${page.name} you can request`, cards: ldCards },
+          faq: page.faqs,
+        })}
       />
 
       {/* 1–2. Breadcrumbs + themed hero */}
@@ -138,6 +142,7 @@ export function CategoryHub({
             <SupplyList cards={catalogCards} requestHref={requestHref} emptyText={`No ${page.singular} listings are published yet. Send a request and we will look for an operator for your date.`} />
           </div>
           <SupplySource snap={snap} />
+          <PricingNotice className="mt-6" />
           {fixtureCards.length > 0 && (
             <div data-testid="fixture-cards" className="mt-8 rounded-2xl border border-dashed border-demo/40 p-4 sm:p-5">
               <p className="text-sm font-semibold text-demo">Demo records — development fixtures, not live listings</p>

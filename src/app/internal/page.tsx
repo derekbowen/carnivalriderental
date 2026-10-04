@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getRide } from "@/lib/content";
 import { getRequestService } from "@/lib/requests";
 import { briefDates, FULFILMENT_LABELS, PAYMENT_LABELS } from "@/lib/requests/labels";
+import { outreachAllowed } from "@/lib/requests/state";
 import type { FulfilmentStatus } from "@/lib/requests/types";
 
 const NEXT_ACTION: Record<FulfilmentStatus, string> = {
@@ -37,7 +38,7 @@ export default function QueuePage() {
               <td className="px-4 py-3">{r.brief.city}, {r.brief.state}</td>
               <td className="px-4 py-3">{FULFILMENT_LABELS[r.fulfilmentStatus].title}</td>
               <td className="px-4 py-3">{PAYMENT_LABELS[r.paymentStatus]} <span className="text-xs text-demo">(demo)</span></td>
-              <td className="px-4 py-3 font-medium">{NEXT_ACTION[r.fulfilmentStatus]}</td>
+              <td className="px-4 py-3 font-medium">{!outreachAllowed(r.paymentStatus) && !["confirmed", "unable_to_source", "declined", "cancelled"].includes(r.fulfilmentStatus) ? "Await payment (pay first)" : NEXT_ACTION[r.fulfilmentStatus]}</td>
             </tr>
           ))}
         </tbody>

@@ -13,6 +13,7 @@ const STATUS_BY_CODE: Record<DomainError["code"], number> = {
   conflict: 409,
   invalid_state: 422,
   forbidden: 403,
+  payment_required: 402,
 };
 
 /** Map any error to a safe response. Internal details are logged server-side, never returned. */

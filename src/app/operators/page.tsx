@@ -6,7 +6,7 @@ import { OPERATOR_PROGRAM } from "@/lib/operators/program";
 import { seoMetadata } from "@/lib/seo/metadata";
 import { operatorPageGate } from "@/lib/seo/publication";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, webPage } from "@/lib/seo/structured-data";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { US_STATES } from "@/lib/taxonomy";
 
 /**
@@ -44,7 +44,7 @@ export default function OperatorsPage() {
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "For ride operators", path: paths.operators() }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={[webPage({ path: paths.operators(), name: title, description: "Operator program: list your rides, set your price, approve every booking.", type: "WebPage" }), breadcrumbs(crumbs), faqPage(FAQ, paths.operators())]} />
+      <JsonLd nodes={pageGraph({ path: paths.operators(), name: title, description: "Operator program: list your rides, set your price, approve every booking.", type: "WebPage", crumbs, faq: FAQ })} />
       <Breadcrumbs items={crumbs} />
 
       <div data-testid="early-access" className="mt-6 rounded-xl border border-demo/30 bg-demo-wash px-4 py-3 text-sm text-demo">

@@ -2,7 +2,10 @@ import Link from "next/link";
 import { RideCard } from "@/components/RideCard";
 import { getContent } from "@/lib/content";
 import { seoMetadata } from "@/lib/seo/metadata";
+import { JsonLd } from "@/components/pseo";
+import { cardFromFixture, structuredDataCards } from "@/lib/catalog/card";
 import { paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
 
 // Filtered views (?category=) canonicalise to /rides and are never indexed separately.
 export function generateMetadata() {
@@ -19,8 +22,20 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
   const { rides, categories } = getContent();
   const shown = category ? rides.filter((r) => r.categorySlug === category) : rides;
   const catName = (slug: string) => categories.find((c) => c.slug === slug)?.name ?? "";
+  // The grid shows these rides in this order; the ItemList mirrors it (fixtures never reach production markup).
+  const ldCards = structuredDataCards(shown.map(cardFromFixture), { source: "not-configured" });
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <JsonLd
+        nodes={pageGraph({
+          path: paths.rides(),
+          name: "Carnival ride rentals",
+          description: "Browse carnival ride rental offerings and request one for your event.",
+          type: "CollectionPage",
+          service: {},
+          list: { name: "Carnival ride rentals", cards: ldCards },
+        })}
+      />
       <p className="eyebrow">Browse rides</p>
       <h1 className="mt-2 text-4xl">Carnival ride rentals</h1>
       <p className="mt-3 max-w-2xl text-ink-soft">

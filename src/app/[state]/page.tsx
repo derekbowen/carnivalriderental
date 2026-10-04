@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { PricingNotice } from "@/components/PricingNotice";
 import { HOW_IT_WORKS, RequestCta } from "@/components/RequestCta";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "@/components/pseo";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
@@ -7,7 +8,7 @@ import { getContent } from "@/lib/content";
 import { seoMetadata } from "@/lib/seo/metadata";
 import { stateGate, supplyFor } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
-import { breadcrumbs, faqPage, itemList, rentalService, webPage } from "@/lib/seo/structured-data";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { COMMON_FAQ, OCCASION_GROUPS, OCCASIONS, stateBySlug, US_STATES } from "@/lib/taxonomy";
 
 export const dynamicParams = false;
@@ -45,13 +46,16 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd
-        nodes={[
-          webPage({ path, name: title, description, hasItemList: ldCards.length > 0, hasService: true }),
-          breadcrumbs(crumbs),
-          rentalService({ path, name: title, description, areaServed: { type: "State", name: s.name } }),
-          ...(ldCards.length ? [itemList({ path, name: `Carnival rides available to request in ${s.name}`, cards: ldCards })] : []),
-          faqPage(COMMON_FAQ, path),
-        ]}
+        nodes={pageGraph({
+          path,
+          name: title,
+          description,
+          type: "CollectionPage",
+          crumbs,
+          service: { areaServed: { type: "State", name: s.name } },
+          list: { name: `Carnival rides available to request in ${s.name}`, cards: ldCards },
+          faq: COMMON_FAQ,
+        })}
       />
       <Breadcrumbs items={crumbs} />
       <p className="eyebrow mt-6">{s.name}</p>
@@ -66,6 +70,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
           <SupplyList cards={cards} requestHref={paths.request(undefined, s.slug)} emptyText={`We have not published ride offerings for ${s.name} yet. You can still send a request and we will look for an operator.`} />
         </div>
         <SupplySource snap={snap} />
+        <PricingNotice className="mt-6" />
       </section>
 
       <div className="mt-12">
