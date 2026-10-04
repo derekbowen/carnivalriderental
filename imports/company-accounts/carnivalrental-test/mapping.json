@@ -163,6 +163,42 @@
       "email": "blue-sky-amusements@carnivalriderental.us",
       "companyId": "blue-sky-amusements",
       "createdAt": "2026-10-04T12:24:18.066Z"
+    },
+    "disc-bluegrass-rides": {
+      "userId": "6ac245f2-26dc-4a41-9532-713920f43447",
+      "email": "bluegrass-rides@carnivalriderental.us",
+      "companyId": "bluegrass-rides",
+      "createdAt": "2026-10-04T12:26:26.704Z"
+    },
+    "cw-814": {
+      "userId": "6ac2463b-9375-4711-b1db-8a672626922a",
+      "email": "browns-amusements@carnivalriderental.us",
+      "companyId": "browns-amusements",
+      "createdAt": "2026-10-04T12:27:40.487Z"
+    },
+    "cw-821": {
+      "userId": "6ac246b7-b7ab-4f3c-a0b2-17fbb85ae501",
+      "email": "c-and-l-shows@carnivalriderental.us",
+      "companyId": "c-and-l-shows",
+      "createdAt": "2026-10-04T12:29:43.256Z"
+    },
+    "cw-12671": {
+      "userId": "6ac24739-0e41-43c3-9cb3-fe164a0ea1a7",
+      "email": "c-and-m-southern-midways@carnivalriderental.us",
+      "companyId": "c-and-m-southern-midways",
+      "createdAt": "2026-10-04T12:31:54.166Z"
+    },
+    "cw-828": {
+      "userId": "6ac247bf-7c30-4e7d-bf9d-8b0b51f3db68",
+      "email": "campy-amusements@carnivalriderental.us",
+      "companyId": "campy-amusements",
+      "createdAt": "2026-10-04T12:34:08.159Z"
+    },
+    "cw-1197": {
+      "userId": "6ac2483d-a8c8-40cb-ad93-4cea60d3da2d",
+      "email": "candyland-amusements@carnivalriderental.us",
+      "companyId": "candyland-amusements",
+      "createdAt": "2026-10-04T12:36:13.831Z"
     }
   }
 }
