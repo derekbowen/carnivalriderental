@@ -127,6 +127,42 @@
       "email": "b-and-k-carnival@carnivalriderental.us",
       "companyId": "b-and-k-carnival",
       "createdAt": "2026-10-04T12:12:56.446Z"
+    },
+    "cw-1149": {
+      "userId": "6ac242f0-3dd7-4aa5-a86e-8c3e417fcbc9",
+      "email": "bartlebaugh-amusements@carnivalriderental.us",
+      "companyId": "bartlebaugh-amusements",
+      "createdAt": "2026-10-04T12:13:41.933Z"
+    },
+    "cw-802": {
+      "userId": "6ac24377-d43e-4576-94e6-50c7dfccc9fb",
+      "email": "bates-brothers-amusements@carnivalriderental.us",
+      "companyId": "bates-brothers-amusements",
+      "createdAt": "2026-10-04T12:15:52.183Z"
+    },
+    "disc-belle-city-amusements": {
+      "userId": "6ac243ea-f64c-4b4f-a669-a7d5f252bc15",
+      "email": "belle-city-amusements@carnivalriderental.us",
+      "companyId": "belle-city-amusements",
+      "createdAt": "2026-10-04T12:17:46.731Z"
+    },
+    "cw-12645": {
+      "userId": "6ac2446d-325c-4119-90d3-cb3deb8a4130",
+      "email": "big-rock-amusements@carnivalriderental.us",
+      "companyId": "big-rock-amusements",
+      "createdAt": "2026-10-04T12:19:57.343Z"
+    },
+    "disc-bigtops-magic-midways": {
+      "userId": "6ac244f1-ace9-404d-9b38-b0f27e461816",
+      "email": "bigtops-magic-midways@carnivalriderental.us",
+      "companyId": "bigtops-magic-midways",
+      "createdAt": "2026-10-04T12:22:10.201Z"
+    },
+    "cw-1069": {
+      "userId": "6ac24571-8dda-4717-91b0-19243f7873cf",
+      "email": "blue-sky-amusements@carnivalriderental.us",
+      "companyId": "blue-sky-amusements",
+      "createdAt": "2026-10-04T12:24:18.066Z"
     }
   }
 }
