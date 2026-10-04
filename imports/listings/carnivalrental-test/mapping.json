@@ -21349,6 +21349,840 @@
       "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
       "companyId": "wade-shows",
       "createdAt": "2026-10-04T20:27:00.413Z"
+    },
+    "wade-shows--everglades-adventure": {
+      "listingId": "6ac2b696-6812-433a-87a1-c81b117f6914",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:02.521Z"
+    },
+    "wade-shows--extreme": {
+      "listingId": "6ac2b698-8823-4f4d-8877-78bef937d448",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:04.632Z"
+    },
+    "wade-shows--friendly-wheel": {
+      "listingId": "6ac2b69a-c4d9-4c3d-b4fe-0e8d18569c86",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:06.711Z"
+    },
+    "wade-shows--giant-bumper-cars": {
+      "listingId": "6ac2b69c-c505-47c4-ab23-3efabffd0851",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:08.813Z"
+    },
+    "wade-shows--giant-wheel-1": {
+      "listingId": "6ac2b69e-56a1-4106-b81f-994cc8eee5b9",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:10.910Z"
+    },
+    "wade-shows--giant-wheel-2": {
+      "listingId": "6ac2b6a1-27ae-47e5-9d0e-6405f56fe489",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:13.009Z"
+    },
+    "wade-shows--granny-bugs": {
+      "listingId": "6ac2b6a3-b098-475a-ad5f-a4d997d6e454",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:15.110Z"
+    },
+    "wade-shows--groovy-bus": {
+      "listingId": "6ac2b6a5-d701-442e-bc75-ea54fe7204f8",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:17.210Z"
+    },
+    "wade-shows--happy-swing": {
+      "listingId": "6ac2b6a7-5a50-4e22-b3c0-8e57f60056ed",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:19.315Z"
+    },
+    "wade-shows--haunted": {
+      "listingId": "6ac2b6a9-0ea6-49f6-8ad5-8b88f488a282",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:21.409Z"
+    },
+    "wade-shows--helicopters": {
+      "listingId": "6ac2b6ab-c0d8-4a5c-bd00-30efff7adbb4",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:23.512Z"
+    },
+    "wade-shows--hillbilly-village": {
+      "listingId": "6ac2b6ad-bfbd-4b3e-b2ff-ae0d77add519",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:25.611Z"
+    },
+    "wade-shows--hit-in-2000": {
+      "listingId": "6ac2b6af-382b-49b4-a54d-dbcb1685cd7c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:27.709Z"
+    },
+    "wade-shows--infinity": {
+      "listingId": "6ac2b6b1-7858-414a-9465-6eee01bce0d1",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:29.811Z"
+    },
+    "wade-shows--inflatable-bounce": {
+      "listingId": "6ac2b6b3-8d1a-4bb0-8862-c0c932632006",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:31.911Z"
+    },
+    "wade-shows--inflatable-slide": {
+      "listingId": "6ac2b6b6-758d-40c0-9d4a-e4d0a337ca6c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:34.114Z"
+    },
+    "wade-shows--jalopy-junction": {
+      "listingId": "6ac2b6b8-1dbb-4e61-a39e-639649ea4220",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:36.111Z"
+    },
+    "wade-shows--jumping-star": {
+      "listingId": "6ac2b6ba-6d97-4756-979e-1e5f4a28cfe6",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:38.211Z"
+    },
+    "wade-shows--kamikaze": {
+      "listingId": "6ac2b6bc-8e13-43de-9cd3-620d9c211e79",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:40.311Z"
+    },
+    "wade-shows--kiddie-bumper-boats": {
+      "listingId": "6ac2b6be-4fec-489d-8e07-6a5b523f126d",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:42.409Z"
+    },
+    "wade-shows--kraken": {
+      "listingId": "6ac2b6c0-733c-4f61-a36c-a46773655587",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:44.520Z"
+    },
+    "wade-shows--light-house-dive": {
+      "listingId": "6ac2b6c2-c690-45c1-a93e-d344be59896d",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:46.676Z"
+    },
+    "wade-shows--lolly-swings": {
+      "listingId": "6ac2b6c4-464d-44d0-b86f-d392981d17f7",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:48.711Z"
+    },
+    "wade-shows--lolly-swings-2": {
+      "listingId": "6ac2b6c6-e914-403d-a9e6-e3eae35e5b6f",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:50.813Z"
+    },
+    "wade-shows--lost-city-glass-house": {
+      "listingId": "6ac2b6c8-c637-4110-b9cd-fe3ed802351b",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:52.910Z"
+    },
+    "wade-shows--magic-maze": {
+      "listingId": "6ac2b6cb-862b-4baa-9303-8fd47eda3f01",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:55.010Z"
+    },
+    "wade-shows--mega-drop": {
+      "listingId": "6ac2b6cd-456d-451c-9909-f86a8d8a2950",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:57.114Z"
+    },
+    "wade-shows--merry-go-round": {
+      "listingId": "6ac2b6cf-4e39-4e3f-b560-9d5728ca55eb",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:27:59.210Z"
+    },
+    "wade-shows--midway-sky-eye": {
+      "listingId": "6ac2b6d1-ecbb-494e-b393-d968873f1251",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:01.311Z"
+    },
+    "wade-shows--mighty-mouse-coaster": {
+      "listingId": "6ac2b6d3-31fe-48bd-8fea-610e593a3147",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:03.411Z"
+    },
+    "wade-shows--mini-bounce-land": {
+      "listingId": "6ac2b6d5-6c8d-4fbb-b3f1-70fe99c2f352",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:05.516Z"
+    },
+    "wade-shows--mini-dinos": {
+      "listingId": "6ac2b6d7-3b0d-4439-b490-5e377f4afe7c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:07.617Z"
+    },
+    "wade-shows--mini-dumbos": {
+      "listingId": "6ac2b6d9-e3c6-46e4-988e-eb9a7bb7b9b4",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:09.715Z"
+    },
+    "wade-shows--mirror-maze": {
+      "listingId": "6ac2b6db-c199-4f72-be1a-0d191e23cca8",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:11.810Z"
+    },
+    "wade-shows--monster-trucks": {
+      "listingId": "6ac2b6dd-f5d1-48b7-b8ba-700da99579d7",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:13.911Z"
+    },
+    "wade-shows--music-express": {
+      "listingId": "6ac2b6e0-e2a6-4d3e-9402-e443db082ab3",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:16.014Z"
+    },
+    "wade-shows--music-fest": {
+      "listingId": "6ac2b6e2-51f9-454f-bfba-c65ea0733018",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:18.124Z"
+    },
+    "wade-shows--orbiter": {
+      "listingId": "6ac2b6e4-8281-4c28-a7f9-189c1b100c01",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:20.211Z"
+    },
+    "wade-shows--puppy-roll": {
+      "listingId": "6ac2b6e6-63dd-4e7c-a294-f862fcd5e5e5",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:22.311Z"
+    },
+    "wade-shows--raiders": {
+      "listingId": "6ac2b6e8-29f0-4539-b42d-3033f11f50dd",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:24.412Z"
+    },
+    "wade-shows--rainbow-rock": {
+      "listingId": "6ac2b6ea-e7c9-41a2-823e-99cea3c90b9f",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:26.514Z"
+    },
+    "wade-shows--rc-48-coaster": {
+      "listingId": "6ac2b6ec-07ce-4027-909f-2d52361959f0",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:28.613Z"
+    },
+    "wade-shows--rio-grande-train": {
+      "listingId": "6ac2b6ee-54bc-4fc5-b5d5-75c2bc7367a9",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:30.711Z"
+    },
+    "wade-shows--rock-star": {
+      "listingId": "6ac2b6f0-70fe-4cfc-8b48-3a3d1f171f53",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:32.811Z"
+    },
+    "wade-shows--safari-jeeps": {
+      "listingId": "6ac2b6f2-2354-463e-9350-7fb0b43f5d69",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:34.910Z"
+    },
+    "wade-shows--samba-balloon": {
+      "listingId": "6ac2b6f5-19e5-457f-837b-8f8d370ac9a4",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:37.028Z"
+    },
+    "wade-shows--sea-ray": {
+      "listingId": "6ac2b6f7-c617-46dc-9367-1eb6a354f6da",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:39.110Z"
+    },
+    "wade-shows--silver-streak": {
+      "listingId": "6ac2b6f9-d473-419e-9b38-380a21292b14",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:41.210Z"
+    },
+    "wade-shows--sizzler-1": {
+      "listingId": "6ac2b6fb-1961-4b7c-8d90-845228ce6481",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:43.311Z"
+    },
+    "wade-shows--sizzler-2": {
+      "listingId": "6ac2b6fd-3cd4-46eb-8424-808b5e83eafe",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:45.409Z"
+    },
+    "wade-shows--sky-ride": {
+      "listingId": "6ac2b6ff-d657-4cd1-bff5-87e7590ab41e",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:47.527Z"
+    },
+    "wade-shows--speedway": {
+      "listingId": "6ac2b701-10e0-4d39-8da4-09a6315ed92b",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:49.609Z"
+    },
+    "wade-shows--spider": {
+      "listingId": "6ac2b703-9db8-4ca1-a338-055ff6e98ea4",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:51.709Z"
+    },
+    "wade-shows--spin-the-apple": {
+      "listingId": "6ac2b705-5395-4b9a-b08e-4f097d1be31e",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:53.811Z"
+    },
+    "wade-shows--starship-4000-1": {
+      "listingId": "6ac2b707-250d-4cbd-a5cc-8de527b74d33",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:55.909Z"
+    },
+    "wade-shows--starship-4000-2": {
+      "listingId": "6ac2b70a-7d57-4521-ba89-b13a89338b07",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:28:58.009Z"
+    },
+    "wade-shows--state-fair-giant-slide": {
+      "listingId": "6ac2b70c-b0cb-4ada-bd5e-785a3506683b",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:00.118Z"
+    },
+    "wade-shows--street-fighter-360": {
+      "listingId": "6ac2b70e-106e-4979-8682-9b4f18d85fc6",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:02.208Z"
+    },
+    "wade-shows--super-bumper-boats": {
+      "listingId": "6ac2b710-7338-48d1-85b9-03a4f5c018a1",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:04.312Z"
+    },
+    "wade-shows--super-cyclone-coaster-1": {
+      "listingId": "6ac2b712-8a42-4cd3-bf54-6e2d25b84d16",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:06.417Z"
+    },
+    "wade-shows--super-cyclone-coaster-2": {
+      "listingId": "6ac2b714-4e99-44d8-aca1-c60542430749",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:08.511Z"
+    },
+    "wade-shows--super-himalaya": {
+      "listingId": "6ac2b716-09ba-40c9-aee8-4c7673ff853d",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:10.620Z"
+    },
+    "wade-shows--super-polar-himalaya": {
+      "listingId": "6ac2b718-0106-4482-a4b2-fdf515a51fbe",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:12.711Z"
+    },
+    "wade-shows--super-slide": {
+      "listingId": "6ac2b71a-886e-4e15-b4e3-96546d2beb52",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:14.810Z"
+    },
+    "wade-shows--super-slide-2": {
+      "listingId": "6ac2b71c-014c-4f2e-8207-acdfb4ded1be",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:16.920Z"
+    },
+    "wade-shows--surfs-up": {
+      "listingId": "6ac2b71f-6c32-475b-a3cc-30e3d1d6dc19",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:19.013Z"
+    },
+    "wade-shows--tea-cups": {
+      "listingId": "6ac2b721-3459-4739-9f27-a93bb9507a24",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:21.119Z"
+    },
+    "wade-shows--thunderbird-swing": {
+      "listingId": "6ac2b723-f437-4e24-993d-32d61b399ca7",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:23.218Z"
+    },
+    "wade-shows--tilt-a-whirl": {
+      "listingId": "6ac2b725-4567-4a74-8f9d-09928baf4b74",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:25.312Z"
+    },
+    "wade-shows--time-zone": {
+      "listingId": "6ac2b727-3261-48ca-9ca7-16b3d69c7c90",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:27.411Z"
+    },
+    "wade-shows--tornado": {
+      "listingId": "6ac2b729-6e87-45dc-a93f-01383134bb19",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:29.514Z"
+    },
+    "wade-shows--typhoon": {
+      "listingId": "6ac2b72b-f47c-46b0-8f3d-dfc425952ef1",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:31.609Z"
+    },
+    "wade-shows--umbrella-4x4-quads": {
+      "listingId": "6ac2b72d-d2d1-45ae-bfc7-1f29088e1c56",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:33.712Z"
+    },
+    "wade-shows--umbrella-boats": {
+      "listingId": "6ac2b72f-8d7f-48c6-bf5f-da623a216bc2",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:35.811Z"
+    },
+    "wade-shows--umbrella-cars": {
+      "listingId": "6ac2b731-4cf2-45c0-8c4e-0b9713485f36",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:37.912Z"
+    },
+    "wade-shows--umbrella-cycles": {
+      "listingId": "6ac2b734-3ad5-47f5-b60c-2915672a27ad",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:40.011Z"
+    },
+    "wade-shows--umbrella-farm-tractors": {
+      "listingId": "6ac2b736-7728-42e7-ac6e-fcecc39f7a34",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:42.110Z"
+    },
+    "wade-shows--umbrella-hummers": {
+      "listingId": "6ac2b738-9314-4b5f-a835-c193ad3575b1",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:44.211Z"
+    },
+    "wade-shows--umbrella-jeeps": {
+      "listingId": "6ac2b73a-73ed-44b8-87d6-f137c2819b12",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:46.312Z"
+    },
+    "wade-shows--umbrella-vw-bugs": {
+      "listingId": "6ac2b73c-35b7-4818-b230-ed15e36e9c8c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:48.425Z"
+    },
+    "wade-shows--undersea-adventure": {
+      "listingId": "6ac2b73e-c7eb-4bac-9b93-e912bd8a7914",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:50.677Z"
+    },
+    "wade-shows--up-up-and-away": {
+      "listingId": "6ac2b740-60a2-48ea-abbf-bdd57482522a",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:52.613Z"
+    },
+    "wade-shows--venetian-carousel": {
+      "listingId": "6ac2b742-c556-439b-833d-1e2f5fb74d9c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:54.711Z"
+    },
+    "wade-shows--vertigo": {
+      "listingId": "6ac2b744-6cac-4287-b2bb-fec7c6aa0d70",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:56.809Z"
+    },
+    "wade-shows--wacky-shack": {
+      "listingId": "6ac2b746-c67d-4899-8092-93ab813a7842",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:29:58.913Z"
+    },
+    "wade-shows--wacky-worm-coaster-1": {
+      "listingId": "6ac2b74a-73c9-4356-9e31-c0aa170a3545",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:02.072Z"
+    },
+    "wade-shows--wacky-worm-coaster-2": {
+      "listingId": "6ac2b74b-28c1-498c-b730-983c2a5faa5a",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:03.120Z"
+    },
+    "wade-shows--wave-swinger": {
+      "listingId": "6ac2b74d-8584-48f6-a788-59ba22a81500",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:05.214Z"
+    },
+    "wade-shows--wipeout": {
+      "listingId": "6ac2b74f-15e5-4442-a3d0-3e6279d90ae2",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:07.319Z"
+    },
+    "wade-shows--yo-yo": {
+      "listingId": "6ac2b751-8851-4665-ad60-87aa02345b4c",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:09.411Z"
+    },
+    "wade-shows--zero-gravity": {
+      "listingId": "6ac2b753-069d-4562-9622-6227eda338a4",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:11.511Z"
+    },
+    "wade-shows--zipper": {
+      "listingId": "6ac2b755-6389-4509-90bc-de5342947c6b",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:13.611Z"
+    },
+    "wade-shows--zipper-2": {
+      "listingId": "6ac2b757-aa36-441d-9c5e-2f5cf58805b0",
+      "authorId": "6ac2a1d3-5fe1-4c25-974a-184718cb46ed",
+      "companyId": "wade-shows",
+      "createdAt": "2026-10-04T20:30:15.712Z"
+    },
+    "wenzel-amazements--balloon-race": {
+      "listingId": "6ac2b759-71e6-41c5-acf6-42a87adc9058",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:17.809Z"
+    },
+    "wenzel-amazements--fun-factory": {
+      "listingId": "6ac2b75b-f89a-4784-bd06-20b192eef470",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:19.913Z"
+    },
+    "wenzel-amazements--fun-slide": {
+      "listingId": "6ac2b75e-9eaf-4876-8894-ad59fb9ebba8",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:22.010Z"
+    },
+    "wenzel-amazements--g-force": {
+      "listingId": "6ac2b760-9f01-4020-8d66-00cd30e17e52",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:24.113Z"
+    },
+    "wenzel-amazements--go-gator": {
+      "listingId": "6ac2b762-2b33-416f-9bce-94eaf084ba28",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:26.209Z"
+    },
+    "wenzel-amazements--hurricane": {
+      "listingId": "6ac2b764-ce7e-4015-988a-01788ce75db7",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:28.309Z"
+    },
+    "wenzel-amazements--merry-go-round": {
+      "listingId": "6ac2b766-6bda-45a1-a6b7-af7d639213e6",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:30.411Z"
+    },
+    "wenzel-amazements--mickey-bounce": {
+      "listingId": "6ac2b768-3048-4577-81fd-7b4f1533a708",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:32.511Z"
+    },
+    "wenzel-amazements--monkey-mayhem": {
+      "listingId": "6ac2b76a-c6b7-4668-ac4e-0f43f63e27e6",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:34.617Z"
+    },
+    "wenzel-amazements--motorcycle-race": {
+      "listingId": "6ac2b76c-3573-4456-b185-ff880f93ff3a",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:36.711Z"
+    },
+    "wenzel-amazements--rock-o-plane": {
+      "listingId": "6ac2b76e-5f21-4861-9171-466f255df733",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:38.810Z"
+    },
+    "wenzel-amazements--scrambler": {
+      "listingId": "6ac2b770-fec3-4159-941c-95788196497e",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:40.912Z"
+    },
+    "wenzel-amazements--tilt-a-whirl": {
+      "listingId": "6ac2b773-ceb2-4703-9396-7db234ee25b6",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:43.014Z"
+    },
+    "wenzel-amazements--umbrella-combo": {
+      "listingId": "6ac2b775-7a21-4ea9-a0f2-1f5e4e8c4151",
+      "authorId": "6ac2a1db-f7c5-4d9d-81c0-1d0c8f51f26c",
+      "companyId": "wenzel-amazements",
+      "createdAt": "2026-10-04T20:30:45.113Z"
+    },
+    "windy-city-amusements--bear-affair": {
+      "listingId": "6ac2b777-04c6-4308-8f2b-4f1f4c848e3d",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:47.210Z"
+    },
+    "windy-city-amusements--carousel-1": {
+      "listingId": "6ac2b779-1ecf-482b-8b4c-cdffafeab9e7",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:49.327Z"
+    },
+    "windy-city-amusements--carousel-2": {
+      "listingId": "6ac2b77b-a35b-4153-91ff-91667cfa1c79",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:51.414Z"
+    },
+    "windy-city-amusements--century-wheel-1": {
+      "listingId": "6ac2b77d-773e-4cb2-a396-9c46a30d2748",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:53.513Z"
+    },
+    "windy-city-amusements--century-wheel-2": {
+      "listingId": "6ac2b77f-7886-4753-b117-ddf8a62d39f2",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:55.613Z"
+    },
+    "windy-city-amusements--cliff-hanger": {
+      "listingId": "6ac2b781-5e6e-4a9a-a6a8-930be4bbcf70",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:57.845Z"
+    },
+    "windy-city-amusements--dizzy-dragons": {
+      "listingId": "6ac2b783-a82f-4df6-a097-a1da713e9dfc",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:30:59.820Z"
+    },
+    "windy-city-amusements--dragon-wagon": {
+      "listingId": "6ac2b785-8c89-467e-a1c1-cb97f56baa87",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:01.917Z"
+    },
+    "windy-city-amusements--ferris-wheel": {
+      "listingId": "6ac2b788-c495-4d92-9395-cd0e1170dddb",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:04.022Z"
+    },
+    "windy-city-amusements--fire-ball": {
+      "listingId": "6ac2b78a-b8b7-41ce-8e07-0b433ad7e8b3",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:06.110Z"
+    },
+    "windy-city-amusements--flying-tea-cups": {
+      "listingId": "6ac2b78c-aea2-4270-9388-b1d79995a6f5",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:08.217Z"
+    },
+    "windy-city-amusements--freak-out": {
+      "listingId": "6ac2b78e-ef84-4a35-bf7c-dce4b06e19e4",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:10.313Z"
+    },
+    "windy-city-amusements--free-fall": {
+      "listingId": "6ac2b790-e145-4322-9504-d209aa650b07",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:12.409Z"
+    },
+    "windy-city-amusements--fun-slide": {
+      "listingId": "6ac2b792-3bdb-42dc-bc00-c2def60a35aa",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:14.510Z"
+    },
+    "windy-city-amusements--himalaya": {
+      "listingId": "6ac2b794-d47e-4edc-b7d0-f143dbe18dc1",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:16.609Z"
+    },
+    "windy-city-amusements--madagascar-fun-house": {
+      "listingId": "6ac2b796-424d-4f83-8111-a4e049a8f5da",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:18.714Z"
+    },
+    "windy-city-amusements--mini-enterprise": {
+      "listingId": "6ac2b798-88dc-4628-92bd-a78942180e0e",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:20.808Z"
+    },
+    "windy-city-amusements--mini-enterprise-combo": {
+      "listingId": "6ac2b79a-079f-4cca-bb2b-4bb8753d24b8",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:22.910Z"
+    },
+    "windy-city-amusements--motorcycle-jump": {
+      "listingId": "6ac2b79d-5600-4d31-bc66-db796ad6d6ae",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:25.013Z"
+    },
+    "windy-city-amusements--motorcycle-race": {
+      "listingId": "6ac2b79f-043d-451a-b808-ba0a6b87bb1b",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:27.115Z"
+    },
+    "windy-city-amusements--orient-express": {
+      "listingId": "6ac2b7a1-a606-4abd-8c95-2628e794eafc",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:29.212Z"
+    },
+    "windy-city-amusements--peter-paul-dinos": {
+      "listingId": "6ac2b7a3-f8de-4f20-8901-bda18187f5ce",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:31.312Z"
+    },
+    "windy-city-amusements--pharaohs-fury": {
+      "listingId": "6ac2b7a5-cb30-4987-a369-b7389e53c557",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:33.411Z"
+    },
+    "windy-city-amusements--pirate-island": {
+      "listingId": "6ac2b7a7-e7c7-4b68-8340-e19ecadc602e",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:35.512Z"
+    },
+    "windy-city-amusements--predator": {
+      "listingId": "6ac2b7a9-93d7-475f-ac40-5863303e672b",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:37.611Z"
+    },
+    "windy-city-amusements--rio-grande-train": {
+      "listingId": "6ac2b7ab-d23d-4b22-b5c8-7169fa210334",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:39.711Z"
+    },
+    "windy-city-amusements--rock-star": {
+      "listingId": "6ac2b7ad-1905-4fcb-9481-558276c86b98",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:41.814Z"
+    },
+    "windy-city-amusements--scooter": {
+      "listingId": "6ac2b7af-90ff-43d3-a23e-467d23ec8b01",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:43.922Z"
+    },
+    "windy-city-amusements--sizzler": {
+      "listingId": "6ac2b7b2-4194-4f44-a0a1-5faead9dba12",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:46.013Z"
+    },
+    "windy-city-amusements--sky-rider": {
+      "listingId": "6ac2b7b4-5850-4855-bff6-3b4132c47427",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:48.109Z"
+    },
+    "windy-city-amusements--speedway": {
+      "listingId": "6ac2b7b6-4d04-4100-b3a7-3319516b12a7",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:50.287Z"
+    },
+    "windy-city-amusements--super-slide": {
+      "listingId": "6ac2b7b8-41c5-4702-9231-69208b29055b",
+      "authorId": "6ac2a1df-9aed-4ab7-8707-47283b8f387f",
+      "companyId": "windy-city-amusements",
+      "createdAt": "2026-10-04T20:31:52.313Z"
     }
   }
 }
