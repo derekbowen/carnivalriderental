@@ -13,6 +13,7 @@ Read `docs/PROJECT_BRIEF.md` first. It is the business model; do not drift from 
 - Listing data follows `contract/listing-contract.json` (see `docs/DATA_CONTRACT.md`). Never invent field IDs/options in components; every listing write goes through `validateOfferingRecord` (validate the merged result for updates); every listing READ goes through `src/lib/catalog` (Console edits bypass the write validator). Verify config with `npm run sharetribe:inspect && npm run contract:diff` — UNVERIFIED is never a pass. The `default-negotiation` binding is a temporary Test scaffold, not the approved transaction process. Configuration changes happen in the Sharetribe **Test** environment and are copied to Dev.
 - Payments: test/demo mode only until the founder approves a payment policy (see `docs/SHARETRIBE_MAPPING.md`). Never collect card data in our own fields.
 - No real charges, operator/customer outreach, mass imports, production publishing or public indexing without explicit approval.
+- Company accounts are imported only via `npm run import:companies` (`docs/COMPANY_IMPORT.md`): A+B tiers, unclaimed, claim domain we control, no research notes in Sharetribe, never overwrite or reset an existing account.
 - Secrets live in `.env.local` (gitignored). Never commit or log them.
 
 Checks before pushing: `npm run typecheck && npm test && npm run build && npm run test:e2e`.

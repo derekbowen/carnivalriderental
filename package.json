@@ -20,7 +20,8 @@
     "sharetribe:inspect": "tsx --env-file-if-exists=.env.local scripts/sharetribe-inspect.ts",
     "contract:diff": "tsx scripts/contract-diff.ts",
     "catalog:seed": "tsx --env-file-if-exists=.env.local scripts/catalog-seed.ts",
-    "catalog:search-proof": "tsx --env-file-if-exists=.env.local scripts/catalog-search-proof.ts"
+    "catalog:search-proof": "tsx --env-file-if-exists=.env.local scripts/catalog-search-proof.ts",
+    "import:companies": "tsx --env-file-if-exists=.env.local scripts/company-import.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

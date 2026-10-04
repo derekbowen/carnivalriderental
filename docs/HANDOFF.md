@@ -35,6 +35,7 @@ Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED co
 7. **Operator research** — coworker fills `research/operator-research-template.xlsx`; send it to Claude directly (not into the repo).
 8. **pSEO copy review** — approve occasion intros and ride types (`docs/PSEO_TEMPLATES.md` §6).
 10. **Category hub pilot** — review the five previews and approve or edit their copy (`src/lib/content/category-pages.ts`, `reviewStatus`). Optional: add Magic Patterns credits and run `design/magic-patterns/CATEGORY_PILOT_PROMPT.md`.
+11. **Claim-email domain** for imported company accounts: a domain we own with a catch-all inbox → `IMPORT_CLAIM_EMAIL_DOMAIN` in `.env.local` (`docs/COMPANY_IMPORT.md` §7).
 9. **Operator program decisions** — who pays the fee and the rate, far-out events, updated-price path, operator requirements, cancellations (`docs/OPERATOR_MARKETPLACE.md` §6). Then approve the `/operators` copy.
 
 ## Pay-first + pricing wording (2026-10-04)
@@ -48,6 +49,9 @@ Web build is app-shell ready for a Capacitor wrapper (iOS + Android); see `docs/
 
 ## pSEO families (2026-10-04)
 State hubs (51), occasion hubs (75) and occasion × state (3,825) are built and noindex. They show live catalog supply only and become indexable per `docs/PSEO_TEMPLATES.md` §4.
+
+## Company-account import (2026-10-04)
+`npm run import:companies` imports the 184 eligible companies (A_ready + B_account_only) as unclaimed accounts. 135 are held and 11 excluded. Dry run verified; **no accounts created yet**: blocked on a claim-email domain (`IMPORT_CLAIM_EMAIL_DOMAIN`). See `docs/COMPANY_IMPORT.md`.
 
 ## Next small milestone
 1. ~~Confirm the marketplace~~ — done: "CarnivalRental Dev".
