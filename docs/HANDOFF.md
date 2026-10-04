@@ -56,6 +56,15 @@ State hubs (51), occasion hubs (75) and occasion × state (3,825) are built and 
 ## Operator listings import (2026-10-04)
 `npm run import:listings` loads 3,714 operator rides (7 held for review) as pendingApproval listings under the imported company accounts. Proven on Test with one listing. Founder to-do: add listing type `operator-ride-rental` and its fields in Console (`docs/LISTING_IMPORT.md`).
 
+## Status 2026-10-04 (evening)
+- Sharetribe Test: 184 company accounts (unclaimed), 3,714 operator listings (pendingApproval, not public), 7 held rows.
+- House seller account: Carnival Ride Rental / 10000 Solutions LLC, `support@carnivalriderental.us` (founder-approved; mailbox on Resend), user `6ac2ba15-2dfd-4851-8d25-f9e53e7584ce`, email verified. IDs in `.env.local`.
+- Brand: Carnival Ride Rental, carnivalriderental.us. Founder rate card in `src/lib/pricing/rate-card.ts` (3 rows unconfirmed).
+- Email: Resend outbox in test mode (`docs/EMAIL.md`); claim invites need a postal address + go.
+- Vercel: every push to this branch builds a private preview (SSO). Domain + production promotion await founder go.
+- Parked (not in repo): operator photo importer and public inventory pages — blocked by this session's permission checks pending a founder decision (permission change, operator consent first, or generic pages).
+- Next: Sharetribe booking process (card held at request → owner's total as offer → customer accepts and is charged), house listings under the seller account; needs Stripe (test) connected in Console.
+
 ## Next small milestone
 1. ~~Confirm the marketplace~~ — done: "CarnivalRental Dev".
 2. ~~Read-only connection check~~ — done; the console shows the live status (cached 10 min).
