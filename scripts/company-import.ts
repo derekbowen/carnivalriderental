@@ -231,7 +231,14 @@ function writeJsonAtomic(file: string, value: unknown) {
   // ---------------- apply guards
   if (!domain.ok) throw new Error(`Refusing: ${domain.reason}. Set IMPORT_CLAIM_EMAIL_DOMAIN to a domain we control (catch-all mailbox).`);
   if (plan.issues.length) throw new Error(`Refusing: ${plan.issues.length} validation issues.`);
-  const mx = await dns.resolveMx(domain.domain).catch(() => []);
+  // Local resolvers can hold a stale "no record" answer for a fresh MX; fall back to Cloudflare DNS-over-HTTPS.
+  let mx: unknown[] = await dns.resolveMx(domain.domain).catch(() => []);
+  if (!mx.length) {
+    const doh = await fetch(`https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain.domain)}&type=MX`, { headers: { accept: "application/dns-json" }, signal: AbortSignal.timeout(10000) })
+      .then((r) => r.json() as Promise<{ Answer?: { type: number }[] }>)
+      .catch(() => ({ Answer: [] }));
+    mx = (doh.Answer ?? []).filter((a) => a.type === 15);
+  }
   if (!mx.length) throw new Error(`Refusing: ${domain.domain} has no MX record, so claim and verification mail would be lost.`);
   const names = await marketplaceNames();
   if (names.integ !== names.mkt) throw new Error(`Refusing: Integration API marketplace "${names.integ}" ≠ Marketplace API marketplace "${names.mkt}".`);
