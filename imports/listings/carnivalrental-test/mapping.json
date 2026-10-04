@@ -8203,6 +8203,162 @@
       "authorId": "6ac254fb-769d-43d5-9f75-6f12ec1aff38",
       "companyId": "e-k-fernandez-shows",
       "createdAt": "2026-10-04T14:19:01.589Z"
+    },
+    "earls-rides--berry-go-round": {
+      "listingId": "6ac2a494-bdb4-42a8-8b8d-dea922adfb27",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:12.629Z"
+    },
+    "earls-rides--el-paso-train": {
+      "listingId": "6ac2a496-d563-4fea-8906-4b9c365dde7c",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:14.721Z"
+    },
+    "earls-rides--ferris-wheel": {
+      "listingId": "6ac2a498-cfc5-4aa9-80c8-7738eb478db0",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:16.828Z"
+    },
+    "earls-rides--fun-slide": {
+      "listingId": "6ac2a49a-10c6-4c22-811c-10a197b98db5",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:18.924Z"
+    },
+    "earls-rides--loop-o-plane": {
+      "listingId": "6ac2a49d-de89-4732-b6b9-afbd9480c557",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:21.023Z"
+    },
+    "earls-rides--noahs-ark": {
+      "listingId": "6ac2a49f-facb-4a9e-be7d-b6db09981580",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:23.126Z"
+    },
+    "earls-rides--scrambler": {
+      "listingId": "6ac2a4a1-54f0-4ea9-abf7-6f4ad5497840",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:25.289Z"
+    },
+    "earls-rides--super-trooper": {
+      "listingId": "6ac2a4a3-f868-4cf9-b218-269e0409282f",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:27.321Z"
+    },
+    "earls-rides--umbrella-combo": {
+      "listingId": "6ac2a4a5-79a4-498f-bfda-3594ce8e349d",
+      "authorId": "6ac25542-fdff-4134-9506-3d3ee20ca50d",
+      "companyId": "earls-rides",
+      "createdAt": "2026-10-04T19:10:29.421Z"
+    },
+    "elliotts-amusements--apple-worm": {
+      "listingId": "6ac2a4a7-083d-4b69-b8e1-d9adcbc11652",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:31.521Z"
+    },
+    "elliotts-amusements--bayou-lagoon": {
+      "listingId": "6ac2a4a9-ca27-436c-aca1-f6e5881630af",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:33.619Z"
+    },
+    "elliotts-amusements--bear-affair": {
+      "listingId": "6ac2a4ab-6d2d-4dac-8c32-3b372a6db594",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:35.719Z"
+    },
+    "elliotts-amusements--berry-go-round": {
+      "listingId": "6ac2a4ad-5647-4b47-bb91-51a49327a174",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:37.818Z"
+    },
+    "elliotts-amusements--carousel": {
+      "listingId": "6ac2a4af-a608-45dd-92fb-3b0f10c8a47c",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:39.921Z"
+    },
+    "elliotts-amusements--cortina-bob": {
+      "listingId": "6ac2a4b2-95bf-44b9-871c-e674864c3742",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:42.025Z"
+    },
+    "elliotts-amusements--crystal-lils": {
+      "listingId": "6ac2a4b4-b73d-4ca0-a51b-5a0fc2572ecb",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:44.121Z"
+    },
+    "elliotts-amusements--giant-wheel": {
+      "listingId": "6ac2a4b6-5f45-4c6e-8e5a-6fa8fa90d828",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:46.231Z"
+    },
+    "elliotts-amusements--helicopters": {
+      "listingId": "6ac2a4b8-1329-402d-a9d6-45c7c6970b7e",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:48.320Z"
+    },
+    "elliotts-amusements--hero-planet": {
+      "listingId": "6ac2a4ba-d3c5-4f1a-aaac-dffe6ab458be",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:50.420Z"
+    },
+    "elliotts-amusements--puppy-love": {
+      "listingId": "6ac2a4bc-799e-461f-ad06-4f9ceb4fbfd3",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:52.522Z"
+    },
+    "elliotts-amusements--rok-n-roll": {
+      "listingId": "6ac2a4be-64cc-4b00-8088-5b5d05ff18fd",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:54.621Z"
+    },
+    "elliotts-amusements--sea-ray": {
+      "listingId": "6ac2a4c0-723c-47db-ae8f-9f81846ccd4f",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:56.720Z"
+    },
+    "elliotts-amusements--sizzler": {
+      "listingId": "6ac2a4c2-dce6-45fd-81e4-9e4e81671491",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:10:58.820Z"
+    },
+    "elliotts-amusements--super-slide": {
+      "listingId": "6ac2a4c4-7dd8-4363-adf9-a41d09917121",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:11:00.921Z"
+    },
+    "elliotts-amusements--super-trucks": {
+      "listingId": "6ac2a4c7-2b70-4e4e-8487-0085a73e3c38",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:11:03.026Z"
+    },
+    "elliotts-amusements--tempest": {
+      "listingId": "6ac2a4c9-ffe7-4374-a92a-d044ace2b875",
+      "authorId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T19:11:05.122Z"
     }
   }
 }
