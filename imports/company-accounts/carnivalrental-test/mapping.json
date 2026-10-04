@@ -301,6 +301,24 @@
       "email": "d-c-lynch-shows@carnivalriderental.us",
       "companyId": "d-c-lynch-shows",
       "createdAt": "2026-10-04T13:09:41.255Z"
+    },
+    "cw-1034": {
+      "userId": "6ac25098-3222-4ce4-91da-1476b49fab23",
+      "email": "d-and-j-amusements@carnivalriderental.us",
+      "companyId": "d-and-j-amusements",
+      "createdAt": "2026-10-04T13:11:52.617Z"
+    },
+    "cw-1103": {
+      "userId": "6ac2511b-844d-4eb0-8af8-001f9809067b",
+      "email": "davis-shows-nw@carnivalriderental.us",
+      "companyId": "davis-shows-nw",
+      "createdAt": "2026-10-04T13:14:03.488Z"
+    },
+    "disc-dayton-area-amusements": {
+      "userId": "6ac2519f-06da-4771-93e0-019654a4b707",
+      "email": "dayton-area-amusements@carnivalriderental.us",
+      "companyId": "dayton-area-amusements",
+      "createdAt": "2026-10-04T13:16:15.809Z"
     }
   }
 }
