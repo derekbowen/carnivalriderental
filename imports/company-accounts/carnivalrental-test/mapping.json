@@ -367,6 +367,42 @@
       "email": "earls-rides@carnivalriderental.us",
       "companyId": "earls-rides",
       "createdAt": "2026-10-04T13:31:46.706Z"
+    },
+    "disc-ego-midways": {
+      "userId": "6ac255c6-6843-4a13-8356-431aed305a9e",
+      "email": "ego-midways@carnivalriderental.us",
+      "companyId": "ego-midways",
+      "createdAt": "2026-10-04T13:33:59.179Z"
+    },
+    "cw-1071": {
+      "userId": "6ac2564b-da09-4a55-bd13-07f1e0e3b6a8",
+      "email": "elliotts-amusements@carnivalriderental.us",
+      "companyId": "elliotts-amusements",
+      "createdAt": "2026-10-04T13:36:11.971Z"
+    },
+    "disc-family-fun-tyme-amusements": {
+      "userId": "6ac256cf-c1e1-41a2-910d-549f7d5018a8",
+      "email": "family-fun-tyme-amusements@carnivalriderental.us",
+      "companyId": "family-fun-tyme-amusements",
+      "createdAt": "2026-10-04T13:38:23.434Z"
+    },
+    "cw-878": {
+      "userId": "6ac25752-a54c-4c6c-b04b-3094cf1fc9cd",
+      "email": "fanelli-amusements@carnivalriderental.us",
+      "companyId": "fanelli-amusements",
+      "createdAt": "2026-10-04T13:40:34.781Z"
+    },
+    "cw-879": {
+      "userId": "6ac25797-2dec-431d-8575-359100924596",
+      "email": "fantasy-amusement-co@carnivalriderental.us",
+      "companyId": "fantasy-amusement-co",
+      "createdAt": "2026-10-04T13:41:44.149Z"
+    },
+    "cw-1098": {
+      "userId": "6ac2581a-ee93-4a94-9757-d59681b0007d",
+      "email": "fiesta-shows@carnivalriderental.us",
+      "companyId": "fiesta-shows",
+      "createdAt": "2026-10-04T13:43:54.563Z"
     }
   }
 }
