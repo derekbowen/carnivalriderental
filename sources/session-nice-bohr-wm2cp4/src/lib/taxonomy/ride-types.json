@@ -1,0 +1,567 @@
+{
+  "version": "1.0.0",
+  "status": "draft — names and priorities are an initial list; replace priority with keyword-volume data before rollout",
+  "rules": [
+    "id is the URL slug and is permanent once a page is indexed.",
+    "categoryId follows the contract primary-category rule (one category per ride type).",
+    "A ride type is a search target, not inventory. Pages for a ride type list only live catalog offerings; with none, the page cannot be indexed.",
+    "Names are generic. searchPhrases may contain common or brand-associated names people search for: use them for keyword matching only, never in page copy unless the unit is verified to be that make.",
+    "No specs (height, capacity, footprint, power) here. Those come later from provenance-backed records."
+  ],
+  "rideTypes": [
+    {
+      "id": "ferris-wheel",
+      "name": "Ferris wheel",
+      "categoryId": "ferris-wheels",
+      "priority": 1,
+      "searchPhrases": [
+        "ferris wheel rental",
+        "rent a ferris wheel",
+        "ferris wheel for events"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "giant-ferris-wheel",
+      "name": "Giant Ferris wheel",
+      "categoryId": "ferris-wheels",
+      "priority": 2,
+      "searchPhrases": [
+        "giant ferris wheel rental",
+        "large ferris wheel for festival"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "mini-ferris-wheel",
+      "name": "Mini Ferris wheel",
+      "categoryId": "kiddie-rides",
+      "priority": 3,
+      "searchPhrases": [
+        "mini ferris wheel rental",
+        "kiddie ferris wheel rental",
+        "small ferris wheel for party"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "carousel",
+      "name": "Carousel",
+      "categoryId": "carousels",
+      "priority": 4,
+      "searchPhrases": [
+        "carousel rental",
+        "merry go round rental",
+        "rent a carousel"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "double-decker-carousel",
+      "name": "Double-decker carousel",
+      "categoryId": "carousels",
+      "priority": 5,
+      "searchPhrases": [
+        "double decker carousel rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-carousel",
+      "name": "Kiddie carousel",
+      "categoryId": "carousels",
+      "priority": 6,
+      "searchPhrases": [
+        "kiddie carousel rental",
+        "small carousel rental",
+        "mini merry go round rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "wave-swinger",
+      "name": "Wave swinger",
+      "categoryId": "swing-rides",
+      "priority": 7,
+      "searchPhrases": [
+        "wave swinger rental",
+        "wave swinger ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "chair-swing-ride",
+      "name": "Chair swing ride",
+      "categoryId": "swing-rides",
+      "priority": 8,
+      "searchPhrases": [
+        "swing ride rental",
+        "chair swing ride rental",
+        "flying swings rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-swing-ride",
+      "name": "Kiddie swing ride",
+      "categoryId": "kiddie-rides",
+      "priority": 9,
+      "searchPhrases": [
+        "kiddie swing ride rental",
+        "kids swing ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "tower-swing-ride",
+      "name": "Tower swing ride",
+      "categoryId": "thrill-rides",
+      "priority": 10,
+      "searchPhrases": [
+        "tower swing ride rental",
+        "star flyer style ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "trackless-train",
+      "name": "Trackless train",
+      "categoryId": "family-rides",
+      "priority": 11,
+      "searchPhrases": [
+        "trackless train rental",
+        "party train rental",
+        "kids train ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-train",
+      "name": "Kiddie train",
+      "categoryId": "kiddie-rides",
+      "priority": 12,
+      "searchPhrases": [
+        "kiddie train ride rental",
+        "mini train ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "family-coaster",
+      "name": "Family roller coaster",
+      "categoryId": "family-rides",
+      "priority": 13,
+      "searchPhrases": [
+        "roller coaster rental",
+        "dragon coaster rental",
+        "portable roller coaster rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-coaster",
+      "name": "Kiddie coaster",
+      "categoryId": "kiddie-rides",
+      "priority": 14,
+      "searchPhrases": [
+        "kiddie coaster rental",
+        "kids roller coaster rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "spinning-teacups",
+      "name": "Spinning teacups",
+      "categoryId": "family-rides",
+      "priority": 15,
+      "searchPhrases": [
+        "teacup ride rental",
+        "tea cup ride rental",
+        "spinning teacups rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "tilt-ride",
+      "name": "Tilting spin ride",
+      "categoryId": "family-rides",
+      "priority": 16,
+      "searchPhrases": [
+        "tilt a whirl rental",
+        "tilt ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "scrambler",
+      "name": "Scrambler",
+      "categoryId": "family-rides",
+      "priority": 17,
+      "searchPhrases": [
+        "scrambler ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "bumper-cars",
+      "name": "Bumper cars",
+      "categoryId": "family-rides",
+      "priority": 18,
+      "searchPhrases": [
+        "bumper car rental",
+        "portable bumper cars rental",
+        "dodgem rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-bumper-cars",
+      "name": "Kiddie bumper cars",
+      "categoryId": "kiddie-rides",
+      "priority": 19,
+      "searchPhrases": [
+        "kids bumper cars rental",
+        "mini bumper car rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "bumper-boats",
+      "name": "Bumper boats",
+      "categoryId": "family-rides",
+      "priority": 20,
+      "searchPhrases": [
+        "bumper boat rental",
+        "portable bumper boats"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "giant-slide",
+      "name": "Giant slide",
+      "categoryId": "family-rides",
+      "priority": 21,
+      "searchPhrases": [
+        "giant slide rental",
+        "fun slide rental",
+        "carnival slide rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "fun-house",
+      "name": "Fun house",
+      "categoryId": "family-rides",
+      "priority": 22,
+      "searchPhrases": [
+        "fun house rental",
+        "carnival fun house rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "mirror-maze",
+      "name": "Mirror maze",
+      "categoryId": "family-rides",
+      "priority": 23,
+      "searchPhrases": [
+        "mirror maze rental",
+        "portable mirror maze"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "haunted-house",
+      "name": "Walk-through haunted house",
+      "categoryId": "family-rides",
+      "priority": 24,
+      "searchPhrases": [
+        "portable haunted house rental",
+        "haunted house trailer rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "swinging-pirate-ship",
+      "name": "Swinging pirate ship",
+      "categoryId": "family-rides",
+      "priority": 25,
+      "searchPhrases": [
+        "pirate ship ride rental",
+        "swinging ship ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-pirate-ship",
+      "name": "Kiddie pirate ship",
+      "categoryId": "kiddie-rides",
+      "priority": 26,
+      "searchPhrases": [
+        "kiddie pirate ship rental",
+        "mini pirate ship ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "music-express",
+      "name": "Music express",
+      "categoryId": "family-rides",
+      "priority": 27,
+      "searchPhrases": [
+        "himalaya ride rental",
+        "music express ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "sizzler-style-ride",
+      "name": "Spinning sizzler-style ride",
+      "categoryId": "family-rides",
+      "priority": 28,
+      "searchPhrases": [
+        "sizzler ride rental",
+        "twister ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "paratrooper",
+      "name": "Paratrooper ride",
+      "categoryId": "family-rides",
+      "priority": 29,
+      "searchPhrases": [
+        "paratrooper ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "helicopter-ride",
+      "name": "Kiddie helicopter ride",
+      "categoryId": "kiddie-rides",
+      "priority": 30,
+      "searchPhrases": [
+        "kiddie helicopter ride rental",
+        "helicopter ride for kids"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-jets",
+      "name": "Kiddie jets",
+      "categoryId": "kiddie-rides",
+      "priority": 31,
+      "searchPhrases": [
+        "kiddie jet ride rental",
+        "airplane ride for kids rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-boats",
+      "name": "Kiddie boats",
+      "categoryId": "kiddie-rides",
+      "priority": 32,
+      "searchPhrases": [
+        "kiddie boat ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-cars",
+      "name": "Kiddie car ride",
+      "categoryId": "kiddie-rides",
+      "priority": 33,
+      "searchPhrases": [
+        "kiddie car ride rental",
+        "kids car ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-motorcycles",
+      "name": "Kiddie motorcycles",
+      "categoryId": "kiddie-rides",
+      "priority": 34,
+      "searchPhrases": [
+        "kiddie motorcycle ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-drop-tower",
+      "name": "Kiddie drop tower",
+      "categoryId": "kiddie-rides",
+      "priority": 35,
+      "searchPhrases": [
+        "kiddie drop tower rental",
+        "frog hopper rental",
+        "kids bounce tower ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kiddie-whip",
+      "name": "Kiddie whip ride",
+      "categoryId": "kiddie-rides",
+      "priority": 36,
+      "searchPhrases": [
+        "kiddie whip rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "pony-cart-ride",
+      "name": "Kiddie pony cart ride",
+      "categoryId": "kiddie-rides",
+      "priority": 37,
+      "searchPhrases": [
+        "pony cart ride rental",
+        "horse cart kiddie ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "zipper-style-ride",
+      "name": "Zipper-style ride",
+      "categoryId": "thrill-rides",
+      "priority": 38,
+      "searchPhrases": [
+        "zipper ride rental",
+        "zipper carnival ride"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "gravitron",
+      "name": "Spinning centrifuge ride",
+      "categoryId": "thrill-rides",
+      "priority": 39,
+      "searchPhrases": [
+        "gravitron rental",
+        "starship ride rental",
+        "centrifuge ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "drop-tower",
+      "name": "Drop tower",
+      "categoryId": "thrill-rides",
+      "priority": 40,
+      "searchPhrases": [
+        "drop tower ride rental",
+        "free fall ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "pendulum-ride",
+      "name": "Pendulum ride",
+      "categoryId": "thrill-rides",
+      "priority": 41,
+      "searchPhrases": [
+        "pendulum ride rental",
+        "frisbee ride rental",
+        "fireball ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "ring-of-fire",
+      "name": "Looping coaster ring",
+      "categoryId": "thrill-rides",
+      "priority": 42,
+      "searchPhrases": [
+        "ring of fire ride rental",
+        "loop ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "kamikaze",
+      "name": "Kamikaze ride",
+      "categoryId": "thrill-rides",
+      "priority": 43,
+      "searchPhrases": [
+        "kamikaze ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "orbiter",
+      "name": "Orbiter ride",
+      "categoryId": "thrill-rides",
+      "priority": 44,
+      "searchPhrases": [
+        "orbiter ride rental",
+        "spinning arm ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "round-up",
+      "name": "Round up ride",
+      "categoryId": "thrill-rides",
+      "priority": 45,
+      "searchPhrases": [
+        "round up ride rental",
+        "enterprise ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "inverter",
+      "name": "Inverter ride",
+      "categoryId": "thrill-rides",
+      "priority": 46,
+      "searchPhrases": [
+        "inverter ride rental",
+        "flipping ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "freak-out",
+      "name": "Freak out ride",
+      "categoryId": "thrill-rides",
+      "priority": 47,
+      "searchPhrases": [
+        "freak out ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "tornado-ride",
+      "name": "Tornado spin ride",
+      "categoryId": "thrill-rides",
+      "priority": 48,
+      "searchPhrases": [
+        "tornado ride rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "go-karts",
+      "name": "Portable go-kart track",
+      "categoryId": "family-rides",
+      "priority": 49,
+      "searchPhrases": [
+        "go kart rental for events",
+        "portable go kart track rental"
+      ],
+      "reviewStatus": "draft"
+    },
+    {
+      "id": "dark-ride",
+      "name": "Portable dark ride",
+      "categoryId": "family-rides",
+      "priority": 50,
+      "searchPhrases": [
+        "portable dark ride rental",
+        "ghost train rental"
+      ],
+      "reviewStatus": "draft"
+    }
+  ]
+}

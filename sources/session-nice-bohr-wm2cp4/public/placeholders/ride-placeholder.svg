@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Development placeholder image — not a photograph of real equipment">
+  <defs><pattern id="p" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M0 40L40 0" stroke="#d9d2c4" stroke-width="2"/></pattern></defs>
+  <rect width="1200" height="800" fill="#ece6da"/><rect width="1200" height="800" fill="url(#p)"/>
+  <g fill="none" stroke="#b8ad98" stroke-width="6"><circle cx="600" cy="360" r="210"/><circle cx="600" cy="360" r="18" fill="#b8ad98"/>
+  <path d="M600 150v420M390 360h420M452 212l296 296M748 212L452 508"/><path d="M520 700l80-322 80 322"/></g>
+  <rect x="200" y="640" width="800" height="88" rx="44" fill="#14213d"/>
+  <text x="600" y="694" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#ffffff">DEVELOPMENT PLACEHOLDER — not a real photo</text>
+</svg>

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens from the Magic Patterns design (design/magic-patterns, see its README).
+ * Cool canvas, navy ink, marigold accent, red "pop" + awning stripe.
+ */
+@theme {
+  --color-canvas: #f3f5fa;
+  --color-paper: #ffffff;
+  --color-surface: #ffffff;
+  --color-ink: #0b1b3f;
+  --color-ink-soft: #2e3b5c;
+  --color-muted: #56627d;
+  --color-line: #e1e5ee;
+  --color-line-strong: #c9d0de;
+  --color-accent: #ffc629;
+  --color-accent-hover: #f5b700;
+  --color-accent-wash: #fff2cc;
+  --color-accent-strong: #7a5200; /* readable accent text */
+  --color-pop: #e5352b;
+  --color-pop-wash: #fde4e2;
+  --color-placeholder: #d4d9e3;
+  --color-ok: #1f7a4d;
+  --color-ok-wash: #dff3e8;
+  --color-warn: #7a5200;
+  --color-warn-wash: #fff2cc;
+  --color-danger: #c2281f;
+  --color-danger-wash: #fde4e2;
+  --color-demo: #6d28d9;
+  --color-demo-wash: #f1ebfe;
+
+  --font-display: "Bricolage Grotesque", Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+html {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Red-and-white tent awning stripe */
+.awning {
+  background-image: repeating-linear-gradient(90deg, #e5352b 0, #e5352b 28px, #ffffff 28px, #ffffff 56px);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-pop);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/*
+ * Safe areas (notch, home indicator, landscape cut-outs). Zero in normal browsers; non-zero in
+ * iOS Safari standalone and in the Capacitor app shell, where the page draws edge to edge.
+ */
+body {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  -webkit-tap-highlight-color: transparent;
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/*
+ * Category hub themes (src/lib/content/category-pages.ts). Hero + accents only; header, footer,
+ * type scale, buttons and cards stay the brand's. Text/background pairs meet WCAG AA.
+ */
+[data-cat-theme] { --cat-hero-bg: var(--color-ink); --cat-hero-ink: #fff; --cat-hero-muted: rgba(255,255,255,.8); --cat-accent: var(--color-accent); --cat-wash: var(--color-canvas); --cat-rule: var(--color-line); }
+[data-cat-theme="ferris"] { --cat-hero-bg: #121f4d; --cat-hero-ink: #fff; --cat-hero-muted: #d9dcef; --cat-accent: #ffc629; --cat-wash: #fff8e6; --cat-rule: #f1d78c; }
+[data-cat-theme="carousel"] { --cat-hero-bg: #f8efdd; --cat-hero-ink: #5a1625; --cat-hero-muted: #6b3b3f; --cat-accent: #b08d3c; --cat-wash: #fbf5ea; --cat-rule: #d9c08a; }
+[data-cat-theme="swing"] { --cat-hero-bg: #dff0fb; --cat-hero-ink: #0b1b3f; --cat-hero-muted: #2e3b5c; --cat-accent: #2f7fc1; --cat-wash: #eff7fd; --cat-rule: #a9d0ee; }
+[data-cat-theme="thrill"] { --cat-hero-bg: #140f24; --cat-hero-ink: #fff; --cat-hero-muted: #d8d3e8; --cat-accent: #e5352b; --cat-wash: #f4f2f8; --cat-rule: #c9c2dc; }
+[data-cat-theme="kiddie"] { --cat-hero-bg: #fff4c7; --cat-hero-ink: #0b1b3f; --cat-hero-muted: #2e3b5c; --cat-accent: #1f9d8b; --cat-wash: #fffaf0; --cat-rule: #f3d779; }
+
+/* Component classes live in the components layer so utilities (e.g. pl-9) can override them. */
+@layer components {
+.input {
+  @apply w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-base text-ink transition-[border-color,box-shadow] duration-150 placeholder:text-muted focus:border-ink focus:ring-2 focus:ring-accent/40 focus:outline-none;
+}
+.label {
+  @apply mb-1.5 block text-sm font-semibold text-ink;
+}
+/* Primary action: marigold with navy text */
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-ink transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60;
+}
+.btn-accent {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-3 text-[15px] font-semibold text-ink transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] disabled:opacity-60;
+}
+.btn-dark {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-ink px-5 py-3 text-[15px] font-semibold text-white transition hover:bg-ink-soft disabled:opacity-60;
+}
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line-strong bg-surface px-5 py-2.5 text-[15px] font-medium text-ink transition-[border-color] duration-150 hover:border-ink disabled:opacity-60;
+}
+.card {
+  @apply rounded-2xl border border-line bg-surface;
+}
+.eyebrow {
+  @apply text-xs font-semibold uppercase tracking-[0.14em] text-pop;
+}
+}

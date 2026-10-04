@@ -1,0 +1,29 @@
+{
+  "$comment": "Clearly labelled Test samples for the catalog proof. Company-controlled; no real operator identities, no prices, no specs. Created only in CarnivalRental Test by scripts/catalog-seed.ts.",
+  "samples": [
+    {
+      "title": "[TEST] Ferris wheel rental",
+      "description": "TEST LISTING — not a real offer. We source a suitable Ferris wheel and operating crew for your event, subject to availability.",
+      "publicData": { "categoryLevel1": "ferris-wheels" },
+      "metadata": { "offerKey": "ofr-test-ferris-wheel-family", "offeringScope": "ride-family", "requestableStates": ["tx"], "eventTypes": ["festival", "municipal"], "pricingMode": "quote-required" }
+    },
+    {
+      "title": "[TEST] Carousel rental",
+      "description": "TEST LISTING — not a real offer. We source a suitable carousel and operating crew for your event, subject to availability.",
+      "publicData": { "categoryLevel1": "carousels" },
+      "metadata": { "offerKey": "ofr-test-carousel-family", "offeringScope": "ride-family", "requestableStates": ["az"], "pricingMode": "quote-required" }
+    },
+    {
+      "title": "[TEST] Swing ride rental",
+      "description": "TEST LISTING — not a real offer. We source a suitable swing ride and operating crew for your event, subject to availability.",
+      "publicData": { "categoryLevel1": "swing-rides" },
+      "metadata": { "offerKey": "ofr-test-swing-ride-family", "offeringScope": "ride-family", "requestableStates": ["tx", "az"], "eventTypes": ["festival"], "pricingMode": "quote-required" }
+    },
+    {
+      "title": "[TEST] Kiddie ride rental",
+      "description": "TEST LISTING — not a real offer. We source a suitable kiddie ride and operating crew for your event, subject to availability.",
+      "publicData": { "categoryLevel1": "kiddie-rides" },
+      "metadata": { "offerKey": "ofr-test-kiddie-ride-family", "offeringScope": "ride-family", "requestableStates": ["ok"], "eventTypes": ["school"], "pricingMode": "quote-required" }
+    }
+  ]
+}
