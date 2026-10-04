@@ -1,0 +1,12 @@
+{
+  "marketplace": "CarnivalRental Test",
+  "importBatch": "carnival-hosts-2026-10-v1",
+  "accounts": {
+    "cw-1241": {
+      "userId": "6ac222df-506a-415d-9a3c-07d5f8c38fc0",
+      "email": "a-and-a-attractions@carnivalriderental.us",
+      "companyId": "a-and-a-attractions",
+      "createdAt": "2026-10-04T09:56:48.001Z"
+    }
+  }
+}
