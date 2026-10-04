@@ -211,6 +211,96 @@
       "email": "badgerland-midways@carnivalriderental.us",
       "companyId": "badgerland-midways",
       "createdAt": "2026-10-04T12:39:43.270Z"
+    },
+    "cw-12666": {
+      "userId": "6ac24995-a39c-47c7-844f-d70c18804d29",
+      "email": "beer-and-jessop-amusements@carnivalriderental.us",
+      "companyId": "beer-and-jessop-amusements",
+      "createdAt": "2026-10-04T12:41:57.641Z"
+    },
+    "disc-bortner-shows": {
+      "userId": "6ac24a1b-8371-468a-93cd-a3a6e9eb23e5",
+      "email": "bortner-shows@carnivalriderental.us",
+      "companyId": "bortner-shows",
+      "createdAt": "2026-10-04T12:44:11.783Z"
+    },
+    "cw-818": {
+      "userId": "6ac24a9e-77f2-40b6-a3c9-7ead679d2009",
+      "email": "butler-amusements@carnivalriderental.us",
+      "companyId": "butler-amusements",
+      "createdAt": "2026-10-04T12:46:22.837Z"
+    },
+    "disc-carnie-king-entertainment-llc": {
+      "userId": "6ac24ae8-eddf-4ec0-b36c-0734a6e79e5f",
+      "email": "carnie-king-entertainment-llc@carnivalriderental.us",
+      "companyId": "carnie-king-entertainment-llc",
+      "createdAt": "2026-10-04T12:47:36.683Z"
+    },
+    "cw-838": {
+      "userId": "6ac24b6c-2f6a-40c1-af1f-c8432c5cfcf7",
+      "email": "caseys-rides-inc@carnivalriderental.us",
+      "companyId": "caseys-rides-inc",
+      "createdAt": "2026-10-04T12:49:48.926Z"
+    },
+    "cw-12702": {
+      "userId": "6ac24bee-b28b-4b87-be6c-28f463b32e77",
+      "email": "chicketti-family-amusements@carnivalriderental.us",
+      "companyId": "chicketti-family-amusements",
+      "createdAt": "2026-10-04T12:51:58.894Z"
+    },
+    "cw-841": {
+      "userId": "6ac24c72-dcd3-4052-9dcf-7523dfd881cd",
+      "email": "christiansen-amusements@carnivalriderental.us",
+      "companyId": "christiansen-amusements",
+      "createdAt": "2026-10-04T12:54:11.180Z"
+    },
+    "disc-classic-amusements": {
+      "userId": "6ac24cf6-7771-484e-b43e-f0d39b8b4f57",
+      "email": "classic-amusements@carnivalriderental.us",
+      "companyId": "classic-amusements",
+      "createdAt": "2026-10-04T12:56:22.552Z"
+    },
+    "cw-12687": {
+      "userId": "6ac24d78-3aa0-4dab-92fe-e1a886868b78",
+      "email": "classic-rides-amusements@carnivalriderental.us",
+      "companyId": "classic-rides-amusements",
+      "createdAt": "2026-10-04T12:58:32.482Z"
+    },
+    "cw-844": {
+      "userId": "6ac24dbf-0bdb-47a8-8bef-ebb63453a53e",
+      "email": "cole-shows-amusement-co@carnivalriderental.us",
+      "companyId": "cole-shows-amusement-co",
+      "createdAt": "2026-10-04T12:59:43.290Z"
+    },
+    "cw-847": {
+      "userId": "6ac24e42-6892-4d58-bdb0-209779bab545",
+      "email": "coleman-brothers-shows@carnivalriderental.us",
+      "companyId": "coleman-brothers-shows",
+      "createdAt": "2026-10-04T13:01:54.471Z"
+    },
+    "cw-850": {
+      "userId": "6ac24ec6-7c6a-4124-b40d-ed0d0ed100c4",
+      "email": "conner-amusements@carnivalriderental.us",
+      "companyId": "conner-amusements",
+      "createdAt": "2026-10-04T13:04:07.075Z"
+    },
+    "cw-1161": {
+      "userId": "6ac24f4a-cb76-476e-a799-2daf850cb84c",
+      "email": "crescent-city-amusements@carnivalriderental.us",
+      "companyId": "crescent-city-amusements",
+      "createdAt": "2026-10-04T13:06:18.567Z"
+    },
+    "cw-941": {
+      "userId": "6ac24fcd-7fe4-43b4-acc5-b3e85d1f3f72",
+      "email": "cushing-amusements@carnivalriderental.us",
+      "companyId": "cushing-amusements",
+      "createdAt": "2026-10-04T13:08:30.094Z"
+    },
+    "cw-1097": {
+      "userId": "6ac25015-08be-4c5c-b289-b8e4eb52f0c4",
+      "email": "d-c-lynch-shows@carnivalriderental.us",
+      "companyId": "d-c-lynch-shows",
+      "createdAt": "2026-10-04T13:09:41.255Z"
     }
   }
 }
