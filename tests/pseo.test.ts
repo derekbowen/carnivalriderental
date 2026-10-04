@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { CatalogRecord } from "@/lib/catalog/normalize";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import { occasionGate, occasionStateGate, PSEO_THRESHOLDS, pseoRoutes, stateGate, supplyFor } from "@/lib/seo/pseo";
+import { checkSlugNamespaces, RESERVED_TOP_LEVEL } from "@/lib/seo/namespaces";
 import { paths } from "@/lib/seo/routes";
 import { breadcrumbs, offeringList, rentalService, serializeJsonLd } from "@/lib/seo/structured-data";
 import occasionsJson from "@/lib/taxonomy/occasions.json";
@@ -118,23 +119,31 @@ describe("live supply + gates", () => {
   it("enumerates every state, occasion and combination with canonical paths", () => {
     const routes = pseoRoutes(snap([]));
     expect(routes).toHaveLength(51 + OCCASIONS.length + OCCASIONS.length * 51);
-    expect(routes.some((r) => r.path === "/events/bar-mitzvahs/new-york")).toBe(true);
+    expect(routes.some((r) => r.path === "/new-york/bar-mitzvahs")).toBe(true);
     expect(routes.every((r) => !r.gate.indexable)).toBe(true);
   });
 });
 
 describe("routes + structured data", () => {
   it("builds canonical paths and request prefill links", () => {
-    expect(paths.state("texas")).toBe("/locations/texas");
-    expect(paths.occasionState("bar-mitzvahs", "new-york")).toBe("/events/bar-mitzvahs/new-york");
+    expect(paths.state("texas")).toBe("/texas");
+    expect(paths.city("texas", "austin")).toBe("/texas/austin");
+    expect(paths.rideCity("ferris-wheel-rental", "texas", "austin")).toBe("/texas/austin/ferris-wheel-rental");
+    expect(paths.occasionState("bar-mitzvahs", "new-york")).toBe("/new-york/bar-mitzvahs");
     expect(paths.request(undefined, "texas", undefined, "bar-mitzvahs")).toBe("/request?state=texas&occasion=bar-mitzvahs");
     expect(() => paths.occasion("Bar Mitzvahs")).toThrow();
+  });
+
+  it("keeps the /{state}/… namespace collision-free", () => {
+    expect(checkSlugNamespaces()).toEqual([]);
+    expect(checkSlugNamespaces(["austin", "bar-mitzvahs"])).toEqual(['city slug "bar-mitzvahs" collides with occasion id']);
+    expect(US_STATES.some((s) => RESERVED_TOP_LEVEL.includes(s.slug))).toBe(false);
   });
 
   it("emits no ratings or prices and cannot break out of the script tag", () => {
     const data = [
       breadcrumbs([{ name: "Home", path: "/" }]),
-      rentalService({ name: "x", description: "y", path: "/locations/texas", areaServed: { type: "State", name: "Texas" } }),
+      rentalService({ name: "x", description: "y", path: "/texas", areaServed: { type: "State", name: "Texas" } }),
       offeringList("rides", [rec({ title: "</script><b>" })], () => "/preview/rides/x"),
     ];
     const json = serializeJsonLd(data);

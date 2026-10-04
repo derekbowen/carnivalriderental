@@ -1,37 +1,18 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { RequestCta } from "@/components/RequestCta";
 import { DemoBadge, EstimateLabel } from "@/components/badges";
-import { getContent, getLocation } from "@/lib/content";
-import { seoMetadata } from "@/lib/seo/metadata";
-import { cityGate } from "@/lib/seo/publication";
+import { getContent, type ServiceLocation } from "@/lib/content";
 import { paths } from "@/lib/seo/routes";
 
-export const dynamicParams = false;
-export const revalidate = 3600;
-
-type P = { state: string; city: string };
-
-export function generateStaticParams(): P[] {
-  return getContent().locations.map((l) => ({ state: l.stateSlug, city: l.citySlug }));
-}
-
-export async function generateMetadata({ params }: { params: Promise<P> }) {
-  const p = await params;
-  const l = getLocation(p.state, p.city);
-  if (!l) return {};
-  return seoMetadata({
-    path: paths.city(l.stateSlug, l.citySlug),
+export function cityCopy(l: ServiceLocation) {
+  return {
     title: `Carnival ride rentals in ${l.cityName}, ${l.stateCode}`,
     description: `Request carnival rides for events in ${l.cityName}, ${l.stateName}. We source rides and operating crews, subject to availability.`,
-    gate: cityGate(l),
-  });
+  };
 }
 
-export default async function CityPage({ params }: { params: Promise<P> }) {
-  const p = await params;
-  const l = getLocation(p.state, p.city);
-  if (!l) notFound();
+/** City service page body (/{state}/{city}). */
+export function CityPage({ l }: { l: ServiceLocation }) {
   const { rides, coverage } = getContent();
   const verifiedHere = coverage.filter((c) => c.stateSlug === l.stateSlug && c.citySlug === l.citySlug);
   return (

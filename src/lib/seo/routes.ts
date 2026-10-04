@@ -4,16 +4,20 @@ import { siteUrl } from "../config";
  * THE canonical URL structure. Every page family builds its path here and nowhere
  * else, so canonicals, internal links and sitemap entries cannot drift apart.
  *
- *   /rides                                  browse all ride rental offerings
- *   /rides/{ride}                           ride rental offering
- *   /rides/{ride}/{state}/{city}            ride + location page
+ * Local pages hang directly off the domain (no /locations or /p prefix):
+ *   /{state}                                state hub (cities, occasions, live supply)
+ *   /{state}/{city}                         city service page
+ *   /{state}/{city}/{ride}                  ride + city page
+ *   /{state}/{occasion}                     occasion + state ("bar mitzvahs in Texas")
+ * National hubs keep a short prefix (a bare /{slug} is reserved for states):
+ *   /rides, /rides/{ride}                   ride rental offerings
  *   /categories/{category}                  ride category
- *   /locations/{state}                      state hub (cities, occasions, live supply)
- *   /locations/{state}/{city}               city service page
+ *   /events, /events/{occasion}             occasion index (noindex) + occasion hub
  *   /operators                              operator program (early access)
- *   /events                                 occasion index (navigation, noindex)
- *   /events/{occasion}                      occasion hub ("carnival rides for bar mitzvahs")
- *   /events/{occasion}/{state}              occasion + state
+ *
+ * City slugs and occasion ids share the /{state}/… namespace; checkSlugNamespaces()
+ * fails the build on a collision. Old /locations, /rides/{ride}/{state}/{city} and
+ * /events/{occasion}/{state} URLs redirect permanently (next.config.ts).
  *
  * Rules: lowercase, hyphenated slugs, no trailing slash, no query strings in
  * canonicals (filtered /rides?category=… views canonicalise to /rides).
@@ -29,17 +33,17 @@ export const paths = {
   home: () => "/",
   rides: () => "/rides",
   ride: (ride: string) => `/rides/${seg(ride)}`,
-  rideCity: (ride: string, state: string, city: string) => `/rides/${seg(ride)}/${seg(state)}/${seg(city)}`,
+  rideCity: (ride: string, state: string, city: string) => `/${seg(state)}/${seg(city)}/${seg(ride)}`,
   /** Development previews of Sharetribe-backed catalog records (always noindex). */
   previewRide: (ride: string) => `/preview/rides/${seg(ride)}`,
   previewRideCity: (ride: string, state: string, city: string) => `/preview/rides/${seg(ride)}/${seg(state)}/${seg(city)}`,
   category: (category: string) => `/categories/${seg(category)}`,
-  state: (state: string) => `/locations/${seg(state)}`,
-  city: (state: string, city: string) => `/locations/${seg(state)}/${seg(city)}`,
+  state: (state: string) => `/${seg(state)}`,
+  city: (state: string, city: string) => `/${seg(state)}/${seg(city)}`,
   operators: () => "/operators",
   occasions: () => "/events",
   occasion: (occasion: string) => `/events/${seg(occasion)}`,
-  occasionState: (occasion: string, state: string) => `/events/${seg(occasion)}/${seg(state)}`,
+  occasionState: (occasion: string, state: string) => `/${seg(state)}/${seg(occasion)}`,
   request: (ride?: string, state?: string, city?: string, occasion?: string) => {
     const q = new URLSearchParams();
     if (ride) q.set("ride", seg(ride));

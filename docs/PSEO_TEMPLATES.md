@@ -1,6 +1,6 @@
 # pSEO page templates — state, event type ("occasion"), ride type
 
-Status: **built, noindex**. Every page renders; none is indexable until live supply and approved copy exist (gates below). Code: `src/lib/taxonomy/`, `src/lib/seo/pseo.ts`, `src/lib/seo/structured-data.ts`, `src/components/OccasionPage.tsx`, `src/app/locations/[state]`, `src/app/events/…`. Tests: `tests/pseo.test.ts`, `e2e/pseo.spec.ts`.
+Status: **built, noindex**. Every page renders; none is indexable until live supply and approved copy exist (gates below). Code: `src/lib/taxonomy/`, `src/lib/seo/pseo.ts`, `src/lib/seo/structured-data.ts`, `src/components/OccasionPage.tsx`, `src/app/[state]/…`, `src/app/events/…`. Tests: `tests/pseo.test.ts`, `e2e/pseo.spec.ts`.
 
 ## 1. Dimensions (the JSON data)
 
@@ -46,11 +46,14 @@ No specs (height, riders, footprint, power). Brand-associated names appear only 
 
 | Family | URL | Pages | Rendering |
 |---|---|---|---|
-| State hub | `/locations/{state}` | 51 | SSG + ISR 10 min |
+| State hub | `/{state}` | 51 | SSG + ISR 10 min |
 | Occasion index | `/events` | 1 | navigation, always noindex |
 | Occasion hub | `/events/{occasion}` | 75 | SSG + ISR 10 min |
-| Occasion + state | `/events/{occasion}/{state}` | 3,825 | on first request + ISR 10 min |
-| City (existing) | `/locations/{state}/{city}` | per city | existing gate |
+| Occasion + state | `/{state}/{occasion}` | 3,825 | on first request + ISR 10 min |
+| City | `/{state}/{city}` | per city | existing gate |
+| Ride + city | `/{state}/{city}/{ride}` | per ride × city | existing gate |
+
+Local URLs hang directly off the domain (founder decision 2026-10-04). City slugs and occasion ids share `/{state}/…`, so a collision fails the build (`checkSlugNamespaces`). Old `/locations/…`, `/rides/{ride}/{state}/{city}` and `/events/{occasion}/{state}` URLs 308-redirect to the new ones.
 
 ## 3. Section order (the template)
 

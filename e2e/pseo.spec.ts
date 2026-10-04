@@ -35,20 +35,20 @@ const jsonLdTypes = async (page: import("@playwright/test").Page) =>
   (await page.locator('script[type="application/ld+json"]').allTextContents()).flatMap((t) => (JSON.parse(t) as { "@type": string }[]).map((d) => d["@type"]));
 
 test("state hub renders for every state, noindex, with structured data and occasion links", async ({ page, request }) => {
-  for (const s of ["texas", "district-of-columbia", "wyoming"]) expect((await request.get(`/locations/${s}`)).status()).toBe(200);
-  expect((await request.get("/locations/atlantis")).status()).toBe(404);
-  await page.goto("/locations/texas");
+  for (const s of ["texas", "district-of-columbia", "wyoming"]) expect((await request.get(`/${s}`)).status()).toBe(200);
+  expect((await request.get("/atlantis")).status()).toBe(404);
+  await page.goto("/texas");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals in Texas");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-  await expect(page.getByRole("link", { name: "Carnival rides for bar mitzvahs" })).toHaveAttribute("href", "/events/bar-mitzvahs/texas");
+  await expect(page.getByRole("link", { name: "Carnival rides for bar mitzvahs" })).toHaveAttribute("href", "/texas/bar-mitzvahs");
   expect(await jsonLdTypes(page)).toEqual(expect.arrayContaining(["BreadcrumbList", "Service", "FAQPage"]));
 });
 
 test("occasion + state lists live supply in suggested categories first, labelled, and 404s unknown slugs", async ({ page, request }) => {
-  expect((await request.get("/events/bar-mitzvahs/atlantis")).status()).toBe(404);
-  expect((await request.get("/events/unicorn-parties/texas")).status()).toBe(404);
+  expect((await request.get("/atlantis/bar-mitzvahs")).status()).toBe(404);
+  expect((await request.get("/texas/unicorn-parties")).status()).toBe(404);
 
-  await page.goto("/events/bar-mitzvahs/texas");
+  await page.goto("/texas/bar-mitzvahs");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals for bar mitzvahs in Texas");
   await expect(page.getByTestId("supply-list").first()).toContainText("[TEST] Ferris wheel rental");
   await expect(page.getByText("Test sample").first()).toBeVisible();
@@ -59,7 +59,7 @@ test("occasion + state lists live supply in suggested categories first, labelled
 
   // Arizona: the carousel is not a suggested category for bar mitzvahs, so it is listed under "other rides";
   // the Texas-only Ferris wheel does not appear at all.
-  await page.goto("/events/bar-mitzvahs/arizona");
+  await page.goto("/arizona/bar-mitzvahs");
   await expect(page.getByTestId("supply-empty")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Other rides you can request in Arizona" })).toBeVisible();
   await expect(page.locator("main")).not.toContainText("[TEST] Ferris wheel rental");
@@ -69,5 +69,19 @@ test("occasion hub and index render and link to every state", async ({ page, req
   expect((await request.get("/events")).status()).toBe(200);
   await page.goto("/events/quinceaneras");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals for quinceañeras");
-  await expect(page.getByRole("link", { name: "District of Columbia" })).toHaveAttribute("href", "/events/quinceaneras/district-of-columbia");
+  await expect(page.getByRole("link", { name: "District of Columbia" })).toHaveAttribute("href", "/district-of-columbia/quinceaneras");
+});
+
+test("old prefixed URLs redirect permanently to the direct ones", async ({ request }) => {
+  for (const [from, to] of [
+    ["/locations/texas", "/texas"],
+    ["/locations/texas/austin", "/texas/austin"],
+    ["/rides/ferris-wheel-rental/texas/austin", "/texas/austin/ferris-wheel-rental"],
+    ["/events/bar-mitzvahs/texas", "/texas/bar-mitzvahs"],
+  ]) {
+    const r = await request.get(from, { maxRedirects: 0 });
+    expect(r.status(), from).toBe(308);
+    expect(r.headers()["location"], from).toBe(to);
+  }
+  expect((await request.get("/texas/austin/not-a-ride")).status()).toBe(404);
 });

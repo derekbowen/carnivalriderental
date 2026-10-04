@@ -122,7 +122,7 @@ test("internal console is protected, and status updates reach the customer witho
 
 test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", async ({ page, request }) => {
   const origins = new Set<string>();
-  for (const path of ["/rides/ferris-wheel-rental", "/locations/texas/austin", "/rides/ferris-wheel-rental/texas/austin", "/categories/ferris-wheels"]) {
+  for (const path of ["/rides/ferris-wheel-rental", "/texas/austin", "/texas/austin/ferris-wheel-rental", "/categories/ferris-wheels"]) {
     const res = await request.get(path);
     expect(res.status()).toBe(200);
     expect(res.headers()["x-robots-tag"]).toContain("noindex");
@@ -141,7 +141,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
     }
   }
   expect(origins.size).toBe(1);
-  await page.goto("/locations/texas/austin");
+  await page.goto("/texas/austin");
   await expect(page.getByText("None recorded yet. We do not claim local inventory")).toBeVisible();
 
   const sitemapRes = await request.get("/sitemap.xml");

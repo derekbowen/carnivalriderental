@@ -8,16 +8,17 @@ import { paths } from "@/lib/seo/routes";
 export const dynamicParams = false;
 export const revalidate = 3600;
 
-type P = { ride: string; state: string; city: string };
+/** /{state}/{city}/{ride} */
+type P = { state: string; slug: string; ride: string };
 
 export function generateStaticParams(): P[] {
   const { rides, locations } = getContent();
-  return rides.flatMap((r) => locations.map((l) => ({ ride: r.slug, state: l.stateSlug, city: l.citySlug })));
+  return rides.flatMap((r) => locations.map((l) => ({ state: l.stateSlug, slug: l.citySlug, ride: r.slug })));
 }
 
 function load(p: P) {
   const ride = getRide(p.ride);
-  const location = getLocation(p.state, p.city);
+  const location = getLocation(p.state, p.slug);
   return ride && location ? { ride, location } : null;
 }
 
