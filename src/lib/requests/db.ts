@@ -89,6 +89,16 @@ const MIGRATIONS = [
      created_at TEXT NOT NULL
    )`,
   `CREATE INDEX IF NOT EXISTS idx_status_events_request ON status_events(request_id, created_at)`,
+  // Operator program early-access applications (one row per email; resubmits update it).
+  `CREATE TABLE IF NOT EXISTS operator_applications (
+     id TEXT PRIMARY KEY,
+     email TEXT NOT NULL UNIQUE,
+     payload_json TEXT NOT NULL,
+     status TEXT NOT NULL,
+     submissions INTEGER NOT NULL,
+     created_at TEXT NOT NULL,
+     updated_at TEXT NOT NULL
+   )`,
 ];
 
 export function openDb(file: string): Db {

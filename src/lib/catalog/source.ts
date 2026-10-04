@@ -53,8 +53,13 @@ export async function getCatalog(force = false): Promise<CatalogSnapshot> {
   const harness = process.env.CATALOG_SOURCE_FILE;
   if (harness && appEnv() !== "production") {
     // Test harness: listings in Marketplace API response shape, re-read on every call (no cache).
-    const listings = (JSON.parse(fs.readFileSync(harness, "utf8")) as { data: SharetribeListing[] }).data;
-    return { ...normalizeAll(listings), fetchedAt: new Date().toISOString(), source: "test-harness-file" };
+    try {
+      const listings = (JSON.parse(fs.readFileSync(harness, "utf8")) as { data: SharetribeListing[] }).data;
+      return { ...normalizeAll(listings), fetchedAt: new Date().toISOString(), source: "test-harness-file" };
+    } catch (e) {
+      // A missing or unreadable harness file is "no catalog", never a crash (pages and sitemap still render).
+      return { records: [], rejected: [], fetchedAt: new Date().toISOString(), source: "error", error: `test harness: ${(e as Error).message}` };
+    }
   }
   if (!force && cache && Date.now() - cache.at < TTL_MS) return cache.value;
   let value: CatalogSnapshot;

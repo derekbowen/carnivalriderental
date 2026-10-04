@@ -79,6 +79,7 @@ export function SiteFooter() {
             <ul className="mt-3 space-y-2 text-white/75">
               <li><Link className="hover:text-white" href="/#how-it-works">How managed booking works</Link></li>
               <li><Link className="hover:text-white" href={paths.request()}>Start an event request</Link></li>
+              <li><Link className="hover:text-white" href={paths.operators()}>For ride operators</Link></li>
             </ul>
           </div>
         </nav>

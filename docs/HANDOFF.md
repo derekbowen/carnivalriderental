@@ -34,6 +34,10 @@ Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED co
 6. **Email + SMS provider** for booking communication.
 7. **Operator research** — coworker fills `research/operator-research-template.xlsx`; send it to Claude directly (not into the repo).
 8. **pSEO copy review** — approve occasion intros and ride types (`docs/PSEO_TEMPLATES.md` §6).
+9. **Operator program decisions** — who pays the fee and the rate, far-out events, updated-price path, operator requirements, cancellations (`docs/OPERATOR_MARKETPLACE.md` §6). Then approve the `/operators` copy.
+
+## Operator program (2026-10-04)
+`/operators` early-access page (noindex) + application form → `/internal/operators`. No accounts, listings, payments or SMS. See `docs/OPERATOR_MARKETPLACE.md`.
 
 ## pSEO families (2026-10-04)
 State hubs (51), occasion hubs (75) and occasion × state (3,825) are built and noindex. They show live catalog supply only and become indexable per `docs/PSEO_TEMPLATES.md` §4.

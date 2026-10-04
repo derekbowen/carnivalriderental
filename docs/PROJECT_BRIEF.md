@@ -19,6 +19,10 @@ It is **not**: a directory that sends customers away, a lead-selling site, an ow
 
 Long-term goal: make every carnival ride in the US discoverable and sourceable through this business. That is an ambition, **not** a claim that we have rides under contract.
 
+### Second track — operator program (founder direction, 2026-10-04)
+
+Later, operators may list their own rides, set their own price and be paid through Stripe Connect. Operators pay 0% commission; the marketplace is funded by a customer service fee (rate to be set). This runs **alongside** the managed track and is **not** a launch dependency. Today only an early-access page (`/operators`) and an application list exist. Design, verified Sharetribe constraints and open decisions: `docs/OPERATOR_MARKETPLACE.md`. In that track the operator is the seller on the card charge (destination charges), so the seller-of-record rules above apply to managed bookings only.
+
 ## Ownership
 
 The business is **owned and operated by 10000 Solutions LLC** (parent company). It is the seller of record: customers contract with and pay 10000 Solutions LLC (via its own Sharetribe seller account and Stripe Connect onboarding), and operators are its subcontracted suppliers.

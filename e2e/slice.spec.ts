@@ -144,7 +144,10 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
   await page.goto("/locations/texas/austin");
   await expect(page.getByText("None recorded yet. We do not claim local inventory")).toBeVisible();
 
-  const sitemap = await (await request.get("/sitemap.xml")).text();
+  const sitemapRes = await request.get("/sitemap.xml");
+  expect(sitemapRes.status()).toBe(200);
+  const sitemap = await sitemapRes.text();
+  expect(sitemap).toContain("<urlset");
   expect(sitemap).not.toContain("<url>");
   expect(await (await request.get("/robots.txt")).text()).toContain("Disallow: /");
   expect((await request.get("/rides/not-a-ride")).status()).toBe(404);

@@ -1,5 +1,6 @@
 import { publicIndexingEnabled } from "../config";
 import { getContent, getVerifiedCoverage } from "../content";
+import { OPERATOR_PROGRAM } from "../operators/program";
 import type { RideCategory, RideOffering, ServiceLocation } from "../content/types";
 import { paths } from "./routes";
 
@@ -58,10 +59,19 @@ export function rideCityGate(ride: RideOffering, location: ServiceLocation): Gat
   return result([...new Set(reasons)]);
 }
 
+/** The operator program page: indexable only once the founder approves its copy. */
+export function operatorPageGate(): GateResult {
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (!OPERATOR_PROGRAM.copyApproved) reasons.push("operator page copy not approved");
+  return result(reasons);
+}
+
 /** Every renderable SEO route with its gate. Used by sitemap, tests and the internal SEO view. */
 export function allSeoRoutes(): { path: string; family: string; gate: GateResult }[] {
   const { rides, categories, locations } = getContent();
   const out: { path: string; family: string; gate: GateResult }[] = [];
+  out.push({ path: paths.operators(), family: "operators", gate: operatorPageGate() });
   for (const c of categories) out.push({ path: paths.category(c.slug), family: "category", gate: categoryGate(c) });
   for (const r of rides) out.push({ path: paths.ride(r.slug), family: "ride", gate: rideGate(r) });
   for (const l of locations) out.push({ path: paths.city(l.stateSlug, l.citySlug), family: "city", gate: cityGate(l) });

@@ -10,6 +10,7 @@ import { siteUrl } from "../config";
  *   /categories/{category}                  ride category
  *   /locations/{state}                      state hub (cities, occasions, live supply)
  *   /locations/{state}/{city}               city service page
+ *   /operators                              operator program (early access)
  *   /events                                 occasion index (navigation, noindex)
  *   /events/{occasion}                      occasion hub ("carnival rides for bar mitzvahs")
  *   /events/{occasion}/{state}              occasion + state
@@ -35,6 +36,7 @@ export const paths = {
   category: (category: string) => `/categories/${seg(category)}`,
   state: (state: string) => `/locations/${seg(state)}`,
   city: (state: string, city: string) => `/locations/${seg(state)}/${seg(city)}`,
+  operators: () => "/operators",
   occasions: () => "/events",
   occasion: (occasion: string) => `/events/${seg(occasion)}`,
   occasionState: (occasion: string, state: string) => `/events/${seg(occasion)}/${seg(state)}`,
