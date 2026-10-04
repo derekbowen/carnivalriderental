@@ -237,6 +237,9 @@ function writeJsonAtomic(file: string, value: unknown) {
   if (names.integ !== names.mkt) throw new Error(`Refusing: Integration API marketplace "${names.integ}" ≠ Marketplace API marketplace "${names.mkt}".`);
   if (target === "test" && names.integ !== TEST_MARKETPLACE) throw new Error(`Refusing: --target test but the configured marketplace is "${names.integ}".`);
   if (target === "live") {
+    // A provider-managed receiving domain (Resend's <id>.resend.app) is fine for the Test proof, but the
+    // addresses vanish with that account: production needs a domain whose DNS we own.
+    if (/(^|\.)resend\.app$/.test(domain.domain)) throw new Error(`Refusing: ${domain.domain} is a Resend-managed domain. Live accounts need a claim domain we own (e.g. claims.<our domain> with MX → Resend inbound).`);
     if (names.integ === TEST_MARKETPLACE) throw new Error("Refusing: --target live but the configured credentials are the Test marketplace.");
     if (opt("confirm-live") !== names.integ) throw new Error(`Refusing: pass --confirm-live "${names.integ}" to write to that Live marketplace.`);
   }

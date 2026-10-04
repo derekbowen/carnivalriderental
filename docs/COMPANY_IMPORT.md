@@ -98,7 +98,11 @@ npm run import:companies -- --apply --target live --confirm-live "<Live marketpl
 
 ## 7. Blockers
 
-1. **Claim domain:** none configured, and Claude will not invent one. The founder chooses a domain we own with a catch-all inbox (e.g. a subdomain of the brand domain) and sets `IMPORT_CLAIM_EMAIL_DOMAIN`.
+1. **Claim domain:** none configured, and Claude will not invent one. Plan (2026-10-04): receive on **Resend inbound**. Resend accepts mail for any address on a receiving domain, so it works as a catch-all. Mail stays in the Resend dashboard and its Receiving API; no webhook is needed. Resend docs: https://resend.com/docs/dashboard/receiving/introduction
+   - **Test proof:** the Resend-managed `<id>.resend.app` domain is acceptable.
+   - **Live:** a subdomain we own, e.g. `claims.<our domain>`, with Resend's MX record on that subdomain only. The CLI refuses `*.resend.app` for `--target live`.
+   - Never use a Pool Rental Near Me domain or its DNS.
+   - Never click the Sharetribe verification links that arrive there: that would mark the account verified.
 2. **Live marketplace:** `.env.local` holds Test (and Dev) credentials only. A production run needs the Live Integration and Marketplace client credentials and explicit approval.
 3. **Claim process:** not built. It needs an operator procedure: password reset to the claim mailbox, change the email to the company's, then set `claimStatus` and verify. Until then the accounts are placeholders that only we can reach.
 4. If a user type is added in Console later, rows need `publicData.userType`. Test has none today.
