@@ -16,6 +16,7 @@ Read `docs/PROJECT_BRIEF.md` first. It is the business model; do not drift from 
 - No real charges, operator/customer outreach, mass imports, production publishing or public indexing without explicit approval.
 - Company accounts are imported only via `npm run import:companies` (`docs/COMPANY_IMPORT.md`): A+B tiers, unclaimed, claim domain we control, no research notes in Sharetribe, never overwrite or reset an existing account.
 - Operator ride listings are imported only via `npm run import:listings` (`docs/LISTING_IMPORT.md`, `contract/operator-listing-contract.json`): pendingApproval only, no photo uploads, dimensions public only from the operator's own site, held rows stay held. Never publish them without a founder go.
+- Email goes through `src/lib/email` (outbox + Resend, `docs/EMAIL.md`). `EMAIL_MODE` stays `test` (everything to qa@) and outreach needs an approved campaign, unsubscribe, suppression and a real postal address. Never send to customers or operators without a founder go.
 - Secrets live in `.env.local` (gitignored). Never commit or log them.
 
 Checks before pushing: `npm run typecheck && npm test && npm run build && npm run test:e2e`.

@@ -565,6 +565,78 @@
       "email": "janesky-brothers-amusements@carnivalriderental.us",
       "companyId": "janesky-brothers-amusements",
       "createdAt": "2026-10-04T14:38:09.978Z"
+    },
+    "cw-1211": {
+      "userId": "6ac26932-435d-409b-a498-8d9bd7a74d74",
+      "email": "jessop-amusements@carnivalriderental.us",
+      "companyId": "jessop-amusements",
+      "createdAt": "2026-10-04T14:56:50.834Z"
+    },
+    "disc-johnson-brothers-rides-and-concessions": {
+      "userId": "6ac26936-a38c-41e2-8408-6c1a6c5d5ae5",
+      "email": "johnson-brothers-rides-and-concessions@carnivalriderental.us",
+      "companyId": "johnson-brothers-rides-and-concessions",
+      "createdAt": "2026-10-04T14:56:54.521Z"
+    },
+    "cw-1107": {
+      "userId": "6ac2693a-30df-496d-b15a-8ecfb685a790",
+      "email": "johnston-amusements@carnivalriderental.us",
+      "companyId": "johnston-amusements",
+      "createdAt": "2026-10-04T14:56:58.702Z"
+    },
+    "cw-926": {
+      "userId": "6ac2693e-651a-447d-a26c-845f3077ec06",
+      "email": "jolly-shows@carnivalriderental.us",
+      "companyId": "jolly-shows",
+      "createdAt": "2026-10-04T14:57:02.917Z"
+    },
+    "cw-1196": {
+      "userId": "6ac26942-37be-4d45-9db0-cea9e46b7fff",
+      "email": "kastl-amusements@carnivalriderental.us",
+      "companyId": "kastl-amusements",
+      "createdAt": "2026-10-04T14:57:07.238Z"
+    },
+    "cw-932": {
+      "userId": "6ac26947-e0fb-4989-b3dd-044a61054a29",
+      "email": "kissel-amusement-co@carnivalriderental.us",
+      "companyId": "kissel-amusement-co",
+      "createdAt": "2026-10-04T14:57:11.318Z"
+    },
+    "cw-933": {
+      "userId": "6ac2694b-80a3-43d0-9c7c-4d25df6ce91a",
+      "email": "kissel-entertainment@carnivalriderental.us",
+      "companyId": "kissel-entertainment",
+      "createdAt": "2026-10-04T14:57:15.504Z"
+    },
+    "disc-knoxs-great-american-midway": {
+      "userId": "6ac2694f-7431-4180-b1a9-fa9083134ed4",
+      "email": "knoxs-great-american-midway@carnivalriderental.us",
+      "companyId": "knoxs-great-american-midway",
+      "createdAt": "2026-10-04T14:57:19.728Z"
+    },
+    "disc-l-and-l-entertainment": {
+      "userId": "6ac26953-11c6-4791-9c36-06967b9b9109",
+      "email": "l-and-l-entertainment@carnivalriderental.us",
+      "companyId": "l-and-l-entertainment",
+      "createdAt": "2026-10-04T14:57:23.922Z"
+    },
+    "disc-lowery-carnival-company": {
+      "userId": "6ac2695f-41e4-433e-bae8-37c1f5399488",
+      "email": "lowery-carnival-company@carnivalriderental.us",
+      "companyId": "lowery-carnival-company",
+      "createdAt": "2026-10-04T14:57:35.607Z"
+    },
+    "cw-12674": {
+      "userId": "6ac269e2-e619-4c91-a6da-2736a69a3f6a",
+      "email": "luehrs-ideal-rides@carnivalriderental.us",
+      "companyId": "luehrs-ideal-rides",
+      "createdAt": "2026-10-04T14:59:46.718Z"
+    },
+    "cw-12650": {
+      "userId": "6ac26a66-d6ba-423a-8438-49b24004a1f4",
+      "email": "main-event-amusements@carnivalriderental.us",
+      "companyId": "main-event-amusements",
+      "createdAt": "2026-10-04T15:01:59.002Z"
     }
   }
 }

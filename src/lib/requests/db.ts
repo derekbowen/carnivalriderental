@@ -99,6 +99,36 @@ const MIGRATIONS = [
      created_at TEXT NOT NULL,
      updated_at TEXT NOT NULL
    )`,
+  // Email outbox (src/lib/email): rows are written in the same transaction as the event that
+  // causes them and sent later by the dispatcher, so no email is lost or sent twice (dedupe_key).
+  `CREATE TABLE IF NOT EXISTS email_outbox (
+     id TEXT PRIMARY KEY,
+     kind TEXT NOT NULL CHECK (kind IN ('transactional', 'outreach')),
+     template TEXT NOT NULL,
+     campaign TEXT,
+     dedupe_key TEXT NOT NULL UNIQUE,
+     to_email TEXT NOT NULL,
+     subject TEXT NOT NULL,
+     html TEXT NOT NULL,
+     text TEXT NOT NULL,
+     reply_to TEXT,
+     unsubscribe_url TEXT,
+     request_id TEXT,
+     status TEXT NOT NULL,
+     attempts INTEGER NOT NULL DEFAULT 0,
+     sent_mode TEXT,
+     delivered_to TEXT,
+     provider_id TEXT,
+     error TEXT,
+     created_at TEXT NOT NULL,
+     sent_at TEXT
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_email_outbox_status ON email_outbox(status, created_at)`,
+  `CREATE TABLE IF NOT EXISTS email_suppressions (
+     email TEXT PRIMARY KEY,
+     reason TEXT NOT NULL,
+     created_at TEXT NOT NULL
+   )`,
 ];
 
 export function openDb(file: string): Db {

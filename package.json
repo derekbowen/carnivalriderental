@@ -22,7 +22,9 @@
     "catalog:seed": "tsx --env-file-if-exists=.env.local scripts/catalog-seed.ts",
     "catalog:search-proof": "tsx --env-file-if-exists=.env.local scripts/catalog-search-proof.ts",
     "import:companies": "tsx --env-file-if-exists=.env.local scripts/company-import.ts",
-    "import:listings": "tsx --env-file-if-exists=.env.local scripts/listing-import.ts"
+    "import:listings": "tsx --env-file-if-exists=.env.local scripts/listing-import.ts",
+    "email:dispatch": "tsx --env-file-if-exists=.env.local scripts/email-dispatch.ts",
+    "email:claim-invites": "tsx --env-file-if-exists=.env.local scripts/claim-invites.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

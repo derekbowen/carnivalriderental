@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { onPaymentAuthorized, onQuoteSent, onRequestCreated } from "../email/notify";
 import type { Db } from "./db";
 import type { CreateRequestInput } from "./schema";
 import { canTransition, canTransitionPayment, outreachAllowed, PAYMENT_POLICY } from "./state";
@@ -142,7 +143,9 @@ export class RequestService {
         )
         .run(id, reference, input.idempotencyKey, hash, JSON.stringify(input.brief), opts.isTestData ? 1 : 0, ts, ts);
       this.event({ requestId: id, track: "fulfilment", fromStatus: null, toStatus: "submitted", actor: "customer", note: null });
-      return { request: this.mustGet(id), created: true };
+      const request = this.mustGet(id);
+      onRequestCreated(this.db, request);
+      return { request, created: true };
     });
   }
 
@@ -346,7 +349,9 @@ export class RequestService {
       } else {
         this.event({ requestId: req.id, track: "note", fromStatus: null, toStatus: null, actor: "team", note: `Sent revised quote v${quote.version}` });
       }
-      return this.mustGet(req.id);
+      const updated = this.mustGet(req.id);
+      onQuoteSent(this.db, updated, quote);
+      return updated;
     });
   }
 
@@ -466,7 +471,9 @@ export class RequestService {
       }
       this.db.prepare(`UPDATE event_requests SET payment_status = ?, updated_at = ? WHERE id = ?`).run(to, now(), requestId);
       this.event({ requestId, track: "payment", fromStatus: req.paymentStatus, toStatus: to, actor: "team", note: `[DEMO] ${note ?? ""}`.trim() });
-      return this.mustGet(requestId);
+      const updated = this.mustGet(requestId);
+      if (to === "funds_authorized") onPaymentAuthorized(this.db, updated);
+      return updated;
     });
   }
 
