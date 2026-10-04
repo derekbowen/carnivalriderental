@@ -529,6 +529,42 @@
       "email": "houghton-enterprises@carnivalriderental.us",
       "companyId": "houghton-enterprises",
       "createdAt": "2026-10-04T14:26:00.632Z"
+    },
+    "disc-hulsey-amusements": {
+      "userId": "6ac2627c-8e5f-42e7-905c-9fd98f0ab33c",
+      "email": "hulsey-amusements@carnivalriderental.us",
+      "companyId": "hulsey-amusements",
+      "createdAt": "2026-10-04T14:28:12.497Z"
+    },
+    "cw-1224": {
+      "userId": "6ac26300-6618-4bef-a2a1-28512ed795ea",
+      "email": "inners-shows@carnivalriderental.us",
+      "companyId": "inners-shows",
+      "createdAt": "2026-10-04T14:30:24.776Z"
+    },
+    "cw-1159": {
+      "userId": "6ac26347-7e51-4708-bc52-c7c986128be2",
+      "email": "j-and-k-amusements@carnivalriderental.us",
+      "companyId": "j-and-k-amusements",
+      "createdAt": "2026-10-04T14:31:35.585Z"
+    },
+    "disc-j-and-k-shows": {
+      "userId": "6ac263ca-8280-449d-88a2-6704d70a276c",
+      "email": "j-and-k-shows@carnivalriderental.us",
+      "companyId": "j-and-k-shows",
+      "createdAt": "2026-10-04T14:33:46.295Z"
+    },
+    "cw-923": {
+      "userId": "6ac2644e-6111-420b-a508-7ea314803eb3",
+      "email": "james-gang-amusements@carnivalriderental.us",
+      "companyId": "james-gang-amusements",
+      "createdAt": "2026-10-04T14:35:58.545Z"
+    },
+    "disc-janesky-brothers-amusements": {
+      "userId": "6ac264d1-eecb-4b65-96ea-03372a39a231",
+      "email": "janesky-brothers-amusements@carnivalriderental.us",
+      "companyId": "janesky-brothers-amusements",
+      "createdAt": "2026-10-04T14:38:09.978Z"
     }
   }
 }
