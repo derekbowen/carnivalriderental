@@ -46,9 +46,11 @@ export function databasePath(): string {
 }
 
 export const BRAND = {
-  // Working placeholder name — not approved. Change here only.
-  name: process.env.NEXT_PUBLIC_BRAND_NAME || "Book a Carnival",
-  isPlaceholder: true,
+  // Founder-chosen brand (2026-10-04): "Carnival Ride Rental" at carnivalriderental.us. Change here only.
+  name: process.env.NEXT_PUBLIC_BRAND_NAME || "Carnival Ride Rental",
+  tagline: "Let us help you put a touch of magic on any event, anywhere.",
+  domain: "carnivalriderental.us",
+  isPlaceholder: false,
   // Legal owner/operator and seller of record (confirmed by the founder 2026-10-01).
   legalEntity: "10000 Solutions LLC",
 };
