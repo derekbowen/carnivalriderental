@@ -30,7 +30,7 @@ const NAV = [
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface">
+    <header className="safe-top sticky top-0 z-40 border-b border-line bg-surface">
       <div className="awning h-1.5" aria-hidden="true" />
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-10">
         <Link href="/" aria-label={`${BRAND.name} home`}><Logo /></Link>
@@ -40,7 +40,7 @@ export function SiteHeader() {
         </nav>
         {/* No-JS mobile menu */}
         <details className="relative md:hidden">
-          <summary className="list-none rounded-md p-2 text-ink [&::-webkit-details-marker]:hidden" aria-label="Menu"><MenuIcon className="h-5 w-5" /></summary>
+          <summary className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-md text-ink [&::-webkit-details-marker]:hidden" aria-label="Menu"><MenuIcon className="h-5 w-5" /></summary>
           <div className="absolute right-0 mt-2 w-60 rounded-xl border border-line bg-surface p-4 shadow-lg">
             <ul className="flex flex-col gap-3">
               {NAV.map((n) => <li key={n.href}><Link href={n.href} className="block py-1 text-[15px]">{n.label}</Link></li>)}
@@ -55,7 +55,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 bg-ink text-white">
+    <footer className="safe-bottom mt-24 bg-ink text-white">
       <div className="awning h-3" aria-hidden="true" />
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-12 lg:px-10">
         <div className="md:col-span-5">

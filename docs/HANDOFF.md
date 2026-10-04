@@ -36,6 +36,9 @@ Built and tested (88 unit, 11 e2e): approved contract, MATCH/DRIFT/UNVERIFIED co
 8. **pSEO copy review** — approve occasion intros and ride types (`docs/PSEO_TEMPLATES.md` §6).
 9. **Operator program decisions** — who pays the fee and the rate, far-out events, updated-price path, operator requirements, cancellations (`docs/OPERATOR_MARKETPLACE.md` §6). Then approve the `/operators` copy.
 
+## Mobile apps (2026-10-04)
+Web build is app-shell ready for a Capacitor wrapper (iOS + Android); see `docs/MOBILE_APP.md` for the wrapper must-dos.
+
 ## Operator program (2026-10-04)
 `/operators` early-access page (noindex) + application form → `/internal/operators`. No accounts, listings, payments or SMS. See `docs/OPERATOR_MARKETPLACE.md`.
 
