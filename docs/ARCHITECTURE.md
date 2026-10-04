@@ -5,7 +5,7 @@ Browser ──► Next.js 15 app (this repo, Node runtime)
               │
               ├─ Public SEO pages (SSG + ISR, revalidate 1h)  ◄── content layer (src/lib/content)
               │     /rides, /rides/{ride}, /rides/{ride}/{state}/{city},
-              │     /categories/{category}, /locations/{state}/{city}
+              │     /categories/{category}, /{state}/{city}
               │
               ├─ Event request flow  /request  ──POST /api/requests──┐
               ├─ Customer status     /requests/{ref}?t=token          │
