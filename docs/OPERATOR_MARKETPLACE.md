@@ -4,6 +4,14 @@ Status: **early access only.** Built: `/operators` landing page (noindex, copy n
 
 Single source for page numbers: `src/lib/operators/program.ts` (`operatorCommissionPct: 0`, `customerServiceFeePct: null`, `copyApproved: false`).
 
+
+## 0. Current implementation (2026-10-05)
+
+- **Claim:** `npm run ops:claim`. It verifies ownership (email on the company's website domain, or a founder-recorded manual check), hands over the existing placeholder account, and removes the unclaimed notice. Sharetribe cannot change a listing's author, so the account moves and the listings stay put.
+- **Booking eligibility:** `src/lib/operators/claim.ts → bookingBlockers`, applied by `npm run ops:bookable`. It requires all of: verified claim, ride approved, Stripe connected, payouts and charges enabled (Stripe API), an operator price, and a decided commission. Only then is `metadata.bookable=true` written. Connecting Stripe alone never makes a ride bookable.
+- **Unclaimed rides:** inquiry-only, through the house request desk (`npm run desk:list|show|reply`).
+- **Payments proven in Test** with `default-booking` (`npm run qa:payment`). Console commission is currently provider 10%, which is not decided. See `docs/LAUNCH_STATUS.md`.
+
 ## 1. The founder's model
 
 1. Operator lists a ride and sets the price.
