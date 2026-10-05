@@ -2,13 +2,17 @@ import type { Metadata } from "next";
 import { EventRequestForm } from "@/components/request/EventRequestForm";
 import { getContent, getLocation, getRide } from "@/lib/content";
 import { PricingNotice } from "@/components/PricingNotice";
+import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
 import { JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { categoryPageById } from "@/lib/content/category-pages";
 import { occasionById, stateBySlug } from "@/lib/taxonomy";
-import { getOperatorListing } from "@/lib/catalog/operator-search";
+import { getOperatorListing, isListingId } from "@/lib/catalog/operator-search";
+import { RideRequestForm } from "@/components/request/RideRequestForm";
+import { INQUIRY_ALIAS } from "@/lib/operators/claim";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +25,11 @@ type SP = { ride?: string; state?: string; city?: string; cityName?: string; dat
 
 export default async function RequestPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
+  // From /s "Request this ride": a marketplace inquiry for one operator ride.
+  if (sp.listing) return <OperatorRideRequest listingId={sp.listing} />;
+  // Marketplace deployments (request desk configured): general requests go to the desk too, so they
+  // are saved in Sharetribe. The legacy managed form below stays for local/e2e environments only.
+  if (process.env.REQUEST_DESK_LISTING_ID) return <OperatorRideRequest listingId={null} />;
   const ride = sp.ride ? getRide(sp.ride) : undefined;
   const loc = sp.state && sp.city ? getLocation(sp.state, sp.city) : undefined;
   // Homepage free-text "City, ST"
@@ -30,13 +39,7 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   const occasion = sp.occasion ? occasionById(sp.occasion) : undefined;
   // From category hubs: the ride type goes into the notes (the ride picker lists offerings, not categories).
   const category = sp.category ? categoryPageById(sp.category) : undefined;
-  // From /s "Request this ride": the operator listing goes into the notes (it is not a managed offering).
-  const listing = sp.listing ? await getOperatorListing(sp.listing) : null;
-  const noteLines = [
-    listing && `Requested ride: ${listing.title}${listing.company ? ` (${listing.company}${listing.base ? `, ${listing.base}` : ""})` : ""} [listing ${listing.id}]`,
-    category && `Ride type: ${category.name}`,
-    occasion && `Occasion: ${occasion.name}`,
-  ].filter(Boolean);
+  const noteLines = [category && `Ride type: ${category.name}`, occasion && `Occasion: ${occasion.name}`].filter(Boolean);
   const prefill = {
     rideSlug: ride?.slug,
     city: loc?.cityName ?? m?.[1],
@@ -66,6 +69,69 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
             <li>You get a private status page to follow progress.</li>
           </ul>
         </div>
+      </aside>
+    </div>
+  );
+}
+
+const ANY_RIDE = { id: "", title: "Help me choose a ride", company: null, base: null, photo: null, rideClassLabel: null, estimate: null, claimed: false } as const;
+
+async function OperatorRideRequest({ listingId }: { listingId: string | null }) {
+  const ride = listingId === null ? ANY_RIDE : isListingId(listingId) ? await getOperatorListing(listingId) : null;
+  const clientId = process.env.SHARETRIBE_CLIENT_ID;
+  const desk = process.env.REQUEST_DESK_LISTING_ID;
+  const marketplaceUrl = (process.env.SHARETRIBE_MARKETPLACE_URL ?? "").replace(/\/$/, "");
+  if (!ride || !clientId || !desk || !marketplaceUrl) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
+        <h1 className="text-3xl">{ride ? "Requests are unavailable right now" : "We couldn't find that ride"}</h1>
+        <p className="mt-3 text-ink-soft">{ride ? "Please try again shortly." : "It may have been removed."} Nothing was sent.</p>
+        <Link className="btn-primary mt-6" href={paths.search()}>Back to ride search</Link>
+      </div>
+    );
+  }
+  // Claimed (verified) operators receive requests on their own listing; everything else goes to the desk.
+  const toDesk = !ride.claimed;
+  const today = new Date().toISOString().slice(0, 10);
+  return (
+    <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_320px]">
+      <div>
+        <p className="eyebrow">Ride request</p>
+        <h1 className="mt-2 text-4xl">{ride.id ? `Request ${ride.title}` : "Tell us about your event"}</h1>
+        <p className="mt-3 max-w-2xl text-ink-soft">
+          {!ride.id
+            ? "Not sure which ride? Your request goes to the Carnival Ride Rental request desk. We suggest rides and operators near your event and reply in your marketplace inbox."
+            : toDesk
+            ? `${ride.company ?? "This operator"} hasn't joined Carnival Ride Rental yet, so your request goes to our request desk, not to them. We contact the operator and reply in your marketplace inbox.`
+            : `Your request goes to ${ride.company ?? "the operator"}, who replies in your marketplace inbox.`}
+        </p>
+        <div className="mt-8">
+          <RideRequestForm
+            target={{ listingId: toDesk ? desk : ride.id, processAlias: INQUIRY_ALIAS, toDesk, ride: { id: ride.id, title: ride.title, company: ride.company, base: ride.base } }}
+            clientId={clientId}
+            marketplaceUrl={marketplaceUrl}
+            today={today}
+          />
+        </div>
+      </div>
+      <aside className="space-y-4 text-sm lg:pt-28">
+        {!ride.id ? (
+          <Link className="btn-ghost w-full" href={paths.search()}>Browse rides near you first</Link>
+        ) : (
+        <div className="card overflow-hidden">
+          {ride.photo && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={ride.photo.src} alt={ride.photo.alt} className="aspect-[4/3] w-full object-cover" />
+          )}
+          <div className="p-5">
+            {ride.rideClassLabel && <p className="text-xs font-semibold text-muted">{ride.rideClassLabel}</p>}
+            <h2 className="text-lg">{ride.title}</h2>
+            {ride.company && <p className="text-ink-soft">{ride.company}{ride.base ? ` · based in ${ride.base}` : ""}</p>}
+            <p className="mt-2 font-semibold">{ride.estimate ?? "Request a quote"}</p>
+            {ride.estimate && <p className="text-xs text-muted">{ESTIMATE_DISCLAIMER}</p>}
+          </div>
+        </div>
+        )}
       </aside>
     </div>
   );

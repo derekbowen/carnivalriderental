@@ -25,7 +25,7 @@ function Logo({ dark = false }: { dark?: boolean }) {
 }
 
 const NAV = [
-  { href: paths.rides(), label: "Browse rides" },
+  { href: paths.search(), label: "Find a ride" },
   { href: "/#how-it-works", label: "How it works" },
 ];
 

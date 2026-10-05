@@ -31,9 +31,9 @@ describe("operator search cards", () => {
     expect(c.estimate).toMatch(/^Estimated from \$/);
   });
 
-  it("is bookable only when the operator is marked Stripe-connected", () => {
-    expect(toOperatorCard(listing({}, {}, { operatorConnected: true }), included, null)!.bookable).toBe(true);
-    expect(toOperatorCard(listing({}, {}, { operatorConnected: "true" }), included, null)!.bookable).toBe(false);
+  it("is bookable only when claimed AND marked bookable by the ops check", () => {
+    expect(toOperatorCard(listing({}, {}, { claimStatus: "claimed", bookable: true }), included, null)!.bookable).toBe(true);
+    expect(toOperatorCard(listing({}, {}, { bookable: true }), included, null)!.bookable).toBe(false);
   });
 
   it("never renders other listing types, unpublished or deleted listings", () => {

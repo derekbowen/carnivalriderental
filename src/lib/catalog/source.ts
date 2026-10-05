@@ -31,7 +31,6 @@ async function anonToken(clientId: string): Promise<string> {
     headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
     body: new URLSearchParams({ client_id: clientId, grant_type: "client_credentials", scope: "public-read" }),
     signal: AbortSignal.timeout(8000),
-    cache: "no-store",
   });
   if (!res.ok) throw new Error(`auth failed (HTTP ${res.status})`);
   return (await res.json()).access_token;
@@ -44,7 +43,7 @@ export async function queryPublicListings(params: Record<string, string>): Promi
   const token = await anonToken(clientId);
   const qs = new URLSearchParams({ pub_listingType: LISTING_TYPE_ID, perPage: "100", ...params });
   const url = `${API}/listings/query?${qs}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate: 60 } });
   const body = await res.json().catch(() => null);
   return { status: res.status, url: url.replace(API, ""), listings: res.ok ? (body?.data ?? []) : [], body: res.ok ? undefined : body };
 }

@@ -25,7 +25,12 @@
     "import:listings": "tsx --env-file-if-exists=.env.local scripts/listing-import.ts",
     "email:dispatch": "tsx --env-file-if-exists=.env.local scripts/email-dispatch.ts",
     "email:claim-invites": "tsx --env-file-if-exists=.env.local scripts/claim-invites.ts",
-    "import:photos": "tsx --env-file-if-exists=.env.local scripts/photo-import.ts"
+    "import:photos": "tsx --env-file-if-exists=.env.local scripts/photo-import.ts",
+    "listings:enable-inquiry": "tsx --env-file-if-exists=.env.local scripts/listing-enable-inquiry.ts",
+    "desk:setup": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts setup",
+    "desk:list": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts list",
+    "desk:show": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts show",
+    "desk:reply": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts reply"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

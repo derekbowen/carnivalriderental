@@ -36,6 +36,6 @@ test("mobile menu opens with a finger-sized button and reaches the main pages", 
   expect(box!.width).toBeGreaterThanOrEqual(44);
   expect(box!.height).toBeGreaterThanOrEqual(44);
   await menu.tap();
-  await page.getByRole("banner").getByRole("link", { name: "Browse rides" }).tap();
-  await expect(page).toHaveURL(/\/rides$/);
+  await page.getByRole("banner").getByRole("link", { name: "Find a ride" }).tap();
+  await expect(page).toHaveURL(/\/s$/);
 });

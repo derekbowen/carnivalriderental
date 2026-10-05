@@ -41,7 +41,15 @@ export interface OperatorCard {
   miles: number | null;
   /** Rate-card estimate line, or null when that ride size has no confirmed rate. */
   estimate: string | null;
-  /** True only when the ATM has marked the operator as Stripe-connected (metadata.operatorConnected). */
+  /** Listing author's account has been claimed by the verified operator (listing metadata.claimStatus). */
+  claimed: boolean;
+  /** The Sharetribe listing page renders (inquiry process alias set); otherwise no details link. */
+  detailsReady: boolean;
+  /**
+   * True only when the transactional side has recorded that EVERY booking condition holds
+   * (metadata.bookable, written by `npm run ops:bookable` after authoritative server-side checks;
+   * see src/lib/operators/claim.ts → bookingBlockers). Never inferred from a browser redirect.
+   */
   bookable: boolean;
 }
 
@@ -89,6 +97,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   const pd = a.publicData ?? {};
   const title = str(a.title);
   if (l.type !== "listing" || a.deleted || a.state !== "published" || !title || pd.listingType !== OPERATOR_LISTING_TYPE) return null;
+  if (a.metadata?.requestDesk === true) return null; // the house request desk is not a ride
   const byKey = new Map(included.map((i) => [`${i.type}/${i.id}`, i]));
   const authorId = l.relationships?.author?.data?.id;
   const imageId = l.relationships?.images?.data?.[0]?.id;
@@ -109,7 +118,9 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
     photo: photoUrl && photoUrl.startsWith("https://") ? { src: photoUrl, alt: company ? `${title} from ${company}` : title } : null,
     miles: origin && geo ? Math.round(milesBetween(origin, geo)) : null,
     estimate: estimateText(rateKeyFor(rideClass ?? "other", title)),
-    bookable: l.attributes.metadata?.operatorConnected === true,
+    claimed: a.metadata?.claimStatus === "claimed",
+    detailsReady: typeof pd.transactionProcessAlias === "string" && pd.transactionProcessAlias.length > 0,
+    bookable: a.metadata?.claimStatus === "claimed" && a.metadata?.bookable === true,
   };
 }
 

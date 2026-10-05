@@ -144,7 +144,9 @@
     "companyId",
     "importExternalId",
     "footprintSource",
-    "operatorConnected"
+    "bookable",
+    "rideApproved",
+    "requestDesk"
   ],
   "privateData": [
     "sourceRidePage",
@@ -177,7 +179,11 @@
     "note": "Copyright belongs to the photographer regardless of subject; the founder accepted the risk with removal on request."
   },
   "bookability": {
-    "key": "metadata.operatorConnected",
-    "rule": "true only when the operator's Sharetribe account has finished Stripe Connect onboarding; set by the transactional side (never by the search site). Search shows 'Book this ride' (Sharetribe listing page) when true, otherwise 'Request this ride' (our request flow). Absent = not bookable."
+    "key": "metadata.bookable",
+    "rule": "Written only by `npm run ops:bookable` (transactional side) after server-side checks: verified claim (user metadata.claimStatus=claimed), metadata.rideApproved=true, authoritative Stripe readiness from the Integration API, an operator-set price, and a decided commission. Search shows 'Book this ride' only when claimStatus=claimed AND bookable=true. Connecting Stripe alone never sets it."
+  },
+  "requestDesk": {
+    "key": "metadata.requestDesk",
+    "rule": "true on the single house-account inquiry listing that receives requests for unclaimed rides; never shown as a ride."
   }
 }

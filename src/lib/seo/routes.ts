@@ -42,10 +42,11 @@ export const paths = {
   city: (state: string, city: string) => `/${seg(state)}/${seg(city)}`,
   operators: () => "/operators",
   /** Operator ride search, nearest first (noindex; query strings only for paging/filters). */
-  search: (q: { rideClass?: string; page?: number; near?: string } = {}) => {
+  search: (q: { rideClass?: string; page?: number; near?: string; state?: string } = {}) => {
     const p = new URLSearchParams();
     if (q.rideClass) p.set("class", seg(q.rideClass));
     if (q.near) p.set("near", q.near);
+    else if (q.state) p.set("state", seg(q.state));
     if (q.page && q.page > 1) p.set("page", String(q.page));
     const s = p.toString();
     return s ? `/s?${s}` : "/s";
