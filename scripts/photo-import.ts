@@ -122,7 +122,7 @@ const api: PhotoApi = {
     for (const line of fs.readFileSync(ledgerFile, "utf8").split("\n")) {
       if (!line) continue;
       const e = JSON.parse(line) as { externalId: string; outcome: string };
-      if (e.outcome === "attached_approved" || e.outcome === "approved") done.add(e.externalId);
+      if (["attached_approved", "attached", "already_has_images"].includes(e.outcome)) done.add(e.externalId);
     }
   }
   if (apply && !argv.includes("--recheck")) items = items.filter((i) => !done.has(i.externalId));
