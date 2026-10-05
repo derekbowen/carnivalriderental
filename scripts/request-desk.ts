@@ -14,6 +14,7 @@
  *
  * Test only unless --target live --founder-go.
  */
+import fs from "node:fs";
 import { AUTH, createClient, INTEG, MKT } from "./lib/sharetribe-client";
 
 async function houseToken(): Promise<string> {
@@ -106,19 +107,27 @@ type L = { id: string; attributes: { title: string; state: string; metadata?: Re
     if (typeof pd.rideListingId === "string" && pd.rideListingId) {
       // The public profile is anonymised; the operator's real details live in the user's privateData
       // (Integration API only). Printed to the desk owner's terminal, never stored or sent anywhere.
-      type U = { attributes: { profile: { displayName: string; privateData?: Record<string, unknown>; metadata?: Record<string, unknown> } } };
+      type U = { attributes: { profile: { displayName: string; privateData?: Record<string, unknown>; protectedData?: Record<string, unknown>; metadata?: Record<string, unknown> } } };
       const l = await call<{ data: { attributes: { title: string }; relationships: { author: { data: { id: string } } } }; included?: U[] }>("query", `${INTEG}/listings/show?id=${pd.rideListingId}&include=author`, { headers: await headers("integ") }, true);
       const p = l.included?.[0]?.attributes.profile;
       const priv = p?.privateData ?? {};
       const orig = (priv.originalProfile ?? {}) as { displayName?: string };
-      const pick = (...k: string[]) => k.map((x) => priv[x]).find((v) => typeof v === "string" && v) as string | undefined;
+      // Contact email and legal name are kept out of Sharetribe (import rule); the local private
+      // workbook (gitignored, transactional side only) holds them, keyed by the import external ID.
+      const wbPath = "imports/company-accounts/source/workbook.json";
+      const wbRow = fs.existsSync(wbPath)
+        ? (JSON.parse(fs.readFileSync(wbPath, "utf8")) as { users: { externalId: string; privateData?: string }[] }).users.find((u) => u.externalId === priv.importExternalId)
+        : undefined;
+      const wb = JSON.parse(wbRow?.privateData || "{}") as Record<string, unknown>;
+      const prot = (p as { protectedData?: Record<string, unknown> } | undefined)?.protectedData ?? {};
+      const pick = (...k: string[]) => k.map((x) => priv[x] ?? prot[x] ?? wb[x]).find((v) => typeof v === "string" && v) as string | undefined;
       console.log("Operator record (team only, do not forward to the customer):");
       console.log(`  ride listing   ${pd.rideListingId}  ${l.data.attributes.title}`);
       console.log(`  operator user  ${l.data.relationships.author.data.id}  claim: ${String(p?.metadata?.claimStatus ?? "?")}`);
-      console.log(`  company        ${pick("companyName", "legalName") ?? orig.displayName ?? "(not on file)"}`);
+      console.log(`  company        ${pick("companyName", "legalEntityName", "legalName") ?? orig.displayName ?? "(not on file)"}`);
       console.log(`  contact        ${pick("contactName", "ownerName") ?? "(not on file)"}`);
-      console.log(`  email          ${pick("contactEmail", "email") ?? "(not on file)"}`);
-      console.log(`  phone          ${pick("contactPhone", "phone") ?? "(not on file)"}`);
+      console.log(`  email          ${pick("contactEmail", "email") ?? (wbRow ? "(not in workbook)" : "(private workbook not on this machine)")}`);
+      console.log(`  phone          ${pick("phoneNumber", "contactPhone", "phone") ?? "(not on file)"}`);
       console.log(`  website        ${pick("website") ?? "(not on file)"}   base: ${pick("hqCity", "companyCity") ?? "?"}`);
     }
     const names = new Map((m.included ?? []).map((u: { id: string; attributes: { profile: { displayName: string } } }) => [u.id, u.attributes.profile.displayName]));
