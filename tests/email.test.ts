@@ -1,6 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { emailConfig, type EmailConfig } from "@/lib/email/config";
-import { dispatchOutbox, enqueue, isSuppressed, suppress, unsubscribeToken, unsubscribeUrl, verifyUnsubscribe, type OutboxRow, type SendFn } from "@/lib/email/outbox";
+import { dispatchOutbox, emailitSender, enqueue, senderFor, isSuppressed, suppress, unsubscribeToken, unsubscribeUrl, verifyUnsubscribe, type OutboxRow, type SendFn } from "@/lib/email/outbox";
 import { claimInvite } from "@/lib/email/templates";
 import { createRequestSchema } from "@/lib/requests/schema";
 import { memoryService, validBody } from "./helpers";
@@ -127,5 +127,38 @@ describe("unsubscribe and invite content", () => {
     expect(c.text).toMatch(/removed/);
     expect(c.text).toMatch(/not visible to the public/);
     expect(c.text).not.toMatch(/%|commission|free|guarantee|bookings? (per|a) /i);
+  });
+});
+
+describe("provider", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("Emailit is chosen when its key is set; EMAIL_PROVIDER overrides", () => {
+    expect(emailConfig({ EMAILIT_API_KEY: "k1", RESEND_API_KEY: "k2" })).toMatchObject({ provider: "emailit", apiKey: "k1" });
+    expect(emailConfig({ RESEND_API_KEY: "k2" })).toMatchObject({ provider: "resend", apiKey: "k2" });
+    expect(emailConfig({ EMAILIT_API_KEY: "k1", RESEND_API_KEY: "k2", EMAIL_PROVIDER: "resend" })).toMatchObject({ provider: "resend", apiKey: "k2" });
+    expect(() => senderFor(emailConfig({ EMAIL_PROVIDER: "emailit" }))).toThrow(/EMAILIT_API_KEY/);
+  });
+
+  it("Emailit request: v2 endpoint, bearer key, idempotency key, no tags, tracking off", async () => {
+    const calls: { url: string; init: RequestInit }[] = [];
+    vi.stubGlobal("fetch", async (url: string, init: RequestInit) => {
+      calls.push({ url, init });
+      return new Response(JSON.stringify({ id: "em_1" }), { status: 200 });
+    });
+    const r = await emailitSender("key")({ from: "a@b.us", to: ["c@d.us"], subject: "s", text: "t", tags: [{ name: "template", value: "x" }] }, "outbox-1");
+    expect(r.id).toBe("em_1");
+    expect(calls[0].url).toBe("https://api.emailit.com/v2/emails");
+    const h = calls[0].init.headers as Record<string, string>;
+    expect(h.Authorization).toBe("Bearer key");
+    expect(h["Idempotency-Key"]).toBe("outbox-1");
+    const body = JSON.parse(String(calls[0].init.body));
+    expect(body.tags).toBeUndefined();
+    expect(body.tracking).toBe(false);
+  });
+
+  it("Emailit errors fail the send (retried later by the outbox)", async () => {
+    vi.stubGlobal("fetch", async () => new Response(JSON.stringify({ error: "Validation failed" }), { status: 422 }));
+    await expect(emailitSender("key")({ to: ["x@y.us"] }, "k")).rejects.toThrow(/Emailit HTTP 422/);
   });
 });

@@ -1,11 +1,11 @@
 /**
  * Email outbox: enqueue (synchronous, inside the caller's DB transaction) and dispatch (async, via
- * Resend). Guarantees:
+ * Emailit or Resend, see senderFor). Guarantees:
  * - Each logical email has a dedupe key; enqueueing it twice is a no-op, so retries never double-send.
  * - EMAIL_MODE=test (default) redirects every email to the test inbox and names the intended recipient.
  * - Outreach is dropped as "suppressed" for unsubscribed addresses, held as "blocked" unless its
  *   campaign is approved (live mode), and capped per UTC day by the warm-up schedule.
- * - Sends carry an Idempotency-Key (the outbox id) so a retried request can't send twice at Resend.
+ * - Sends carry an Idempotency-Key (the outbox id) so a retried request can't send twice at the provider.
  */
 import crypto from "node:crypto";
 import type { Db } from "../requests/db";
@@ -99,6 +99,31 @@ export function resendSender(apiKey: string): SendFn {
     if (!res.ok || !json?.id) throw new Error(`Resend HTTP ${res.status}${json?.name ? ` (${json.name})` : ""}`);
     return { id: json.id };
   };
+}
+
+/**
+ * Emailit HTTP API (v2). Same body as Resend minus `tags` (not part of Emailit's API); open and
+ * click tracking off, so transactional mail carries no tracking pixels or rewritten links.
+ */
+export function emailitSender(apiKey: string): SendFn {
+  return async (body, idempotencyKey) => {
+    const { tags: _tags, ...rest } = body;
+    const res = await fetch("https://api.emailit.com/v2/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
+      body: JSON.stringify({ ...rest, tracking: false }),
+      signal: AbortSignal.timeout(20000),
+    });
+    const json = (await res.json().catch(() => null)) as { id?: string; error?: string } | null;
+    if (!res.ok || !json?.id) throw new Error(`Emailit HTTP ${res.status}${json?.error ? ` (${String(json.error).slice(0, 80)})` : ""}`);
+    return { id: json.id };
+  };
+}
+
+/** The sender for the configured provider. */
+export function senderFor(cfg: EmailConfig): SendFn {
+  if (!cfg.apiKey) throw new Error(cfg.provider === "emailit" ? "EMAILIT_API_KEY is not set" : "RESEND_API_KEY is not set");
+  return cfg.provider === "emailit" ? emailitSender(cfg.apiKey) : resendSender(cfg.apiKey);
 }
 
 export interface DispatchResult {

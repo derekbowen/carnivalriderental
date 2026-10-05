@@ -1,6 +1,7 @@
 /**
- * Email configuration. Resend is our sender for everything Sharetribe does not send itself
- * (Sharetribe's own account emails go through its managed SendGrid and cannot use Resend).
+ * Email configuration. Emailit (founder choice, 2026-10-05) sends everything Sharetribe does not
+ * send itself, transactional and marketing; Resend remains as a fallback provider and still
+ * receives inbound mail (MX). Sharetribe's own account emails go through its managed SendGrid.
  *
  * Safety defaults:
  * - EMAIL_MODE defaults to "test": every email, transactional or outreach, is redirected to
@@ -10,9 +11,12 @@
  *   a postal address (CAN-SPAM) and a working unsubscribe secret. Without them nothing is enqueued.
  */
 export type EmailMode = "test" | "live";
+export type EmailProvider = "emailit" | "resend";
 
 export interface EmailConfig {
   mode: EmailMode;
+  provider: EmailProvider;
+  /** API key of the selected provider. */
   apiKey: string | null;
   fromTransactional: string;
   fromOutreach: string;
@@ -30,9 +34,12 @@ const DOMAIN = "carnivalriderental.us";
 
 export function emailConfig(env: Record<string, string | undefined> = process.env): EmailConfig {
   const list = (v?: string) => (v ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+  // EMAIL_PROVIDER wins; otherwise Emailit whenever its key is present.
+  const provider: EmailProvider = env.EMAIL_PROVIDER === "resend" || (env.EMAIL_PROVIDER !== "emailit" && !env.EMAILIT_API_KEY) ? "resend" : "emailit";
   return {
     mode: env.EMAIL_MODE === "live" ? "live" : "test",
-    apiKey: env.RESEND_API_KEY || null,
+    provider,
+    apiKey: (provider === "emailit" ? env.EMAILIT_API_KEY : env.RESEND_API_KEY) || null,
     fromTransactional: env.EMAIL_FROM_TRANSACTIONAL || `Carnival Ride Rental <notifications@${DOMAIN}>`,
     fromOutreach: env.EMAIL_FROM_OUTREACH || `Carnival Ride Rental <hello@${DOMAIN}>`,
     replyTo: env.EMAIL_REPLY_TO || `claims@${DOMAIN}`,

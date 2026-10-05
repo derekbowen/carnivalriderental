@@ -1,4 +1,6 @@
-# Email (Resend) — transactional and outreach
+# Email (Emailit; Resend fallback) — transactional and outreach
+
+Provider (2026-10-05): **Emailit** for transactional and marketing mail. The key is `EMAILIT_API_KEY` in `.env.local`. The Emailit account is shared with another business: only ever send from carnivalriderental.us addresses, and never read or touch the other domains' mail or settings. Domain status in Emailit on 2026-10-05: SPF, DKIM, return-path and DMARC all OK, verification **pending Emailit's manual review**; nothing sends until Emailit approves it. Resend still receives inbound mail (root MX), so keep the Resend domain until inbound moves.
 
 Status (2026-10-04): built and proven in **test mode**. A demo request's "request received" email was sent through Resend from `notifications@carnivalriderental.us`, delivered, and received back at `qa@carnivalriderental.us` with the subject `[TEST → pipeline-test@example.com] We received your request BAC-SCW6CH`. No email has gone to a customer or operator.
 
@@ -7,7 +9,7 @@ Status (2026-10-04): built and proven in **test mode**. A demo request's "reques
 | Sender | Emails |
 |---|---|
 | Sharetribe (its managed SendGrid; can't use Resend) | account emails: verify email, password reset; transaction-process emails. In Test the sender address is fixed (only the name can change). In Live, set a custom sender in Console → General → Outgoing email address (CNAMEs on our domain). |
-| **Resend** (this module) | our app's emails: request received, payment received, quote ready, internal paid alert; operator claim invitations (outreach) |
+| **Emailit** (this module; founder choice 2026-10-05, Resend kept as fallback via `EMAIL_PROVIDER=resend`) | our app's emails: request received, payment received, quote ready, internal paid alert; operator claim invitations (outreach) |
 
 Domain `carnivalriderental.us`:
 - verified for sending and receiving in Resend (DKIM, SPF via `send.`);
@@ -17,7 +19,7 @@ Domain `carnivalriderental.us`:
 ## How it works
 
 - **Outbox:** `email_outbox` table in the app DB. The request service writes the email in the same transaction as the event that causes it (`src/lib/email/notify.ts`). Each logical email has a dedupe key, so retries never double-send.
-- **Dispatch:** `npm run email:dispatch` sends pending rows via Resend, with an Idempotency-Key per row. Failures are retried, up to 5 attempts.
+- **Dispatch:** `npm run email:dispatch` sends pending rows via the configured provider (`EMAILIT_API_KEY` set → Emailit v2 API, open/click tracking off; else Resend), with an Idempotency-Key per row. Failures are retried, up to 5 attempts.
 - **Test mode (default):** `EMAIL_MODE` is unset or `test`. Every email goes to `EMAIL_TEST_RECIPIENT` (default `qa@carnivalriderental.us`) and the subject names the intended recipient. `EMAIL_MODE=live` is a founder decision.
 
 Outreach gates, all enforced in code:
