@@ -169,14 +169,14 @@ async function listingTypeConfigured(): Promise<boolean | null> {
     const a = res.data.attributes;
     const extra = Object.keys(a.publicData).filter((k) => !allowed.has(k));
     const images = res.data.relationships?.images?.data?.length ?? 0;
-    const ok = a.state === "pendingApproval" && images === 0 && extra.length === 0;
+    const ok = ["pendingApproval", "published"].includes(a.state) && images <= 1 && extra.length === 0; // photo + Test approval: import:photos
     if (!ok) bad++;
     console.log(`  verify ${r.externalId}: state=${a.state} images=${images} extraPublicKeys=${extra.join(",") || "none"} ${ok ? "✓" : "✗"}`);
   }
   const tally: Record<string, number> = {};
   for (const r of results) tally[r.outcome] = (tally[r.outcome] ?? 0) + 1;
   console.log(`\nResult: ${Object.entries(tally).map(([k, v]) => `${k} ${v}`).join(", ")}`);
-  console.log(`Read-back sample: ${sample.length - bad}/${sample.length} pendingApproval, no images, approved public keys only.`);
+  console.log(`Read-back sample: ${sample.length - bad}/${sample.length} pending or approved, at most the imported photo, approved public keys only.`);
   console.log(`Mapping: ${mappingFile}\nLedger:  ${ledgerFile}\nHeld:    ${DIR}/held-for-review.json`);
   if (bad || results.some((r) => r.outcome === "failed")) process.exit(1);
 })().catch((e) => {
