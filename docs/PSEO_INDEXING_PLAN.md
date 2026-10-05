@@ -38,8 +38,9 @@ A page is indexable, gets a self-canonical, and is listed in the sitemap only wh
 1. `publicIndexingEnabled()`: `APP_ENV=production` **and** `PUBLIC_INDEXING=true`.
 2. Copy approval: `PSEO_INVENTORY.copyApproved === true` (whole template), **or** the exact path is on `PSEO_PILOT.paths` with `PSEO_PILOT.enabled === true`.
 3. Supply: ≥ 10 rides within 200 mi (city), ≥ 5 matching rides (ride + city), computed from the current snapshot at build time.
+4. **Near-duplicate head (founder decision 2026-10-05, option 1):** the page is the head of its near-duplicate group, or belongs to no group (`src/lib/inventory/index-eligible.json`, written by `npm run pseo:duplicates`). Non-head pages stay live for visitors and keep their self-canonical, but are always `noindex` and never in the sitemap. The list is stamped with the snapshot it was computed from. If the inventory is re-exported and the list isn't regenerated, **nothing** is indexable.
 
-The pilot only stands in for (2) on exact paths. It cannot override (1) or (3). A pilot URL whose supply drops below the threshold becomes noindex and leaves the sitemap on the next build. This is covered by `tests/pseo-pilot.test.ts`.
+The pilot only stands in for (2) on exact paths. It cannot override (1), (3) or (4). A pilot URL whose supply drops below the threshold becomes noindex and leaves the sitemap on the next build. This is covered by `tests/pseo-pilot.test.ts`.
 
 The sitemap holds only URLs that pass every gate, as canonical absolute URLs. It never holds query strings, filtered search URLs, thin pages, or noindex pages.
 
@@ -79,11 +80,12 @@ Adjacent city pages share one template, so the only thing that differs between t
 - **Ride type + city pages:** 15,931 pages meet supply, and 14,946 of them fall in near-duplicate groups. That leaves **2,038 distinct pages**.
 - **Largest groups (head +members):** San Jose +79 (San Francisco, Oakland, Stockton, Fremont, Modesto…); Miami +46 (Port St. Lucie, Hialeah, Fort Lauderdale…); Dallas +41 (Fort Worth, Arlington, Plano…); New York +39 (Newark, Jersey City, Yonkers…); Long Beach +38; Seattle +31 (Tacoma, Bellevue…); Atlanta +29; Boston +29.
 
-**Implications (decisions for the founder; nothing has been changed):**
+**Decision (founder, 2026-10-05): option 1, one page per group.** This is enforced by gate 4 above.
 
-- Index at most one page per group, the head (the most populous city). `groupHeadOf` in the report maps every page to its head.
-- Non-head pages can stay live, linked and `noindex`. We have **not** redirected them, changed canonicals in bulk, or written local paragraphs to make them look different.
-- The 200-mile radius drives the overlap. A smaller radius for page content (for example 75 miles) would make adjacent pages genuinely different but would thin out supply. This is a product decision, not an SEO trick. Rerun `pseo:report` and `pseo:duplicates` after any change.
+- The most that can ever be indexed is **2,397 pages: 359 city + 2,038 ride type + city**, out of 17,358 supply-sufficient pages. `groupHeadOf` in the report maps every page to its head.
+- Non-head pages stay live, linked and `noindex`, with their self-canonical. Nothing is redirected, re-canonicalised in bulk, or padded with local paragraphs.
+- The 200-mile radius drives the overlap. Changing it is a separate product decision; rerun `pseo:report` and `pseo:duplicates` after any change.
+- Indexing itself is still **off**. This decision only limits what can be indexed once the founder turns indexing on.
 
 ## 6. What stays off
 

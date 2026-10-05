@@ -8,12 +8,16 @@
  *   - shown: overlap of the 12 cards actually displayed (city) / 24 (ride + city), as a set
  *   - sameOrder: the displayed cards are identical AND in the same order
  * Pages linked by full ≥ DUP_JACCARD AND shown ≥ DUP_SHOWN are grouped (union-find). Each group
- * names a head: the most populous city, the only one a pilot or sitemap should consider.
- * Nothing is redirected, canonicalised or rewritten by this script.
+ * names a head: the most populous city.
+ *
+ * Founder decision (2026-10-05, option 1): only a group head (or a page in no group) may ever be
+ * indexed. This script also writes src/lib/inventory/index-eligible.json, the list of those pages,
+ * stamped with the snapshot it was computed from; the inventory gates read it (stale → nothing
+ * indexable). Rerun after every inventory export. Nothing is redirected or re-canonicalised.
  */
 import fs from "node:fs";
 import { milesBetween } from "../src/lib/catalog/operator-search";
-import { CITIES, PSEO_INVENTORY, ridesNear, type City } from "../src/lib/inventory";
+import { CITIES, INVENTORY_GENERATED_AT, PSEO_INVENTORY, ridesNear, type City } from "../src/lib/inventory";
 import { US_STATES } from "../src/lib/taxonomy";
 
 const PAIR_MILES = 60;
@@ -90,6 +94,10 @@ const out = {
   rideCityByType: rideCity.map((r) => ({ ...r, groupHeadOf: undefined, largestGroups: r.largestGroups.slice(0, 5) })).sort((a, b) => b.pages - a.pages),
   groupHeadOf: { ...city.groupHeadOf, ...Object.assign({}, ...rideCity.map((r) => r.groupHeadOf)) },
 };
+const headOf = out.groupHeadOf as Record<string, string>;
+const allPages = [...cityPages, ...[...rideCityPages.values()].flat()].map((p) => p.path);
+const eligible = allPages.filter((p) => (headOf[p] ?? p) === p).sort();
+fs.writeFileSync("src/lib/inventory/index-eligible.json", `${JSON.stringify({ inventoryGeneratedAt: INVENTORY_GENERATED_AT, settings: out.settings, count: eligible.length, paths: eligible })}\n`);
 fs.mkdirSync("reports", { recursive: true });
 fs.writeFileSync("reports/pseo-duplicates.json", `${JSON.stringify(out, null, 2)}\n`);
 console.log(JSON.stringify({ city: { ...city, largestGroups: city.largestGroups.slice(0, 6).map((g) => `${g.head} (+${g.size - 1})`), groupHeadOf: undefined }, rideCity: out.rideCitySummary }, null, 2));

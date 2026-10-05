@@ -13,6 +13,7 @@ import { stateBySlug, US_STATES } from "../taxonomy";
 import rideTypesFile from "../taxonomy/ride-types.json";
 import contract from "../../../contract/operator-listing-contract.json";
 import citiesFile from "../geo/cities.json";
+import eligibleFile from "./index-eligible.json";
 import { inPilot } from "./pilot";
 import ridesFile from "./rides.json";
 
@@ -152,9 +153,23 @@ export const inventoryCityPath = (c: City) => `/${stateSlugOf(c)}/${c.slug}`;
 export const inventoryRideCityPath = (c: City, rideType: string) => `/${stateSlugOf(c)}/${c.slug}/${rideType}`;
 
 /**
+ * Near-duplicate gate (founder decision 2026-10-05, option 1). Adjacent cities share most listings,
+ * so only one page per near-duplicate group (its head) may be indexed; the rest stay live for
+ * visitors but noindex. The list comes from `npm run pseo:duplicates` and is tied to the snapshot it
+ * was computed from: if the snapshot changes and the list isn't regenerated, nothing is indexable.
+ */
+const ELIGIBLE = eligibleFile as { inventoryGeneratedAt: string; paths: string[] };
+const eligiblePaths = new Set(ELIGIBLE.paths);
+export function duplicateGateReason(path: string): string | null {
+  if (ELIGIBLE.inventoryGeneratedAt !== INVENTORY_GENERATED_AT) return "near-duplicate map is stale (run npm run pseo:duplicates)";
+  return eligiblePaths.has(path) ? null : "near-duplicate of a nearby city page (not its group head)";
+}
+
+/**
  * Indexable only when ALL hold: public indexing on for the environment; the template copy is
  * founder-approved OR the exact path is on the enabled pilot allowlist (pilot.ts); and the page
- * meets its supply threshold. The pilot never bypasses the environment or supply gates.
+ * meets its supply threshold; and the page is the head of its near-duplicate group. The pilot never
+ * bypasses the environment, supply or near-duplicate gates.
  */
 export function inventoryCityGate(c: City): GateResult {
   const reasons: string[] = [];
@@ -162,6 +177,10 @@ export function inventoryCityGate(c: City): GateResult {
   if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryCityPath(c))) reasons.push("city template copy not founder-approved");
   const total = ridesNear(c.lat, c.lng).length;
   if (total < PSEO_INVENTORY.cityMinRides) reasons.push(`only ${total} rides within ${PSEO_INVENTORY.radiusMiles} mi`);
+  else {
+    const dup = duplicateGateReason(inventoryCityPath(c));
+    if (dup) reasons.push(dup);
+  }
   return gate(reasons);
 }
 
@@ -171,6 +190,10 @@ export function inventoryRideCityGate(c: City, rideType: string): GateResult {
   if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryRideCityPath(c, rideType))) reasons.push("ride + city template copy not founder-approved");
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === rideType).length;
   if (n < PSEO_INVENTORY.rideCityMinRides) reasons.push(`only ${n} matching rides within ${PSEO_INVENTORY.radiusMiles} mi`);
+  else {
+    const dup = duplicateGateReason(inventoryRideCityPath(c, rideType));
+    if (dup) reasons.push(dup);
+  }
   return gate(reasons);
 }
 

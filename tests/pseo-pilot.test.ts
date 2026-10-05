@@ -37,3 +37,44 @@ describe("indexing pilot allowlist", () => {
     expect(inv.inventoryRideCityGate(columbus, "ferris-wheel").indexable).toBe(false); // only the exact path counts
   });
 });
+
+describe("near-duplicate gate (only group heads can be indexed)", () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); vi.doUnmock("@/lib/inventory/index-eligible.json"); });
+  const approveAll = () => vi.doMock("@/lib/inventory/pilot", () => ({ PSEO_PILOT: { enabled: true, paths: [] }, inPilot: () => true }));
+
+  it("the eligible list matches the current snapshot", async () => {
+    const eligible = JSON.parse(fs.readFileSync("src/lib/inventory/index-eligible.json", "utf8"));
+    const { INVENTORY_GENERATED_AT } = await import("@/lib/inventory");
+    expect(eligible.inventoryGeneratedAt).toBe(INVENTORY_GENERATED_AT);
+  });
+
+  it("with every other gate open, only heads are indexable; non-heads stay noindex with a self-canonical", async () => {
+    approveAll();
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("PUBLIC_INDEXING", "true");
+    const inv = await import("@/lib/inventory");
+    const head = inv.cityBySlugs("california", "san-jose")!;
+    const member = inv.cityBySlugs("california", "san-francisco")!;
+    expect(inv.inventoryCityGate(head)).toEqual({ indexable: true, reasons: [] });
+    const g = inv.inventoryCityGate(member);
+    expect(g.indexable).toBe(false);
+    expect(g.reasons.join()).toMatch(/near-duplicate/);
+    const meta = inv.inventoryMetadata({ path: "/california/san-francisco", title: "t", description: "d", gate: g });
+    expect(meta.robots).toEqual({ index: false, follow: true });
+    expect(meta.alternates?.canonical).toMatch(/\/california\/san-francisco$/);
+    const routes = inv.inventoryRoutes();
+    const eligible = JSON.parse(fs.readFileSync("src/lib/inventory/index-eligible.json", "utf8"));
+    expect(routes.filter((r) => r.gate.indexable).length).toBe(eligible.count);
+  });
+
+  it("a stale list blocks indexing everywhere", async () => {
+    approveAll();
+    vi.doMock("@/lib/inventory/index-eligible.json", () => ({ default: { inventoryGeneratedAt: "old", paths: ["/california/san-jose"] } }));
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("PUBLIC_INDEXING", "true");
+    const inv = await import("@/lib/inventory");
+    const g = inv.inventoryCityGate(inv.cityBySlugs("california", "san-jose")!);
+    expect(g.indexable).toBe(false);
+    expect(g.reasons.join()).toMatch(/stale/);
+  });
+});

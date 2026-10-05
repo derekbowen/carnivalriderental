@@ -40,12 +40,13 @@ The matcher (`src/lib/inventory/match.ts`) maps titles to exactly the 50 canonic
 | **Total renderable** | **17,511** |
 | Meeting the supply gate (city) | 1,427 |
 | Meeting the supply gate (ride + city) | 15,931 |
+| Eligible ever (near-duplicate group heads) | 2,397 (359 city + 2,038 ride + city) |
 | Indexable now | 0 |
 | In the sitemap | 0 |
 
 ## Refresh
 
-1. `npm run inventory:export && npm run inventory:validate && npm run pseo:report`
+1. `npm run inventory:export && npm run inventory:validate && npm run pseo:duplicates && npm run pseo:report`. `pseo:duplicates` regenerates `src/lib/inventory/index-eligible.json`; skipping it leaves every page non-indexable.
 2. Commit the changed JSON, then deploy.
 
 The export is deterministic (sorted by id), so unchanged inventory produces an identical file.

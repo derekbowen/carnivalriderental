@@ -16,6 +16,10 @@
     "city": 1427,
     "rideCity": 15931
   },
+  "eligibleAfterNearDuplicateGate": {
+    "city": 359,
+    "rideCity": 2038
+  },
   "indexableNow": 0,
   "sitemapUrls": 0,
   "noindexNow": 17511,

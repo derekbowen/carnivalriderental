@@ -21,10 +21,15 @@ const out = {
     total: CITIES.length + rideCity.length,
   },
   meetSupplyThreshold: { city: city.filter(supplyOk).length, rideCity: rideCity.filter(supplyOk).length },
+  // Founder decision 2026-10-05: only near-duplicate group heads may ever be indexed.
+  eligibleAfterNearDuplicateGate: {
+    city: city.filter((r) => supplyOk(r) && !r.gate.reasons.some((x) => x.startsWith("near-duplicate"))).length,
+    rideCity: rideCity.filter((r) => supplyOk(r) && !r.gate.reasons.some((x) => x.startsWith("near-duplicate"))).length,
+  },
   indexableNow: indexable.length,
   sitemapUrls: indexable.length,
   noindexNow: CITIES.length + rideCity.length - indexable.length,
-  blockingReasons: [...new Set(routes.flatMap((r) => r.gate.reasons.filter((x) => !x.startsWith("only "))))],
+  blockingReasons: [...new Set(routes.flatMap((r) => r.gate.reasons.filter((x) => !x.startsWith("only ") && !x.startsWith("near-duplicate of"))))],
 };
 fs.mkdirSync("reports", { recursive: true });
 fs.writeFileSync("reports/pseo-routes.json", `${JSON.stringify(out, null, 2)}\n`);
