@@ -20,6 +20,6 @@ export function RequestCta({ href, title, body }: { href: string; title: string;
 export const HOW_IT_WORKS = [
   { title: "Find a ride near your event", body: "Search by location and ride type, nearest first. “Not sure” is fine: send a general request." },
   { title: "Send a request", body: "Date, location and site details. No payment is taken to send a request." },
-  { title: "The operator replies", body: "Operators on the marketplace reply in your inbox. If they haven’t joined yet, our request desk contacts them for you." },
+  { title: "Get a quote", body: "Replies arrive in your marketplace inbox. Requests for operators who haven’t joined yet go to our request desk, and we tell you so." },
   { title: "Book through the marketplace", body: "Confirmed only when the operator accepts and payment is completed. Not before." },
 ];

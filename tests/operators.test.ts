@@ -54,7 +54,7 @@ describe("operator applications", () => {
 });
 
 describe("operator program page", () => {
-  it("promises 0% only while the configured operator commission is 0, and the fee is undecided", () => {
+  it("commission is configured at 0 and the service fee is undecided (the page promises neither)", () => {
     expect(OPERATOR_PROGRAM.operatorCommissionPct).toBe(0);
     expect(OPERATOR_PROGRAM.customerServiceFeePct).toBeNull();
   });

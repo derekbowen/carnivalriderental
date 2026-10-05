@@ -3,16 +3,28 @@ import { Breadcrumbs, FaqSection, JsonLd, LinkGrid } from "@/components/pseo";
 import { RequestCta } from "@/components/RequestCta";
 import { RideResult } from "@/components/search/RideResult";
 import { cityStats, nearbyCities, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
-import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
+import { countNoun, rideTypeCopy, titleCase } from "@/lib/inventory/ride-type-copy";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
+import type { Faq } from "@/lib/taxonomy";
 
 /**
- * Structured data limited to what the page visibly shows: CollectionPage, BreadcrumbList, the
- * site's rental Service (Carnival Ride Rental's, as on every page) for this city, FAQPage for the
- * visible FAQ, and an ItemList naming the visible ride cards. No Offer, price, availability,
- * rating, review, address or Event: none of those are facts these pages hold.
+ * Inventory-backed pSEO templates (city; ride type + city). Customer-facing intro first, inventory
+ * facts on a separate secondary line, computed from the ride snapshot. Nothing identifies an
+ * operator. Prices follow src/lib/pricing/public-price.ts ("Request a quote" unless an approved
+ * operator rate exists), so no dollar figures appear in copy, FAQs, metadata or structured data.
+ *
+ * Structured data is limited to what the page visibly shows: CollectionPage, BreadcrumbList, the
+ * site's rental Service (as on every page), FAQPage for the visible FAQ, and an ItemList naming the
+ * visible ride cards. No Offer, price, availability, rating, review, address or Event.
  */
+type PlaceCity = City & { stateName: string; stateAbbr: string; stateSlug: string };
+
+const R = PSEO_INVENTORY.radiusMiles;
+const fmt = (n: number) => n.toLocaleString("en-US");
+const DISTANCE_NOTE = "Distance is measured from operator home bases. Event availability and delivery must be confirmed.";
+const CTA_BODY = "Share your event date, location and site details. A request is not a booking and takes no payment.";
+
 function rideItemList(path: string, name: string, titles: string[]) {
   return {
     "@type": "ItemList",
@@ -22,33 +34,26 @@ function rideItemList(path: string, name: string, titles: string[]) {
     itemListElement: titles.map((t, i) => ({ "@type": "ListItem", position: i + 1, name: t })),
   };
 }
-import type { Faq } from "@/lib/taxonomy";
 
-/**
- * Inventory-backed pSEO templates (city, ride type + city). Every number on these pages is computed
- * from the live ride snapshot; nothing identifies an operator (no company, city or description).
- */
-type PlaceCity = City & { stateName: string; stateAbbr: string; stateSlug: string };
+const REQUEST_FAQ: Faq = {
+  q: "Is sending a request the same as booking?",
+  a: "No. A request takes no payment and is not a booking. Pricing, date availability and delivery are confirmed for your event before anything is booked.",
+};
+const PRICE_FAQ: Faq = {
+  q: "How is a ride priced?",
+  a: "Rides are priced per event. Send your date, location, hours and site details with a quote request; costs such as delivery distance, power, permits or staffing vary by event and are confirmed in the quote.",
+};
 
-const R = PSEO_INVENTORY.radiusMiles;
-const fmt = (n: number) => n.toLocaleString("en-US");
-const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+// ------------------------------------------------------------------------------ city
 
 export function cityCopy(c: PlaceCity) {
   const s = cityStats(c);
   return {
-    title: `Carnival ride rentals near ${c.name}, ${c.stateAbbr}`,
-    description: `${fmt(s.total)} carnival rides from operators within ${R} miles of ${c.name}, ${c.stateAbbr}${s.nearestMiles !== null ? `; the nearest operator is about ${s.nearestMiles} miles away` : ""}. Compare ride types and request one for your event.`,
+    title: `Carnival Ride Rentals Near ${c.name}, ${c.stateAbbr}`,
+    description: s.total > 0
+      ? `Carnival rides for your ${c.name} event. Browse ${fmt(s.total)} ride listings from operators based within ${R} miles and request a quote for your date and location.`
+      : `Carnival rides for your ${c.name} event. Send a request and we'll look for operators who can serve your date and location.`,
   };
-}
-
-function cityFaq(c: PlaceCity, total: number, nearest: number | null): Faq[] {
-  return [
-    { q: `How many carnival rides are available near ${c.name}?`, a: `We list ${fmt(total)} rides from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}.${nearest !== null ? ` The closest operator base is about ${nearest} miles away.` : ""} Operators travel to events, so rides from further away may also serve ${c.name}.` },
-    { q: "How much does it cost to rent a carnival ride?", a: "Ride listings show an estimate from our rate card where we have a confirmed rate for that ride size, per day for a 4-hour rental. It is not the final price: generator, transportation, special permits and fuel can add to it, and the operator confirms the total for your event." },
-    { q: "Is sending a request the same as booking?", a: "No. Sending a request takes no payment. A ride is booked only when the operator accepts and payment is completed through the marketplace." },
-    { q: "Who brings and runs the ride?", a: "The ride's operator delivers it, sets it up and runs it. Operators who have not joined Carnival Ride Rental yet are contacted by our request desk on your behalf." },
-  ];
 }
 
 export function InventoryCityPage({ c }: { c: PlaceCity }) {
@@ -57,29 +62,27 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
   const path = paths.city(c.stateSlug, c.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path }];
   const { title, description } = cityCopy(c);
-  const faq = cityFaq(c, s.total, s.nearestMiles);
-  const near100 = near.filter((r) => r.miles <= 100).length;
   const types = s.byType.filter((t) => t.count >= PSEO_INVENTORY.rideCityMinRides);
   const nearCities = nearbyCities(c, 12);
   const searchHere = (rideClass?: string) => paths.search({ near: `${c.lat.toFixed(2)},${c.lng.toFixed(2)}`, rideClass });
+  const faq: Faq[] = [
+    { q: `How many rides can I browse near ${c.name}?`, a: `${fmt(s.total)} ride listings from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. A listing is not a confirmation that a ride is free on your date; availability and delivery are confirmed when you request a quote.` },
+    PRICE_FAQ,
+    REQUEST_FAQ,
+  ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq: s.total > 0 ? faq : undefined }), ...(near.length ? [rideItemList(path, `Nearest rides to ${c.name}`, near.slice(0, 12).map((r) => r.title))] : [])]} />
+      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq: s.total > 0 ? faq : undefined }), ...(near.length ? [rideItemList(path, `Ride listings near ${c.name}`, near.slice(0, 12).map((r) => r.title))] : [])]} />
       <Breadcrumbs items={crumbs} />
-      <p className="eyebrow mt-6">{c.name}, {c.stateName}</p>
-      <h1 className="mt-2 text-4xl">{title}</h1>
+      <h1 className="mt-6 text-4xl">Carnival rides for your {c.name} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        {s.total > 0 ? (
-          <>
-            {fmt(s.total)} rides from operators based within {R} miles of {c.name}
-            {near100 > 0 ? `, ${fmt(near100)} of them within 100 miles` : ""}.{" "}
-            {s.nearestMiles !== null && `The nearest operator base is about ${s.nearestMiles} miles away. `}
-            Operators are based in {s.operatorStates.length === 1 ? s.operatorStates[0] : `${s.operatorStates.slice(0, -1).join(", ")} and ${s.operatorStates.at(-1)}`}.
-          </>
-        ) : (
-          <>We don&rsquo;t list operators within {R} miles of {c.name} yet. Send a request and our request desk will look further afield.</>
-        )}
+        Bring the fun to your school fundraiser, company party, festival, or celebration. Explore ride listings and request pricing for your event date and location.
       </p>
+      {s.total > 0 ? (
+        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} listings from operators based within {R} miles of {c.name}.</p>
+      ) : (
+        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. You can still send a request and we&rsquo;ll look further afield.</p>
+      )}
 
       {s.byClass.length > 0 && (
         <nav aria-label="Ride types near this city" className="mt-6 flex flex-wrap gap-2">
@@ -94,82 +97,88 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       {near.length > 0 && (
         <section className="mt-10" aria-labelledby="nearest">
           <div className="flex flex-wrap items-end justify-between gap-3">
-            <h2 id="nearest" className="text-2xl">Nearest rides to {c.name}</h2>
-            <Link href={searchHere()} className="btn-ghost">See all {fmt(s.total)} rides</Link>
+            <h2 id="nearest" className="text-2xl">Ride listings near {c.name}</h2>
+            <Link href={searchHere()} className="btn-ghost">Browse all {fmt(s.total)}</Link>
           </div>
+          <p className="mt-2 text-sm text-muted">{DISTANCE_NOTE}</p>
           <ul className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {near.slice(0, 12).map((r) => <li key={r.id}><RideResult card={toCard(r)} /></li>)}
           </ul>
-          <p className="mt-4 text-xs text-muted">Distances are straight-line to each operator&rsquo;s home base, not where a ride is today. {ESTIMATE_DISCLAIMER}</p>
         </section>
       )}
 
       {types.length > 0 && (
         <LinkGrid
-          title={`Popular ride types near ${c.name}`}
-          links={types.slice(0, 24).map((t) => ({ href: paths.rideCity(t.type.id, c.stateSlug, c.slug), label: `${t.type.name} (${fmt(t.count)})` }))}
+          title={`Browse by ride type near ${c.name}`}
+          links={types.slice(0, 24).map((t) => {
+            const copy = rideTypeCopy(t.type.id, t.type.name);
+            return { href: paths.rideCity(t.type.id, c.stateSlug, c.slug), label: `${copy.label} rentals (${fmt(t.count)})` };
+          })}
         />
       )}
 
       <div className="mt-12">
-        <RequestCta href={paths.request()} title={`Planning an event in ${c.name}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
+        <RequestCta href={paths.request()} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
       </div>
 
       {s.total > 0 && <FaqSection faq={faq} />}
 
-      <LinkGrid title={`Carnival rides near other cities`} links={nearCities.map((x) => ({ href: paths.city(x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
+      <LinkGrid title="Nearby cities" links={nearCities.map((x) => ({ href: paths.city(x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
       <LinkGrid title="More" links={[{ href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }, { href: paths.search(), label: "Search all rides" }]} />
     </div>
   );
 }
 
+// ------------------------------------------------------------------------------ ride type + city
+
 export function rideCityCopy(c: PlaceCity, t: RideType) {
+  const copy = rideTypeCopy(t.id, t.name);
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id).length;
   return {
-    title: `${t.name} rental near ${c.name}, ${c.stateAbbr}`,
-    description: `${fmt(n)} ${lower(t.name)} rides from operators within ${R} miles of ${c.name}, ${c.stateAbbr}. See the nearest, estimated prices where available, and request one for your event.`,
+    title: `${titleCase(copy.label)} Rentals Near ${c.name}, ${c.stateAbbr}`,
+    description: `${copy.label} rentals for your ${c.name} event. Browse ${countNoun(n, copy)} from operators based within ${R} miles and request a quote for your date and location.`,
   };
 }
 
 export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
-  const all = ridesNear(c.lat, c.lng);
-  const matches = all.filter((r) => r.rideType === t.id);
+  const copy = rideTypeCopy(t.id, t.name);
+  const matches = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id);
   const path = paths.rideCity(t.id, c.stateSlug, c.slug);
-  const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path: paths.city(c.stateSlug, c.slug) }, { name: t.name, path }];
+  const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path: paths.city(c.stateSlug, c.slug) }, { name: `${copy.label} rentals`, path }];
   const { title, description } = rideCityCopy(c, t);
-  const estimates = [...new Set(matches.map((r) => toCard(r).estimate).filter((e): e is string => !!e))];
   const otherTypes = cityStats(c).byType.filter((x) => x.type.id !== t.id && x.count >= PSEO_INVENTORY.rideCityMinRides).slice(0, 16);
   const sameRideElsewhere = nearbyCities(c, 30)
     .filter((x) => ridesNear(x.lat, x.lng).filter((r) => r.rideType === t.id).length >= PSEO_INVENTORY.rideCityMinRides)
     .slice(0, 12);
+  const lowerLabel = copy.label.charAt(0).toLowerCase() + copy.label.slice(1);
+  const intro = `${copy.hook} Explore ${/^[A-Z]/.test(copy.label) && !/^(Ferris|Scrambler|Zipper)/.test(copy.label) ? lowerLabel : copy.label} listings and request a quote for your event date and location.`;
   const faq: Faq[] = [
-    { q: `How many ${lower(t.name)} rides are near ${c.name}?`, a: `We list ${fmt(matches.length)} from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}${matches[0] ? `; the nearest is about ${matches[0].miles} miles away` : ""}.` },
-    { q: `How much does ${lower(t.name)} rental cost?`, a: estimates.length ? `Listings near ${c.name} show ${estimates.map((e) => lower(e)).join(" or ")}. That is our rate-card estimate, not the final price: generator, transportation, special permits and fuel can add to it, and the operator confirms the total.` : `We don't have a confirmed rate for this ride size yet, so these listings say "Request a quote". Send your event details and the operator prices your event.` },
-    { q: "Is sending a request the same as booking?", a: "No. Sending a request takes no payment. A ride is booked only when the operator accepts and payment is completed through the marketplace." },
+    { q: `How many ${copy.many} can I browse near ${c.name}?`, a: `${countNoun(matches.length, copy)} from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. Availability on your date and delivery are confirmed when you request a quote.` },
+    PRICE_FAQ,
+    REQUEST_FAQ,
   ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { name: `${t.name} rental`, serviceType: `${t.name} rental`, areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq }), rideItemList(path, `${t.name} rides near ${c.name}`, matches.slice(0, 24).map((r) => r.title))]} />
+      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { name: `${copy.label} rental`, serviceType: `${copy.label} rental`, areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq }), rideItemList(path, `${copy.label} listings near ${c.name}`, matches.slice(0, 24).map((r) => r.title))]} />
       <Breadcrumbs items={crumbs} />
-      <p className="eyebrow mt-6">{c.name}, {c.stateName}</p>
-      <h1 className="mt-2 text-4xl">{title}</h1>
-      <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        {fmt(matches.length)} {lower(t.name)} rides from operators based within {R} miles of {c.name}
-        {matches[0] ? `, the nearest about ${matches[0].miles} miles away` : ""}. Each is run by the operator who owns it; send a request with your date and site details.
+      <h1 className="mt-6 text-4xl">{copy.label} rentals for your {c.name} event.</h1>
+      <p className="mt-4 max-w-3xl text-lg text-ink-soft">{intro}</p>
+      <p className="mt-3 text-sm text-muted" data-testid="inventory-line">
+        Browse {countNoun(matches.length, copy)} from operators based within {R} miles of {c.name}.
       </p>
+      <p className="mt-1 text-sm text-muted">{DISTANCE_NOTE}</p>
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {matches.slice(0, 24).map((r) => <li key={r.id}><RideResult card={toCard(r)} /></li>)}
       </ul>
-      <p className="mt-4 text-xs text-muted">Distances are straight-line to each operator&rsquo;s home base. {ESTIMATE_DISCLAIMER}</p>
 
       <div className="mt-12">
-        <RequestCta href={paths.request()} title={`Want a ${lower(t.name)} in ${c.name}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
+        <RequestCta href={paths.request()} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
       </div>
 
       <FaqSection faq={faq} />
 
-      <LinkGrid title={`Other rides near ${c.name}`} links={otherTypes.map((x) => ({ href: paths.rideCity(x.type.id, c.stateSlug, c.slug), label: `${x.type.name} (${fmt(x.count)})` }))} />
-      <LinkGrid title={`${t.name} rental in nearby cities`} links={sameRideElsewhere.map((x) => ({ href: paths.rideCity(t.id, x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
+      <LinkGrid title={`More ride types near ${c.name}`} links={otherTypes.map((x) => ({ href: paths.rideCity(x.type.id, c.stateSlug, c.slug), label: `${rideTypeCopy(x.type.id, x.type.name).label} rentals (${fmt(x.count)})` }))} />
+      <LinkGrid title={`${copy.label} rentals in nearby cities`} links={sameRideElsewhere.map((x) => ({ href: paths.rideCity(t.id, x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
       <LinkGrid title="More" links={[{ href: paths.city(c.stateSlug, c.slug), label: `All carnival rides near ${c.name}` }, { href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }]} />
     </div>
   );

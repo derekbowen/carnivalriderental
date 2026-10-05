@@ -1,9 +1,13 @@
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { marketplaceListingUrl, type OperatorCard } from "@/lib/catalog/operator-search";
+import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 import { paths } from "@/lib/seo/routes";
 
-/** One operator ride in search results (/s, state and city pages). */
+/**
+ * One operator ride in browse results (homepage, /s, state, city and ride-type pages). Account
+ * status and request routing are disclosed on the ride page and the request form, not on every card.
+ */
 export function RideResult({ card }: { card: OperatorCard }) {
   return (
     <article data-testid="ride-result" className="flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-surface">
@@ -28,12 +32,11 @@ export function RideResult({ card }: { card: OperatorCard }) {
           </p>
         )}
         <div className="mt-auto pt-4">
-          <p className="text-sm font-semibold">{card.estimate ?? "Request a quote"}</p>
-          {!card.claimed && <p className="mt-1 text-xs text-muted">Operator not yet on Carnival Ride Rental: requests go to our request desk.</p>}
+          <p className="text-sm font-semibold">{card.price ?? REQUEST_A_QUOTE}</p>
           {card.bookable ? (
             <a href={marketplaceListingUrl(card)} className="btn-primary mt-3 w-full">Book this ride</a>
           ) : (
-            <Link href={paths.requestRide(card.id)} className="btn-primary mt-3 w-full">Request this ride</Link>
+            <Link href={paths.requestRide(card.id)} className="btn-primary mt-3 w-full">Request a quote</Link>
           )}
           <Link href={paths.rideListing(card.id)} className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-accent-strong hover:underline">View ride details</Link>
         </div>

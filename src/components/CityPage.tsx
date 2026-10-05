@@ -69,7 +69,7 @@ export function CityPage({ l }: { l: ServiceLocation }) {
       </section>
 
       <NearbyRides stateCode={l.stateCode.toLowerCase()} stateSlug={l.stateSlug} label={l.stateName} />
-      <div className="mt-16"><RequestCta href={paths.request(undefined, l.stateSlug, l.citySlug)} title={`Planning an event in ${l.cityName}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." /></div>
+      <div className="mt-16"><RequestCta href={paths.request(undefined, l.stateSlug, l.citySlug)} title={`Planning an event in ${l.cityName}?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." /></div>
     </div>
   );
 }

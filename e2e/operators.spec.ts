@@ -1,18 +1,17 @@
 import { expect, test } from "@playwright/test";
 import { E2E_INTERNAL } from "../playwright.config";
 
-test("operator page: early access, 0% operator commission, fee not invented, noindex", async ({ page, request }) => {
+test("operator page: early access, no commission or fee promised, noindex", async ({ page, request }) => {
   const res = await request.get("/operators");
   expect(res.status()).toBe(200);
   expect(res.headers()["x-robots-tag"]).toContain("noindex");
   await page.goto("/operators");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rent out your carnival rides. Keep 100% of your price.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rent out your carnival rides. You set the price.");
   await expect(page.getByTestId("early-access")).toContainText("isn’t live yet");
   await expect(page.getByTestId("fee-pending")).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-  // No service-fee rate is invented: the only percentages are the 0% commission and "keep 100%".
-  const pcts = (await page.locator("main").innerText()).match(/\d+(\.\d+)?%/g) ?? [];
-  expect(new Set(pcts)).toEqual(new Set(["0%", "100%"]));
+  // No commission or fee number is promised anywhere on the page or in the footer strip.
+  expect(await page.locator("body").innerText()).not.toMatch(/\d+(\.\d+)?%|commission/i);
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "For ride operators" })).toHaveAttribute("href", "/operators");
 });
 

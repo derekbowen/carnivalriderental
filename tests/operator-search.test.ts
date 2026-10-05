@@ -22,13 +22,13 @@ const included = [
 ];
 
 describe("operator search cards", () => {
-  it("maps public fields, distance and the rate-card estimate", () => {
+  it("maps public fields and distance; no approved rate means no price (Request a quote)", () => {
     const c = toOperatorCard(listing(), included, { lat: 30.27, lng: -97.74 })!;
     expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", homeState: "TX", bookable: false });
     expect(c.photo?.src).toBe("https://sharetribe.imgix.net/x/i1");
     expect(c.miles).toBeGreaterThan(60);
     expect(c.miles).toBeLessThan(90);
-    expect(c.estimate).toMatch(/^Estimated from \$/);
+    expect(c.price).toBeNull();
   });
 
   it("never exposes the operator's company name or city (no bypassing the marketplace)", () => {
@@ -55,8 +55,17 @@ describe("operator search cards", () => {
     expect(toOperatorCard(listing({ deleted: true }), included, null)).toBeNull();
   });
 
+  it("shows a number only for a claimed listing with an operator-approved rate and unit", () => {
+    const priced = (md: Record<string, unknown>, pd: Record<string, unknown> = { unitType: "day" }) =>
+      toOperatorCard({ ...listing({}, pd, md), attributes: { ...listing({}, pd, md).attributes, price: { amount: 125000, currency: "USD" } } }, included, null)!.price;
+    expect(priced({ claimStatus: "claimed", priceApproved: true })).toBe("$1,250 per day");
+    expect(priced({ claimStatus: "claimed" })).toBeNull(); // no approval provenance
+    expect(priced({ priceApproved: true })).toBeNull(); // unclaimed: price is ours, not the operator's
+    expect(priced({ claimStatus: "claimed", priceApproved: true }, {})).toBeNull(); // no rental duration
+  });
+
   it("unconfirmed ride sizes show no price", () => {
-    expect(toOperatorCard(listing({ title: "Zipper" }, { rideClass: "major" }), included, null)!.estimate).toBeNull();
+    expect(toOperatorCard(listing({ title: "Zipper" }, { rideClass: "major" }), included, null)!.price).toBeNull();
   });
 });
 

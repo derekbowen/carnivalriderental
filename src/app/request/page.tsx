@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { EventRequestForm } from "@/components/request/EventRequestForm";
 import { getContent, getLocation, getRide } from "@/lib/content";
 import { PricingNotice } from "@/components/PricingNotice";
-import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
+import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 import { JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
 import { paths } from "@/lib/seo/routes";
@@ -74,7 +74,7 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   );
 }
 
-const ANY_RIDE = { id: "", title: "Help me choose a ride", homeState: null, photo: null, rideClassLabel: null, estimate: null, claimed: false } as const;
+const ANY_RIDE = { id: "", title: "Help me choose a ride", homeState: null, photo: null, rideClassLabel: null, price: null, claimed: false } as const;
 
 async function OperatorRideRequest({ listingId }: { listingId: string | null }) {
   const ride = listingId === null ? ANY_RIDE : isListingId(listingId) ? await getOperatorListing(listingId) : null;
@@ -100,10 +100,10 @@ async function OperatorRideRequest({ listingId }: { listingId: string | null }) 
         <h1 className="mt-2 text-4xl">{ride.id ? `Request ${ride.title}` : "Tell us about your event"}</h1>
         <p className="mt-3 max-w-2xl text-ink-soft">
           {!ride.id
-            ? "Not sure which ride? Your request goes to the Carnival Ride Rental request desk. We suggest rides and operators near your event and reply in your marketplace inbox."
+            ? "Not sure which ride? Your request goes to the Carnival Ride Rental request desk. Our team reviews it and replies in your marketplace inbox."
             : toDesk
-            ? "This ride's operator hasn't joined Carnival Ride Rental yet, so your request goes to our request desk, not to them. We contact the operator and reply in your marketplace inbox."
-            : "Your request goes to the ride's operator, who replies in your marketplace inbox."}
+            ? "This ride's operator hasn't joined Carnival Ride Rental yet, so your request goes to our request desk, not to them. Our team reviews it and replies in your marketplace inbox."
+            : "Your request goes to the ride's operator through Carnival Ride Rental. Replies arrive in your marketplace inbox."}
         </p>
         <div className="mt-8">
           <RideRequestForm
@@ -127,8 +127,7 @@ async function OperatorRideRequest({ listingId }: { listingId: string | null }) 
             {ride.rideClassLabel && <p className="text-xs font-semibold text-muted">{ride.rideClassLabel}</p>}
             <h2 className="text-lg">{ride.title}</h2>
             {ride.homeState && <p className="text-ink-soft">Operator based in {ride.homeState}</p>}
-            <p className="mt-2 font-semibold">{ride.estimate ?? "Request a quote"}</p>
-            {ride.estimate && <p className="text-xs text-muted">{ESTIMATE_DISCLAIMER}</p>}
+            <p className="mt-2 font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
           </div>
         </div>
         )}

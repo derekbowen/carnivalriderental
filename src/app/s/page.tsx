@@ -9,7 +9,6 @@ import { ipLocation, isRideClass, marketplaceListingUrl, parseNear, RIDE_CLASSES
 import { STATE_CENTERS } from "@/lib/taxonomy/state-centers";
 import { US_STATES } from "@/lib/taxonomy";
 import { BRAND } from "@/lib/config";
-import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
 import { paths } from "@/lib/seo/routes";
 
 export const dynamic = "force-dynamic";
@@ -81,7 +80,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </ul>
       )}
 
-      <p className="mt-6 text-xs text-muted">{ESTIMATE_DISCLAIMER}</p>
+      <p className="mt-6 text-xs text-muted">Distance is measured from operator home bases. Event availability and delivery must be confirmed.</p>
 
       {res.totalPages > 1 && (
         <nav aria-label="Pages" className="mt-8 flex items-center justify-between gap-3">

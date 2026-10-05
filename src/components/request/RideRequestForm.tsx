@@ -85,8 +85,8 @@ export function RideRequestForm({ target, clientId, marketplaceUrl, today }: { t
         <h2 className="text-2xl">{status.duplicate ? "You already sent this request" : "Request sent"}</h2>
         <p className="mt-2 text-ink-soft">
           {target.toDesk
-            ? "Saved in the Carnival Ride Rental request desk. The ride's operator has not joined yet and has not received it; our team will contact them and reply in your inbox."
-            : "Saved and sent to the ride's operator. They reply in your inbox. This is a request, not a booking."}
+            ? "Saved in the Carnival Ride Rental request desk. This ride's operator hasn't joined Carnival Ride Rental and has not received your request. Our team reviews it and replies in your marketplace inbox. This is a request, not a booking, and no payment was taken."
+            : "Sent to the ride's operator through Carnival Ride Rental. Replies arrive in your marketplace inbox. This is a request, not a booking, and no payment was taken."}
         </p>
         <p className="mt-2 text-sm text-muted">Reference: {status.txId}</p>
         <a className="btn-primary mt-4" href={`${marketplaceUrl}/order/${status.txId}`}>Open your inbox</a>

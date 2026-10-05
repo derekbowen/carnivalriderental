@@ -1,7 +1,6 @@
 import { CalendarClockIcon, ShieldCheckIcon } from "lucide-react";
 import type { PlanningEstimate } from "@/lib/content/types";
-import { PRICE_COPY } from "@/lib/pricing/policy";
-import { formatUsd } from "@/lib/requests/labels";
+import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 
 /** Availability is "Sourcing on request" unless a verified coverage record exists. */
 export function AvailabilityBadge({ verified = false, className = "" }: { verified?: boolean; className?: string }) {
@@ -24,34 +23,22 @@ export function DemoBadge({ label = "Demo record" }: { label?: string }) {
   );
 }
 
-/** A planning estimate is never a quote. The label says so every time it appears. */
-export function EstimateLabel({ estimate, size = "sm" }: { estimate: PlanningEstimate | null; size?: "sm" | "lg" }) {
-  if (!estimate) {
-    return size === "lg" ? (
-      <div>
-        <p className="text-sm text-muted">Pricing</p>
-        <p className="mt-1 font-display text-[30px] leading-tight">Tailored quote</p>
-        <p className="mt-1 text-sm text-muted">We price each event after matching it to an operator.</p>
-      </div>
-    ) : (
-      <div>
-        <p className="text-[15px]"><span className="text-muted">Pricing </span><span className="font-semibold">Tailored quote</span></p>
-        <p className="text-xs text-muted">(priced per event)</p>
-      </div>
-    );
-  }
-  const range = `${formatUsd(estimate.lowUsd * 100)} – ${formatUsd(estimate.highUsd * 100)}`;
-  const demo = estimate.isDemoValue && <span className="ml-1 font-semibold text-demo">· DEMO VALUE</span>;
+/**
+ * Public price slot for ride-type and demo records. Their planning estimates are category or
+ * ride-size figures, not an operator's approved rate, so they are never displayed: the slot always
+ * reads "Request a quote" (src/lib/pricing/public-price.ts). The record keeps its estimate privately.
+ */
+export function EstimateLabel({ size = "sm" }: { estimate?: PlanningEstimate | null; size?: "sm" | "lg" }) {
   return size === "lg" ? (
     <div>
-      <p className="text-sm text-muted">{PRICE_COPY.estimateLabel}{demo}</p>
-      <p className="mt-1 font-display text-[34px] leading-tight">{range}</p>
-      <p className="mt-1 text-sm text-muted">{PRICE_COPY.notFinal} {estimate.basis}</p>
+      <p className="text-sm text-muted">Pricing</p>
+      <p className="mt-1 font-display text-[30px] leading-tight">{REQUEST_A_QUOTE}</p>
+      <p className="mt-1 text-sm text-muted">Priced per event by the operator for your date, location and site.</p>
     </div>
   ) : (
     <div>
-      <p className="text-[15px]"><span className="text-muted">{PRICE_COPY.estimateLabel} </span><span className="font-semibold">{range}</span></p>
-      <p className="text-xs text-muted">{PRICE_COPY.notFinal}{demo}</p>
+      <p className="text-[15px] font-semibold">{REQUEST_A_QUOTE}</p>
+      <p className="text-xs text-muted">Priced per event</p>
     </div>
   );
 }

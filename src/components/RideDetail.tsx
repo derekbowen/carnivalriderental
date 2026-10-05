@@ -152,7 +152,7 @@ export function RideDetail({
             <Link href={requestHref} className="btn-primary mt-6 w-full">Request this ride <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
             <div className="mt-5 flex gap-2.5 rounded-lg bg-canvas p-3.5 text-[13px] leading-relaxed text-ink-soft">
               <InfoIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted" aria-hidden="true" />
-              <p>Your quote depends on the unit sourced, transport distance, dates, operating hours and site conditions — it may fall outside any estimate.</p>
+              <p>Your quote depends on the ride, transport distance, dates, operating hours and site conditions.</p>
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
               <li className="flex justify-between gap-3"><span>Payment</span><span className="text-right font-medium text-ink">Paid first — we source only after your request is paid{PRICING_POLICY.paymentsLive ? "" : " (online payment not open yet)"}</span></li>
@@ -166,7 +166,7 @@ export function RideDetail({
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 py-3 lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <p className="min-w-0 truncate text-sm font-semibold">{ride.estimate ? PRICE_COPY.notFinal : "Priced per event — set with the operator"}</p>
+          <p className="min-w-0 truncate text-sm font-semibold">Request a quote · priced per event</p>
           <Link href={requestHref} aria-label="Request (mobile)" className="btn-primary shrink-0 !px-4 !py-2.5 text-sm">Request</Link>
         </div>
       </div>

@@ -21,11 +21,11 @@ export const PRICING_POLICY = {
 } as const;
 
 export const PRICE_COPY = {
-  estimateLabel: "Estimated price",
-  notFinal: "Estimated price — not the final price.",
-  noEstimate: "Request pricing — the final price is set with the operator.",
+  estimateLabel: "Request a quote",
+  notFinal: "Your quote sets the price; any price shown is not the final price.",
+  noEstimate: "Request a quote — the final price is set with the operator.",
   steps: [
-    { title: "Estimated price", body: "Prices shown are estimates for this rental, not the final price." },
+    { title: "Request a quote", body: "Rides are priced per event. A ride shows a price only when its operator has approved one, and that is not the final price until your quote confirms it." },
     {
       title: "The final price can change",
       body: "The operator may adjust it for your location, event type, travel distance and site conditions. You approve any change before you are committed.",

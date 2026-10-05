@@ -63,7 +63,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       <p className="eyebrow mt-6">{s.name}</p>
       <h1 className="mt-2 text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        Planning an event in {s.name}? Find rides from operators near you and send a request. Operators on Carnival Ride Rental reply directly; for operators who haven&rsquo;t joined yet, our request desk contacts them for you.
+        Planning an event in {s.name}? Find rides from operators near you and send a request. Requests for operators who haven&rsquo;t joined yet go to our request desk, and we tell you so.
       </p>
 
       <section className="mt-10">
@@ -86,7 +86,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       />
 
       <div className="mt-12">
-        <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
+        <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." />
       </div>
 
       {OCCASION_GROUPS.map((g) => (

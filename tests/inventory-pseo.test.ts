@@ -31,7 +31,7 @@ describe("pages are computed from real supply", () => {
   it("cards carry no identity and never a $0 price", () => {
     const card = toCard(ridesNear(c.lat, c.lng)[0]);
     expect(Object.keys(card)).not.toContain("company");
-    expect(card.estimate ?? "").not.toMatch(/\$0\b/);
+    expect(card.price).toBeNull(); // snapshot holds no operator-approved rate
   });
   it("nothing is indexable until the founder approves the copy and indexing", () => {
     expect(inventoryCityGate(c).indexable).toBe(false);

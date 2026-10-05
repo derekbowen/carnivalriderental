@@ -49,7 +49,7 @@ test("cards: test samples labelled, fixtures separated, pricing and sourcing tex
   const live = page.getByTestId("supply-list").getByTestId("listing-card");
   await expect(live).toHaveCount(1);
   await expect(live.first()).toContainText("Test sample");
-  await expect(live.first()).toContainText("Request pricing");
+  await expect(live.first()).toContainText("Request a quote");
   await expect(live.first()).toContainText("Sourcing on request");
   await expect(live.first().getByRole("img")).toHaveAttribute("alt", /Illustration of ferris wheels — not a photo of a specific ride/);
   await expect(page.getByTestId("fixture-cards")).toContainText("not live listings");

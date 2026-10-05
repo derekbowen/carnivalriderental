@@ -6,7 +6,6 @@
  * are computed, never written. Operator identity is not in the snapshot at all.
  */
 import { milesBetween, type OperatorCard } from "../catalog/operator-search";
-import { estimateText, type RateKey } from "../pricing/rate-card";
 import { publicIndexingEnabled } from "../config";
 import type { GateResult } from "../seo/publication";
 import { canonicalUrl } from "../seo/routes";
@@ -14,6 +13,7 @@ import { stateBySlug, US_STATES } from "../taxonomy";
 import rideTypesFile from "../taxonomy/ride-types.json";
 import contract from "../../../contract/operator-listing-contract.json";
 import citiesFile from "../geo/cities.json";
+import { inPilot } from "./pilot";
 import ridesFile from "./rides.json";
 
 export interface InventoryRide {
@@ -101,7 +101,8 @@ export function toCard(r: NearRide | InventoryRide): OperatorCard {
     homeState: r.homeState?.toUpperCase() ?? null,
     photo: r.photo ? { src: r.photo, alt: r.title } : null,
     miles: "miles" in r ? r.miles : null,
-    estimate: estimateText(r.rateKey as RateKey),
+    // The snapshot holds no operator-approved prices yet, so every card reads "Request a quote".
+    price: null,
     claimed: r.claimed,
     detailsReady: true,
     bookable: false,
@@ -146,10 +147,19 @@ export function nearbyCities(c: City, n = 12): (City & { miles: number; stateSlu
 
 const gate = (reasons: string[]): GateResult => ({ indexable: reasons.length === 0, reasons });
 
+const stateSlugOf = (c: City) => US_STATES.find((s) => s.code === c.state)!.slug;
+export const inventoryCityPath = (c: City) => `/${stateSlugOf(c)}/${c.slug}`;
+export const inventoryRideCityPath = (c: City, rideType: string) => `/${stateSlugOf(c)}/${c.slug}/${rideType}`;
+
+/**
+ * Indexable only when ALL hold: public indexing on for the environment; the template copy is
+ * founder-approved OR the exact path is on the enabled pilot allowlist (pilot.ts); and the page
+ * meets its supply threshold. The pilot never bypasses the environment or supply gates.
+ */
 export function inventoryCityGate(c: City): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!PSEO_INVENTORY.copyApproved) reasons.push("city template copy not founder-approved");
+  if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryCityPath(c))) reasons.push("city template copy not founder-approved");
   const total = ridesNear(c.lat, c.lng).length;
   if (total < PSEO_INVENTORY.cityMinRides) reasons.push(`only ${total} rides within ${PSEO_INVENTORY.radiusMiles} mi`);
   return gate(reasons);
@@ -158,7 +168,7 @@ export function inventoryCityGate(c: City): GateResult {
 export function inventoryRideCityGate(c: City, rideType: string): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!PSEO_INVENTORY.copyApproved) reasons.push("ride + city template copy not founder-approved");
+  if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryRideCityPath(c, rideType))) reasons.push("ride + city template copy not founder-approved");
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === rideType).length;
   if (n < PSEO_INVENTORY.rideCityMinRides) reasons.push(`only ${n} matching rides within ${PSEO_INVENTORY.radiusMiles} mi`);
   return gate(reasons);

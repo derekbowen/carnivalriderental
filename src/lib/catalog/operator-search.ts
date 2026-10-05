@@ -1,5 +1,5 @@
 import contract from "../../../contract/operator-listing-contract.json";
-import { estimateText, rateKeyFor } from "../pricing/rate-card";
+import { listingPriceLabel } from "../pricing/public-price";
 
 /**
  * Read side for OPERATOR ride listings (listing type operator-ride-rental), used by the /s search
@@ -40,8 +40,8 @@ export interface OperatorCard {
   photo: { src: string; alt: string } | null;
   /** Straight-line miles from the search origin to the operator's (rounded) base. */
   miles: number | null;
-  /** Rate-card estimate line, or null when that ride size has no confirmed rate. */
-  estimate: string | null;
+  /** Approved operator rate for this listing and unit (src/lib/pricing/public-price.ts), else null → "Request a quote". */
+  price: string | null;
   /** Listing author's account has been claimed by the verified operator (listing metadata.claimStatus). */
   claimed: boolean;
   /** The Sharetribe listing page renders (inquiry process alias set); otherwise no details link. */
@@ -72,6 +72,7 @@ interface ApiListing {
     geolocation?: { lat: number; lng: number } | null;
     publicData?: Record<string, unknown>;
     metadata?: Record<string, unknown>;
+    price?: { amount?: number; currency?: string } | null;
   };
   relationships?: { author?: { data?: { id: string } }; images?: { data?: { id: string }[] } };
 }
@@ -113,7 +114,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
     homeState: str(pd.homeState)?.toUpperCase() ?? null,
     photo: photoUrl && photoUrl.startsWith("https://") ? { src: photoUrl, alt: title } : null,
     miles: origin && geo ? Math.round(milesBetween(origin, geo)) : null,
-    estimate: estimateText(rateKeyFor(rideClass ?? "other", title)),
+    price: listingPriceLabel({ claimed: a.metadata?.claimStatus === "claimed", price: a.price, priceApproved: a.metadata?.priceApproved, unitType: pd.unitType }),
     claimed: a.metadata?.claimStatus === "claimed",
     detailsReady: typeof pd.transactionProcessAlias === "string" && pd.transactionProcessAlias.length > 0,
     bookable: a.metadata?.claimStatus === "claimed" && a.metadata?.bookable === true,

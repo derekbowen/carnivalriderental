@@ -104,8 +104,22 @@ type L = { id: string; attributes: { title: string; state: string; metadata?: Re
     console.log(JSON.stringify(pd, null, 2));
     // Team-only: which operator owns the requested ride (never shown to the customer).
     if (typeof pd.rideListingId === "string" && pd.rideListingId) {
-      const l = await call<{ data: { relationships: { author: { data: { id: string } } } }; included?: { attributes: { profile: { displayName: string }; email: string; profile_: unknown } }[] }>("query", `${INTEG}/listings/show?id=${pd.rideListingId}&include=author`, { headers: await headers("integ") }, true);
-      console.log(`Operator (team only): ${l.included?.[0]?.attributes.profile.displayName ?? "?"} — user ${l.data.relationships.author.data.id}`);
+      // The public profile is anonymised; the operator's real details live in the user's privateData
+      // (Integration API only). Printed to the desk owner's terminal, never stored or sent anywhere.
+      type U = { attributes: { profile: { displayName: string; privateData?: Record<string, unknown>; metadata?: Record<string, unknown> } } };
+      const l = await call<{ data: { attributes: { title: string }; relationships: { author: { data: { id: string } } } }; included?: U[] }>("query", `${INTEG}/listings/show?id=${pd.rideListingId}&include=author`, { headers: await headers("integ") }, true);
+      const p = l.included?.[0]?.attributes.profile;
+      const priv = p?.privateData ?? {};
+      const orig = (priv.originalProfile ?? {}) as { displayName?: string };
+      const pick = (...k: string[]) => k.map((x) => priv[x]).find((v) => typeof v === "string" && v) as string | undefined;
+      console.log("Operator record (team only, do not forward to the customer):");
+      console.log(`  ride listing   ${pd.rideListingId}  ${l.data.attributes.title}`);
+      console.log(`  operator user  ${l.data.relationships.author.data.id}  claim: ${String(p?.metadata?.claimStatus ?? "?")}`);
+      console.log(`  company        ${pick("companyName", "legalName") ?? orig.displayName ?? "(not on file)"}`);
+      console.log(`  contact        ${pick("contactName", "ownerName") ?? "(not on file)"}`);
+      console.log(`  email          ${pick("contactEmail", "email") ?? "(not on file)"}`);
+      console.log(`  phone          ${pick("contactPhone", "phone") ?? "(not on file)"}`);
+      console.log(`  website        ${pick("website") ?? "(not on file)"}   base: ${pick("hqCity", "companyCity") ?? "?"}`);
     }
     const names = new Map((m.included ?? []).map((u: { id: string; attributes: { profile: { displayName: string } } }) => [u.id, u.attributes.profile.displayName]));
     for (const x of [...(m.data ?? [])].reverse()) console.log(`--- ${x.attributes.createdAt} ${names.get(x.relationships.sender.data.id) ?? "?"}\n${x.attributes.content}`);

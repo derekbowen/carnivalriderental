@@ -30,7 +30,9 @@ test("customer browses the Ferris wheel, submits a request, and it survives relo
   await page.getByRole("link", { name: "Ferris wheel rental" }).first().click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ferris wheel rental");
   await expect(page.getByText("Sourcing on request").first()).toBeVisible();
-  await expect(page.getByText("DEMO VALUE").first()).toBeVisible();
+  // Ride-type estimates are category figures, never shown publicly.
+  await expect(page.getByText("Request a quote").first()).toBeVisible();
+  await expect(page.getByText(/DEMO VALUE|Estimated/)).toHaveCount(0);
   await page.getByRole("link", { name: "Request this ride" }).click();
   await expect(page.locator("select")).toHaveValue("ferris-wheel-rental");
 
@@ -140,7 +142,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
     expect(u.search).toBe("");
     origins.add(u.origin);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-    await expect(page.getByRole("link", { name: /Start an event request|Request this ride/ }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Start an event request|Request this ride|Request a quote/ }).first()).toBeVisible();
     for (const href of await page.locator('a[href^="/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
       const target = href.split("#")[0] || "/";
       // /preview/* cards point at per-spec test-harness listings that other specs create and delete; a cached
@@ -153,7 +155,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
   expect(origins.size).toBe(1);
   // /texas/austin is a real-city inventory page (Census place + operator snapshot), never indexable yet.
   await page.goto("/texas/austin");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals near Austin, TX");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Austin event.");
 
   const sitemapRes = await request.get("/sitemap.xml");
   expect(sitemapRes.status()).toBe(200);

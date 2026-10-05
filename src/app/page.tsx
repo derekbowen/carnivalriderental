@@ -19,15 +19,15 @@ export function generateMetadata() {
 
 const COMPARISON = [
   { label: "Finding rides", old: "Search dozens of carnival websites", ours: "Rides from operators across the US, nearest to you first" },
-  { label: "Getting a price", old: "Call around and wait for callbacks", ours: "Rate-card estimate up front; the operator confirms the total" },
+  { label: "Getting a price", old: "Call around and wait for callbacks", ours: "Request a quote for your date and location in one form" },
   { label: "Who you deal with", old: "Calls, texts and emails everywhere", ours: "The operator who owns the ride, every message in one inbox" },
   { label: "If an operator can’t do your date", old: "Start over", ours: "Request another nearby ride in a minute" },
 ];
 
 const COMMITMENTS = [
-  { title: "Straight to the operator", body: "Requests go to the operator who owns the ride. If they haven’t joined yet, our request desk contacts them and says so." },
+  { title: "Straight to the operator", body: "Requests go to the operator who owns the ride. If they haven’t joined yet, the request goes to our request desk, and we tell you so." },
   { title: "Honest about who has your request", body: "We never say an operator received or accepted something unless they did." },
-  { title: "Estimates are labelled as estimates", body: "Rate-card estimates help you budget. The operator confirms the total." },
+  { title: "No made-up prices", body: "A ride shows a price only when its operator has approved one. Everything else reads “Request a quote”." },
   { title: "Confirmed means confirmed", body: "A request is not a booking. A ride is booked only when the operator accepts and payment is completed through the marketplace." },
 ];
 
@@ -58,7 +58,7 @@ export default async function HomePage() {
               Carnival rides for your event. <span className="text-accent">Straight from the operators.</span>
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/80">
-              Find carnival rides near your event, nearest first, and request the one you want. Operators on Carnival Ride Rental reply directly; for operators who haven’t joined yet, our request desk contacts them for you.
+              Find carnival rides near your event, nearest first, and request the one you want. Requests for operators who haven’t joined yet go to our request desk, and we tell you so.
             </p>
             <form action={paths.search()} method="get" className="mt-8 rounded-2xl bg-surface p-5 text-ink shadow-[0_24px_48px_-24px_rgba(0,0,0,0.5)]" aria-label="Find rides near your event">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -154,7 +154,7 @@ export default async function HomePage() {
             ))}
           </ol>
           <p className="mt-12 text-sm font-medium text-ink-soft">
-            Nothing is booked until step 4. A request is not a booking, and prices read <span className="font-bold text-ink">“Estimate”</span> until the operator confirms the total.
+            Nothing is booked until step 4. A request is not a booking and takes no payment. Pricing is confirmed for your event in the quote.
           </p>
         </div>
       </section>
@@ -209,8 +209,8 @@ export default async function HomePage() {
           <div className="bg-surface p-7">
             <h3 className="text-2xl">Reading our prices</h3>
             <dl className="mt-5 space-y-4 text-sm">
-              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-accent-wash px-2 py-0.5 text-xs font-semibold text-accent-strong">Estimated from</span></dt><dd className="text-muted">Our rate card for that ride size, per day (4-hour rental). Not the final price: generator, transportation, permits and fuel can add to it.</dd></div>
-              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-ink px-2 py-0.5 text-xs font-semibold text-white">Request a quote</span></dt><dd className="text-muted">No confirmed rate for that ride size yet. Send a request and the operator prices your event.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-ink px-2 py-0.5 text-xs font-semibold text-white">Request a quote</span></dt><dd className="text-muted">Most rides. Send your date, location, hours and site details; the price for your event is confirmed in the quote. Delivery, power, permits and staffing vary by event.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-accent-wash px-2 py-0.5 text-xs font-semibold text-accent-strong">$ per day</span></dt><dd className="text-muted">Shown only when the ride&rsquo;s operator has approved a rate for that rental length.</dd></div>
             </dl>
           </div>
           <div className="bg-surface p-7">

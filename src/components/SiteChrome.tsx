@@ -1,14 +1,13 @@
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
-import { OPERATOR_PROGRAM } from "@/lib/operators/program";
 import { paths } from "@/lib/seo/routes";
 
 export function EnvBanner() {
   if (appEnv() === "production" && publicIndexingEnabled()) return null;
   return (
     <div className="bg-ink px-4 py-1.5 text-center text-xs text-white/85">
-      <strong className="font-semibold text-accent">{appEnv().toUpperCase()} build</strong> · not public, not indexed · demo data · payments in demo mode (no cards, no charges)
+      <strong className="font-semibold text-accent">Preview</strong> · not yet indexed by search engines · ride listings are drawn from operators&rsquo; public information and are unconfirmed · payments are in test mode (no real charges)
     </div>
   );
 }
@@ -59,7 +58,7 @@ export function SiteFooter() {
       <div data-testid="operator-strip" className="border-b border-white/10">
         <p className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-4 text-sm text-white/80 sm:px-6 lg:px-10">
           <strong className="text-white">Own a carnival ride?</strong>
-          <span>List it on {BRAND.name}. Operators set their own price and pay {OPERATOR_PROGRAM.operatorCommissionPct}% commission.</span>
+          <span>List it on {BRAND.name} and set your own price. Terms are confirmed in writing before you list.</span>
           <Link href={paths.operators()} className="font-semibold text-accent hover:underline">Apply for early access →</Link>
         </p>
       </div>
@@ -92,7 +91,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators own and run the rides listed here. Prices are estimates until the operator confirms the total; a request is not a booking.
+          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators own and run the rides listed here. Pricing is by quote unless an operator has approved a rate; a request is not a booking.
         </p>
       </div>
     </footer>

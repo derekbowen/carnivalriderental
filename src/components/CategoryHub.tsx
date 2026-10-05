@@ -201,7 +201,7 @@ export function CategoryHub({
 
         {/* 8. Final request CTA */}
         <div className="mt-16">
-          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
+          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." />
         </div>
       </div>
     </div>

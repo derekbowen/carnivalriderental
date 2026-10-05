@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getOperatorListing, marketplaceListingUrl, type OperatorRideDetail } from "@/lib/catalog/operator-search";
 import { RIDES, toCard } from "@/lib/inventory";
 import { BRAND } from "@/lib/config";
-import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
+import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 import { paths } from "@/lib/seo/routes";
 
 export const revalidate = 60;
@@ -66,13 +66,13 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
       </div>
       <aside className="space-y-4 lg:pt-10">
         <div className="card p-5">
-          <p className="text-lg font-semibold">{ride.estimate ?? "Request a quote"}</p>
-          {ride.estimate && <p className="mt-1 text-xs text-muted">{ESTIMATE_DISCLAIMER}</p>}
+          <p className="text-lg font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
+          {!ride.price && <p className="mt-1 text-xs text-muted">Pricing depends on your date, location, hours and site. The operator prices your event.</p>}
           {!ride.claimed && <p className="mt-3 text-sm text-ink-soft">This operator hasn&rsquo;t joined Carnival Ride Rental yet. Requests go to our request desk, which contacts the operator for you.</p>}
           {ride.bookable ? (
             <a href={marketplaceListingUrl(ride)} className="btn-primary mt-4 w-full">Book this ride</a>
           ) : (
-            <Link href={paths.requestRide(ride.id)} className="btn-primary mt-4 w-full">Request this ride</Link>
+            <Link href={paths.requestRide(ride.id)} className="btn-primary mt-4 w-full">Request a quote</Link>
           )}
           <p className="mt-2 text-xs text-muted">No payment is taken to send a request. It is a request, not a booking.</p>
         </div>
