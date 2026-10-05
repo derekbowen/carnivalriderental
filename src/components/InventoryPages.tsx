@@ -81,7 +81,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       {s.total > 0 ? (
         <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} listings from operators based within {R} miles of {c.name}.</p>
       ) : (
-        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. You can still send a request and we&rsquo;ll look further afield.</p>
+        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. You can still send a request to our request desk.</p>
       )}
 
       {s.byClass.length > 0 && (

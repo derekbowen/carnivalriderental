@@ -32,11 +32,12 @@ export function RideResult({ card }: { card: OperatorCard }) {
           </p>
         )}
         <div className="mt-auto pt-4">
-          <p className="text-sm font-semibold">{card.price ?? REQUEST_A_QUOTE}</p>
+          {/* Price slot: an operator-approved rate, else the "Request a quote" button below stands in for it. */}
+          {card.price ? <p className="text-sm font-semibold" data-testid="card-price">{card.price}</p> : card.bookable ? <p className="text-sm font-semibold">{REQUEST_A_QUOTE}</p> : null}
           {card.bookable ? (
             <a href={marketplaceListingUrl(card)} className="btn-primary mt-3 w-full">Book this ride</a>
           ) : (
-            <Link href={paths.requestRide(card.id)} className="btn-primary mt-3 w-full">Request a quote</Link>
+            <Link href={paths.requestRide(card.id)} className={`btn-primary w-full ${card.price ? "mt-3" : ""}`}>{REQUEST_A_QUOTE}</Link>
           )}
           <Link href={paths.rideListing(card.id)} className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-accent-strong hover:underline">View ride details</Link>
         </div>
