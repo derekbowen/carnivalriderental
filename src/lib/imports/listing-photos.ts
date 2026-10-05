@@ -26,6 +26,8 @@ export interface PhotoItem {
 export interface PhotoApi {
   /** Current images count, metadata and author's claim status. */
   listingState(listingId: string): Promise<{ images: number; state: string; metadata: Record<string, unknown>; authorClaimStatus: unknown } | null>;
+  /** Optional: re-encode an oversized image (e.g. ImageMagick → JPEG ≤ 2400 px). Returns null on failure. */
+  shrink?(bytes: Uint8Array): Promise<Uint8Array | null>;
   /** Integration API listings/approve (pendingApproval → published). */
   approve(listingId: string): Promise<void>;
   download(url: string): Promise<{ bytes: Uint8Array; contentType: string }>;
@@ -127,7 +129,8 @@ async function runSequential(
         } else await emit(it, { outcome: "already_has_images" });
         continue;
       }
-      const { bytes } = await d.api.download(it.sourceUrl);
+      let { bytes } = await d.api.download(it.sourceUrl);
+      if (bytes.byteLength > MAX_BYTES && d.api.shrink && sniffImage(bytes)) bytes = (await d.api.shrink(bytes)) ?? bytes;
       const type = sniffImage(bytes);
       if (!type || bytes.byteLength > MAX_BYTES) {
         await emit(it, { outcome: "bad_image", detail: !type ? "not a JPEG/PNG/GIF" : "over 20 MB" });

@@ -8,6 +8,7 @@
  *                                                           # and add it to imports/photos/takedowns.json
  * Options: --company id1,id2  --only externalId1,…  --limit N
  */
+import { spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -46,7 +47,7 @@ async function download(url: string): Promise<{ bytes: Uint8Array; contentType: 
   }
   if (!res || !res.ok) throw new Error(`download HTTP ${res?.status}`);
   const len = Number(res.headers.get("content-length") ?? 0);
-  if (len > 20 * 1024 * 1024) throw new Error("download over 20 MB");
+  if (len > 60 * 1024 * 1024) throw new Error("download over 60 MB");
   return { bytes: new Uint8Array(await res.arrayBuffer()), contentType: res.headers.get("content-type") ?? "" };
 }
 
@@ -68,6 +69,10 @@ const api: PhotoApi = {
     }
   },
   download,
+  async shrink(bytes) {
+    const r = spawnSync("convert", ["-", "-resize", "2400x2400>", "-quality", "85", "jpg:-"], { input: Buffer.from(bytes), maxBuffer: 64 * 1024 * 1024 });
+    return r.status === 0 && r.stdout.length > 0 ? new Uint8Array(r.stdout) : null;
+  },
   async upload(bytes, filename, contentType) {
     const form = new FormData();
     form.append("image", new Blob([new Uint8Array(bytes)], { type: contentType }), filename);
@@ -121,6 +126,22 @@ const api: PhotoApi = {
     }
   }
   if (apply && !argv.includes("--recheck")) items = items.filter((i) => !done.has(i.externalId));
+  if (argv.includes("--approve-remaining")) {
+    // Founder go 2026-10-05: every imported listing live in Test, with or without a photo.
+    if (target !== "test") throw new Error("Refusing: --approve-remaining is for the Test marketplace only.");
+    const ids = Object.entries(mapping as Record<string, { listingId: string; companyId: string }>);
+    let approved = 0;
+    for (const [externalId, m] of ids) {
+      if (takedowns.some((t) => t.companyId === m.companyId)) continue;
+      const s = await api.listingState(m.listingId);
+      if (!s || s.state !== "pendingApproval" || s.authorClaimStatus !== "unclaimed") continue;
+      await api.approve(m.listingId);
+      approved++;
+      fs.appendFileSync(ledgerFile, `${JSON.stringify({ at: new Date().toISOString(), runId: "approve-remaining", externalId, companyId: m.companyId, listingId: m.listingId, outcome: s.images ? "approved" : "approved_without_photo" })}\n`);
+    }
+    console.log(`Approved ${approved} remaining listings.`);
+    return;
+  }
   if (list("company")) items = items.filter((i) => list("company")!.includes(i.companyId));
   if (list("only")) items = items.filter((i) => list("only")!.includes(i.externalId));
   if (opt("limit")) items = items.slice(0, Number(opt("limit")));
