@@ -21,11 +21,10 @@ export function RideResult({ card }: { card: OperatorCard }) {
       <div className="flex flex-1 flex-col p-4">
         {card.rideClassLabel && <p className="text-xs font-semibold text-muted">{card.rideClassLabel}</p>}
         <h2 className="mt-1 text-xl leading-tight">{card.title}</h2>
-        {card.company && <p className="mt-1 text-sm text-ink-soft">{card.company}</p>}
-        {(card.base || card.miles !== null) && (
+        {(card.homeState || card.miles !== null) && (
           <p className="mt-1 flex items-center gap-1 text-sm text-ink-soft">
             <MapPinIcon className="h-4 w-4 shrink-0" aria-hidden="true" />
-            {[card.base ? `Based in ${card.base}` : null, card.miles !== null ? `~${card.miles.toLocaleString("en-US")} mi away` : null].filter(Boolean).join(" · ")}
+            {[card.miles !== null ? `Operator ~${card.miles.toLocaleString("en-US")} mi away` : null, card.homeState ? `based in ${card.homeState}` : null].filter(Boolean).join(", ")}
           </p>
         )}
         <div className="mt-auto pt-4">
@@ -36,7 +35,7 @@ export function RideResult({ card }: { card: OperatorCard }) {
           ) : (
             <Link href={paths.requestRide(card.id)} className="btn-primary mt-3 w-full">Request this ride</Link>
           )}
-          {card.detailsReady && <a href={marketplaceListingUrl(card)} className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-accent-strong hover:underline">View ride details</a>}
+          <Link href={paths.rideListing(card.id)} className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-accent-strong hover:underline">View ride details</Link>
         </div>
       </div>
     </article>

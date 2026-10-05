@@ -1,4 +1,4 @@
-import { FerrisWheelIcon, MenuIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
 import { OPERATOR_PROGRAM } from "@/lib/operators/program";
@@ -14,13 +14,10 @@ export function EnvBanner() {
 }
 
 function Logo({ dark = false }: { dark?: boolean }) {
+  // Founder's logo (public/brand). The dark variant has white lettering for the navy footer.
   return (
-    <span className="flex items-center gap-2">
-      <span className={`flex h-8 w-8 items-center justify-center rounded-full ${dark ? "bg-accent text-ink" : "bg-pop text-white"}`}>
-        <FerrisWheelIcon className="h-5 w-5" aria-hidden="true" />
-      </span>
-      <span className={`font-display text-[22px] ${dark ? "text-white" : "text-ink"}`}>{BRAND.name}</span>
-    </span>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={dark ? "/brand/logo-on-dark.png" : "/brand/logo-header.png"} alt={BRAND.name} width={127} height={48} className="h-12 w-auto" />
   );
 }
 

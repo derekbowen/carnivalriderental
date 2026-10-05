@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ipLocation, milesBetween, parseNear, toOperatorCard } from "@/lib/catalog/operator-search";
+import { ipLocation, milesBetween, parseNear, rideFacts, toOperatorCard } from "@/lib/catalog/operator-search";
 import { paths } from "@/lib/seo/routes";
 
 const listing = (over: Record<string, unknown> = {}, pd: Record<string, unknown> = {}, md: Record<string, unknown> = {}) => ({
@@ -24,11 +24,24 @@ const included = [
 describe("operator search cards", () => {
   it("maps public fields, distance and the rate-card estimate", () => {
     const c = toOperatorCard(listing(), included, { lat: 30.27, lng: -97.74 })!;
-    expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", base: "San Antonio, TX", company: "Alamo Attractions", bookable: false });
+    expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", homeState: "TX", bookable: false });
     expect(c.photo?.src).toBe("https://sharetribe.imgix.net/x/i1");
     expect(c.miles).toBeGreaterThan(60);
     expect(c.miles).toBeLessThan(90);
     expect(c.estimate).toMatch(/^Estimated from \$/);
+  });
+
+  it("never exposes the operator's company name or city (no bypassing the marketplace)", () => {
+    const c = toOperatorCard(listing(), included, { lat: 30.27, lng: -97.74 })!;
+    const text = JSON.stringify(c);
+    expect(text).not.toMatch(/Alamo|San Antonio/);
+    expect(c.photo?.alt).toBe("Grand Carousel");
+  });
+
+  it("detail facts: approved public fields only", () => {
+    const f = rideFacts({ manufacturer: "Chance", minRiderHeightIn: 42, footprintLengthFt: 50, footprintWidthFt: 40, serviceStates: ["tx", "ok"], companyName: "Alamo", description: "x" });
+    expect(f.map((x) => x.label)).toEqual(["Manufacturer", "Minimum rider height", "Space needed (operator's figure)", "States served"]);
+    expect(JSON.stringify(f)).not.toMatch(/Alamo/);
   });
 
   it("is bookable only when claimed AND marked bookable by the ops check", () => {
@@ -70,6 +83,7 @@ describe("routes", () => {
     expect(paths.search()).toBe("/s");
     expect(paths.search({ rideClass: "family", page: 2 })).toBe("/s?class=family&page=2");
     expect(paths.requestRide("6ac255a8-e335-44cc-93e0-5e60a95b017c")).toBe("/request?listing=6ac255a8-e335-44cc-93e0-5e60a95b017c");
+    expect(paths.rideListing("6ac255a8-e335-44cc-93e0-5e60a95b017c")).toBe("/s/6ac255a8-e335-44cc-93e0-5e60a95b017c");
     expect(() => paths.requestRide("../x")).toThrow();
   });
 });

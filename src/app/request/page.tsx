@@ -74,7 +74,7 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   );
 }
 
-const ANY_RIDE = { id: "", title: "Help me choose a ride", company: null, base: null, photo: null, rideClassLabel: null, estimate: null, claimed: false } as const;
+const ANY_RIDE = { id: "", title: "Help me choose a ride", homeState: null, photo: null, rideClassLabel: null, estimate: null, claimed: false } as const;
 
 async function OperatorRideRequest({ listingId }: { listingId: string | null }) {
   const ride = listingId === null ? ANY_RIDE : isListingId(listingId) ? await getOperatorListing(listingId) : null;
@@ -102,12 +102,12 @@ async function OperatorRideRequest({ listingId }: { listingId: string | null }) 
           {!ride.id
             ? "Not sure which ride? Your request goes to the Carnival Ride Rental request desk. We suggest rides and operators near your event and reply in your marketplace inbox."
             : toDesk
-            ? `${ride.company ?? "This operator"} hasn't joined Carnival Ride Rental yet, so your request goes to our request desk, not to them. We contact the operator and reply in your marketplace inbox.`
-            : `Your request goes to ${ride.company ?? "the operator"}, who replies in your marketplace inbox.`}
+            ? "This ride's operator hasn't joined Carnival Ride Rental yet, so your request goes to our request desk, not to them. We contact the operator and reply in your marketplace inbox."
+            : "Your request goes to the ride's operator, who replies in your marketplace inbox."}
         </p>
         <div className="mt-8">
           <RideRequestForm
-            target={{ listingId: toDesk ? desk : ride.id, processAlias: INQUIRY_ALIAS, toDesk, ride: { id: ride.id, title: ride.title, company: ride.company, base: ride.base } }}
+            target={{ listingId: toDesk ? desk : ride.id, processAlias: INQUIRY_ALIAS, toDesk, ride: { id: ride.id, title: ride.title } }}
             clientId={clientId}
             marketplaceUrl={marketplaceUrl}
             today={today}
@@ -126,7 +126,7 @@ async function OperatorRideRequest({ listingId }: { listingId: string | null }) 
           <div className="p-5">
             {ride.rideClassLabel && <p className="text-xs font-semibold text-muted">{ride.rideClassLabel}</p>}
             <h2 className="text-lg">{ride.title}</h2>
-            {ride.company && <p className="text-ink-soft">{ride.company}{ride.base ? ` · based in ${ride.base}` : ""}</p>}
+            {ride.homeState && <p className="text-ink-soft">Operator based in {ride.homeState}</p>}
             <p className="mt-2 font-semibold">{ride.estimate ?? "Request a quote"}</p>
             {ride.estimate && <p className="text-xs text-muted">{ESTIMATE_DISCLAIMER}</p>}
           </div>

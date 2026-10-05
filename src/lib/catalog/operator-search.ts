@@ -32,10 +32,11 @@ export interface OperatorCard {
   title: string;
   rideClass: string | null;
   rideClassLabel: string | null;
-  /** "City, ST" as published on the listing (operator base, not the event location). */
-  base: string | null;
+  /**
+   * Operator's home state (uppercase), never the city or company: founder decision 2026-10-05 —
+   * customers must not be able to look the operator up and bypass the marketplace.
+   */
   homeState: string | null;
-  company: string | null;
   photo: { src: string; alt: string } | null;
   /** Straight-line miles from the search origin to the operator's (rounded) base. */
   miles: number | null;
@@ -99,23 +100,18 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   if (l.type !== "listing" || a.deleted || a.state !== "published" || !title || pd.listingType !== OPERATOR_LISTING_TYPE) return null;
   if (a.metadata?.requestDesk === true || a.metadata?.qa === true) return null; // the request desk and QA fixtures are not rides
   const byKey = new Map(included.map((i) => [`${i.type}/${i.id}`, i]));
-  const authorId = l.relationships?.author?.data?.id;
   const imageId = l.relationships?.images?.data?.[0]?.id;
   const image = imageId ? byKey.get(`image/${imageId}`) : undefined;
   const photoUrl = image?.attributes.variants?.["landscape-crop"]?.url ?? image?.attributes.variants?.["square-small"]?.url ?? null;
   const rideClass = isRideClass(str(pd.rideClass) ?? undefined) ? (pd.rideClass as string) : null;
   const geo = a.geolocation && Number.isFinite(a.geolocation.lat) && Number.isFinite(a.geolocation.lng) ? a.geolocation : null;
-  const company = authorId ? str(byKey.get(`user/${authorId}`)?.attributes.profile?.displayName) : null;
-  const address = (pd.location as { address?: unknown } | undefined)?.address;
   return {
     id: l.id,
     title,
     rideClass,
     rideClassLabel: rideClass ? CLASS_LABEL.get(rideClass) ?? null : null,
-    base: str(address),
-    homeState: str(pd.homeState),
-    company,
-    photo: photoUrl && photoUrl.startsWith("https://") ? { src: photoUrl, alt: company ? `${title} from ${company}` : title } : null,
+    homeState: str(pd.homeState)?.toUpperCase() ?? null,
+    photo: photoUrl && photoUrl.startsWith("https://") ? { src: photoUrl, alt: title } : null,
     miles: origin && geo ? Math.round(milesBetween(origin, geo)) : null,
     estimate: estimateText(rateKeyFor(rideClass ?? "other", title)),
     claimed: a.metadata?.claimStatus === "claimed",
@@ -142,7 +138,8 @@ async function anonToken(): Promise<string> {
 }
 
 async function apiGet(path: string, params: Record<string, string>) {
-  const qs = new URLSearchParams({ include: "images,author", "fields.image": "variants.landscape-crop,variants.square-small", "fields.user": "profile.displayName", ...params });
+  // Author (company) is deliberately not fetched: operator identity is never shown on our pages.
+  const qs = new URLSearchParams({ include: "images", "fields.image": "variants.landscape-crop,variants.square-small", ...params });
   const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`listing query failed (HTTP ${res.status})`);
   return (await res.json()) as { data: ApiListing | ApiListing[]; included?: ApiIncluded[]; meta?: { totalItems: number; totalPages: number; page: number } };
@@ -174,12 +171,37 @@ export async function searchOperatorListings(q: { origin: LatLng; page?: number;
   }
 }
 
-/** One live operator listing (for the request form prefill), or null. */
-export async function getOperatorListing(id: string): Promise<OperatorCard | null> {
+export interface OperatorRideDetail extends OperatorCard {
+  /** Approved public facts only (contract publicFields); never description text, company or city. */
+  facts: { label: string; value: string }[];
+}
+
+const STATE_NAMES_UPPER = (codes: unknown) => (Array.isArray(codes) ? codes.filter((c) => typeof c === "string").map((c: string) => c.toUpperCase()) : []);
+
+/** Approved public facts of a listing, in display order. Exported for tests. */
+export function rideFacts(pd: Record<string, unknown>): { label: string; value: string }[] {
+  const f: { label: string; value: string }[] = [];
+  const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v > 0 ? v : null);
+  if (str(pd.manufacturer)) f.push({ label: "Manufacturer", value: str(pd.manufacturer)! });
+  if (str(pd.rideModel)) f.push({ label: "Model", value: str(pd.rideModel)! });
+  if (num(pd.minRiderHeightIn)) f.push({ label: "Minimum rider height", value: `${num(pd.minRiderHeightIn)} in` });
+  const L = num(pd.footprintLengthFt), W = num(pd.footprintWidthFt), H = num(pd.rideHeightFt);
+  if (L && W) f.push({ label: "Space needed (operator's figure)", value: `${L} ft × ${W} ft` });
+  if (H) f.push({ label: "Ride height (operator's figure)", value: `${H} ft` });
+  if (str(pd.riderRules)) f.push({ label: "Rider rules", value: str(pd.riderRules)! });
+  const served = STATE_NAMES_UPPER(pd.serviceStates);
+  if (served.length) f.push({ label: "States served", value: served.length >= 50 ? "All states" : served.join(", ") });
+  return f;
+}
+
+/** One live operator listing (request form prefill and our ride detail page), or null. */
+export async function getOperatorListing(id: string): Promise<OperatorRideDetail | null> {
   if (!isListingId(id)) return null;
   try {
     const body = await apiGet("/listings/show", { id });
-    return Array.isArray(body.data) ? null : toOperatorCard(body.data, body.included ?? [], null);
+    if (Array.isArray(body.data)) return null;
+    const card = toOperatorCard(body.data, body.included ?? [], null);
+    return card ? { ...card, facts: rideFacts(body.data.attributes.publicData ?? {}) } : null;
   } catch {
     return null;
   }

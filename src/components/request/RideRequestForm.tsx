@@ -8,7 +8,7 @@ export interface RideRequestTarget {
   listingId: string;
   processAlias: string;
   toDesk: boolean;
-  ride: { id: string; title: string; company: string | null; base: string | null };
+  ride: { id: string; title: string };
 }
 
 type Status = { kind: "idle" } | { kind: "sending" } | { kind: "done"; txId: string; duplicate: boolean } | { kind: "error"; message: string; code?: string };
@@ -48,7 +48,6 @@ export function RideRequestForm({ target, clientId, marketplaceUrl, today }: { t
         source: "carnivalriderental.us",
         rideListingId: target.ride.id,
         rideTitle: target.ride.title,
-        rideCompany: target.ride.company,
         eventDate,
         startTime: v("startTime"),
         endTime: v("endTime"),
@@ -62,7 +61,7 @@ export function RideRequestForm({ target, clientId, marketplaceUrl, today }: { t
         notes: v("notes"),
       };
       const message = [
-        `Ride request: ${target.ride.title}${target.ride.company ? ` (${target.ride.company}${target.ride.base ? `, based in ${target.ride.base}` : ""})` : ""}`,
+        `Ride request: ${target.ride.title}`,
         `Event date: ${eventDate}${pd.startTime ? `, ${pd.startTime}${pd.endTime ? `–${pd.endTime}` : ""}` : ""}`,
         `Event location: ${[pd.eventAddress, pd.eventCity, pd.eventState, pd.eventZip].filter(Boolean).join(", ")}`,
         pd.guests ? `Expected guests: ${pd.guests}` : null,
@@ -86,8 +85,8 @@ export function RideRequestForm({ target, clientId, marketplaceUrl, today }: { t
         <h2 className="text-2xl">{status.duplicate ? "You already sent this request" : "Request sent"}</h2>
         <p className="mt-2 text-ink-soft">
           {target.toDesk
-            ? `Saved in the Carnival Ride Rental request desk. ${target.ride.company ?? "The operator"} has not joined yet and has not received it; our team will contact them and reply in your inbox.`
-            : `Saved and sent to ${target.ride.company ?? "the operator"}. They reply in your inbox. This is a request, not a booking.`}
+            ? "Saved in the Carnival Ride Rental request desk. The ride's operator has not joined yet and has not received it; our team will contact them and reply in your inbox."
+            : "Saved and sent to the ride's operator. They reply in your inbox. This is a request, not a booking."}
         </p>
         <p className="mt-2 text-sm text-muted">Reference: {status.txId}</p>
         <a className="btn-primary mt-4" href={`${marketplaceUrl}/order/${status.txId}`}>Open your inbox</a>

@@ -100,7 +100,13 @@ type L = { id: string; attributes: { title: string; state: string; metadata?: Re
     }
     const t = await (await fetch(`${MKT}/transactions/show?id=${txId}`, { headers: h })).json();
     const m = await (await fetch(`${MKT}/messages/query?transaction_id=${txId}&include=sender&perPage=100`, { headers: h })).json();
-    console.log(JSON.stringify(t.data?.attributes?.protectedData ?? {}, null, 2));
+    const pd = (t.data?.attributes?.protectedData ?? {}) as Record<string, unknown>;
+    console.log(JSON.stringify(pd, null, 2));
+    // Team-only: which operator owns the requested ride (never shown to the customer).
+    if (typeof pd.rideListingId === "string" && pd.rideListingId) {
+      const l = await call<{ data: { relationships: { author: { data: { id: string } } } }; included?: { attributes: { profile: { displayName: string }; email: string; profile_: unknown } }[] }>("query", `${INTEG}/listings/show?id=${pd.rideListingId}&include=author`, { headers: await headers("integ") }, true);
+      console.log(`Operator (team only): ${l.included?.[0]?.attributes.profile.displayName ?? "?"} — user ${l.data.relationships.author.data.id}`);
+    }
     const names = new Map((m.included ?? []).map((u: { id: string; attributes: { profile: { displayName: string } } }) => [u.id, u.attributes.profile.displayName]));
     for (const x of [...(m.data ?? [])].reverse()) console.log(`--- ${x.attributes.createdAt} ${names.get(x.relationships.sender.data.id) ?? "?"}\n${x.attributes.content}`);
     return;

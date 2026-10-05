@@ -51,6 +51,11 @@ export const paths = {
     const s = p.toString();
     return s ? `/s?${s}` : "/s";
   },
+  /** Our own ride detail page for one operator listing (no operator identity shown). */
+  rideListing: (listingId: string) => {
+    if (!/^[0-9a-f-]{36}$/.test(listingId)) throw new Error(`Invalid listing id: "${listingId}"`);
+    return `/s/${listingId}`;
+  },
   /** "Request this ride" for an operator listing that can't be booked directly yet. */
   requestRide: (listingId: string) => {
     if (!/^[0-9a-f-]{36}$/.test(listingId)) throw new Error(`Invalid listing id: "${listingId}"`);
