@@ -16,7 +16,7 @@ import { AUTH, createClient, INTEG, MKT } from "./lib/sharetribe-client";
 const QA_LISTING = "6ac349fd-c1ab-4ad7-afbb-fa15011f46e3";
 const BOOKING_ALIAS = "default-booking/release-1";
 const cid = () => process.env.SHARETRIBE_CLIENT_ID!;
-const PK = process.env.QA_STRIPE_PUBLISHABLE_KEY ?? "";
+let PK = "";
 const out = (ok: boolean, s: string) => {
   console.log(`${ok ? "PASS" : "FAIL"}  ${s}`);
   if (!ok) process.exitCode = 1;
@@ -58,7 +58,12 @@ const day = (offset: number) => {
 };
 
 (async () => {
-  if (!PK.startsWith("pk_test_")) throw new Error("QA_STRIPE_PUBLISHABLE_KEY must be the Test marketplace's pk_test_ key");
+  // The publishable key the Test marketplace actually serves (public), so the proof always uses the
+  // same Stripe account as Sharetribe's Console secret key.
+  const html = await (await fetch(`${process.env.SHARETRIBE_MARKETPLACE_URL}/?k=${Date.now()}`, { headers: { "Cache-Control": "no-cache" } })).text();
+  PK = (html.match(/pk_test_[A-Za-z0-9]+/) ?? [""])[0];
+  if (!PK.startsWith("pk_test_")) throw new Error("The Test marketplace does not serve a pk_test_ key; refusing (test mode only)");
+  console.log(`      Stripe publishable key served by Test marketplace: ${PK.slice(0, 22)}…`);
   const { call, headers } = createClient("test");
   const op = await tok(process.env.QA_OPERATOR_EMAIL!, process.env.QA_OPERATOR_PASSWORD!);
 
@@ -83,7 +88,8 @@ const day = (offset: number) => {
     me = await mkt(op, "/current_user/show");
   }
   out(me.j.data.attributes.stripeConnected === true, "operator stripeConnected=true (authoritative, from Sharetribe)");
-  const sa = await mkt(op, "/stripe_account");
+  const sa = await mkt(op, "/stripe_account/fetch");
+  if (sa.status !== 200) throw new Error(`Operator's Stripe account is not readable with the current platform keys (HTTP ${sa.status}); it belongs to another Stripe account. Create a fresh QA operator.`);
   const req = sa.j?.data?.attributes?.stripeAccountData?.requirements ?? {};
   console.log(`      Stripe requirements currently_due=${JSON.stringify(req.currently_due ?? [])} charges_enabled=${sa.j?.data?.attributes?.stripeAccountData?.charges_enabled}`);
 
@@ -141,6 +147,42 @@ const day = (offset: number) => {
     const c2 = await stripe(`/payment_intents/${String(p2.stripePaymentIntentClientSecret).split("_secret_")[0]}/confirm`, { client_secret: p2.stripePaymentIntentClientSecret, payment_method: "pm_card_chargeDeclined" });
     const t2 = await mkt(cu, "/transactions/transition", { id: i2.j.data.id, transition: "transition/confirm-payment", params: {} });
     out(c2.j.status !== "requires_capture" && t2.status >= 400, `declined card: no authorisation (${c2.j.error?.code ?? c2.j.status}) and confirm-payment refused (HTTP ${t2.status}); tx ${i2.j.data.id} stays pending-payment and expires`);
+  }
+
+  // 7. Cancellation BEFORE capture: operator declines a preauthorized request → authorization released.
+  const book = async (who: string, startOff: number, pm: string) => {
+    const r = await mkt(who, "/transactions/initiate?expand=true", { processAlias: BOOKING_ALIAS, transition: "transition/request-payment", params: { listingId: QA_LISTING, bookingStart: day(startOff), bookingEnd: day(startOff + 1), lineItems: items } });
+    if (r.status !== 200) return { status: r.status, code: r.j?.errors?.[0]?.code as string | undefined };
+    const p = r.j.data.attributes.protectedData.stripePaymentIntents.default;
+    const id = String(p.stripePaymentIntentClientSecret).split("_secret_")[0];
+    const c = await stripe(`/payment_intents/${id}/confirm`, { client_secret: p.stripePaymentIntentClientSecret, payment_method: pm });
+    return { status: 200, txId: r.j.data.id as string, piId: id, secret: p.stripePaymentIntentClientSecret as string, piStatus: c.j.status as string };
+  };
+  const piStatus = async (id: string, secret: string) => (await (await fetch(`https://api.stripe.com/v1/payment_intents/${id}?client_secret=${encodeURIComponent(secret)}`, { headers: { Authorization: `Bearer ${PK}` } })).json()).status as string;
+  const b7 = await book(cuT, base + 4, "pm_card_visa");
+  if (b7.txId) {
+    await mkt(cu, "/transactions/transition", { id: b7.txId, transition: "transition/confirm-payment", params: {} });
+    const dec = await mkt(op, "/transactions/transition", { id: b7.txId, transition: "transition/decline", params: {} });
+    const st = await piStatus(b7.piId!, b7.secret!);
+    out(dec.status === 200 && st === "canceled", `cancellation before capture: operator declines → authorization released (tx ${b7.txId}, ${b7.piId}: ${b7.piStatus} → ${st})`);
+  } else out(false, `cancellation-before-capture setup failed (HTTP ${b7.status} ${b7.code ?? ""})`);
+
+  // 8. Two customers, one slot: customer 1 holds the date; customer 2 is refused.
+  const cu2 = await tok(process.env.QA_CUSTOMER2_EMAIL!, process.env.QA_CUSTOMER2_PASSWORD!);
+  const cu2T = await trusted(cu2);
+  const b8 = await book(cuT, base + 6, "pm_card_visa");
+  if (b8.txId) await mkt(cu, "/transactions/transition", { id: b8.txId, transition: "transition/confirm-payment", params: {} });
+  const b8b = await book(cu2T, base + 6, "pm_card_visa");
+  out(!!b8.txId && b8b.status === 409, `two customers, same slot: customer 1 holds it (tx ${b8.txId}); customer 2 refused (HTTP ${b8b.status} ${b8b.code ?? ""}), no PaymentIntent created for customer 2`);
+  if (b8.txId) await mkt(op, "/transactions/transition", { id: b8.txId, transition: "transition/decline", params: {} });
+
+  // 9. Duplicate submission: the same request fired twice at once → exactly one transaction.
+  const [d1, d2] = await Promise.all([book(cuT, base + 8, "pm_card_visa"), book(cuT, base + 8, "pm_card_visa")]);
+  const ok = [d1, d2].filter((d) => d.status === 200);
+  out(ok.length === 1, `duplicate submission (two simultaneous requests): ${ok.length} created (tx ${ok.map((d) => d.txId).join(",")}), other refused (HTTP ${[d1, d2].find((d) => d.status !== 200)?.status ?? "-"})`);
+  for (const d of ok) {
+    await mkt(cu, "/transactions/transition", { id: d.txId, transition: "transition/confirm-payment", params: {} });
+    await mkt(op, "/transactions/transition", { id: d.txId, transition: "transition/decline", params: {} });
   }
 
   // Restore the QA listing to inquiry-only so nothing stays bookable.
