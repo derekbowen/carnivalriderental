@@ -137,10 +137,10 @@ async function anonToken(): Promise<string> {
   return token.value;
 }
 
-async function apiGet(path: string, params: Record<string, string>) {
+async function apiGet(path: string, params: Record<string, string>, revalidate = 60) {
   // Author (company) is deliberately not fetched: operator identity is never shown on our pages.
   const qs = new URLSearchParams({ include: "images", "fields.image": "variants.landscape-crop,variants.square-small", ...params });
-  const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate: 60 } });
+  const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate } });
   if (!res.ok) throw new Error(`listing query failed (HTTP ${res.status})`);
   return (await res.json()) as { data: ApiListing | ApiListing[]; included?: ApiIncluded[]; meta?: { totalItems: number; totalPages: number; page: number } };
 }
@@ -237,4 +237,30 @@ export function ipLocation(h: { get(name: string): string | null }): (LatLng & {
   const city = decodeURIComponent(h.get("x-vercel-ip-city") ?? "").trim();
   const region = (h.get("x-vercel-ip-country-region") ?? "").trim();
   return { lat, lng, label: city ? `${city}${region ? `, ${region}` : ""}` : "your area" };
+}
+
+export interface ClassShowcase {
+  id: string;
+  label: string;
+  count: number;
+  photo: { src: string; alt: string } | null;
+}
+
+/**
+ * Real ride counts and one real photo per ride class (homepage "Browse by ride type"). One small
+ * query per class, cached by Next for 10 minutes. Classes with no live rides are omitted.
+ */
+export async function rideClassShowcase(): Promise<ClassShowcase[]> {
+  const out = await Promise.all(
+    RIDE_CLASSES.map(async (c) => {
+      try {
+        const body = await apiGet("/listings/query", { pub_listingType: OPERATOR_LISTING_TYPE, pub_rideClass: c.id, perPage: "8" }, 600);
+        const cards = (Array.isArray(body.data) ? body.data : []).map((l) => toOperatorCard(l, body.included ?? [], null)).filter((x): x is OperatorCard => !!x);
+        return { id: c.id, label: c.label, count: body.meta?.totalItems ?? cards.length, photo: cards.find((x) => x.photo)?.photo ?? null };
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return out.filter((x): x is ClassShowcase => !!x && x.count > 0);
 }

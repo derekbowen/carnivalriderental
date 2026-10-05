@@ -36,7 +36,8 @@
     "ops:bookable": "tsx --env-file-if-exists=.env.local scripts/operator-bookable.ts",
     "qa:journey": "tsx --env-file-if-exists=.env.local scripts/qa-journey.ts",
     "qa:payment": "tsx --env-file-if-exists=.env.local scripts/qa-payment.ts",
-    "stripe:probe": "tsx --env-file-if-exists=.env.local scripts/stripe-probe.ts"
+    "stripe:probe": "tsx --env-file-if-exists=.env.local scripts/stripe-probe.ts",
+    "ops:anonymize": "tsx --env-file-if-exists=.env.local scripts/operator-anonymize.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

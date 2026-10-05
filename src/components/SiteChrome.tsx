@@ -83,7 +83,7 @@ export function SiteFooter() {
           <div>
             <p className="font-semibold text-accent">Booking</p>
             <ul className="mt-3 space-y-2 text-white/75">
-              <li><Link className="hover:text-white" href="/#how-it-works">How managed booking works</Link></li>
+              <li><Link className="hover:text-white" href="/#how-it-works">How it works</Link></li>
               <li><Link className="hover:text-white" href={paths.request()}>Start an event request</Link></li>
               <li><Link className="hover:text-white" href={paths.operators()}>For ride operators</Link></li>
             </ul>
@@ -92,7 +92,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          {BRAND.name} is owned and operated by {BRAND.legalEntity}. “{BRAND.name}” is a working name. Prices are planning estimates unless labelled “Accepted quote”. Availability is confirmed per event.
+          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators own and run the rides listed here. Prices are estimates until the operator confirms the total; a request is not a booking.
         </p>
       </div>
     </footer>

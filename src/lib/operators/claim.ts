@@ -68,3 +68,31 @@ export function bookingBlockers(i: EligibilityInput): string[] {
   if (!i.commissionDecided) out.push("commission not decided (real-money payments gated)");
   return out;
 }
+
+// ------------------------------------------------------------------------------ operator anonymity
+// Founder decision 2026-10-05: until an operator claims their account, nothing public on the
+// marketplace identifies the company (customers could look it up and bypass us). Originals are kept
+// in privateData (owner + operator only) and restored on claim.
+
+export const OPERATOR_PLACEHOLDER = {
+  firstName: "Carnival",
+  lastName: "Ride Rental",
+  displayName: "Carnival Ride Rental operator",
+  bio: "Carnival ride operator listed on Carnival Ride Rental. This operator has not joined yet; requests go to the Carnival Ride Rental request desk.",
+} as const;
+
+/** User publicData keys that identify the company; moved to privateData while unclaimed. */
+export const IDENTITY_PUBLIC_KEYS = ["companyName", "hqCity", "website", "otherOperations"] as const;
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Remove the company's name(s), websites and emails from listing text. */
+export function anonymizeText(text: string, names: string[]): string {
+  let t = text ?? "";
+  for (const n of [...new Set(names.map((x) => (x ?? "").trim()).filter((x) => x.length >= 3))].sort((a, b) => b.length - a.length)) {
+    t = t.replace(new RegExp(`\\s*(?:—|-|,)?\\s*(?:operated|owned|run|provided) by ${escapeRe(n)}`, "gi"), "");
+    t = t.replace(new RegExp(escapeRe(n), "gi"), "the operator");
+  }
+  t = t.replace(/\bhttps?:\/\/\S+/gi, "").replace(/\bwww\.\S+/gi, "").replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "");
+  return t.replace(/[ \t]{2,}/g, " ").replace(/ +([.,;])/g, "$1").trim();
+}

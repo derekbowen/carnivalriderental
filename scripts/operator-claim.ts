@@ -108,9 +108,17 @@ async function waitForEmail(to: string, re: RegExp, since: number): Promise<stri
 
   // 4. Record the claim; listings stop showing the unclaimed notice.
   const at = new Date().toISOString();
-  await call("command", `${INTEG}/users/update_profile`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: acct.userId, metadata: { claimStatus: "claimed", claimedAt: at, claimVerification: domainOk ? `email-domain:${email.split("@")[1]}` : `manual:${String(manual).slice(0, 200)}` } }) }, true);
+  // The operator's own identity comes back (it was hidden while unclaimed; see ops:anonymize).
+  const orig = u.attributes.profile.privateData?.originalProfile as { displayName?: string; firstName?: string; lastName?: string; bio?: string; publicData?: Record<string, unknown> } | undefined;
+  await call("command", `${INTEG}/users/update_profile`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({
+    id: acct.userId,
+    ...(orig ? { displayName: orig.displayName, firstName: orig.firstName, lastName: orig.lastName, bio: orig.bio, publicData: orig.publicData ?? {} } : {}),
+    metadata: { claimStatus: "claimed", claimedAt: at, claimVerification: domainOk ? `email-domain:${email.split("@")[1]}` : `manual:${String(manual).slice(0, 200)}` },
+  }) }, true);
   for (const l of listings) {
-    await call("command", `${INTEG}/listings/update`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: l.id, description: withoutNotice(l.attributes.description), metadata: { claimStatus: "claimed", bookable: false } }) }, true);
+    const full = await call<{ data: { attributes: { description: string; privateData?: Record<string, unknown> } } }>("query", `${INTEG}/listings/show?id=${l.id}`, { headers: await headers("integ") }, true);
+    const restored = (full.data.attributes.privateData?.originalDescription as string | undefined) ?? withoutNotice(full.data.attributes.description);
+    await call("command", `${INTEG}/listings/update`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: l.id, description: restored, metadata: { claimStatus: "claimed", bookable: false } }) }, true);
   }
   fs.appendFileSync(`imports/company-accounts/${dir}/claims.jsonl`, `${JSON.stringify({ at, companyId, userId: acct.userId, listings: listings.length, verification: domainOk ? "email-domain" : "manual" })}\n`);
   console.log(`Claimed. Sharetribe sent a verification email to the operator. Next: operator uses "Forgot password" at the marketplace with ${email}, then sets payout details. ${listings.length} listings marked claimed, not bookable.`);

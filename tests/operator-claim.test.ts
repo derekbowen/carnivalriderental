@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bookingBlockers, emailMatchesCompanyDomain, UNCLAIMED_NOTICE, withNotice, withoutNotice } from "@/lib/operators/claim";
+import { anonymizeText, bookingBlockers, emailMatchesCompanyDomain, UNCLAIMED_NOTICE, withNotice, withoutNotice } from "@/lib/operators/claim";
 
 describe("ownership verification", () => {
   it("accepts only emails on the company's own website domain", () => {
@@ -29,5 +29,15 @@ describe("booking eligibility", () => {
     expect(bookingBlockers({ ...ready, stripePayoutsEnabled: false })).toEqual(["Stripe onboarding incomplete"]);
     expect(bookingBlockers({ ...ready, priceAmount: 0 })).toEqual(["no operator-approved price"]);
     expect(bookingBlockers({ ...ready, commissionDecided: false })).toEqual(["commission not decided (real-money payments gated)"]);
+  });
+});
+
+describe("operator anonymity", () => {
+  it("removes company names, websites and emails from listing text", () => {
+    const names = ["Alamo Attractions Inc", "Alamo Attractions"];
+    expect(anonymizeText("Grand Carousel — family ride operated by Alamo Attractions. Space needed: 20 ft.", names)).toBe("Grand Carousel — family ride. Space needed: 20 ft.");
+    const t = anonymizeText("ALAMO ATTRACTIONS brings fun! Book at https://www.alamoattractionsinc.com/ or info@alamo.com.", names);
+    expect(t).not.toMatch(/alamo/i);
+    expect(t).toMatch(/^the operator brings fun!/);
   });
 });
