@@ -3,29 +3,23 @@
 > Working brand **"Book a Carnival"** is a configurable placeholder (`src/lib/config.ts`).
 > The final name and domain are **not approved**.
 
-## The business model (read this before changing anything)
+## The business model (founder decision 2026-10-05; read this before changing anything)
 
-This is a **managed marketplace with operator procurement**:
+Carnival Ride Rental is a **marketplace**. Independent carnival operators supply and fulfil their own rides. Carnival Ride Rental facilitates discovery, requests and transactions.
 
-1. The customer discovers carnival ride rentals through **our** marketplace.
-2. The customer submits their event requirements (and, once the payment policy is approved, a payment commitment) **to us**.
-3. **We** own the customer relationship, the quote, the transaction and fulfilment coordination.
-4. **We** source the ride and operating crew from an appropriate carnival operator.
-5. The operator is our **fulfilment supplier**. Operators do **not** need a marketplace account or a public listing for us to sell.
+1. Customers discover rides on carnivalriderental.us (search `/s`, state/city pages) and the Sharetribe marketplace.
+2. **Verified, payment-ready operator** (claimed account, Stripe Connect complete, ride approved with a price or quote): the customer transacts on that operator's listing. The operator is the provider on the Sharetribe transaction, accepts or declines, fulfils, and is paid through Stripe Connect. Carnival Ride Rental earns the marketplace commission (rate not yet decided).
+3. **Unclaimed inventory** (imported operator listings): inquiry-only. Requests go to Carnival Ride Rental's monitored request desk (the house account's inbox). The copy never says the operator received or accepted anything. The team contacts the operator and works to get them to claim their account and connect payouts.
+4. Connecting Stripe alone never makes rides bookable: booking eligibility needs verified ownership, approval of that ride, authoritative payment readiness, an operator-approved price or quote, and confirmed availability and service area (`docs/OPERATOR_MARKETPLACE.md`).
+5. The earlier "managed" model (we quote, source and sell as seller of record) is retired as the default. Its code (request service, quotes, supplier pipeline) remains as an internal fallback only.
 
-It is **not**: a directory that sends customers away, a lead-selling site, an owner-listing acquisition campaign, software for operators, or a reskinned Pool Rental Near Me.
+It is **not**: a lead-selling site, a directory that hides who fulfils the event, or a reskinned Pool Rental Near Me.
 
-**Operator self-service listings are optional later — never a launch prerequisite.** Do not reintroduce "List your ride", provider onboarding or operator Stripe enrolment as the primary path.
-
-Long-term goal: make every carnival ride in the US discoverable and sourceable through this business. That is an ambition, **not** a claim that we have rides under contract.
-
-### Second track — operator program (founder direction, 2026-10-04)
-
-Later, operators may list their own rides, set their own price and be paid through Stripe Connect. Operators pay 0% commission; the marketplace is funded by a customer service fee (rate to be set). This runs **alongside** the managed track and is **not** a launch dependency. Today only an early-access page (`/operators`) and an application list exist. Design, verified Sharetribe constraints and open decisions: `docs/OPERATOR_MARKETPLACE.md`. In that track the operator is the seller on the card charge (destination charges), so the seller-of-record rules above apply to managed bookings only.
+Long-term goal: every carnival ride in the US discoverable and bookable from its operator. That is an ambition, not a claim that any operator is under contract.
 
 ## Ownership
 
-The business is **owned and operated by 10000 Solutions LLC** (parent company). It is the seller of record: customers contract with and pay 10000 Solutions LLC (via its own Sharetribe seller account and Stripe Connect onboarding), and operators are its subcontracted suppliers.
+The business is **owned and operated by 10000 Solutions LLC** (parent company). It operates the marketplace platform. On marketplace bookings the operator is the provider (and appears on the card charge via Stripe Connect destination charges); 10000 Solutions LLC earns the commission. It is seller of record only on bookings it deliberately sells through its own house account.
 
 ## Origin
 
