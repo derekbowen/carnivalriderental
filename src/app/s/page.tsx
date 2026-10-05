@@ -9,6 +9,7 @@ import { ipLocation, isRideClass, marketplaceListingUrl, parseNear, RIDE_CLASSES
 import { STATE_CENTERS } from "@/lib/taxonomy/state-centers";
 import { US_STATES } from "@/lib/taxonomy";
 import { BRAND } from "@/lib/config";
+import { Breadcrumbs } from "@/components/pseo";
 import { paths } from "@/lib/seo/routes";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +42,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">Find a ride</p>
+      <Breadcrumbs items={[{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]} />
+      <p className="eyebrow mt-6">Find a ride</p>
       <h1 className="mt-2 text-4xl">Carnival rides near {where}</h1>
       <p className="mt-2 text-ink-soft">
         {res.totalItems > 0 ? `${res.totalItems.toLocaleString("en-US")} rides, nearest first.` : "Nearest first."} Distances are approximate, measured to each operator&rsquo;s home base, not to where a ride is today.

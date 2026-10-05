@@ -2,10 +2,12 @@ import Link from "next/link";
 import { RideCard } from "@/components/RideCard";
 import { getContent } from "@/lib/content";
 import { seoMetadata } from "@/lib/seo/metadata";
-import { JsonLd } from "@/components/pseo";
+import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { cardFromFixture, structuredDataCards } from "@/lib/catalog/card";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
+
+const RIDES_CRUMBS = [{ name: "Home", path: paths.home() }, { name: "Ride types", path: paths.rides() }];
 
 // Filtered views (?category=) canonicalise to /rides and are never indexed separately.
 export function generateMetadata() {
@@ -33,10 +35,12 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
           description: "Browse carnival ride rental offerings and request one for your event.",
           type: "CollectionPage",
           service: {},
+          crumbs: RIDES_CRUMBS,
           list: { name: "Carnival ride rentals", cards: ldCards },
         })}
       />
-      <p className="eyebrow">Browse rides</p>
+      <Breadcrumbs items={RIDES_CRUMBS} />
+      <p className="eyebrow mt-6">Browse rides</p>
       <h1 className="mt-2 text-4xl">Carnival ride rentals</h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
         These are ride types. To see actual rides from operators near your event, use ride search. Pricing is by quote for your date and location.

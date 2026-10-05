@@ -23,6 +23,8 @@ function Logo({ dark = false }: { dark?: boolean }) {
 
 const NAV = [
   { href: paths.search(), label: "Find a ride" },
+  { href: paths.rides(), label: "Ride types" },
+  { href: paths.directory(), label: "Locations" },
   { href: "/#how-it-works", label: "How it works" },
 ];
 
@@ -99,6 +101,7 @@ export function SiteFooter() {
               { href: paths.search(), label: "Find a ride" },
               { href: "/#how-it-works", label: "How it works" },
               { href: paths.operators(), label: "For ride operators" },
+              { href: paths.directory(), label: "Site directory" },
             ]}
           />
         </nav>
@@ -110,6 +113,7 @@ export function SiteFooter() {
             {FOOTER_STATES.map((l) => (
               <li key={l.href}><Link className="hover:text-white" href={l.href}>{l.label}</Link></li>
             ))}
+            <li><Link className="font-semibold text-accent hover:underline" href={paths.directory()}>All locations →</Link></li>
           </ul>
         </div>
       </nav>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid } from "@/components/pseo";
 import { RequestCta } from "@/components/RequestCta";
 import { RideResult } from "@/components/search/RideResult";
-import { cityStats, nearbyCities, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
+import { cityStats, linkedNearbyCities, linkedRideCities, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
 import { countNoun, rideTypeCopy, titleCase } from "@/lib/inventory/ride-type-copy";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
@@ -63,7 +63,8 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
   const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path }];
   const { title, description } = cityCopy(c);
   const types = s.byType.filter((t) => t.count >= PSEO_INVENTORY.rideCityMinRides);
-  const nearCities = nearbyCities(c, 12);
+  // Symmetric: every city listed here lists this city back.
+  const nearCities = linkedNearbyCities(c);
   const searchHere = (rideClass?: string) => paths.search({ near: `${c.lat.toFixed(2)},${c.lng.toFixed(2)}`, rideClass });
   const faq: Faq[] = [
     { q: `How many rides can I browse near ${c.name}?`, a: `${fmt(s.total)} ride listings from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. A listing is not a confirmation that a ride is free on your date; availability and delivery are confirmed when you request a quote.` },
@@ -110,7 +111,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       {types.length > 0 && (
         <LinkGrid
           title={`Browse by ride type near ${c.name}`}
-          links={types.slice(0, 24).map((t) => {
+          links={types.map((t) => {
             const copy = rideTypeCopy(t.type.id, t.type.name);
             return { href: paths.rideCity(t.type.id, c.stateSlug, c.slug), label: `${copy.label} rentals (${fmt(t.count)})` };
           })}
@@ -124,7 +125,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       {s.total > 0 && <FaqSection faq={faq} />}
 
       <LinkGrid title="Nearby cities" links={nearCities.map((x) => ({ href: paths.city(x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
-      <LinkGrid title="More" links={[{ href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }, { href: paths.search(), label: "Search all rides" }]} />
+      <LinkGrid title="More" links={[{ href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }, { href: paths.directoryState(c.stateSlug), label: `All ${c.stateName} locations` }, { href: paths.search(), label: "Search all rides" }]} />
     </div>
   );
 }
@@ -146,10 +147,9 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
   const path = paths.rideCity(t.id, c.stateSlug, c.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path: paths.city(c.stateSlug, c.slug) }, { name: `${copy.label} rentals`, path }];
   const { title, description } = rideCityCopy(c, t);
-  const otherTypes = cityStats(c).byType.filter((x) => x.type.id !== t.id && x.count >= PSEO_INVENTORY.rideCityMinRides).slice(0, 16);
-  const sameRideElsewhere = nearbyCities(c, 30)
-    .filter((x) => ridesNear(x.lat, x.lng).filter((r) => r.rideType === t.id).length >= PSEO_INVENTORY.rideCityMinRides)
-    .slice(0, 12);
+  const otherTypes = cityStats(c).byType.filter((x) => x.type.id !== t.id && x.count >= PSEO_INVENTORY.rideCityMinRides);
+  // Symmetric: every page listed here lists this page back.
+  const sameRideElsewhere = linkedRideCities(c, t.id);
   const lowerLabel = copy.label.charAt(0).toLowerCase() + copy.label.slice(1);
   const intro = `${copy.hook} Explore ${/^[A-Z]/.test(copy.label) && !/^(Ferris|Scrambler|Zipper)/.test(copy.label) ? lowerLabel : copy.label} listings and request a quote for your event date and location.`;
   const faq: Faq[] = [
@@ -179,7 +179,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
 
       <LinkGrid title={`More ride types near ${c.name}`} links={otherTypes.map((x) => ({ href: paths.rideCity(x.type.id, c.stateSlug, c.slug), label: `${rideTypeCopy(x.type.id, x.type.name).label} rentals (${fmt(x.count)})` }))} />
       <LinkGrid title={`${copy.label} rentals in nearby cities`} links={sameRideElsewhere.map((x) => ({ href: paths.rideCity(t.id, x.stateSlug, x.slug), label: `${x.name}, ${x.state.toUpperCase()}` }))} />
-      <LinkGrid title="More" links={[{ href: paths.city(c.stateSlug, c.slug), label: `All carnival rides near ${c.name}` }, { href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }]} />
+      <LinkGrid title="More" links={[{ href: paths.city(c.stateSlug, c.slug), label: `All carnival rides near ${c.name}` }, { href: paths.state(c.stateSlug), label: `Carnival rides in ${c.stateName}` }, { href: paths.directoryState(c.stateSlug), label: `All ${c.stateName} locations` }]} />
     </div>
   );
 }

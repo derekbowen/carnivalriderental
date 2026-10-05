@@ -31,6 +31,16 @@ The matcher (`src/lib/inventory/match.ts`) maps titles to exactly the 50 canonic
 - **Card wording:** "Operator ~N mi away, based in XX". That is the operator's home base, not where the ride is now and not the event location. The price slot reads "Request a quote" unless the listing has an operator-approved rate for its rental unit (`src/lib/pricing/public-price.ts`). Category, ride-size and rate-card estimates are never shown publicly.
 - **Structured data:** CollectionPage, BreadcrumbList, the site's rental Service, FAQPage (only when the FAQ is shown), and an ItemList of the visible ride names. No Offer, price, availability, rating, review, address or Event.
 
+## Internal linking (measured: `reports/internal-links.json`)
+
+Every link between pSEO pages is **bidirectional**, and the structure is checked by a full crawl of a production build.
+
+- **City → ride type + city:** every ride-type page that exists for the city, uncapped. **Ride type + city → city:** breadcrumb plus "All carnival rides near X".
+- **Nearby cities** and **the same ride in nearby cities** are symmetric. Each page links its 12 nearest peers plus every peer that links to it (at most 30). See `linkedNearbyCities` and `linkedRideCities`.
+- **Listing detail (`/s/{id}`):** breadcrumbs Home › State › nearest index-eligible city › ride-type page › ride, plus links back to that ride-type page, the same ride in nearby cities, nearby city pages and the state directory.
+- **Site directory:** `/directory` and `/directory/{state}`, linked from the header ("Locations") and the footer. It lists every city page with supply, every ride-type page for index-eligible cities, and every ride listing from operators based in the state. It follows the same environment and approval gates as the inventory pages.
+- **Result (before → after):** pages with no inbound body link 5 → 0; city → own ride-type pages 15,577 → 15,931 of 15,931; reciprocated nearby links 71% → 100%; listings linked 2,324 → 3,714 of 3,714; indexable pages beyond 4 clicks from home 17 (8 unreachable) → 0.
+
 ## Counts (from `reports/pseo-routes.json`)
 
 | Measure | Pages |

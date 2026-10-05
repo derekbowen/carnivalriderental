@@ -3,7 +3,10 @@ import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOperatorListing, marketplaceListingUrl, type OperatorRideDetail } from "@/lib/catalog/operator-search";
-import { RIDES, toCard } from "@/lib/inventory";
+import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
+import { linkedNearbyCities, linkedRideCities, PSEO_INVENTORY, RIDES, rideHome, ridesNear, toCard } from "@/lib/inventory";
+import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
+import { pageGraph } from "@/lib/seo/structured-data";
 import { BRAND } from "@/lib/config";
 import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 import { paths } from "@/lib/seo/routes";
@@ -29,13 +32,44 @@ export async function generateMetadata({ params }: { params: Promise<P> }): Prom
  * Our ride detail page. Shows only approved public facts: never the operator's company name,
  * city or description text (founder decision 2026-10-05: no bypassing the marketplace).
  */
+/**
+ * Where the ride sits in the site: breadcrumbs (Home › State › nearest city › ride-type page) and
+ * links back to the pSEO pages that list it, so every card link has a link in return.
+ */
+function placement(id: string) {
+  const snap = RIDES.find((x) => x.id === id);
+  if (!snap) return null;
+  const home = rideHome(snap);
+  if (!home) return null;
+  const copy = snap.rideType ? rideTypeCopy(snap.rideType, snap.rideType) : null;
+  const crumbs = [{ name: "Home", path: paths.home() }, { name: home.state.name, path: paths.state(home.state.slug) }];
+  if (home.city) crumbs.push({ name: home.city.name, path: paths.city(home.city.stateSlug, home.city.slug) });
+  if (home.rideCityPath && copy) crumbs.push({ name: `${copy.label} rentals`, path: home.rideCityPath });
+  const links: { href: string; label: string }[] = [];
+  if (home.city && copy && snap.rideType) {
+    if (home.rideCityPath) links.push({ href: home.rideCityPath, label: `${copy.label} rentals near ${home.city.name}` });
+    for (const x of linkedRideCities(home.city, snap.rideType).slice(0, 4)) links.push({ href: paths.rideCity(snap.rideType, x.stateSlug, x.slug), label: `${copy.label} rentals near ${x.name}, ${x.state.toUpperCase()}` });
+  }
+  if (home.city) {
+    links.push({ href: paths.city(home.city.stateSlug, home.city.slug), label: `Carnival rides near ${home.city.name}` });
+    for (const x of linkedNearbyCities(home.city).filter((x) => ridesNear(x.lat, x.lng).length >= PSEO_INVENTORY.cityMinRides).slice(0, 3)) links.push({ href: paths.city(x.stateSlug, x.slug), label: `Carnival rides near ${x.name}, ${x.state.toUpperCase()}` });
+  }
+  links.push({ href: paths.directoryState(home.state.slug), label: `All ride listings from operators based in ${home.state.name}` });
+  return { crumbs, links };
+}
+
 export default async function RideListingPage({ params }: { params: Promise<P> }) {
-  const ride = await loadRide((await params).id);
+  const id = (await params).id;
+  const ride = await loadRide(id);
   if (!ride) notFound();
+  const place = placement(id);
+  const crumbs = [...(place?.crumbs ?? [{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]), { name: ride.title, path: paths.rideListing(id) }];
   return (
-    <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_340px]">
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <JsonLd nodes={pageGraph({ path: paths.rideListing(id), name: ride.title, description: `${ride.title}: request a quote for your event.`, type: "WebPage", crumbs })} />
+      <Breadcrumbs items={crumbs} />
+    <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
       <div>
-        <Link href={paths.search()} className="text-sm text-ink-soft hover:underline">← All rides</Link>
         <div className="mt-4 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-placeholder">
           {ride.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -68,7 +102,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
         <div className="card p-5">
           <p className="text-lg font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
           {!ride.price && <p className="mt-1 text-xs text-muted">Pricing depends on your date, location, hours and site. The operator prices your event.</p>}
-          {!ride.claimed && <p className="mt-3 text-sm text-ink-soft">This operator hasn&rsquo;t joined Carnival Ride Rental yet. Requests go to our request desk, which contacts the operator for you.</p>}
+          {!ride.claimed && <p className="mt-3 text-sm text-ink-soft">This operator hasn&rsquo;t joined Carnival Ride Rental yet. Requests go to our request desk, not to the operator.</p>}
           {ride.bookable ? (
             <a href={marketplaceListingUrl(ride)} className="btn-primary mt-4 w-full">Book this ride</a>
           ) : (
@@ -77,6 +111,8 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
           <p className="mt-2 text-xs text-muted">No payment is taken to send a request. It is a request, not a booking.</p>
         </div>
       </aside>
+    </div>
+      {place && place.links.length > 0 && <LinkGrid title="Find more near this ride" links={place.links} />}
     </div>
   );
 }

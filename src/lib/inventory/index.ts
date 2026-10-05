@@ -51,6 +51,7 @@ export const INVENTORY_GENERATED_AT = (ridesFile as { generatedAt: string }).gen
 export const CITIES = (citiesFile as { cities: City[] }).cities;
 export const RIDE_TYPES: RideType[] = (rideTypesFile as { rideTypes: RideType[] }).rideTypes;
 const CLASS_LABEL = new Map(contract.rideClass.options.map((o) => [o.option, o.label]));
+export const CLASS_LABELS: ReadonlyMap<string, string> = CLASS_LABEL;
 
 /**
  * Template settings. A page family becomes indexable only when its copy is founder-approved,
@@ -146,6 +147,69 @@ export function nearbyCities(c: City, n = 12): (City & { miles: number; stateSlu
     .slice(0, n);
 }
 
+// ------------------------------------------------------------------------------ link graph
+// Internal links between pSEO pages are made SYMMETRIC: if page A links to nearby page B, B links
+// back to A. Each page links to its k nearest peers, plus every peer that lists it among theirs.
+
+const cityKey = (c: City) => `${c.state}/${c.slug}`;
+const withSlug = (c: City) => ({ ...c, stateSlug: US_STATES.find((s) => s.code === c.state)!.slug });
+const NEAR_K = 12;
+
+function symmetricNeighbours(nodes: City[], k: number): Map<string, City[]> {
+  const nearest = new Map<string, City[]>();
+  for (const c of nodes) {
+    nearest.set(cityKey(c), nodes.filter((x) => x !== c).map((x) => ({ x, d: milesBetween(c, x) })).sort((a, b) => a.d - b.d).slice(0, k).map((o) => o.x));
+  }
+  const out = new Map<string, City[]>();
+  for (const c of nodes) out.set(cityKey(c), [...nearest.get(cityKey(c))!]);
+  for (const c of nodes) for (const n of nearest.get(cityKey(c))!) {
+    const back = out.get(cityKey(n))!;
+    if (!back.includes(c)) back.push(c);
+  }
+  for (const [kk, list] of out) {
+    const me = nodes.find((x) => cityKey(x) === kk)!;
+    list.sort((a, b) => milesBetween(me, a) - milesBetween(me, b));
+  }
+  return out;
+}
+
+let cityGraph: Map<string, City[]> | null = null;
+/** Nearby city pages to link from a city page: its nearest 12 plus every city that links to it. */
+export function linkedNearbyCities(c: City): (City & { stateSlug: string })[] {
+  cityGraph ??= symmetricNeighbours(CITIES, NEAR_K);
+  return (cityGraph.get(cityKey(c)) ?? []).map(withSlug);
+}
+
+const rideGraphs = new Map<string, Map<string, City[]>>();
+/** Other cities with a page for the same ride type, linked symmetrically (nearest 12 + reverse). */
+export function linkedRideCities(c: City, rideType: string): (City & { stateSlug: string })[] {
+  let g = rideGraphs.get(rideType);
+  if (!g) {
+    const nodes = CITIES.filter((x) => ridesNear(x.lat, x.lng).filter((r) => r.rideType === rideType).length >= PSEO_INVENTORY.rideCityMinRides);
+    g = symmetricNeighbours(nodes, NEAR_K);
+    rideGraphs.set(rideType, g);
+  }
+  return (g.get(cityKey(c)) ?? []).map(withSlug);
+}
+
+/**
+ * Where a ride listing sits in the page hierarchy, for its breadcrumbs and back links: the nearest
+ * city page in the operator's home state that is index-eligible (else any with supply), and that
+ * city's ride-type page when one exists for the ride's type.
+ */
+export function rideHome(r: { lat: number; lng: number; homeState: string | null; rideType: string | null }) {
+  const st = r.homeState ? US_STATES.find((s) => s.code === r.homeState!.toLowerCase()) : undefined;
+  if (!st) return null;
+  const inState = CITIES.filter((c) => c.state === st.code && ridesNear(c.lat, c.lng).length >= PSEO_INVENTORY.cityMinRides)
+    .map((c) => ({ c, d: milesBetween(c, r) }))
+    .sort((a, b) => a.d - b.d);
+  const pick = inState.find((x) => !duplicateGateReason(inventoryCityPath(x.c))) ?? inState[0];
+  if (!pick) return { state: st, city: null, rideCityPath: null };
+  const city = withSlug(pick.c);
+  const hasRideCity = !!r.rideType && ridesNear(city.lat, city.lng).filter((x) => x.rideType === r.rideType).length >= PSEO_INVENTORY.rideCityMinRides;
+  return { state: st, city, rideCityPath: hasRideCity ? inventoryRideCityPath(city, r.rideType!) : null };
+}
+
 const gate = (reasons: string[]): GateResult => ({ indexable: reasons.length === 0, reasons });
 
 const stateSlugOf = (c: City) => US_STATES.find((s) => s.code === c.state)!.slug;
@@ -195,6 +259,18 @@ export function inventoryRideCityGate(c: City, rideType: string): GateResult {
     if (dup) reasons.push(dup);
   }
   return gate(reasons);
+}
+
+/** Site directory pages (/directory, /directory/{state}): same environment and approval gates. */
+export function directoryGate(): GateResult {
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (!PSEO_INVENTORY.copyApproved) reasons.push("directory not founder-approved");
+  return gate(reasons);
+}
+export function directoryRoutes(): { path: string; family: string; gate: GateResult }[] {
+  const g = directoryGate();
+  return [{ path: "/directory", family: "directory", gate: g }, ...US_STATES.map((s) => ({ path: `/directory/${s.slug}`, family: "directory", gate: g }))];
 }
 
 /** Every inventory page that would exist (has supply), with its gate. For the sitemap and docs. */

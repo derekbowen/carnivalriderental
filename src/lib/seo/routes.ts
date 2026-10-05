@@ -14,6 +14,7 @@ import { siteUrl } from "../config";
  *   /categories/{category}                  ride category
  *   /events, /events/{occasion}             occasion index (noindex) + occasion hub
  *   /operators                              operator program (early access)
+ *   /directory, /directory/{state}          site directory (every location, ride type, listing)
  *
  * City slugs and occasion ids share the /{state}/… namespace; checkSlugNamespaces()
  * fails the build on a collision. Old /locations, /rides/{ride}/{state}/{city} and
@@ -61,6 +62,8 @@ export const paths = {
     if (!/^[0-9a-f-]{36}$/.test(listingId)) throw new Error(`Invalid listing id: "${listingId}"`);
     return `/request?listing=${listingId}`;
   },
+  directory: () => "/directory",
+  directoryState: (state: string) => `/directory/${seg(state)}`,
   occasions: () => "/events",
   occasion: (occasion: string) => `/events/${seg(occasion)}`,
   occasionState: (occasion: string, state: string) => `/${seg(state)}/${seg(occasion)}`,
