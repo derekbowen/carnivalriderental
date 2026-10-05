@@ -79,6 +79,23 @@ export function sniffImage(b: Uint8Array): "image/jpeg" | "image/png" | "image/g
 
 export async function runPhotoImport(
   items: PhotoItem[],
+  d: { api: PhotoApi; takedowns: Set<string>; now(): string; runId: string; onResult(e: PhotoLedgerEntry): Promise<void> | void; approve?: boolean; concurrency?: number },
+): Promise<PhotoLedgerEntry[]> {
+  // Companies run in parallel (different websites); one company's rides run in order, so each
+  // operator's site sees one request at a time. Sharetribe's rate limit is enforced by the client.
+  const groups = new Map<string, PhotoItem[]>();
+  for (const it of items) groups.set(it.companyId, [...(groups.get(it.companyId) ?? []), it]);
+  const queue = [...groups.values()];
+  const all: PhotoLedgerEntry[] = [];
+  const worker = async () => {
+    for (let g = queue.shift(); g; g = queue.shift()) all.push(...(await runSequential(g, d)));
+  };
+  await Promise.all(Array.from({ length: Math.max(1, Math.min(d.concurrency ?? 1, 6)) }, worker));
+  return all;
+}
+
+async function runSequential(
+  items: PhotoItem[],
   d: { api: PhotoApi; takedowns: Set<string>; now(): string; runId: string; onResult(e: PhotoLedgerEntry): Promise<void> | void; approve?: boolean },
 ): Promise<PhotoLedgerEntry[]> {
   const out: PhotoLedgerEntry[] = [];

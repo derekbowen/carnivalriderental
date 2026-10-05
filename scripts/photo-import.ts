@@ -35,11 +35,16 @@ const { call, headers, marketplaceNames } = createClient(target);
 const lastHit = new Map<string, number>();
 async function download(url: string): Promise<{ bytes: Uint8Array; contentType: string }> {
   const host = new URL(url).host;
-  const wait = (lastHit.get(host) ?? 0) + 1000 - Date.now();
-  if (wait > 0) await new Promise((r) => setTimeout(r, wait));
-  lastHit.set(host, Date.now());
-  const res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(20000), headers: { "User-Agent": "CarnivalRideRental-ListingPhotos/1.0 (+https://carnivalriderental.us)", Accept: "image/*" } });
-  if (!res.ok) throw new Error(`download HTTP ${res.status}`);
+  let res: Response | null = null;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const wait = (lastHit.get(host) ?? 0) + 2500 - Date.now(); // ≤ 1 request / 2.5 s per website
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    lastHit.set(host, Date.now());
+    res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(20000), headers: { "User-Agent": "CarnivalRideRental-ListingPhotos/1.0 (+https://carnivalriderental.us)", Accept: "image/*" } });
+    if (res.status !== 429 && res.status !== 503) break;
+    await new Promise((r) => setTimeout(r, 10000 * (attempt + 1))); // the site asked us to slow down
+  }
+  if (!res || !res.ok) throw new Error(`download HTTP ${res?.status}`);
   const len = Number(res.headers.get("content-length") ?? 0);
   if (len > 20 * 1024 * 1024) throw new Error("download over 20 MB");
   return { bytes: new Uint8Array(await res.arrayBuffer()), contentType: res.headers.get("content-type") ?? "" };
@@ -127,6 +132,7 @@ const api: PhotoApi = {
   const results = await runPhotoImport(items, {
     api,
     approve,
+    concurrency: Number(opt("concurrency") ?? 3),
     takedowns: new Set(takedowns.map((t) => t.companyId)),
     now: () => new Date().toISOString(),
     runId,
