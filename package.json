@@ -30,7 +30,11 @@
     "desk:setup": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts setup",
     "desk:list": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts list",
     "desk:show": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts show",
-    "desk:reply": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts reply"
+    "desk:reply": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts reply",
+    "ops:claim": "tsx --env-file-if-exists=.env.local scripts/operator-claim.ts",
+    "qa:operator": "tsx --env-file-if-exists=.env.local scripts/qa-operator.ts",
+    "ops:bookable": "tsx --env-file-if-exists=.env.local scripts/operator-bookable.ts",
+    "qa:journey": "tsx --env-file-if-exists=.env.local scripts/qa-journey.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

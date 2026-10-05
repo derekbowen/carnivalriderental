@@ -1105,6 +1105,13 @@
       "email": "zeiler-amusements@carnivalriderental.us",
       "companyId": "zeiler-amusements",
       "createdAt": "2026-10-04T19:02:09.235Z"
+    },
+    "qa-test-operator": {
+      "userId": "6ac349fa-7914-4816-944d-95d60bc4f14b",
+      "email": "qa-test-operator@carnivalriderental.us",
+      "companyId": "qa-test-operator",
+      "createdAt": "2026-10-05T06:55:55.316Z",
+      "qa": true
     }
   }
 }

@@ -97,7 +97,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   const pd = a.publicData ?? {};
   const title = str(a.title);
   if (l.type !== "listing" || a.deleted || a.state !== "published" || !title || pd.listingType !== OPERATOR_LISTING_TYPE) return null;
-  if (a.metadata?.requestDesk === true) return null; // the house request desk is not a ride
+  if (a.metadata?.requestDesk === true || a.metadata?.qa === true) return null; // the request desk and QA fixtures are not rides
   const byKey = new Map(included.map((i) => [`${i.type}/${i.id}`, i]));
   const authorId = l.relationships?.author?.data?.id;
   const imageId = l.relationships?.images?.data?.[0]?.id;
@@ -160,7 +160,9 @@ export async function searchOperatorListings(q: { origin: LatLng; page?: number;
   if (hit && Date.now() - hit.at < TTL_MS) return hit.value;
   try {
     const params: Record<string, string> = { pub_listingType: OPERATOR_LISTING_TYPE, origin: `${origin.lat},${origin.lng}`, page: String(page), perPage: String(PER_PAGE) };
-    if (isRideClass(q.rideClass)) params.pub_rideClass = q.rideClass;
+    // Always filter on ride class (all classes = OR): the request desk and QA fixtures carry no
+    // rideClass, so they never count towards totals or take a slot on a page.
+    params.pub_rideClass = isRideClass(q.rideClass) ? q.rideClass : RIDE_CLASSES.map((c) => c.id).join(",");
     const body = await apiGet("/listings/query", params);
     const list = Array.isArray(body.data) ? body.data : [];
     const cards = list.map((l) => toOperatorCard(l, body.included ?? [], origin)).filter((c): c is OperatorCard => c !== null);
