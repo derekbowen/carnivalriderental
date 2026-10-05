@@ -34,7 +34,8 @@ const COMMITMENTS = [
 export default async function HomePage() {
   const approx = ipLocation(await headers());
   const where = approx ?? US_CENTER;
-  const [classes, nearby] = await Promise.all([rideClassShowcase(), searchOperatorListings({ origin: where })]);
+  const classes = await rideClassShowcase();
+  const nearby = await searchOperatorListings({ origin: where });
   const total = classes.reduce((n, c) => n + c.count, 0);
   const heroOrder = ["major", "spectacular", "coaster", "family", "kiddie"];
   const heroPhotos = [...classes].filter((c) => c.photo).sort((a, b) => (heroOrder.indexOf(a.id) + 99) % 99 - (heroOrder.indexOf(b.id) + 99) % 99).slice(0, 4);

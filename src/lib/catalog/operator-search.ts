@@ -120,8 +120,17 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   };
 }
 
+type ApiBody = { data: ApiListing | ApiListing[]; included?: ApiIncluded[]; meta?: { totalItems: number; totalPages: number; page: number } };
+
 let token: { value: string; exp: number } | null = null;
+let tokenInFlight: Promise<string> | null = null;
+/** One shared anonymous token; concurrent callers wait for the same request. */
 async function anonToken(): Promise<string> {
+  if (token && token.exp > Date.now()) return token.value;
+  tokenInFlight ??= fetchAnonToken().finally(() => (tokenInFlight = null));
+  return tokenInFlight;
+}
+async function fetchAnonToken(): Promise<string> {
   const clientId = process.env.SHARETRIBE_CLIENT_ID;
   if (!clientId) throw new Error("SHARETRIBE_CLIENT_ID not configured");
   if (token && token.exp > Date.now()) return token.value;
@@ -137,12 +146,16 @@ async function anonToken(): Promise<string> {
   return token.value;
 }
 
-async function apiGet(path: string, params: Record<string, string>, revalidate = 60) {
+async function apiGet(path: string, params: Record<string, string>, revalidate = 60, retry = true): Promise<ApiBody> {
   // Author (company) is deliberately not fetched: operator identity is never shown on our pages.
   const qs = new URLSearchParams({ include: "images", "fields.image": "variants.landscape-crop,variants.square-small", ...params });
   const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate } });
+  if (res.status === 429 && retry) {
+    await new Promise((r) => setTimeout(r, 1200));
+    return apiGet(path, params, revalidate, false);
+  }
   if (!res.ok) throw new Error(`listing query failed (HTTP ${res.status})`);
-  return (await res.json()) as { data: ApiListing | ApiListing[]; included?: ApiIncluded[]; meta?: { totalItems: number; totalPages: number; page: number } };
+  return (await res.json()) as ApiBody;
 }
 
 const cache = new Map<string, { at: number; value: SearchResult }>();
@@ -250,17 +263,23 @@ export interface ClassShowcase {
  * Real ride counts and one real photo per ride class (homepage "Browse by ride type"). One small
  * query per class, cached by Next for 10 minutes. Classes with no live rides are omitted.
  */
+let showcaseCache: { at: number; value: ClassShowcase[] } | null = null;
+
 export async function rideClassShowcase(): Promise<ClassShowcase[]> {
-  const out = await Promise.all(
-    RIDE_CLASSES.map(async (c) => {
-      try {
-        const body = await apiGet("/listings/query", { pub_listingType: OPERATOR_LISTING_TYPE, pub_rideClass: c.id, perPage: "8" }, 600);
-        const cards = (Array.isArray(body.data) ? body.data : []).map((l) => toOperatorCard(l, body.included ?? [], null)).filter((x): x is OperatorCard => !!x);
-        return { id: c.id, label: c.label, count: body.meta?.totalItems ?? cards.length, photo: cards.find((x) => x.photo)?.photo ?? null };
-      } catch {
-        return null;
-      }
-    }),
-  );
-  return out.filter((x): x is ClassShowcase => !!x && x.count > 0);
+  // Sequential (the Test marketplace rate-limits bursts of parallel queries from one IP), with the
+  // last good result kept in memory so a transient failure never empties the homepage.
+  if (showcaseCache && Date.now() - showcaseCache.at < 600_000) return showcaseCache.value;
+  const out: ClassShowcase[] = [];
+  for (const c of RIDE_CLASSES) {
+    try {
+      const body = await apiGet("/listings/query", { pub_listingType: OPERATOR_LISTING_TYPE, pub_rideClass: c.id, perPage: "8" }, 600);
+      const cards = (Array.isArray(body.data) ? body.data : []).map((l) => toOperatorCard(l, body.included ?? [], null)).filter((x): x is OperatorCard => !!x);
+      const count = body.meta?.totalItems ?? cards.length;
+      if (count > 0) out.push({ id: c.id, label: c.label, count, photo: cards.find((x) => x.photo)?.photo ?? null });
+    } catch {
+      return showcaseCache?.value ?? out;
+    }
+  }
+  showcaseCache = { at: Date.now(), value: out };
+  return out;
 }
