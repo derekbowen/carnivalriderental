@@ -39,8 +39,8 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
       <p className="eyebrow">Browse rides</p>
       <h1 className="mt-2 text-4xl">Carnival ride rentals</h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
-        Every ride is sourced for your specific event. Prices shown are planning estimates where we have them — your price is the written quote you accept.
-      </p>
+        These are ride types. To see actual rides from operators near your event, use ride search. Prices shown are estimates; the operator confirms the total.
+        </p>
       <div className="mt-10 grid gap-8 lg:grid-cols-[220px_1fr]">
         <aside aria-label="Filters" className="space-y-6">
           <div>

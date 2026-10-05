@@ -137,7 +137,7 @@ export function CategoryHub({
         {/* 3. Photo-led listing cards, early */}
         <section id="listings" aria-labelledby="listings-heading" className="scroll-mt-24">
           <h2 id="listings-heading" className="text-3xl">{page.name} you can request</h2>
-          <p className="mt-1 text-sm text-muted">Every listing is sourced for your date. Nothing is booked until you accept a written quote.</p>
+          <p className="mt-1 text-sm text-muted">A request is not a booking. Nothing is booked until the operator accepts and payment is completed.</p>
           <div className="mt-6">
             <SupplyList cards={catalogCards} requestHref={requestHref} emptyText={`No ${page.singular} listings are published yet. Send a request and we will look for an operator for your date.`} />
           </div>
@@ -201,7 +201,7 @@ export function CategoryHub({
 
         {/* 8. Final request CTA */}
         <div className="mt-16">
-          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Share your date, site and audience. We find the ride and crew, then send one written quote." />
+          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
         </div>
       </div>
     </div>

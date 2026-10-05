@@ -127,6 +127,11 @@ describe("unsubscribe and invite content", () => {
     expect(c.text).toMatch(/removed/);
     expect(c.text).toMatch(/not visible to the public/);
     expect(c.text).not.toMatch(/%|commission|free|guarantee|bookings? (per|a) /i);
+    const l = claimInvite({ companyName: "Acme Shows", rideCount: 12, unsubscribeUrl: "https://x.test/u", postalAddress: "1 Test St, Austin, TX", replyTo: "claims@carnivalriderental.us", listed: true });
+    expect(l.text).toMatch(/not yet claimed/);
+    expect(l.text).toMatch(/come to our team/);
+    expect(l.text).not.toMatch(/not visible to the public/);
+    expect(l.text).not.toMatch(/%|commission|free|guarantee/i);
   });
 });
 

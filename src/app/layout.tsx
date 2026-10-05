@@ -7,7 +7,7 @@ export function generateMetadata(): Metadata {
   return {
     metadataBase: new URL(siteUrl()),
     title: { default: `${BRAND.name} — carnival ride rentals for events`, template: `%s` },
-    description: "Request a carnival ride for your event. We source the ride and operating crew and manage the booking.",
+    description: "Find carnival rides near your event and request them from the operators who own them.",
     // Default for every page; page-level gates can only tighten this, never open it outside production.
     robots: publicIndexingEnabled() ? undefined : { index: false, follow: false },
   };

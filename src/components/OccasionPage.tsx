@@ -79,7 +79,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
       )}
 
       <div className="mt-12">
-        <RequestCta href={requestHref} title="Tell us about your event" body="Share the date, venue and guest count. We find the ride and crew, then send one written quote." />
+        <RequestCta href={requestHref} title="Tell us about your event" body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
       </div>
 
       <section className="mt-12">

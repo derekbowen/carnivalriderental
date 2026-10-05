@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<P> }) {
   return seoMetadata({
     path: paths.rideCity(d.ride.slug, d.location.stateSlug, d.location.citySlug),
     title: `${d.ride.name} in ${d.location.cityName}, ${d.location.stateCode}`,
-    description: `Request ${d.ride.name.toLowerCase()} for an event in ${d.location.cityName}. We source the ride and operating crew, subject to availability.`,
+    description: `Request ${d.ride.name.toLowerCase()} for an event in ${d.location.cityName}. Find nearby operators with this ride and request it directly.`,
     gate: rideCityGate(d.ride, d.location),
   });
 }

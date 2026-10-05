@@ -14,17 +14,17 @@ export function generateMetadata() {
 }
 
 const COMPARISON = [
-  { label: "Finding rides", old: "Search dozens of carnival websites", ours: "Browse ride types here and send one request" },
-  { label: "Getting a price", old: "Call around and wait for callbacks", ours: "Planning estimate up front, then one written quote from us" },
-  { label: "Who you deal with", old: "Several vendors and contracts", ours: "One team from request to teardown" },
-  { label: "If an operator can’t do your date", old: "Start over", ours: "We move to the next suitable operator and tell you" },
+  { label: "Finding rides", old: "Search dozens of carnival websites", ours: "Rides from operators across the US, nearest to you first" },
+  { label: "Getting a price", old: "Call around and wait for callbacks", ours: "Rate-card estimate up front; the operator confirms the total" },
+  { label: "Who you deal with", old: "Calls, texts and emails everywhere", ours: "The operator who owns the ride, every message in one inbox" },
+  { label: "If an operator can’t do your date", old: "Start over", ours: "Request another nearby ride in a minute" },
 ];
 
 const COMMITMENTS = [
-  { title: "One quote, one point of contact", body: "You get a single written scope and price from us. We deal with the operator so you don’t have to." },
-  { title: "A no isn’t a dead end", body: "If the closest operator can’t do your date, we go to the next suitable one and tell you before anything changes." },
-  { title: "Estimates are labelled as estimates", body: "Planning ranges help you budget. Your price is the written quote you accept." },
-  { title: "Confirmed means confirmed", body: "A ride type on this site is not a booking. We only call it confirmed once an operator has committed and the agreed payment step is done." },
+  { title: "Straight to the operator", body: "Requests go to the operator who owns the ride. If they haven’t joined yet, our request desk contacts them and says so." },
+  { title: "Honest about who has your request", body: "We never say an operator received or accepted something unless they did." },
+  { title: "Estimates are labelled as estimates", body: "Rate-card estimates help you budget. The operator confirms the total." },
+  { title: "Confirmed means confirmed", body: "A request is not a booking. A ride is booked only when the operator accepts and payment is completed through the marketplace." },
 ];
 
 export default function HomePage() {
@@ -36,7 +36,7 @@ export default function HomePage() {
         nodes={pageGraph({
           path: paths.home(),
           name: "Carnival ride rentals for events",
-          description: "Request a carnival ride for your event. We source the ride and operating crew and manage the booking.",
+          description: "Find carnival rides near your event and request them from the operators who own them.",
           type: "WebPage",
           service: { name: "Carnival ride rentals" },
         })}
@@ -45,10 +45,10 @@ export default function HomePage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-20 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-14 lg:px-10 lg:pb-24 lg:pt-16">
           <div className="lg:col-span-6">
             <h1 className="text-[44px] leading-[0.98] text-white sm:text-[60px] lg:text-[68px]">
-              Carnival rides for your event. <span className="text-accent">One team books it.</span>
+              Carnival rides for your event. <span className="text-accent">Straight from the operators.</span>
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/80">
-              Tell us the ride and your date. We find an operator with that ride, send you one written quote and manage the booking through to your event day.
+              Find carnival rides near your event, nearest first, and request the one you want. Operators on Carnival Ride Rental reply directly; for operators who haven’t joined yet, our request desk contacts them for you.
             </p>
             <form action={paths.request()} method="get" className="mt-8 rounded-2xl bg-surface p-5 text-ink shadow-[0_24px_48px_-24px_rgba(0,0,0,0.5)]" aria-label="Start an event request">
               <div className="grid gap-4 sm:grid-cols-3">
@@ -96,7 +96,7 @@ export default function HomePage() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 id="categories-heading" className="text-4xl">Browse by ride type</h2>
-            <p className="mt-2 max-w-lg text-muted">Pick a ride type and tell us about your event. We source the specific unit and operator.</p>
+            <p className="mt-2 max-w-lg text-muted">Pick a ride type to learn what it is, or find rides near your event.</p>
           </div>
           <Link href={paths.rides()} className="inline-flex items-center gap-1.5 text-sm font-medium hover:text-accent-strong">View all rides <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
         </div>
@@ -147,7 +147,7 @@ export default function HomePage() {
             ))}
           </ol>
           <p className="mt-12 text-sm font-medium text-ink-soft">
-            Nothing is booked until step 4. Until then, availability reads <span className="font-bold text-ink">“Sourcing on request”</span> and prices read <span className="font-bold text-ink">“Estimate”</span>.
+            Nothing is booked until step 4. A request is not a booking, and prices read <span className="font-bold text-ink">“Estimate”</span> until the operator confirms the total.
           </p>
         </div>
       </section>

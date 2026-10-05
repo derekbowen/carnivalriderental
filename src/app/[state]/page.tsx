@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { PricingNotice } from "@/components/PricingNotice";
+import { NearbyRides } from "@/components/search/NearbyRides";
 import { HOW_IT_WORKS, RequestCta } from "@/components/RequestCta";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "@/components/pseo";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
@@ -22,7 +23,7 @@ export function generateStaticParams(): P[] {
 
 const copy = (name: string) => ({
   title: `Carnival ride rentals in ${name}`,
-  description: `Rent carnival rides for events anywhere in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides. We source the ride and operating crew and send one written quote.`,
+  description: `Find carnival rides for events in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides, nearest operators first. Request a ride from the operator who owns it.`,
 });
 
 export async function generateMetadata({ params }: { params: Promise<P> }) {
@@ -61,7 +62,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       <p className="eyebrow mt-6">{s.name}</p>
       <h1 className="mt-2 text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        Planning an event in {s.name}? Tell us the date, location and the kind of ride you want. We find a carnival operator who can bring the ride and run it, then send you one written quote.
+        Planning an event in {s.name}? Find rides from operators near you and send a request. Operators on Carnival Ride Rental reply directly; for operators who haven&rsquo;t joined yet, our request desk contacts them for you.
       </p>
 
       <section className="mt-10">
@@ -73,8 +74,10 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
         <PricingNotice className="mt-6" />
       </section>
 
+      <NearbyRides stateCode={s.code} stateSlug={s.slug} label={s.name} />
+
       <div className="mt-12">
-        <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your dates and site details. We handle sourcing, the quote and coordination." />
+        <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />
       </div>
 
       {OCCASION_GROUPS.map((g) => (

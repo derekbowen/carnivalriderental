@@ -70,7 +70,7 @@ export function SiteFooter() {
         <div className="md:col-span-5">
           <Logo dark />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-            Managed carnival ride rentals. Tell us the ride and your date — we source an operator, send one written quote and manage the booking through to your event.
+            A marketplace for carnival ride rentals. Find rides near your event and request them from the operators who own them.
           </p>
         </div>
         <nav aria-label="Footer" className="grid grid-cols-2 gap-8 text-sm md:col-span-7 md:grid-cols-2">

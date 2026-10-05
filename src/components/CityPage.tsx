@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { RequestCta } from "@/components/RequestCta";
+import { NearbyRides } from "@/components/search/NearbyRides";
 import { DemoBadge, EstimateLabel } from "@/components/badges";
 import { getContent, type ServiceLocation } from "@/lib/content";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
@@ -9,7 +10,7 @@ import { pageGraph } from "@/lib/seo/structured-data";
 export function cityCopy(l: ServiceLocation) {
   return {
     title: `Carnival ride rentals in ${l.cityName}, ${l.stateCode}`,
-    description: `Request carnival rides for events in ${l.cityName}, ${l.stateName}. We source rides and operating crews, subject to availability.`,
+    description: `Request carnival rides for events in ${l.cityName}, ${l.stateName}. Find rides from nearby operators and request them directly.`,
   };
 }
 
@@ -67,7 +68,8 @@ export function CityPage({ l }: { l: ServiceLocation }) {
         </ul>
       </section>
 
-      <div className="mt-16"><RequestCta href={paths.request(undefined, l.stateSlug, l.citySlug)} title={`Planning an event in ${l.cityName}?`} body="Share your dates and site details. We handle sourcing, the quote and coordination." /></div>
+      <NearbyRides stateCode={l.stateCode.toLowerCase()} stateSlug={l.stateSlug} label={l.stateName} />
+      <div className="mt-16"><RequestCta href={paths.request(undefined, l.stateSlug, l.citySlug)} title={`Planning an event in ${l.cityName}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." /></div>
     </div>
   );
 }

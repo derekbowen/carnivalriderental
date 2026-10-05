@@ -86,15 +86,18 @@ export function adminPaidAlert(p: { reference: string; customer: string; city: s
  * Operator claim invitation (outreach). Factual only: no fee, feature or traffic claims — those are
  * not approved (src/lib/operators/program.ts copyApproved=false). Offers claim, correction and removal.
  */
-export function claimInvite(p: { companyName: string; rideCount: number; unsubscribeUrl: string; postalAddress: string; replyTo: string }): Rendered {
+export function claimInvite(p: { companyName: string; rideCount: number; unsubscribeUrl: string; postalAddress: string; replyTo: string; listed?: boolean }): Rendered {
   const rides = p.rideCount > 0 ? `${p.rideCount} ride${p.rideCount === 1 ? "" : "s"} from your public website` : "your company details";
+  const status = p.listed
+    ? `We've listed ${esc(p.companyName)} with ${esc(rides)}, marked as <strong>not yet claimed</strong>. Event organizers can send requests for your rides; until you claim your account those requests come to our team, and we pass them on to you. Nothing is booked or paid on your behalf.`
+    : `We've prepared an <strong>unclaimed, unpublished</strong> profile for ${esc(p.companyName)} with ${esc(rides)}. It is not visible to the public.`;
   return {
-    subject: `${p.companyName}: we've prepared an unclaimed profile for you`,
+    subject: `${p.companyName}: your rides on ${BRAND.name}`,
     ...layout(
       [
         `Hello ${esc(p.companyName)} team,`,
-        `We're building ${esc(BRAND.name)}, a place for event organizers to find carnival rides. We've prepared an <strong>unclaimed, unpublished</strong> profile for ${esc(p.companyName)} with ${esc(rides)}. It is not visible to the public.`,
-        `If you'd like to claim it, correct anything, or have it removed, just reply to this email (${esc(p.replyTo)}).`,
+        `${esc(BRAND.name)} is a marketplace where event organizers find carnival rides and book them directly from the operator. ${status}`,
+        `To claim it, reply from an email address at your company's website domain (${esc(p.replyTo)}). Once claimed you manage your rides and replies yourself. You can also ask us to correct anything or have your listings removed.`,
         `If you'd rather not hear from us, ${link(p.unsubscribeUrl, "unsubscribe here")} and we won't email you again.`,
       ],
       [

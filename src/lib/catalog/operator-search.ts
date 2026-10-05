@@ -134,7 +134,6 @@ async function anonToken(): Promise<string> {
     headers: { "Content-Type": "application/x-www-form-urlencoded", Accept: "application/json" },
     body: new URLSearchParams({ client_id: clientId, grant_type: "client_credentials", scope: "public-read" }),
     signal: AbortSignal.timeout(8000),
-    cache: "no-store",
   });
   if (!res.ok) throw new Error(`auth failed (HTTP ${res.status})`);
   const j = (await res.json()) as { access_token: string; expires_in?: number };
@@ -144,7 +143,7 @@ async function anonToken(): Promise<string> {
 
 async function apiGet(path: string, params: Record<string, string>) {
   const qs = new URLSearchParams({ include: "images,author", "fields.image": "variants.landscape-crop,variants.square-small", "fields.user": "profile.displayName", ...params });
-  const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+  const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`listing query failed (HTTP ${res.status})`);
   return (await res.json()) as { data: ApiListing | ApiListing[]; included?: ApiIncluded[]; meta?: { totalItems: number; totalPages: number; page: number } };
 }
