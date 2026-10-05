@@ -143,7 +143,8 @@
     "importBatch",
     "companyId",
     "importExternalId",
-    "footprintSource"
+    "footprintSource",
+    "operatorConnected"
   ],
   "privateData": [
     "sourceRidePage",
@@ -174,5 +175,9 @@
       "companies on imports/photos/takedowns.json"
     ],
     "note": "Copyright belongs to the photographer regardless of subject; the founder accepted the risk with removal on request."
+  },
+  "bookability": {
+    "key": "metadata.operatorConnected",
+    "rule": "true only when the operator's Sharetribe account has finished Stripe Connect onboarding; set by the transactional side (never by the search site). Search shows 'Book this ride' (Sharetribe listing page) when true, otherwise 'Request this ride' (our request flow). Absent = not bookable."
   }
 }

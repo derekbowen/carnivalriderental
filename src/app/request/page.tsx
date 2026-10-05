@@ -8,6 +8,7 @@ import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { categoryPageById } from "@/lib/content/category-pages";
 import { occasionById, stateBySlug } from "@/lib/taxonomy";
+import { getOperatorListing } from "@/lib/catalog/operator-search";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string; occasion?: string; category?: string };
+type SP = { ride?: string; state?: string; city?: string; cityName?: string; date?: string; occasion?: string; category?: string; listing?: string };
 
 export default async function RequestPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
@@ -29,7 +30,13 @@ export default async function RequestPage({ searchParams }: { searchParams: Prom
   const occasion = sp.occasion ? occasionById(sp.occasion) : undefined;
   // From category hubs: the ride type goes into the notes (the ride picker lists offerings, not categories).
   const category = sp.category ? categoryPageById(sp.category) : undefined;
-  const noteLines = [category && `Ride type: ${category.name}`, occasion && `Occasion: ${occasion.name}`].filter(Boolean);
+  // From /s "Request this ride": the operator listing goes into the notes (it is not a managed offering).
+  const listing = sp.listing ? await getOperatorListing(sp.listing) : null;
+  const noteLines = [
+    listing && `Requested ride: ${listing.title}${listing.company ? ` (${listing.company}${listing.base ? `, ${listing.base}` : ""})` : ""} [listing ${listing.id}]`,
+    category && `Ride type: ${category.name}`,
+    occasion && `Occasion: ${occasion.name}`,
+  ].filter(Boolean);
   const prefill = {
     rideSlug: ride?.slug,
     city: loc?.cityName ?? m?.[1],
