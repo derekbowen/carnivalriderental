@@ -53,8 +53,8 @@ test("custom listing page renders the normalised record, labelled, noindex, with
   const html = await page.content();
   expect(html).not.toMatch(/SECRET OPERATOR|12345|supplierCost/);
   // Only covered locations are linked.
-  await expect(page.getByRole("link", { name: "Austin, TX" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Denver, CO" })).toHaveCount(0);
+  await expect(page.getByRole("main").getByRole("link", { name: "Austin, TX" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: "Denver, CO" })).toHaveCount(0);
 });
 
 test("pSEO preview: covered city renders, uncovered city is 404", async ({ request, page }) => {
@@ -73,8 +73,8 @@ test("an edit to the source updates the dependent pages", async ({ page }) => {
   write(d);
   await page.goto("/preview/rides/test-ferris-wheel-rental");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("[TEST] Ferris wheel rental (edited)");
-  await expect(page.getByRole("link", { name: "Denver, CO" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Austin, TX" })).toHaveCount(0);
+  await expect(page.getByRole("main").getByRole("link", { name: "Denver, CO" })).toBeVisible();
+  await expect(page.getByRole("main").getByRole("link", { name: "Austin, TX" })).toHaveCount(0);
   const r = await page.request.get("/preview/rides/test-ferris-wheel-rental/texas/austin");
   expect(r.status()).toBe(404);
 });

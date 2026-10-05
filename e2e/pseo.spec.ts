@@ -69,7 +69,7 @@ test("occasion hub and index render and link to every state", async ({ page, req
   expect((await request.get("/events")).status()).toBe(200);
   await page.goto("/events/quinceaneras");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals for quinceañeras");
-  await expect(page.getByRole("link", { name: "District of Columbia" })).toHaveAttribute("href", "/district-of-columbia/quinceaneras");
+  await expect(page.getByRole("main").getByRole("link", { name: "District of Columbia" })).toHaveAttribute("href", "/district-of-columbia/quinceaneras");
 });
 
 test("old prefixed URLs redirect permanently to the direct ones", async ({ request }) => {

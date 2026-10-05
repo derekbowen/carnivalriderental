@@ -1,6 +1,7 @@
 import { MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
+import { FOOTER_CITIES, FOOTER_EVENTS, FOOTER_RIDE_TYPES, FOOTER_STATES, type FooterLink } from "@/lib/seo/footer-links";
 import { paths } from "@/lib/seo/routes";
 
 export function EnvBanner() {
@@ -50,6 +51,21 @@ export function SiteHeader() {
   );
 }
 
+const SUPPORT_EMAIL = `support@${BRAND.domain}`;
+
+function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
+  return (
+    <div>
+      <p className="font-semibold text-accent">{title}</p>
+      <ul className="mt-3 space-y-2 text-white/75">
+        {links.map((l) => (
+          <li key={l.href}><Link className="hover:text-white" href={l.href}>{l.label}</Link></li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function SiteFooter() {
   return (
     <footer className="safe-bottom mt-24 bg-ink text-white">
@@ -62,33 +78,41 @@ export function SiteFooter() {
           <Link href={paths.operators()} className="font-semibold text-accent hover:underline">Apply for early access →</Link>
         </p>
       </div>
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-12 lg:px-10">
-        <div className="md:col-span-5">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:px-10">
+        <div className="lg:col-span-4">
           <Logo dark />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
             A marketplace for carnival ride rentals. Find rides near your event and request them from the operators who own them.
           </p>
+          <p className="mt-5 text-sm text-white/70">
+            Questions? <a className="font-semibold text-white hover:underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+          </p>
+          <Link href={paths.request()} className="btn-primary mt-5 inline-flex">Start an event request</Link>
         </div>
-        <nav aria-label="Footer" className="grid grid-cols-2 gap-8 text-sm md:col-span-7 md:grid-cols-2">
-          <div>
-            <p className="font-semibold text-accent">Rides</p>
-            <ul className="mt-3 space-y-2 text-white/75">
-              <li><Link className="hover:text-white" href={paths.rides()}>All ride rentals</Link></li>
-              <li><Link className="hover:text-white" href={paths.category("ferris-wheels")}>Ferris wheels</Link></li>
-              <li><Link className="hover:text-white" href={paths.category("carousels")}>Carousels</Link></li>
-              <li><Link className="hover:text-white" href={paths.category("swing-rides")}>Swing rides</Link></li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-semibold text-accent">Booking</p>
-            <ul className="mt-3 space-y-2 text-white/75">
-              <li><Link className="hover:text-white" href="/#how-it-works">How it works</Link></li>
-              <li><Link className="hover:text-white" href={paths.request()}>Start an event request</Link></li>
-              <li><Link className="hover:text-white" href={paths.operators()}>For ride operators</Link></li>
-            </ul>
-          </div>
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-4 lg:col-span-8">
+          <FooterColumn title="Ride types" links={FOOTER_RIDE_TYPES} />
+          <FooterColumn title="Popular cities" links={FOOTER_CITIES} />
+          <FooterColumn title="Events" links={FOOTER_EVENTS} />
+          <FooterColumn
+            title="Carnival Ride Rental"
+            links={[
+              { href: paths.search(), label: "Find a ride" },
+              { href: "/#how-it-works", label: "How it works" },
+              { href: paths.operators(), label: "For ride operators" },
+            ]}
+          />
         </nav>
       </div>
+      <nav aria-label="Browse locations" className="border-t border-white/10">
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-10">
+          <p className="text-sm font-semibold text-accent">Carnival ride rentals by state</p>
+          <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-[13px] text-white/65">
+            {FOOTER_STATES.map((l) => (
+              <li key={l.href}><Link className="hover:text-white" href={l.href}>{l.label}</Link></li>
+            ))}
+          </ul>
+        </div>
+      </nav>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
           {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators own and run the rides listed here. Pricing is by quote unless an operator has approved a rate; a request is not a booking.
