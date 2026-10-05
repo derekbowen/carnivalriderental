@@ -151,8 +151,9 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
     }
   }
   expect(origins.size).toBe(1);
+  // /texas/austin is a real-city inventory page (Census place + operator snapshot), never indexable yet.
   await page.goto("/texas/austin");
-  await expect(page.getByText("None recorded yet. We do not claim local inventory")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival ride rentals near Austin, TX");
 
   const sitemapRes = await request.get("/sitemap.xml");
   expect(sitemapRes.status()).toBe(200);

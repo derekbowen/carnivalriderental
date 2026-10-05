@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { PricingNotice } from "@/components/PricingNotice";
 import { NearbyRides } from "@/components/search/NearbyRides";
+import { CITIES, ridesNear, PSEO_INVENTORY } from "@/lib/inventory";
 import { HOW_IT_WORKS, RequestCta } from "@/components/RequestCta";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "@/components/pseo";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
@@ -75,6 +76,14 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       </section>
 
       <NearbyRides stateCode={s.code} stateSlug={s.slug} label={s.name} />
+
+      <LinkGrid
+        title={`Carnival rides by city in ${s.name}`}
+        links={CITIES.filter((c) => c.state === s.code && ridesNear(c.lat, c.lng).length >= PSEO_INVENTORY.cityMinRides)
+          .sort((a, b) => b.pop - a.pop)
+          .slice(0, 60)
+          .map((c) => ({ href: paths.city(s.slug, c.slug), label: c.name }))}
+      />
 
       <div className="mt-12">
         <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your date and site details. Operators reply in your inbox; for operators who have not joined yet, our request desk contacts them for you." />

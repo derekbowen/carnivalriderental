@@ -3,13 +3,14 @@ import { getCatalog } from "@/lib/catalog/source";
 import { pseoRoutes } from "@/lib/seo/pseo";
 import { allSeoRoutes } from "@/lib/seo/publication";
 import { canonicalUrl } from "@/lib/seo/routes";
+import { inventoryRoutes } from "@/lib/inventory";
 
 export const revalidate = 600;
 
 /** Only routes that pass every publication gate. Empty in development by design. */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const snap = await getCatalog();
-  return [...allSeoRoutes(), ...pseoRoutes(snap)]
+  return [...allSeoRoutes(), ...pseoRoutes(snap), ...inventoryRoutes()]
     .filter((r) => r.gate.indexable)
     .map((r) => ({ url: canonicalUrl(r.path) }));
 }

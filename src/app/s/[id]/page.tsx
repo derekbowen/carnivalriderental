@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getOperatorListing, marketplaceListingUrl } from "@/lib/catalog/operator-search";
+import { getOperatorListing, marketplaceListingUrl, type OperatorRideDetail } from "@/lib/catalog/operator-search";
+import { RIDES, toCard } from "@/lib/inventory";
 import { BRAND } from "@/lib/config";
 import { ESTIMATE_DISCLAIMER } from "@/lib/pricing/rate-card";
 import { paths } from "@/lib/seo/routes";
@@ -11,8 +12,16 @@ export const revalidate = 60;
 
 type P = { id: string };
 
+/** Live listing, or the public inventory snapshot when the marketplace API is unreachable. */
+async function loadRide(id: string): Promise<OperatorRideDetail | null> {
+  const live = await getOperatorListing(id);
+  if (live) return live;
+  const r = RIDES.find((x) => x.id === id);
+  return r ? { ...toCard(r), facts: r.facts } : null;
+}
+
 export async function generateMetadata({ params }: { params: Promise<P> }): Promise<Metadata> {
-  const ride = await getOperatorListing((await params).id);
+  const ride = await loadRide((await params).id);
   return { title: ride ? `${ride.title} | ${BRAND.name}` : BRAND.name, robots: { index: false, follow: true } };
 }
 
@@ -21,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<P> }): Prom
  * city or description text (founder decision 2026-10-05: no bypassing the marketplace).
  */
 export default async function RideListingPage({ params }: { params: Promise<P> }) {
-  const ride = await getOperatorListing((await params).id);
+  const ride = await loadRide((await params).id);
   if (!ride) notFound();
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_340px]">

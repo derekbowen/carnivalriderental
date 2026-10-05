@@ -1,0 +1,27 @@
+{
+  "thresholds": {
+    "radiusMiles": 200,
+    "cityMinRides": 10,
+    "rideCityMinRides": 5,
+    "copyApproved": false
+  },
+  "renderable": {
+    "cityPages": 1580,
+    "cityPagesWithSupply": 1433,
+    "cityPagesWithoutSupply": 147,
+    "rideCityPages": 15931,
+    "total": 17511
+  },
+  "meetSupplyThreshold": {
+    "city": 1427,
+    "rideCity": 15931
+  },
+  "indexableNow": 0,
+  "sitemapUrls": 0,
+  "noindexNow": 17511,
+  "blockingReasons": [
+    "public indexing disabled in this environment",
+    "city template copy not founder-approved",
+    "ride + city template copy not founder-approved"
+  ]
+}
