@@ -1,103 +1,41 @@
-# Operator program — operators list rides, set prices, get paid (founder direction 2026-10-04)
+# Operator program (founder decision 2026-10-06: discovery and access, not a payment marketplace)
 
-Status: **early access only.** Built: `/operators` landing page (noindex, copy not approved) and an application form whose entries appear at `/internal/operators`. **Not built:** operator accounts, Stripe onboarding, operator listings, the transaction process, SMS. Nothing here changes the managed track (`PROJECT_BRIEF.md`): we keep selling under our own seller account. Operator listings run alongside it later, and are not a launch dependency.
+This file replaces the earlier "operators list rides, set prices, get paid through Stripe Connect" program. That model is retired. Anything below about payouts, commission, Stripe Connect, booking acceptance or payment-ready badges that survives elsewhere in the repo is stale and should be removed when found.
 
-Single source for page numbers: `src/lib/operators/program.ts` (`operatorCommissionPct: 0`, `customerServiceFeePct: null`, `copyApproved: false`).
+## The offer to operators
 
+- **Listing is free.** No commission, no fee on the rental, no payout onboarding.
+- **Customers contact you directly.** A customer who buys Event Access sees your company name, contact person, phone, email and website, then calls or emails you. Price, availability, contract, insurance and payment are between you and the customer.
+- **You control your inventory.** Claim the company account we created for you, or create one; add and edit rides, upload photos, set service states, keep your contact details current; remove any ride or your whole company on request.
+- **We never resell your contact details as a list.** Access is sold per event, capped per pass, and every reveal is logged.
 
-## 0. Current implementation (2026-10-05)
+## The operator workflow
 
-- **Claim:** `npm run ops:claim`. It verifies ownership (email on the company's website domain, or a founder-recorded manual check), hands over the existing placeholder account, and removes the unclaimed notice. Sharetribe cannot change a listing's author, so the account moves and the listings stay put.
-- **Booking eligibility:** `src/lib/operators/claim.ts → bookingBlockers`, applied by `npm run ops:bookable`. It requires all of: verified claim, ride approved, Stripe connected, payouts and charges enabled (Stripe API), an operator price, and a decided commission. Only then is `metadata.bookable=true` written. Connecting Stripe alone never makes a ride bookable.
-- **Unclaimed rides:** inquiry-only, through the house request desk (`npm run desk:list|show|reply`).
-- **Payments proven in Test** with `default-booking` (`npm run qa:payment`). Console commission is currently provider 10%, which is not decided. See `docs/LAUNCH_STATUS.md`.
+1. Create an account or log in (Sharetribe account: email verification and password reset are Sharetribe's).
+2. Claim the imported company (ownership check: an email at the company's website domain, or a founder-recorded manual check; `npm run ops:claim`).
+3. See existing rides.
+4. Add or edit a ride (title, description, class, facts from the contract; `own_listings/*`).
+5. Upload photos (`images/upload`).
+6. Edit service states and home base.
+7. Edit contact information (stored in the account's private data; never public).
+8. Submit/publish → `pendingApproval` → the team approves.
 
-## 1. The founder's model
+Sharetribe handles 1, 3, 4, 5, 6 and 8 natively. 2 and 7 are ours (the claim script today; a self-serve portal later). Operators are never shown Stripe Connect, payout setup, commission, payment-ready badges or booking eligibility.
 
-1. Operator lists a ride and sets the price.
-2. Customer picks a date, enters the event requirements, and pays. The money is already secured when the operator sees the request.
-3. Operator gets a text and an email.
-4. Operator accepts, or needs more money (distance, hours, site) and sends the customer an updated price to pay, or declines.
-5. Operators pay **0%**. The marketplace earns a **small percentage of the total**, which covers card processing and running costs. The rate is set later.
+## What stays private
 
-## 2. Verified Sharetribe facts (docs checked 2026-10-04)
+The company name, contact person, phone, email, website and exact address are in Sharetribe `privateData` / `protectedData` (server-readable only) and are revealed to customers only through a valid access pass. The public profile stays "Carnival Ride Rental operator" even after a claim, so the hosted Sharetribe pages can't bypass the paywall. Console → Access control → private marketplace keeps the hosted web app from being a public catalogue (founder action; see `LAUNCH_STATUS.md`).
+
+## Verified Sharetribe facts (docs checked 2026-10-06)
 
 | Fact | Source |
 |---|---|
-| Payments use Stripe Connect **destination charges** (`on_behalf_of`). The money goes to the **operator's** Connect account, and the operator's details show on the customer's card receipt. A listing can't take payment until its operator finishes Stripe onboarding (KYC + bank). | [Payments overview](https://www.sharetribe.com/docs/concepts/payments/payments-overview/) |
-| **Calendar booking** flow: the card is **authorized** (held) when the customer requests. The operator has **6 days** to accept. Accept captures the payment; decline or expiry releases the hold, and Stripe charges no fee because nothing was captured. | [Payments overview — provider acceptance](https://www.sharetribe.com/docs/concepts/payments/payments-overview/#provider-acceptance), [How calendar booking transactions work](https://www.sharetribe.com/help/en/articles/9106928-how-calendar-booking-transactions-work) |
-| Payout happens when the transaction completes, automatically **48 h after the booking ends**. Funds can typically be held for **~90 days**. | same |
-| Bookings further than 90 days out: the **off-session payment** pattern. Save the card and accept now, then charge automatically closer to the event. A charge can fail, so the process needs a fallback. | [Off-session payments](https://www.sharetribe.com/docs/concepts/payments/off-session-payments-in-transaction-process/) |
-| **Only one PaymentIntent per transaction.** One transaction cannot charge twice. | [Transaction process actions](https://www.sharetribe.com/docs/references/transaction-process-actions/#actionstripe-create-payment-intent) |
-| Extra charges: either (a) a second transaction with its own payment (documented pattern), or (b) a manual charge in the Stripe dashboard. With (b), the money lands in **our** balance and we pay the operator by hand. | [Stored cards FAQ](https://www.sharetribe.com/docs/concepts/payments/using-stored-payment-cards/#frequently-asked-questions-about-storing-payment-cards), [Partial refunds](https://www.sharetribe.com/docs/concepts/payments/payments-overview/#how-to-implement-partial-refunds) |
-| Refunds are **full only** by default. | same |
-| **Price negotiation** (regular flow): the customer requests a quote, and the operator sends or **updates the offer before the customer pays**. It can't be combined with calendar availability without custom code (there is an example `negotiated-booking` process). Paid orders auto-cancel after **75 days** if not delivered. | [Negotiation process](https://www.sharetribe.com/docs/concepts/transactions/negotiation-process/), [Regular price negotiation](https://www.sharetribe.com/help/en/articles/12800532-how-regular-price-negotiation-transactions-work) |
-| **Commission:** provider %, customer % (added on top of the price), and minimum or flat fees. Set in Console → Monetization → Commission. | [Commission rates](https://www.sharetribe.com/help/en/articles/8413880-how-to-set-your-marketplace-commission-rates) |
-| **The marketplace pays all Stripe fees** out of its commission: card processing, payouts, and monthly active accounts. At 0%/0% we pay them out of pocket. Sharetribe's US example uses 2.9% + 30¢ processing, $2 per active account per month, and 0.25% + 25¢ per payout. Check our actual Stripe rates. | [Stripe's processing fees](https://www.sharetribe.com/help/en/articles/8803821-stripe-s-processing-fees) |
-| Payment methods: **cards only** without code. Apple/Google Pay and some push methods need custom work. PayPal isn't supported. ACH bank debit isn't in the supported list (it doesn't confirm immediately). | [Payment methods](https://www.sharetribe.com/docs/concepts/payments/payment-methods-overview/), [Help: payment methods](https://www.sharetribe.com/help/en/articles/8671710-how-payments-with-stripe-work#h_7e42c568d6) |
-| **SMS isn't built in.** Use Twilio via Zapier (Sharetribe has a tutorial) or our own integration. | [Zapier SMS tutorial](https://www.sharetribe.com/help/en/articles/8788994-zapier-tutorial-sms-booking-notifications-via-twilio) |
-| **Multiple products in one checkout:** one transaction pays **one provider** and holds stock or availability for **one listing**. A cart is possible but needs significant custom development: one checkout per operator, extra listings as line items, and a child transaction per listing to hold its calendar. Several line items for **one** ride (rental + delivery + extra hours + attendant) are standard. | [Shopping cart series](https://www.sharetribe.com/developer-blog/shopping-cart-introduction/) |
+| Listings publish without a Stripe account; the API's only publish failure is a permission 403. | [create](https://www.sharetribe.com/api-reference/marketplace.html#create-listing), [publish](https://www.sharetribe.com/api-reference/marketplace.html#publish-draft-listing) |
+| "Payout details required before publishing" is a listing-type toggle; Free-messaging providers don't need payout details. | [help](https://www.sharetribe.com/help/en/articles/8940366-what-are-payout-details#h_53357dd6c0), [listing types](https://www.sharetribe.com/help/en/articles/8413295-how-listing-types-work#h_50a2864b44) |
+| "You can absolutely use Sharetribe without using Stripe." | [FAQ](https://www.sharetribe.com/docs/concepts/payments/payments-overview/#can-i-use-sharetribe-and-not-use-stripe) |
+| User privateData/protectedData never appear in public Marketplace API resources; the Integration API returns them. | [users](https://www.sharetribe.com/api-reference/marketplace.html#users), [integration user](https://www.sharetribe.com/api-reference/integration.html#user-resource-format) |
+| Pricing (from 1 Oct 2026): Build $39/month, Live $259/month ($199 annual), usage credits, no transaction fees. | [pricing](https://www.sharetribe.com/pricing/) |
 
-## 3. Recommended flow ("pay to request")
+## Page copy source
 
-Base: Sharetribe's **calendar booking** process, plus one custom path.
-
-```mermaid
-stateDiagram-v2
-    direction LR
-    [*] --> Held: customer books + card authorized
-    Held --> Confirmed: operator accepts (card charged)
-    Held --> Released: operator declines / 6 days pass
-    Held --> PriceUpdated: operator sends updated price (hold released)
-    PriceUpdated --> HeldNew: customer approves + pays new total (new transaction)
-    PriceUpdated --> Released: customer walks away
-    HeldNew --> Confirmed: operator accepts
-    Confirmed --> PaidOut: event ends + 48 h → payout to operator
-    Released --> [*]
-    PaidOut --> [*]
-```
-
-1. **Price at checkout should usually be right.** Use custom line items: the base price per day, delivery at so much per mile past an included radius, and extra hours. These are all calculated server-side from the customer's address and times. This makes updated prices the exception.
-2. **Updated price = custom work.** One transaction can hold only one payment. So "send updated price" releases the hold and gives the customer a one-click checkout at the new total, which creates a new transaction. The new price must come from a trusted server-side record of the operator's offer, never from the browser.
-3. **After acceptance** (an extra hour on the day, damage): use a second "top-up" transaction. Avoid manual dashboard charges, because that money lands in our account and has to be paid out by hand.
-4. **Events more than ~80 days out** (common for carnival rides): authorizations only last 7 days, and Stripe holds funds about 90 days. Pick one:
-   - Save the card at booking and charge it automatically about 60 days before the event.
-   - Take a deposit now and charge the balance later (two transactions).
-5. **Operator deposits:** the stock flow pays out after the event. Operators who need money up front for transport need either a custom early payout (a policy decision) or our own working capital.
-
-The page copy describes this flow. It is only accurate once 1–3 are built and item 4 is decided.
-
-## 4. Fee maths (why "0% for operators" needs a customer fee)
-
-Assumes Sharetribe's example US rates (above). Check the real rates before setting the fee.
-
-| $20,000 booking, operator gets $20,000 | Customer fee 3% | Customer fee 5% |
-|---|---|---|
-| Customer pays | $20,600 | $21,000 |
-| Card processing (2.9% + 30¢ on what the customer pays) | −$597.70 | −$609.30 |
-| Payout fee (0.25% + 25¢ on $20,000) | −$50.25 | −$50.25 |
-| Active account ($2/month) | −$2 | −$2 |
-| **Marketplace keeps** | **≈ −$50 (loss)** | **≈ $338** |
-
-Below about **3.3%**, card bookings lose money. International cards cost more. Refunds after capture don't return Stripe's processing fee.
-
-The "0% / keep 100%" headline is only true if the fee is charged to the **customer**. If the percentage comes out of the operator's payout, the page must change.
-
-## 5. Console changes needed later (not applied, IDs not approved)
-
-- A user type for operators (e.g. `operator`) with Stripe payout setup.
-- A listing type for operator listings, separate from `managed-ride-rental`, bound to a calendar-booking process (later a custom process with the updated-price path). Proposed id `operator-ride-rental`. Needs founder approval; ids are permanent.
-- Commission: provider 0%, customer = the approved fee. Console commission applies to **every** transaction, including managed bookings. Charging the fee only on operator bookings needs custom pricing code.
-
-## 6. Decisions for the founder
-
-Decided 2026-10-04: **pay first** (no contact before payment), **estimates are not final** (wording in `src/lib/pricing/policy.ts`), **no phone-number sign-in** (an operator is identified through Stripe Connect onboarding). Payout timing and big-ticket payments: `PAYMENT_STATES.md`.
-
-
-1. Who pays the percentage: the customer (keeps "0% for operators" true) or the operator (headline changes)? Also the rate (at least ~3.3% to cover card costs).
-2. Events far out: save the card and charge later, or deposit plus balance?
-3. Updated-price path: build it (recommended), or start with decline-and-rebook?
-4. Operator requirements before going live: insurance, state inspections, signed terms. Not stated on the page until decided.
-5. Cancellation and refund policy for operator bookings.
-6. SMS provider (Twilio via Zapier is the quickest).
-7. Multi-ride checkout: one operator's rides in one checkout (significant custom work), or one booking per ride at launch?
+`src/lib/operators/program.ts` holds the numbers the `/operators` page may state (listing fee 0, commission none). The page's copy is not founder-approved for indexing (`copyApproved: false`).

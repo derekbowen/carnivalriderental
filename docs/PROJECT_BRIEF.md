@@ -1,75 +1,76 @@
-# Project brief — national carnival ride rental marketplace
+# Project brief: Carnival Ride Rental (carnivalriderental.us)
 
-> Working brand **"Book a Carnival"** is a configurable placeholder (`src/lib/config.ts`).
-> The final name and domain are **not approved**.
+Owner and operator: **10000 Solutions LLC** (founder Derek Bowen). This repository is separate from Pool Rental Near Me and must never touch PRNM code, infrastructure, its Sharetribe marketplace, its Stripe account or any other business.
 
-## The business model (founder decision 2026-10-05; read this before changing anything)
+## The business model (founder decision 2026-10-06; this supersedes every earlier model)
 
-Carnival Ride Rental is a **marketplace**. Independent carnival operators supply and fulfil their own rides. Carnival Ride Rental facilitates discovery, requests and transactions.
+**Carnival Ride Rental is a national carnival ride discovery and operator-access platform.**
 
-1. Customers discover rides on carnivalriderental.us (search `/s`, state/city pages) and the Sharetribe marketplace.
-2. **Verified, payment-ready operator** (claimed account, Stripe Connect complete, ride approved with a price or quote): the customer transacts on that operator's listing. The operator is the provider on the Sharetribe transaction, accepts or declines, fulfils, and is paid through Stripe Connect. Carnival Ride Rental earns the marketplace commission (rate not yet decided).
-3. **Unclaimed inventory** (imported operator listings): inquiry-only. Requests go to Carnival Ride Rental's monitored request desk (the house account's inbox). The copy never says the operator received or accepted anything. The team contacts the operator and works to get them to claim their account and connect payouts.
-4. Connecting Stripe alone never makes rides bookable: booking eligibility needs verified ownership, approval of that ride, authoritative payment readiness, an operator-approved price or quote, and confirmed availability and service area (`docs/OPERATOR_MARKETPLACE.md`).
-5. The earlier "managed" model (we quote, source and sell as seller of record) is retired as the default. Its code (request service, quotes, supplier pipeline) remains as an internal fallback only.
+Independent carnival operators manage or claim their own inventory. Visitors browse ride inventory, photos, specifications, service areas, city, state and event information for free. Customers may purchase **Event Access**: direct contact information for matching independent carnival operators. Carnival Ride Rental keeps the access fee. Operators do not receive rental payments through Carnival Ride Rental. Pricing, scheduling, availability, contracts, insurance requirements and payment for the actual carnival rental are handled directly between the customer and the operator.
 
-It is **not**: a lead-selling site, a directory that hides who fulfils the event, or a reskinned Pool Rental Near Me.
+What we sell is **access and discovery**, not the ride rental. The public internet problem we solve: carnival ride inventory is fragmented across hundreds of small operators, poor websites, PDFs, Facebook pages and outdated directories. We aggregate and normalise it.
 
-Long-term goal: every carnival ride in the US discoverable and bookable from its operator. That is an ambition, not a claim that any operator is under contract.
+The funnel is **Find → Evaluate → Connect**:
 
-## Ownership
+1. A visitor lands on a ride, city, city × ride, state, event or directory page from Google, or searches `/s`.
+2. They evaluate rides for free: title, type, class, photo, verified facts, approximate location, home state, service states, distance, event fit, related rides.
+3. They start Event Access with their event (date, city, state, ride type). Before any payment the server counts the unique, contactable, relevant operators and says so honestly.
+4. They pay Carnival Ride Rental through our own standard Stripe account (Checkout; no Stripe Connect; no operator payout).
+5. A server-verified payment creates a durable **access pass** (initially: up to 5 unique operators, 30 days, $99; all configurable in `access_products`).
+6. On the pass page they unlock operators one at a time. The server retrieves the operator's contact details from Sharetribe (Integration API) and records exactly what was revealed.
+7. The customer and operator deal directly. We are not a party to the rental.
 
-The business is **owned and operated by 10000 Solutions LLC** (parent company). It operates the marketplace platform. On marketplace bookings the operator is the provider (and appears on the card charge via Stripe Connect destination charges); 10000 Solutions LLC earns the commission. It is seller of record only on bookings it deliberately sells through its own house account.
+### What Carnival Ride Rental does not do
 
-## Origin
+- collect the carnival rental payment, pay operators, hold funds, charge a commission, or act as seller of record for operator rentals;
+- require Stripe Connect, payout onboarding or marketplace transaction acceptance from operators;
+- guarantee a booking, availability, a quote or a response from any operator;
+- synchronise operator calendars (first version);
+- show operator identity or contact details to anyone without a valid access pass.
 
-Founder: Derek Bowen (operates Pool Rental Near Me; previously rented carnival rides as Ferris Wheel Rental U.S.). A single Ferris wheel rental, sold from a WordPress site, out-earned a full year of PRNM. The earlier mistake was positioning as a connector between owner and customer. This project corrects that.
+### Infrastructure roles
 
-This repository is **separate** from PRNM. It must never touch PRNM code, infrastructure, its Sharetribe marketplace or any other existing business.
+| System | Role |
+|---|---|
+| **Sharetribe** | catalog and operator-management infrastructure: operator accounts, company ownership and claims, ride listings, listing fields, photos, service geography, listing approval, operator self-management, and the private operator contact record (`privateData`/`protectedData`, server-readable only). **Not** our rental payment processor. Its transaction and payment layer is unused. |
+| **Our Next.js app** | SEO pages, search, discovery, matching, the Event Access funnel, contact reveal. |
+| **Stripe (our standard account)** | the customer's access-fee payment. No Connect, no payouts, no commission. |
+| **Access ledger (Postgres, Supabase)** | product configuration, event requests, purchases, passes, unlock limit and count, unlocked operators with an immutable reveal snapshot, expiration, refund and revocation, Stripe webhook idempotency, audit. References Sharetribe IDs; mirrors nothing else. See `docs/PAID_ACCESS_ARCHITECTURE.md`. |
 
-## Economics — keep these amounts distinct
-
-| Amount | Owner | Notes |
-|---|---|---|
-| Customer selling price | us | Set per event quote. No fixed platform fee; PRNM's 15% does **not** apply. |
-| Supplier quote | operator | Recorded internally per event. |
-| Transport & mobilization | operator / us | Often the largest variable. |
-| Setup, teardown & operating crew | operator | |
-| Other fulfilment costs | varies | permits, insurance riders, fuel, etc. |
-| Payment costs | Stripe / Sharetribe | Rate not yet configured → shown as Unknown. |
-| Projected contribution margin | derived | **Never** shown as guaranteed profit. Unknown costs stay unknown. |
-
-$22,000 for a Ferris wheel is an illustrative example, not an approved price.
-
-## Transaction model — intent vs. current Test scaffold
-
-**Intended model:** the customer makes a **meaningful payment commitment before we invest in sourcing**, and the booking is confirmed only after an operator commits and the approved payment step is complete. Policy (deposit, timing, capture, refunds) is **not yet decided** — see `docs/PAYMENT_STATES.md`.
-
-**Current Test scaffold:** listing type `managed-ride-rental` is bound to Sharetribe's regular `default-negotiation` process (quote request → offer → accept & pay) **only to prove catalog creation, retrieval and search in Test**. That flow is *not* equivalent to the intended model (payment comes after sourcing) and is **not approved as the final process**. A quote-only path may exist later, but not as the only path without founder approval. The process binding lives in `contract/listing-contract.json → processBinding`, separate from offering and category identity.
-
-## Core entities
-
-| Entity | Meaning | Source of truth (session one) |
-|---|---|---|
-| Ride category | Ferris wheels, carousels… | `src/lib/content` fixtures |
-| Ride rental offering | What customers browse and request | `src/lib/content` fixtures (→ Sharetribe listing later) |
-| Physical ride unit | A specific machine with owner, model, verification | dev SQLite `ride_units` (internal only) |
-| Supplier / operator | Business providing equipment + crew | dev SQLite `suppliers` (internal only) |
-| Event request | Customer's brief + fulfilment + payment status | dev SQLite `event_requests` |
-| Customer quote (versioned) | Price + scope we offer the customer | dev SQLite `customer_quotes` |
-| Supplier candidate / quote | Per-event supplier stage and costs | dev SQLite `request_suppliers`, `supplier_quotes` |
-| Event fulfilment | The committed supplier + unit for an event | `event_requests.assigned_*` after `commitSupplier` |
-
-Supplier relationship (global): `researched_prospect → contacted → verified_supplier`.
-Supplier stage per event: `candidate → contacted → quoted → committed` (or `declined`).
-A researched operator is not a partner. A catalogue entry is not confirmed available equipment.
+**Future sessions must not reintroduce Stripe Connect, marketplace checkout, operator payouts, booking transactions or a mirror of the Sharetribe catalog without a new, explicit founder decision recorded here.**
 
 ## Non-negotiable product rules
 
-- Unconfirmed supply is never presented as confirmed. Availability labels are "Sourcing on request" unless a **verified coverage** record exists.
-- Price labels distinguish *planning estimate*, *quote awaiting acceptance* and *accepted quote*.
-- Request submitted ≠ payment method saved ≠ funds authorized ≠ payment captured ≠ supplier committed ≠ booking confirmed.
-- No invented reviews, completed rentals, supplier counts, insurance promises, certifications, dimensions, capacities or manufacturer specs.
-- No copied operator photos; development placeholders are labelled as such.
-- Raw card data never touches our forms, database, logs or analytics.
-- All non-production environments are noindex and should be access-controlled.
+- **Locked data** (operator company name where it identifies the supplier, contact person, phone, email, direct website, exact address, direct booking instructions) is never in HTML, hydration data, JSON-LD, metadata, Open Graph, image alt text, API responses, static exports, sitemaps, analytics or logs before a server-side entitlement check. Paid pages are `private, no-store` and noindex.
+- **Public data** may include: ride title and type, class, manufacturer and model when verified, specifications when verified, photos we are entitled to display, approximate location, home state, service states, approximate distance, event suitability, related rides.
+- Operator access is sold per **operator**, not per listing: five rides from one company are one operator. Operators with no usable contact channel are never sold.
+- Never claim availability, a price for the rental, a guaranteed response, reviews, ratings, supplier counts, insurance or certifications. Unknown stays unknown.
+- Pricing and limits for Event Access live in configuration (`access_products`), never hard-coded in copy or logic. Old purchases keep the terms they were bought with.
+- Payments are server-verified (Stripe webhook or server-side session retrieval). A success redirect alone proves nothing. Idempotent processing; concurrency-safe unlock counting.
+- Inventory ingestion (company import, listing import, photo provenance, validation, anonymisation, claim) is a first-class capability and must keep its controls: deduplication, source provenance, operator identity resolution, image rights, taxonomy consistency.
+- SEO: existing canonical URLs never change; the indexing gates in `src/lib/inventory` and `src/lib/seo/publication.ts` stay; nothing is mass-indexed because of this pivot.
+
+## Economics
+
+| Amount | Owner |
+|---|---|
+| Event Access fee | Carnival Ride Rental (100%) |
+| Rental price, delivery, crew, permits, insurance | agreed directly between customer and operator; never shown as ours |
+| Stripe processing on the access fee | Carnival Ride Rental |
+| Sharetribe plan and API usage | Carnival Ride Rental |
+
+## Entities
+
+```
+Equipment (ride listing, Sharetribe)  ──owned by──►  Operator (Sharetribe user / company)
+      │                                                     │
+      └──located/serves──► Geography (home state, service states, approximate base)
+      └──fits──► Event type (taxonomy)
+Customer ──► Event request ──► Purchase ──► Access pass ──► Unlocks (operator, snapshot, time)
+```
+
+The taxonomy (`src/lib/taxonomy`, `src/lib/inventory/match.ts`) is ride-first but not ride-only: equipment classes beyond rides (inflatables, games, concessions, generators, tents, stages) can be added as classes and types without changing the page templates or the access model. Carnival rides remain the wedge.
+
+## Origin
+
+A single Ferris wheel rental sold from a WordPress site out-earned a full year of PRNM. The hard part was never the transaction; it was finding who actually owns the ride. This product sells that answer.
