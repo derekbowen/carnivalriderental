@@ -93,3 +93,27 @@ describe("routes", () => {
     expect(() => paths.connectListing("../x")).toThrow();
   });
 });
+
+describe("listingAuthorIds", () => {
+  it("asks the public API to include the author (the relationship is absent otherwise) and keeps only ids", async () => {
+    const { listingAuthorIds } = await import("@/lib/catalog/operator-search");
+    const calls: string[] = [];
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = (async (url: string | URL | Request) => {
+      const u = String(url);
+      calls.push(u);
+      if (u.includes("/auth/token")) return new Response(JSON.stringify({ access_token: "t", expires_in: 3600 }), { status: 200 });
+      return new Response(JSON.stringify({ data: [{ id: "6ac25d13-69ba-4a14-9d1d-6c5ef96615c4", type: "listing", attributes: { title: "x" }, relationships: { author: { data: { id: "6ac24bee-b28b-4b87-be6c-28f463b32e77", type: "user" } } } }] }), { status: 200 });
+    }) as typeof fetch;
+    try {
+      process.env.SHARETRIBE_CLIENT_ID ||= "test-client";
+      const m = await listingAuthorIds(["6ac25d13-69ba-4a14-9d1d-6c5ef96615c4"]);
+      expect(m.get("6ac25d13-69ba-4a14-9d1d-6c5ef96615c4")).toBe("6ac24bee-b28b-4b87-be6c-28f463b32e77");
+      const q = calls.find((c) => c.includes("/listings/query"))!;
+      expect(q).toContain("include=author");
+      expect(q).toContain("fields.user=");
+    } finally {
+      globalThis.fetch = realFetch;
+    }
+  });
+});

@@ -227,7 +227,9 @@ export async function listingAuthorIds(ids: string[]): Promise<Map<string, strin
   for (let i = 0; i < ids.length; i += 100) {
     const batch = ids.slice(i, i + 100).filter(isListingId);
     if (batch.length === 0) continue;
-    const qs = new URLSearchParams({ ids: batch.join(","), "fields.listing": "title", perPage: "100" });
+    // The author relationship is only present when the author is included; `fields.user=` keeps the
+    // included profile to its id (no name, no public fields).
+    const qs = new URLSearchParams({ ids: batch.join(","), "fields.listing": "title", include: "author", "fields.user": "", perPage: "100" });
     const res = await fetch(`${API}/listings/query?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), cache: "no-store" });
     if (!res.ok) throw new Error(`listing author lookup failed (HTTP ${res.status})`);
     const body = (await res.json()) as { data?: ApiListing[] };
