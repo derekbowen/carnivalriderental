@@ -84,12 +84,13 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
             </div>
           )}
           <div className="card p-5">
-            <h2 className="text-lg">What {product?.name ?? "Event Access"} is</h2>
+            <h2 className="text-lg">{product?.name ?? "Event Access"}: know who to call and what to ask</h2>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
               <li>{product ? `${priceLabel(product)} once, for one event.` : "One fee, for one event."}</li>
               <li>Direct contact details (company, phone, email, website) for up to {product?.unlockLimit ?? 5} matching independent operators, for {product?.validityDays ?? 30} days.</li>
               <li>You see how many operators match before paying. We don&rsquo;t sell access when there are fewer than {product?.minimumMatches ?? 3}.</li>
-              <li>Not a booking. Price, availability, contract, insurance and payment for the rental are agreed directly with the operator. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
+              <li>Buyer guidance included: <Link className="underline" href={paths.guide("how-to-rent-carnival-rides")}>what to ask each operator</Link> and a checklist for comparing quotes.</li>
+              <li>No commission on the rental. Price, availability, contract, insurance and payment are agreed directly with the operator. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
             </ul>
             <p className="mt-3 text-xs text-muted"><Link className="underline" href={paths.accessPolicy()}>Access and refund policy</Link> · <Link className="underline" href={paths.terms()}>Terms</Link></p>
           </div>

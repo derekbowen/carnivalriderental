@@ -1,13 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { EnvBanner, SiteFooter, SiteHeader } from "@/components/SiteChrome";
-import { BRAND, publicIndexingEnabled, siteUrl } from "@/lib/config";
+import { BRAND, publicIndexingEnabled, SITE_DESCRIPTION, siteUrl } from "@/lib/config";
 import "./globals.css";
 
 export function generateMetadata(): Metadata {
   return {
     metadataBase: new URL(siteUrl()),
-    title: { default: `${BRAND.name} — carnival ride rentals for events`, template: `%s` },
-    description: "Find carnival rides near your event and request them from the operators who own them.",
+    title: { default: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, template: `%s` },
+    description: SITE_DESCRIPTION,
+    applicationName: BRAND.name,
+    openGraph: { type: "website", siteName: BRAND.name, locale: "en_US", url: siteUrl(), title: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, description: SITE_DESCRIPTION, images: [{ url: "/brand/carnival-ride-rental-logo.png", alt: BRAND.name }] },
+    twitter: { card: "summary", title: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, description: SITE_DESCRIPTION, images: ["/brand/carnival-ride-rental-logo.png"] },
     // Default for every page; page-level gates can only tighten this, never open it outside production.
     robots: publicIndexingEnabled() ? undefined : { index: false, follow: false },
   };

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { RequestCta } from "@/components/RequestCta";
+import { CTA_BODY, RequestCta } from "@/components/RequestCta";
 import { NearbyRides } from "@/components/search/NearbyRides";
 import { DemoBadge, EstimateLabel } from "@/components/badges";
 import { getContent, type ServiceLocation } from "@/lib/content";
@@ -69,7 +69,7 @@ export function CityPage({ l }: { l: ServiceLocation }) {
       </section>
 
       <NearbyRides stateCode={l.stateCode.toLowerCase()} stateSlug={l.stateSlug} label={l.stateName} />
-      <div className="mt-16"><RequestCta href={paths.connect({ state: l.stateSlug, city: l.citySlug })} title={`Planning an event in ${l.cityName}?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." /></div>
+      <div className="mt-16"><RequestCta href={paths.connect({ state: l.stateSlug, city: l.citySlug })} title={`Planning an event in ${l.cityName}?`} body={CTA_BODY} /></div>
     </div>
   );
 }

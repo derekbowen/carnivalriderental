@@ -14,7 +14,7 @@ export function generateMetadata() {
   return seoMetadata({
     path: paths.rides(),
     title: "Carnival ride rentals",
-    description: "Browse carnival ride rental offerings and request one for your event.",
+    description: "Browse carnival ride types for events and connect with the independent operators who rent them.",
     gate: { indexable: false, reasons: ["browse page indexing decided with first published offerings"] },
   });
 }
@@ -32,7 +32,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
         nodes={pageGraph({
           path: paths.rides(),
           name: "Carnival ride rentals",
-          description: "Browse carnival ride rental offerings and request one for your event.",
+          description: "Browse carnival ride types for events and connect with the independent operators who rent them.",
           type: "CollectionPage",
           service: {},
           crumbs: RIDES_CRUMBS,
@@ -43,7 +43,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
       <p className="eyebrow mt-6">Browse rides</p>
       <h1 className="mt-2 text-4xl">Carnival ride rentals</h1>
       <p className="mt-3 max-w-2xl text-ink-soft">
-        These are ride types. To see actual rides from operators near your event, use ride search. Pricing is by quote for your date and location.
+        These are ride types. To see actual rides from operators near your event, use ride search. Each operator prices per event for your date and location.
         </p>
       <div className="mt-10 grid gap-8 lg:grid-cols-[220px_1fr]">
         <aside aria-label="Filters" className="space-y-6">
@@ -59,7 +59,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
             </ul>
           </div>
           <div className="rounded-xl bg-accent-wash p-4 text-xs text-warn">
-            <strong>About availability:</strong> “Sourcing on request” means we will look for equipment for your dates. It is not a confirmation that a unit is available.
+            <strong>About availability:</strong> a listing shows what an operator owns and where they serve. It is not a confirmation that a unit is free on your date; the operator confirms that.
           </div>
         </aside>
         <div>

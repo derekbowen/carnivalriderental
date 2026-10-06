@@ -32,6 +32,7 @@
     "qa:journey": "tsx --env-file-if-exists=.env.local scripts/qa-journey.ts",
     "ops:anonymize": "tsx --env-file-if-exists=.env.local scripts/operator-anonymize.ts",
     "inventory:export": "tsx --env-file-if-exists=.env.local scripts/inventory-export.ts",
+    "inventory:operators": "tsx --env-file-if-exists=.env.local scripts/inventory-operators.ts",
     "geo:cities": "python3 scripts/cities-build.py",
     "inventory:validate": "tsx scripts/inventory-validate.ts",
     "inventory:unmatched": "tsx scripts/inventory-unmatched.ts",

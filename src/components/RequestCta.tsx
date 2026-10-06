@@ -1,5 +1,6 @@
 import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
+import { paths } from "@/lib/seo/routes";
 
 /** The obvious route into Event Access, on every SEO page family. */
 export function RequestCta({ href, title, body }: { href: string; title: string; body: string }) {
@@ -10,6 +11,9 @@ export function RequestCta({ href, title, body }: { href: string; title: string;
         <div>
           <h2 className="text-3xl text-white">{title}</h2>
           <p className="mt-2 max-w-xl text-sm text-white/75">{body}</p>
+          <p className="mt-3 text-xs text-white/60">
+            Not sure what to ask an operator? Read <Link href={paths.guide("how-to-rent-carnival-rides")} className="font-semibold text-accent hover:underline">how to rent carnival rides</Link> first.
+          </p>
         </div>
         <Link href={href} className="btn-primary shrink-0">Connect with operators <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
       </div>
@@ -17,9 +21,13 @@ export function RequestCta({ href, title, body }: { href: string; title: string;
   );
 }
 
+/** The standard CTA body on inventory pages: what Event Access does, in one sentence. */
+export const CTA_BODY = "Tell us your date and city. We show how many independent operators with matching equipment serve your area, then Event Access gives you their direct contact details so you can compare and book with them.";
+
+/** The four steps, in consumer language. Shown on the homepage and every category hub. */
 export const HOW_IT_WORKS = [
-  { title: "Find the ride", body: "Browse real inventory by city, ride type and class, nearest first. Photos, verified facts and service areas are free." },
-  { title: "See who can serve your event", body: "Give us the date and city. Before you pay, we show how many independent operators with matching equipment and a working contact channel are near you." },
-  { title: "Unlock operator contacts", body: "Event Access reveals company name, phone, email and website for the operators you choose, one at a time, up to your pass’s limit." },
-  { title: "Deal directly with the operator", body: "Price, availability, delivery, crew, insurance and payment are agreed with the operator. We don’t take part in the rental." },
+  { title: "Find the right rides", body: "Browse carnival rides by type and location. See photos, equipment details and the areas each operator serves." },
+  { title: "Compare your options", body: "See several relevant rides and operators serving your area, instead of hunting through dozens of separate websites." },
+  { title: "Get direct operator access", body: "Event Access unlocks direct contact details for the operators that match your event, so you know who to call." },
+  { title: "Arrange the rental directly", body: "Discuss availability, transport, power, staffing, insurance, pricing and the contract with the carnival company itself." },
 ];

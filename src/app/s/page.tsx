@@ -44,7 +44,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <Breadcrumbs items={[{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]} />
       <p className="eyebrow mt-6">Find a ride</p>
-      <h1 className="mt-2 text-4xl">Carnival rides near {where}</h1>
+      <h1 className="mt-2 text-4xl">{approx || exact || picked ? `Carnival rides near ${where}` : "Carnival rides across the United States"}</h1>
       <p className="mt-2 text-ink-soft">
         {res.totalItems > 0 ? `${res.totalItems.toLocaleString("en-US")} rides, nearest first.` : "Nearest first."} Distances are approximate, measured to each operator&rsquo;s home base, not to where a ride is today.
       </p>

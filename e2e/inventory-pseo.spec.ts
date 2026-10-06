@@ -19,7 +19,7 @@ test("city page: real supply, breadcrumbs, cards, links, visible-content-only sc
   await page.goto("/ohio/columbus");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Columbus event.");
   await expect(page).toHaveTitle("Carnival Ride Rentals Near Columbus, OH | Carnival Ride Rental");
-  await expect(page.getByTestId("inventory-line")).toHaveText(/^Browse [\d,]+ listings from operators based within 200 miles of Columbus\.$/);
+  await expect(page.getByTestId("inventory-line")).toHaveText(/^Browse [\d,]+ ride listings from \d+ operators based within 200 miles of Columbus\./);
   await expect(page.getByText("Distance is measured from operator home bases. Event availability and delivery must be confirmed.").first()).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toContainText("Ohio");
   expect(await page.locator('[data-testid="ride-result"]').count()).toBe(12);

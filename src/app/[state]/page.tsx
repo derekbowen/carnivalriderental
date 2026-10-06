@@ -24,7 +24,7 @@ export function generateStaticParams(): P[] {
 
 const copy = (name: string) => ({
   title: `Carnival ride rentals in ${name}`,
-  description: `Find carnival rides for events in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides, nearest operators first. Request a ride from the operator who owns it.`,
+  description: `Find carnival rides for events in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides, nearest operators first. Connect directly with the operators who own them.`,
 });
 
 export async function generateMetadata({ params }: { params: Promise<P> }) {
@@ -55,7 +55,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
           type: "CollectionPage",
           crumbs,
           service: { areaServed: { type: "State", name: s.name } },
-          list: { name: `Carnival rides available to request in ${s.name}`, cards: ldCards },
+          list: { name: `Carnival ride types for events in ${s.name}`, cards: ldCards },
           faq: COMMON_FAQ,
         })}
       />

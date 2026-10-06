@@ -15,6 +15,7 @@ import contract from "../../../contract/operator-listing-contract.json";
 import citiesFile from "../geo/cities.json";
 import eligibleFile from "./index-eligible.json";
 import { inPilot } from "./pilot";
+import operatorsFile from "./operators.json";
 import ridesFile from "./rides.json";
 
 export interface InventoryRide {
@@ -57,6 +58,23 @@ export const CLASS_LABELS: ReadonlyMap<string, string> = CLASS_LABEL;
  * Template settings. A page family becomes indexable only when its copy is founder-approved,
  * public indexing is switched on for the environment, AND the page has enough real supply.
  */
+/**
+ * Anonymous operator keys (scripts/inventory-operators.ts): opaque per-owner hashes used only to
+ * count distinct operators ("listed by 4 operators"). Never an identity.
+ */
+const OPERATOR_KEY: Record<string, string> = (operatorsFile as { byListing: Record<string, string> }).byListing;
+export const operatorKey = (listingId: string): string => OPERATOR_KEY[listingId] ?? `listing:${listingId}`;
+/** Distinct operators behind a set of rides. */
+export function operatorCount(rides: { id: string }[]): number {
+  return new Set(rides.map((r) => operatorKey(r.id))).size;
+}
+/** Rides from operators other than the one that owns `ride`, same ride type, nearest first. */
+export function similarRides(ride: InventoryRide, radius: number = PSEO_INVENTORY.radiusMiles): NearRide[] {
+  if (!ride.rideType) return [];
+  const own = operatorKey(ride.id);
+  return ridesNear(ride.lat, ride.lng, radius).filter((r) => r.rideType === ride.rideType && r.id !== ride.id && operatorKey(r.id) !== own);
+}
+
 export const PSEO_INVENTORY = {
   /** Operators within this many straight-line miles count as "near". */
   radiusMiles: 200,
@@ -102,6 +120,7 @@ export function toCard(r: NearRide | InventoryRide): OperatorCard {
     rideClassLabel: r.rideClass ? CLASS_LABEL.get(r.rideClass) ?? null : null,
     homeState: r.homeState?.toUpperCase() ?? null,
     photo: r.photo ? { src: r.photo, alt: r.title } : null,
+    photoLarge: null,
     miles: "miles" in r ? r.miles : null,
     // The snapshot holds no operator-approved prices yet, so every card reads "Priced by the operator".
     price: null,
@@ -116,6 +135,8 @@ export interface CityStats {
   byType: { type: RideType; count: number; nearestMiles: number }[];
   byClass: { id: string; label: string; count: number }[];
   operatorStates: string[];
+  /** Distinct operators behind `total` (anonymous keys). */
+  operators: number;
 }
 
 export function cityStats(c: City): CityStats {
@@ -135,6 +156,7 @@ export function cityStats(c: City): CityStats {
     byType: [...types].map(([id, v]) => ({ type: rideTypeById.get(id)!, ...v })).filter((x) => x.type).sort((a, b) => b.count - a.count),
     byClass: [...classes].map(([id, count]) => ({ id, label: CLASS_LABEL.get(id) ?? id, count })).sort((a, b) => b.count - a.count),
     operatorStates: [...new Set(near.map((r) => r.homeState?.toUpperCase()).filter((s): s is string => !!s))].sort(),
+    operators: operatorCount(near),
   };
 }
 

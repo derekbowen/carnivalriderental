@@ -8,6 +8,7 @@ Read `PROJECT_BRIEF.md` for the model, `PAID_ACCESS_ARCHITECTURE.md` for where t
 - The Event Access funnel (`/connect`, `/connect/{id}`, `/pass/{id}`) is deployed but **renders "Event Access is opening soon"** on the production domain because the production environment has no Stripe key and no ledger database (section 4). Nothing can be bought until those are set.
 - Every CTA reads "Connect with operators". No "Book this ride", "Request a quote", request desk or marketplace-inbox copy remains on public pages (`e2e/access.spec.ts` checks).
 - Legal pages: `/terms`, `/privacy`, `/access-policy`, `/contact` (drafted for counsel review; noindex).
+- Public-facing pass (2026-10-06, after the pivot): homepage leads with "Carnival Ride Rentals Nationwide" (search, ride types, nearby rides, how it works, comparison, event types, cities, buyer education, Event Access, operator CTA, FAQ); buyer guide at `/guides/how-to-rent-carnival-rides` (`src/lib/content/guides.ts`); anonymous operator counts ("listed by N operators") from `src/lib/inventory/operators.json` (`npm run inventory:operators`, opaque hashes of author ids, no identity); occasion taxonomy, category hubs, city, ride-city, state, ride detail and footer copy all describe the discovery model. Site title and description in `src/app/layout.tsx` / `src/lib/config.ts`.
 
 ## 2. Sharetribe (Test marketplace)
 

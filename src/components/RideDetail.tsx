@@ -8,7 +8,7 @@ import { Breadcrumbs, JsonLd } from "./pseo";
 import { AvailabilityBadge, DemoBadge, EstimateLabel } from "./badges";
 import { PRICE_COPY, PRICING_POLICY } from "@/lib/pricing/policy";
 import { PricingNotice } from "./PricingNotice";
-import { RequestCta } from "./RequestCta";
+import { CTA_BODY, RequestCta } from "./RequestCta";
 import { RideImage } from "./RideImage";
 
 /** Shared body for /rides/{ride} and /rides/{ride}/{state}/{city}. */
@@ -79,12 +79,12 @@ export function RideDetail({
 
           {location && (
             <section aria-labelledby="local-heading">
-              <h2 id="local-heading" className="text-3xl">Requesting {ride.name.toLowerCase()} in {location.cityName}</h2>
+              <h2 id="local-heading" className="text-3xl">{ride.name} rentals in {location.cityName}</h2>
               {verified ? (
                 <ul className="mt-4 space-y-2 text-ink-soft">{coverage.map((c) => <li key={c.note}>{c.note} <span className="text-xs text-muted">(source: {c.verification.source})</span></li>)}</ul>
               ) : (
                 <p className="mt-4 max-w-2xl leading-relaxed text-ink-soft">
-                  We arrange requests for events in {location.cityName}, {location.stateName}, subject to availability. We do not currently have verified equipment committed to this area — when you submit a request, our team contacts operators who may be able to travel to your site and confirms fit before quoting.
+                  Independent operators serving {location.cityName}, {location.stateName} list this kind of ride. We don&rsquo;t yet have verified equipment committed to this area, so confirm travel, fit and availability for your date directly with the operator before you commit.
                 </p>
               )}
               {location.localNotes.length > 0 && (
@@ -107,9 +107,9 @@ export function RideDetail({
 
           <section aria-labelledby="specs-heading">
             <h2 id="specs-heading" className="text-3xl">Specifications</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">Specifications depend on the specific unit sourced for your event. We only show values we have verified.</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">Specifications depend on the specific unit the operator brings. We only show values we have verified.</p>
             {ride.specs.length === 0 ? (
-              <p data-testid="specs-unknown" className="mt-4 text-sm text-muted">No verified specifications on file for this offering. They are confirmed for the specific unit sourced for your event.</p>
+              <p data-testid="specs-unknown" className="mt-4 text-sm text-muted">No verified specifications on file for this offering. Confirm them with the operator for the specific unit.</p>
             ) : (
             <div className="mt-6 overflow-hidden rounded-xl border border-line bg-surface">
               <table className="w-full text-left text-[15px]">
@@ -162,7 +162,7 @@ export function RideDetail({
         </aside>
       </div>
 
-      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." /></div>
+      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body={CTA_BODY} /></div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 py-3 lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">

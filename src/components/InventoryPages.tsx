@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid } from "@/components/pseo";
-import { RequestCta } from "@/components/RequestCta";
+import { CTA_BODY, RequestCta } from "@/components/RequestCta";
 import { RideResult } from "@/components/search/RideResult";
-import { cityStats, linkedNearbyCities, linkedRideCities, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
+import { cityStats, linkedNearbyCities, linkedRideCities, operatorCount, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
 import { countNoun, rideTypeCopy, titleCase } from "@/lib/inventory/ride-type-copy";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
@@ -23,7 +23,6 @@ type PlaceCity = City & { stateName: string; stateAbbr: string; stateSlug: strin
 const R = PSEO_INVENTORY.radiusMiles;
 const fmt = (n: number) => n.toLocaleString("en-US");
 const DISTANCE_NOTE = "Distance is measured from operator home bases. Event availability and delivery must be confirmed.";
-const CTA_BODY = "Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details.";
 
 function rideItemList(path: string, name: string, titles: string[]) {
   return {
@@ -77,10 +76,10 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       <Breadcrumbs items={crumbs} />
       <h1 className="mt-6 text-4xl">Carnival rides for your {c.name} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        Bring the fun to your school fundraiser, company party, festival, or celebration. Explore ride listings and request pricing for your event date and location.
+        Explore carnival rides serving the {c.name} area, compare nearby equipment, and connect directly with the independent operators who own it.
       </p>
       {s.total > 0 ? (
-        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} listings from operators based within {R} miles of {c.name}.</p>
+        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} ride listings from {fmt(s.operators)} operator{s.operators === 1 ? "" : "s"} based within {R} miles of {c.name}. A listing doesn’t guarantee availability on your date; delivery, service and price are confirmed by the operator.</p>
       ) : (
         <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. Browse the nearest cities below or search all rides.</p>
       )}
@@ -151,6 +150,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
   // Symmetric: every page listed here lists this page back.
   const sameRideElsewhere = linkedRideCities(c, t.id);
   const lowerLabel = copy.label.charAt(0).toLowerCase() + copy.label.slice(1);
+  const operators = operatorCount(matches);
   const intro = `${copy.hook} Explore ${/^[A-Z]/.test(copy.label) && !/^(Ferris|Scrambler|Zipper)/.test(copy.label) ? lowerLabel : copy.label} listings and connect with the operators that own them.`;
   const faq: Faq[] = [
     { q: `How many ${copy.many} can I browse near ${c.name}?`, a: `${countNoun(matches.length, copy)} from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. Availability on your date and delivery are confirmed with the operator directly.` },
@@ -167,6 +167,12 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
         Browse {countNoun(matches.length, copy)} from operators based within {R} miles of {c.name}.
       </p>
       <p className="mt-1 text-sm text-muted">{DISTANCE_NOTE}</p>
+      {operators >= 2 && (
+        <p className="mt-4 inline-flex max-w-3xl items-start gap-2 rounded-xl bg-accent-wash px-4 py-3 text-sm text-ink-soft" data-testid="multi-operator">
+          <strong className="shrink-0 text-ink">More than one option.</strong>
+          <span>{copy.label} rentals near {c.name} are listed by {operators} operators serving the area, so you have more companies to contact if one is booked or outside your budget.</span>
+        </p>
+      )}
       <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {matches.slice(0, 24).map((r) => <li key={r.id}><RideResult card={toCard(r)} /></li>)}
       </ul>

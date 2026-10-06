@@ -57,10 +57,10 @@ export const demoContent: ContentSet = {
       name: "Ferris wheel rental",
       categorySlug: "ferris-wheels",
       summary:
-        "Request a Ferris wheel with a professional operating crew for your event. We source a suitable wheel and operator, then send you a confirmed scope and price.",
+        "A Ferris wheel with a professional operating crew for your event. Independent operators list their wheels here; you confirm scope and price with the operator.",
       description: [
         "A Ferris wheel gives an event a visible centrepiece. Because wheels differ greatly in size, transport needs and setup time, we do not quote a fixed price until we have matched your event to a specific operator and unit.",
-        "Tell us your dates, location, expected attendance and what you know about the site. Our team sources an appropriate wheel and operating crew, then sends you a written quote that states exactly what is included.",
+        "Have your dates, location, expected attendance and site details ready. The operator confirms the wheel and crew and sends a quote that states exactly what is included.",
         "Nothing is booked until you accept the final scope and price and the booking is confirmed under the agreed payment terms.",
       ],
       suitability: ["Festivals", "Municipal and civic events", "Corporate events", "College events"],
@@ -88,10 +88,10 @@ export const demoContent: ContentSet = {
       name: "Carousel rental",
       categorySlug: "carousels",
       summary:
-        "Request a carousel with operating crew. We confirm the unit, footprint and power needs with the operator before you commit.",
+        "A carousel with operating crew. Confirm the unit, footprint and power needs with the operator before you commit.",
       description: [
         "A carousel suits mixed-age audiences and longer operating days.",
-        "Share your event brief and our team will source an appropriate unit and operator, then send you a written quote.",
+        "Share your event brief with the operator and they send a written quote for the unit and crew.",
       ],
       suitability: ["Family days", "Holiday markets", "School events", "Community festivals"],
       specs: [
@@ -109,7 +109,7 @@ export const demoContent: ContentSet = {
       name: "Swing ride rental",
       categorySlug: "swing-rides",
       summary:
-        "Request a swing ride with operating crew. Rider restrictions and site requirements are confirmed per unit before quoting.",
+        "A swing ride with operating crew. Rider restrictions and site requirements are confirmed per unit by the operator before quoting.",
       description: [
         "Swing rides draw attention from across an event site.",
         "Tell us about your site and audience. We verify fit with the operator before sending a quote.",

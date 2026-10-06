@@ -70,3 +70,7 @@ See `docs/PSEO_INDEXING_PLAN.md` for the robots correction, the disabled 10-URL 
 1. Approve the city and ride-type + city copy, then set `copyApproved: true`.
 2. Turn on indexing: `PUBLIC_INDEXING=true` and `APP_ENV=production` in Vercel production.
 3. Optionally tune the radius and minimum-ride thresholds, which change the counts above.
+
+## Operator counts (2026-10-06)
+
+`src/lib/inventory/operators.json` maps listing id → an opaque operator key (truncated SHA-256 of the Sharetribe author id). Pages use it only to count distinct operators ("listed by 13 operators serving the area", "similar rides from 3 other operators") and to exclude an operator's own other listings from "similar rides". It holds no names, contacts or locations and cannot be reversed. Regenerate with `npm run inventory:operators` (public Marketplace API) whenever `rides.json` is re-exported.

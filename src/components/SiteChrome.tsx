@@ -24,8 +24,9 @@ function Logo({ dark = false }: { dark?: boolean }) {
 const NAV = [
   { href: paths.search(), label: "Find a ride" },
   { href: paths.rides(), label: "Ride types" },
+  { href: paths.occasions(), label: "Events" },
   { href: paths.directory(), label: "Locations" },
-  { href: "/#how-it-works", label: "How it works" },
+  { href: paths.guide("how-to-rent-carnival-rides"), label: "How to rent" },
 ];
 
 export function SiteHeader() {
@@ -75,16 +76,16 @@ export function SiteFooter() {
       {/* Operator side, on every page (mirrored by operatorProgramNode in every JSON-LD graph). */}
       <div data-testid="operator-strip" className="border-b border-white/10">
         <p className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-4 text-sm text-white/80 sm:px-6 lg:px-10">
-          <strong className="text-white">Own a carnival ride?</strong>
-          <span>List it on {BRAND.name} and set your own price. Terms are confirmed in writing before you list.</span>
-          <Link href={paths.operators()} className="font-semibold text-accent hover:underline">Apply for early access →</Link>
+          <strong className="text-white">Own or operate carnival rides?</strong>
+          <span>Claim your free listing, keep your information accurate, and hear directly from customers looking for equipment like yours.</span>
+          <Link href={paths.operators()} className="font-semibold text-accent hover:underline">Claim or list your rides →</Link>
         </p>
       </div>
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-12 lg:px-10">
         <div className="lg:col-span-4">
           <Logo dark />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-            Carnival ride inventory from independent operators across the US. Find the ride, then connect with the company that owns it.
+            Carnival ride rentals from independent operators across the U.S. Find the ride, compare nearby options, then connect with the company that owns it.
           </p>
           <p className="mt-5 text-sm text-white/70">
             Questions? <a className="font-semibold text-white hover:underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
@@ -99,6 +100,7 @@ export function SiteFooter() {
             title="Carnival Ride Rental"
             links={[
               { href: paths.search(), label: "Find a ride" },
+              { href: paths.guide("how-to-rent-carnival-rides"), label: "How to rent carnival rides" },
               { href: "/#how-it-works", label: "How it works" },
               { href: paths.operators(), label: "For ride operators" },
               { href: paths.directory(), label: "Site directory" },
@@ -123,7 +125,7 @@ export function SiteFooter() {
       </nav>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access sells contact details, not the rental: price, availability, contract and payment are agreed directly with the operator.
+          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access is a one-time fee for direct operator contact details; the rental itself, including price, availability, contract and payment, is agreed directly with the operator.
         </p>
       </div>
     </footer>

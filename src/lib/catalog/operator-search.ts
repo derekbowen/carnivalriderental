@@ -38,6 +38,8 @@ export interface OperatorCard {
    */
   homeState: string | null;
   photo: { src: string; alt: string } | null;
+  /** Larger variant of the same photo (2x landscape crop) for hero and detail images; null when the API did not return one. */
+  photoLarge: { src: string; alt: string } | null;
   /** Straight-line miles from the search origin to the operator's (rounded) base. */
   miles: number | null;
   /** Approved operator rate for this listing and unit (src/lib/pricing/public-price.ts), else null → "Request a quote". */
@@ -98,6 +100,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   const imageId = l.relationships?.images?.data?.[0]?.id;
   const image = imageId ? byKey.get(`image/${imageId}`) : undefined;
   const photoUrl = image?.attributes.variants?.["landscape-crop"]?.url ?? image?.attributes.variants?.["square-small"]?.url ?? null;
+  const largeUrl = image?.attributes.variants?.["landscape-crop2x"]?.url ?? null;
   const rideClass = isRideClass(str(pd.rideClass) ?? undefined) ? (pd.rideClass as string) : null;
   const geo = a.geolocation && Number.isFinite(a.geolocation.lat) && Number.isFinite(a.geolocation.lng) ? a.geolocation : null;
   return {
@@ -107,6 +110,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
     rideClassLabel: rideClass ? CLASS_LABEL.get(rideClass) ?? null : null,
     homeState: str(pd.homeState)?.toUpperCase() ?? null,
     photo: photoUrl && photoUrl.startsWith("https://") ? { src: photoUrl, alt: title } : null,
+    photoLarge: largeUrl && largeUrl.startsWith("https://") ? { src: largeUrl, alt: title } : null,
     miles: origin && geo ? Math.round(milesBetween(origin, geo)) : null,
     price: listingPriceLabel({ claimed: a.metadata?.claimStatus === "claimed", price: a.price, priceApproved: a.metadata?.priceApproved, unitType: pd.unitType }),
     claimed: a.metadata?.claimStatus === "claimed",
@@ -142,7 +146,7 @@ async function fetchAnonToken(): Promise<string> {
 
 async function apiGet(path: string, params: Record<string, string>, revalidate = 60, retry = true): Promise<ApiBody> {
   // Author (company) is deliberately not fetched: operator identity is never shown on our pages.
-  const qs = new URLSearchParams({ include: "images", "fields.image": "variants.landscape-crop,variants.square-small", ...params });
+  const qs = new URLSearchParams({ include: "images", "fields.image": "variants.landscape-crop,variants.landscape-crop2x,variants.square-small", ...params });
   const res = await fetch(`${API}${path}?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), next: { revalidate } });
   if (res.status === 429 && retry) {
     await new Promise((r) => setTimeout(r, 1200));

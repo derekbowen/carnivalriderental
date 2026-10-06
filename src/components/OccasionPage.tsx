@@ -7,13 +7,13 @@ import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
 import { COMMON_FAQ, groupOf, occasionById, US_STATES, type Occasion, type UsState } from "@/lib/taxonomy";
 import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
 import { PricingNotice } from "./PricingNotice";
-import { RequestCta } from "./RequestCta";
+import { CTA_BODY, RequestCta } from "./RequestCta";
 
 export function occasionCopy(o: Occasion, s?: UsState) {
   const where = s ? ` in ${s.name}` : "";
   return {
     title: `Carnival ride rentals for ${o.plural}${where}`,
-    description: `Rent carnival rides for ${o.plural}${where}. Ferris wheels, carousels, swing, kiddie and family rides, sourced with an operating crew and quoted per event.`,
+    description: `Rent carnival rides for ${o.plural}${where}: Ferris wheels, carousels, swing, kiddie and family rides from independent operators, priced per event by the operator.`,
   };
 }
 
@@ -59,11 +59,11 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
       <p className="eyebrow mt-6">{group.name}</p>
       <h1 className="mt-2 text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">{o.intro}</p>
-      {s && <p className="mt-2 max-w-3xl text-ink-soft">We arrange rides for events across {s.name}, subject to operator availability for your date and site.</p>}
+      {s && <p className="mt-2 max-w-3xl text-ink-soft">Browse rides from operators serving {s.name}, then connect with them directly. Availability on your date and site is confirmed with the operator.</p>}
 
       <section className="mt-10">
         <h2 className="text-2xl">Rides for {o.plural}{s ? ` in ${s.name}` : ""}</h2>
-        <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Every ride is sourced for your date; nothing is booked until you accept a quote.</p>
+        <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Availability and price are confirmed with the operator; nothing is booked until you agree terms with them.</p>
         <div className="mt-4">
           <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Tell us your date and city to see which operators have related equipment nearby.`} />
         </div>
@@ -79,7 +79,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
       )}
 
       <div className="mt-12">
-        <RequestCta href={requestHref} title="Planning this event?" body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." />
+        <RequestCta href={requestHref} title="Planning this event?" body={CTA_BODY} />
       </div>
 
       <section className="mt-12">

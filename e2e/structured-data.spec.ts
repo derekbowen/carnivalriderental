@@ -38,7 +38,7 @@ test("every public page: one connected graph, both audiences, no prices or ratin
     const op = g.find((n) => String(n["@id"]).endsWith("/operators#service"))!;
     expect(op, path).toBeTruthy();
     expect(op.audience).toMatchObject({ "@type": "BusinessAudience" });
-    await expect(page.getByTestId("operator-strip")).toContainText("Own a carnival ride?");
+    await expect(page.getByTestId("operator-strip")).toContainText("Own or operate carnival rides?");
 
     // Customer side: the page node, typed, and (except on the operator page) the rental Service with its audience.
     const webPage = g.find((n) => ["WebPage", "CollectionPage", "ItemPage"].includes(n["@type"]))!;

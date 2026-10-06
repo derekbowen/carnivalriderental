@@ -9,7 +9,7 @@ import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { stateByCode } from "@/lib/taxonomy";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
-import { HOW_IT_WORKS, RequestCta } from "./RequestCta";
+import { CTA_BODY, HOW_IT_WORKS, RequestCta } from "./RequestCta";
 import { ListingCard } from "./ListingCard";
 import { PricingNotice } from "./PricingNotice";
 
@@ -201,7 +201,7 @@ export function CategoryHub({
 
         {/* 8. Final request CTA */}
         <div className="mt-16">
-          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." />
+          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body={CTA_BODY} />
         </div>
       </div>
     </div>

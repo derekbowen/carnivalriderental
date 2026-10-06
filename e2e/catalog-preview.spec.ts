@@ -63,7 +63,7 @@ test("pSEO preview: covered city renders, uncovered city is 404", async ({ reque
   expect((await request.get("/preview/rides/test-carousel-rental/texas/austin")).status()).toBe(404);
   await page.goto("/preview/rides/test-ferris-wheel-rental/texas/austin");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("[TEST] Ferris wheel rental in Austin, TX");
-  await expect(page.getByText("subject to availability").first()).toBeVisible();
+  await expect(page.getByText("confirm travel, fit and availability").first()).toBeVisible();
 });
 
 test("an edit to the source updates the dependent pages", async ({ page }) => {
