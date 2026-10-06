@@ -5,6 +5,7 @@ export const E2E_INTERNAL = { username: "team", password: "e2e-internal-password
 
 export default defineConfig({
   testDir: "e2e",
+  globalSetup: "./e2e/global-setup.ts",
   timeout: 60_000,
   workers: 1,
   use: {

@@ -65,7 +65,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
         <h2 className="text-2xl">Rides for {o.plural}{s ? ` in ${s.name}` : ""}</h2>
         <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Every ride is sourced for your date; nothing is booked until you accept a quote.</p>
         <div className="mt-4">
-          <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Send a request and we will look for an operator.`} />
+          <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Tell us your date and city to see which operators have related equipment nearby.`} />
         </div>
         <SupplySource snap={snap} />
         <PricingNotice className="mt-6" />

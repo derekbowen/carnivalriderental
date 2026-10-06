@@ -137,9 +137,9 @@ export function CategoryHub({
         {/* 3. Photo-led listing cards, early */}
         <section id="listings" aria-labelledby="listings-heading" className="scroll-mt-24">
           <h2 id="listings-heading" className="text-3xl">{page.name} you can request</h2>
-          <p className="mt-1 text-sm text-muted">A request is not a booking. Nothing is booked until the operator accepts and payment is completed.</p>
+          <p className="mt-1 text-sm text-muted">Listings are drawn from operators’ public information. Nothing is booked until you and the operator agree terms directly.</p>
           <div className="mt-6">
-            <SupplyList cards={catalogCards} requestHref={requestHref} emptyText={`No ${page.singular} listings are published yet. Send a request and we will look for an operator for your date.`} />
+            <SupplyList cards={catalogCards} requestHref={requestHref} emptyText={`No ${page.singular} listings are published yet. Tell us your date and city to see which operators have related equipment nearby.`} />
           </div>
           <SupplySource snap={snap} />
           <PricingNotice className="mt-6" />
@@ -163,18 +163,18 @@ export function CategoryHub({
               </li>
             ))}
             <li className="rounded-2xl border border-[var(--cat-rule)] bg-[var(--cat-wash)] p-5 sm:col-span-2 lg:col-span-2">
-              <p className="font-semibold">What we need for a quote</p>
+              <p className="font-semibold">What operators ask before quoting</p>
               <ul className="mt-2 grid gap-1.5 text-sm text-ink-soft sm:grid-cols-2">
                 {page.quoteChecklist.map((q) => <li key={q} className="flex gap-2"><CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cat-accent)]" aria-hidden="true" />{q}</li>)}
               </ul>
-              <p className="mt-3 text-xs text-muted">Not sure about something? Say so in the request — “not sure” is a fine answer.</p>
+              <p className="mt-3 text-xs text-muted">Not sure about something? Tell the operator — “not sure” is a fine answer.</p>
             </li>
           </ul>
         </section>
 
-        {/* 5. Sourcing and quote confirmation */}
+        {/* 5. How Event Access works */}
         <section aria-labelledby="sourcing-heading" className="mt-16 rounded-2xl bg-[var(--cat-wash)] p-6 sm:p-8">
-          <h2 id="sourcing-heading" className="text-3xl">How sourcing and quotes work</h2>
+          <h2 id="sourcing-heading" className="text-3xl">How Event Access works</h2>
           <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {HOW_IT_WORKS.map((h, i) => (
               <li key={h.title} className="rounded-xl border border-line bg-surface p-5">
@@ -192,7 +192,7 @@ export function CategoryHub({
         {/* 7. Related categories and locations */}
         <LinkGrid title="Related ride types" links={related.map((r) => ({ href: paths.category(r.id), label: r.h1 }))} />
         <LinkGrid
-          title={`Where to request a ${page.singular}`}
+          title={`Where to find a ${page.singular}`}
           links={[
             ...states.map((s) => ({ href: paths.state(s!.slug), label: `Carnival ride rentals in ${s!.name}` })),
             ...cities.map((l) => ({ href: paths.city(l.stateSlug, l.citySlug), label: `${l.cityName}, ${l.stateCode}` })),

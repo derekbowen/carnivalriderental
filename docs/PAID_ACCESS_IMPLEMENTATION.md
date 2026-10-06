@@ -46,12 +46,12 @@ No canonical URL changed. pSEO counts unchanged: 17,511 renderable, 0 indexable,
 
 | Variable | Where | Purpose |
 |---|---|---|
-| `ACCESS_DATABASE_URL` | Vercel production (and preview if the funnel should work there) | Postgres connection string. Unset outside `APP_ENV=development` disables Event Access ("opening soon"). |
+| `ACCESS_DATABASE_URL` | Vercel production (and preview if the funnel should work there) | Postgres connection string. Unset outside `APP_ENV=development` disables Event Access ("opening soon"). **Connection mode:** use the Supabase *transaction pooler* URI (Supavisor, port 6543, `?sslmode=require`), not the direct `db.<ref>.supabase.co:5432` host: Vercel functions open a fresh `pg.Pool` per instance and the direct host runs out of connections. The ledger only uses parameterised queries and single-client `BEGIN … COMMIT`, both supported in transaction mode. |
 | `STRIPE_SECRET_KEY` | Vercel production | `sk_test_…` then `sk_live_…`. Carnival Ride Rental's account only. Unset in development selects the fake gateway. |
 | `STRIPE_WEBHOOK_SECRET` | Vercel production | From the Stripe webhook endpoint. |
 | `ACCESS_SESSION_SECRET` | Vercel production | Signs pass cookies; hashes IPs in the audit. Falls back to `REQUEST_TOKEN_SECRET`. |
 | `ACCESS_OPERATOR_SOURCE` | local/e2e only | `fixture` = fictional operators. Refused outside development. |
-| `SHARETRIBE_INTEGRATION_CLIENT_ID/_SECRET` | Vercel production (already) | Operator contacts at reveal time; contactability flags before payment. |
+| `SHARETRIBE_INTEGRATION_CLIENT_ID/_SECRET` | Vercel production (**not set yet**: the 2026-10-06 env audit found only the public client ID there) | Operator contacts at reveal time; contactability flags before payment. Without them every operator counts as uncontactable and nothing is sold. |
 | `SITE_URL`, `EMAIL_*` | as before | Pass emails and canonical links. |
 
 The e2e and local runs need none of the production values: SQLite ledger, fake Stripe, fixture operators.

@@ -66,7 +66,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
   const crumbs = [...(place?.crumbs ?? [{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]), { name: ride.title, path: paths.rideListing(id) }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={pageGraph({ path: paths.rideListing(id), name: ride.title, description: `${ride.title}: request a quote for your event.`, type: "WebPage", crumbs })} />
+      <JsonLd nodes={pageGraph({ path: paths.rideListing(id), name: ride.title, description: `${ride.title}: connect with the operator that owns it.`, type: "WebPage", crumbs })} />
       <Breadcrumbs items={crumbs} />
     <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
       <div>

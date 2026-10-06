@@ -28,13 +28,13 @@ export function CityPage({ l }: { l: ServiceLocation }) {
       <p className="eyebrow mt-6">Service area</p>
       <div className="mt-2 flex flex-wrap items-center gap-3"><h1 className="text-4xl">Carnival ride rentals in {l.cityName}, {l.stateCode}</h1>{l.isDemo && <DemoBadge />}</div>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        We arrange carnival ride requests for events in {l.cityName}, {l.stateName}, subject to availability. Tell us about your event and our team will contact operators who may be able to serve your site.
+        Carnival rides listed by independent operators who serve {l.cityName}, {l.stateName}. Tell us about your event and Event Access gives you the contact details of matching operators; the rental is between you and them.
       </p>
 
       <div className="mt-8 grid gap-6 md:grid-cols-2">
         <section className="card p-6">
-          <h2 className="text-xl">Request sourcing for {l.cityName}</h2>
-          <p className="mt-2 text-sm text-ink-soft">Available for any ride type below. We confirm an operator and unit for your dates before sending a quote.</p>
+          <h2 className="text-xl">Connect with operators near {l.cityName}</h2>
+          <p className="mt-2 text-sm text-ink-soft">For any ride type below. The operator confirms the unit, your dates and the price directly with you.</p>
         </section>
         <section className="card p-6">
           <h2 className="text-xl">Verified equipment in {l.cityName}</h2>

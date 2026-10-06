@@ -32,14 +32,14 @@ export { categoryLabel } from "@/lib/catalog/card";
 
 /**
  * Supply grid: the shared ListingCard for every card. Nothing here is invented — an empty list says so.
- * Every offering is "sourcing on request": we confirm an operator and unit per event.
+ * Availability is confirmed by the operator; nothing here is a booking.
  */
 export function SupplyList({ cards, emptyText, requestHref }: { cards: ListingCardModel[]; emptyText: string; requestHref: string }) {
   if (cards.length === 0) {
     return (
       <div data-testid="supply-empty" className="card p-6 text-sm text-ink-soft">
         <p>{emptyText}</p>
-        <Link href={requestHref} className="mt-3 inline-block font-semibold text-accent-strong hover:underline">Send a request anyway →</Link>
+        <Link href={requestHref} className="mt-3 inline-block font-semibold text-accent-strong hover:underline">Connect with operators anyway →</Link>
       </div>
     );
   }

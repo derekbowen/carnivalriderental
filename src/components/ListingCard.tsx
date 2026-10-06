@@ -5,7 +5,7 @@ import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 import { DemoBadge } from "./badges";
 
 /**
- * THE listing card (category hubs, state hubs, occasion pages). Photo-led; quiet "Sourcing on request";
+ * THE listing card (category hubs, state hubs, occasion pages). Photo-led; quiet "Availability confirmed by the operator";
  * no promotional badges, ratings, favourites or instant-booking claims. Sample labels stay visible.
  */
 export function ListingCard({ card }: { card: ListingCardModel }) {
@@ -45,7 +45,7 @@ export function ListingCard({ card }: { card: ListingCardModel }) {
           {/* Card estimates are category figures, never an operator's approved rate (src/lib/pricing/public-price.ts). */}
           <p data-testid="card-request-pricing" className="text-[15px] font-semibold">{REQUEST_A_QUOTE}</p>
           <p className="text-xs text-muted">Per event; ask the operator.</p>
-          <p className="mt-1 text-xs text-muted">Sourcing on request</p>
+          <p className="mt-1 text-xs text-muted">Availability confirmed by the operator</p>
           {card.detail ? (
             <Link href={card.detail.href} className="mt-3 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-accent-strong hover:underline" aria-label={`View details: ${card.name}`}>
               {card.detail.kind === "preview" ? "View details (dev preview)" : "View details"} <ArrowRightIcon className="h-4 w-4" aria-hidden="true" />

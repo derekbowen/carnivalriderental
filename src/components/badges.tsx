@@ -2,7 +2,7 @@ import { CalendarClockIcon, ShieldCheckIcon } from "lucide-react";
 import type { PlanningEstimate } from "@/lib/content/types";
 import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
 
-/** Availability is "Sourcing on request" unless a verified coverage record exists. */
+/** Availability is confirmed by the operator unless a verified coverage record exists. */
 export function AvailabilityBadge({ verified = false, className = "" }: { verified?: boolean; className?: string }) {
   return verified ? (
     <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-ok-wash px-2.5 py-1 text-xs font-semibold text-ok ${className}`}>
@@ -10,7 +10,7 @@ export function AvailabilityBadge({ verified = false, className = "" }: { verifi
     </span>
   ) : (
     <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-accent-wash px-2.5 py-1 text-xs font-semibold text-accent-strong ${className}`}>
-      <CalendarClockIcon className="h-3.5 w-3.5" aria-hidden="true" /> Sourcing on request
+      <CalendarClockIcon className="h-3.5 w-3.5" aria-hidden="true" /> Availability confirmed by the operator
     </span>
   );
 }

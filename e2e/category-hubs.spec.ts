@@ -1,21 +1,15 @@
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
+import { HARNESS_FILE, writeCategorySamples } from "./harness";
 
 /**
  * Five pilot category hubs on one template. Supply comes from the labelled test harness
  * (data/e2e-catalog.json, Test samples) plus development fixtures — never live listings.
  */
-const FILE = "data/e2e-catalog.json";
+const FILE = HARNESS_FILE;
 const CATS = ["ferris-wheels", "carousels", "swing-rides", "thrill-rides", "kiddie-rides"];
-const binding = { listingType: "managed-ride-rental", transactionProcessAlias: "default-negotiation/release-1", unitType: "offer" };
 
-test.beforeAll(() => {
-  const samples = JSON.parse(fs.readFileSync("catalog/test-samples.json", "utf8")).samples as { title: string; description: string; publicData: object; metadata: object }[];
-  fs.writeFileSync(
-    FILE,
-    JSON.stringify({ data: samples.map((s, i) => ({ id: `dddddddd-0000-0000-0000-00000000000${i + 1}`, attributes: { title: s.title, description: s.description, state: "published", publicData: { ...binding, ...s.publicData }, metadata: s.metadata } })) }),
-  );
-});
+test.beforeAll(() => writeCategorySamples(FILE));
 test.afterAll(() => fs.rmSync(FILE, { force: true }));
 
 type Node = Record<string, unknown> & { "@type": string };
@@ -35,8 +29,8 @@ test("all five hubs render the shared template, noindex, with themed hero and se
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
     const headings = await page.locator("main h2").allTextContents();
     const idx = (re: RegExp) => headings.findIndex((h) => re.test(h));
-    // listings → planning → sourcing → FAQ → related → final CTA
-    const order = [idx(/you can request$/), idx(/^Planning a /), idx(/^How sourcing and quotes work$/), idx(/^Frequently asked questions$/), idx(/^Related ride types$/), idx(/at your event\?$/)];
+    // listings → planning → how Event Access works → FAQ → related → final CTA
+    const order = [idx(/you can request$/), idx(/^Planning a /), idx(/^How Event Access works$/), idx(/^Frequently asked questions$/), idx(/^Related ride types$/), idx(/at your event\?$/)];
     expect(order.every((n) => n >= 0), `${c}: ${headings.join(" | ")}`).toBe(true);
     expect([...order].sort((a, b) => a - b)).toEqual(order);
   }
@@ -50,7 +44,7 @@ test("cards: test samples labelled, fixtures separated, pricing and sourcing tex
   await expect(live).toHaveCount(1);
   await expect(live.first()).toContainText("Test sample");
   await expect(live.first()).toContainText("Priced by the operator");
-  await expect(live.first()).toContainText("Sourcing on request");
+  await expect(live.first()).toContainText("Availability confirmed by the operator");
   await expect(live.first().getByRole("img")).toHaveAttribute("alt", /Illustration of ferris wheels — not a photo of a specific ride/);
   await expect(page.getByTestId("fixture-cards")).toContainText("not live listings");
   await expect(page.getByTestId("fixture-cards").getByTestId("listing-card").first()).toContainText("Demo record");
