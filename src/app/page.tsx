@@ -5,11 +5,10 @@ import { HOW_IT_WORKS } from "@/components/RequestCta";
 import { PlaceholderImage } from "@/components/RideImage";
 import { RideResult } from "@/components/search/RideResult";
 import { FaqSection, JsonLd } from "@/components/pseo";
-import { activeProduct, DEFAULT_PRODUCT, type AccessProduct } from "@/lib/access/config";
+import { DEFAULT_PRODUCT, type AccessProduct } from "@/lib/access/config";
 
 type ProductLimits = Pick<AccessProduct, "unlockLimit" | "validityDays">;
-import { accessDb } from "@/lib/access/db";
-import { accessAvailability } from "@/lib/access/runtime";
+import { activeProductOrNull } from "@/lib/access/runtime";
 import { getOperatorListing, ipLocation, rideClassShowcase, searchOperatorListings, US_CENTER } from "@/lib/catalog/operator-search";
 import { BRAND, SITE_DESCRIPTION } from "@/lib/config";
 import { operatorCount, RIDES } from "@/lib/inventory";
@@ -89,7 +88,7 @@ export default async function HomePage() {
   const where = approx ?? US_CENTER;
   const classes = await rideClassShowcase();
   const nearby = await searchOperatorListings({ origin: where });
-  const product: ProductLimits = (accessAvailability().enabled ? await activeProduct(await accessDb()).catch(() => null) : null) ?? DEFAULT_PRODUCT;
+  const product: ProductLimits = (await activeProductOrNull()) ?? DEFAULT_PRODUCT;
   const FAQ = faqFor(product);
   const total = classes.reduce((n, c) => n + c.count, 0) || RIDES.length;
   const operators = operatorCount(RIDES);

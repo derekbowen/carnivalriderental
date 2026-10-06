@@ -3,6 +3,7 @@
  * and a small in-memory rate limiter. Server only (imports the ledger and the Integration client).
  */
 import { appEnv, siteUrl } from "../config";
+import { activeProduct, type AccessProduct } from "./config";
 import { operatorSource, type OperatorSource } from "./contacts";
 import { accessDb, accessStorageMode, type AccessDb } from "./db";
 import { cookieHeader, decodeSession, encodeSession, PASS_COOKIE, sessionSecret } from "./session";
@@ -30,6 +31,20 @@ export function accessAvailability(env: Record<string, string | undefined> = pro
     reasons.push((e as Error).message);
   }
   return { enabled: reasons.length === 0, reasons, stripe: s.kind, storage: d.kind };
+}
+
+/**
+ * The active product when the ledger is reachable, else null. Public pages must never 500 because
+ * the ledger is down or misconfigured: they fall back to "opening soon" and log the cause.
+ */
+export async function activeProductOrNull(): Promise<AccessProduct | null> {
+  if (!accessAvailability().enabled) return null;
+  try {
+    return await activeProduct(await accessDb());
+  } catch (e) {
+    console.error("[access] ledger unavailable:", (e as Error).message);
+    return null;
+  }
 }
 
 export interface AccessRuntime {
