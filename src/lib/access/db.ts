@@ -77,9 +77,19 @@ const toPg = (text: string) => {
   return text.replace(/\?/g, () => `$${++i}`);
 };
 
+/**
+ * TLS is decided here, not by the URL: `pg` treats `sslmode=require` as verify-full, which fails on
+ * Supabase's pooler certificate chain, so any sslmode/ssl query parameter is stripped.
+ */
+export function pgConnectionString(url: string): string {
+  const u = new URL(url);
+  for (const k of ["sslmode", "ssl", "sslrootcert", "uselibpqcompat"]) u.searchParams.delete(k);
+  return u.toString().replace(/\?$/, "");
+}
+
 async function postgresDb(url: string): Promise<AccessDb> {
   const { Pool } = await import("pg");
-  const pool = new Pool({ connectionString: url, max: 4, ssl: /localhost|127\.0\.0\.1/.test(url) ? undefined : { rejectUnauthorized: false } });
+  const pool = new Pool({ connectionString: pgConnectionString(url), max: 4, ssl: /localhost|127\.0\.0\.1/.test(url) ? undefined : { rejectUnauthorized: false } });
   const client = await pool.connect();
   try {
     for (const s of statements()) await client.query(s);

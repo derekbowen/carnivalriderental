@@ -204,3 +204,13 @@ describe("Event Access ledger", () => {
     await expect(activatePurchase(db, "00000000-0000-0000-0000-000000000000", { sessionId: null, paymentIntentId: null }, { siteUrl: SITE, sendEmail: false })).rejects.toMatchObject({ code: "not_found" });
   });
 });
+
+import { pgConnectionString } from "@/lib/access/db";
+
+describe("pgConnectionString", () => {
+  it("strips sslmode so the driver decides TLS (pg treats sslmode=require as verify-full)", () => {
+    expect(pgConnectionString("postgresql://u:p@h:6543/db?sslmode=require")).toBe("postgresql://u:p@h:6543/db");
+    expect(pgConnectionString("postgresql://u:p@h:6543/db")).toBe("postgresql://u:p@h:6543/db");
+    expect(pgConnectionString("postgresql://u:p@h:6543/db?sslmode=require&application_name=x")).toBe("postgresql://u:p@h:6543/db?application_name=x");
+  });
+});
