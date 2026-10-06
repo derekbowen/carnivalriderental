@@ -17,9 +17,9 @@ const PAGES = [
   "/events/weddings",
   "/categories/swing-rides",
   "/operators",
-  "/request",
+  "/connect",
 ];
-const PRICED = ["/rides/ferris-wheel-rental", "/texas", "/ohio/company-picnics", "/events/weddings", "/categories/swing-rides", "/request"];
+const PRICED = ["/rides/ferris-wheel-rental", "/texas", "/ohio/company-picnics", "/events/weddings", "/categories/swing-rides"];
 
 type Node = Record<string, unknown> & { "@type": string; "@id"?: string };
 
@@ -44,7 +44,7 @@ test("every public page: one connected graph, both audiences, no prices or ratin
     const webPage = g.find((n) => ["WebPage", "CollectionPage", "ItemPage"].includes(n["@type"]))!;
     expect(webPage, path).toBeTruthy();
     expect(webPage.mentions).toEqual({ "@id": op["@id"] });
-    if (path !== "/operators" && path !== "/request" && path !== "/events") {
+    if (path !== "/operators" && path !== "/connect" && path !== "/events") {
       const svc = g.find((n) => n["@type"] === "Service" && n !== op)!;
       expect(svc, path).toBeTruthy();
       expect(svc.audience).toMatchObject({ "@type": "Audience", audienceType: "Event organizers" });
@@ -74,8 +74,8 @@ test("pricing rules are stated wherever prices or the request button appear", as
     await page.goto(path);
     const notice = page.getByTestId("pricing-notice").first();
     await expect(notice, path).toContainText("not the final price");
-    await expect(notice, path).toContainText("Pay first, then we source");
-    await expect(notice, path).toContainText("A request, not a booking");
+    await expect(notice, path).toContainText("Event Access is the fee we charge");
+    await expect(notice, path).toContainText("Not a booking");
   }
   await page.goto("/rides/ferris-wheel-rental");
   await expect(page.locator("main")).not.toContainText(/Free to request|Cost to request/);

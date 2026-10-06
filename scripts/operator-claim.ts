@@ -27,7 +27,15 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { AUTH, createClient, INTEG, MKT } from "./lib/sharetribe-client";
-import { emailMatchesCompanyDomain, withoutNotice } from "../src/lib/operators/claim";
+import { anonymizeText, emailMatchesCompanyDomain, OPERATOR_PLACEHOLDER, withoutNotice } from "../src/lib/operators/claim";
+
+/** Every name that could identify the company in listing text: display names, legal names, website host. */
+function identityNames(profile: { displayName?: string; publicData?: Record<string, unknown>; privateData?: Record<string, unknown> }): string[] {
+  const priv = profile.privateData ?? {};
+  const orig = (priv.originalProfile ?? {}) as { displayName?: unknown; publicData?: Record<string, unknown> };
+  const host = (w: unknown) => { try { return typeof w === "string" && w ? new URL(/^https?:\/\//i.test(w) ? w : `https://${w}`).hostname.replace(/^www\./, "") : null; } catch { return null; } };
+  return [profile.displayName, priv.companyName, priv.legalEntityName, priv.legalName, orig.displayName, orig.publicData?.companyName, host(priv.website), host(orig.publicData?.website)].filter((x): x is string => typeof x === "string" && x.trim().length >= 3);
+}
 
 const argv = process.argv.slice(2);
 const opt = (n: string) => {
@@ -108,20 +116,23 @@ async function waitForEmail(to: string, re: RegExp, since: number): Promise<stri
 
   // 4. Record the claim; listings stop showing the unclaimed notice.
   const at = new Date().toISOString();
-  // The operator's own identity comes back (it was hidden while unclaimed; see ops:anonymize).
-  const orig = u.attributes.profile.privateData?.originalProfile as { displayName?: string; firstName?: string; lastName?: string; bio?: string; publicData?: Record<string, unknown> } | undefined;
+  // The public profile STAYS anonymised (founder, 2026-10-06): the company's identity is what Event
+  // Access sells, so the hosted marketplace must not reveal it after a claim either. The original
+  // profile remains in privateData for the operator and the Integration API; only metadata changes.
   await call("command", `${INTEG}/users/update_profile`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({
     id: acct.userId,
-    ...(orig ? { displayName: orig.displayName, firstName: orig.firstName, lastName: orig.lastName, bio: orig.bio, publicData: orig.publicData ?? {} } : {}),
+    ...OPERATOR_PLACEHOLDER,
     metadata: { claimStatus: "claimed", claimedAt: at, claimVerification: domainOk ? `email-domain:${email.split("@")[1]}` : `manual:${String(manual).slice(0, 200)}` },
   }) }, true);
   for (const l of listings) {
-    const full = await call<{ data: { attributes: { description: string; privateData?: Record<string, unknown> } } }>("query", `${INTEG}/listings/show?id=${l.id}`, { headers: await headers("integ") }, true);
-    const restored = (full.data.attributes.privateData?.originalDescription as string | undefined) ?? withoutNotice(full.data.attributes.description);
-    await call("command", `${INTEG}/listings/update`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: l.id, description: restored, metadata: { claimStatus: "claimed", bookable: false } }) }, true);
+    const full = await call<{ data: { attributes: { description: string; privateData?: Record<string, unknown>; publicData?: Record<string, unknown> } } }>("query", `${INTEG}/listings/show?id=${l.id}`, { headers: await headers("integ") }, true);
+    // Original wording comes back, minus the unclaimed notice and minus anything that names the company.
+    const original = (full.data.attributes.privateData?.originalDescription as string | undefined) ?? withoutNotice(full.data.attributes.description);
+    const description = anonymizeText(original, identityNames(u.attributes.profile));
+    await call("command", `${INTEG}/listings/update`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: l.id, description, metadata: { claimStatus: "claimed" } }) }, true);
   }
   fs.appendFileSync(`imports/company-accounts/${dir}/claims.jsonl`, `${JSON.stringify({ at, companyId, userId: acct.userId, listings: listings.length, verification: domainOk ? "email-domain" : "manual" })}\n`);
-  console.log(`Claimed. Sharetribe sent a verification email to the operator. Next: operator uses "Forgot password" at the marketplace with ${email}, then sets payout details. ${listings.length} listings marked claimed, not bookable.`);
+  console.log(`Claimed. Sharetribe sent a verification email to the operator. Next: operator uses "Forgot password" at the marketplace with ${email} to set their password; they can then edit rides, photos, service states and contact details. No payout setup exists or is needed. ${listings.length} listings marked claimed; public profile stays anonymised.`);
 })().catch((e) => {
   console.error((e as Error).message);
   process.exit(1);

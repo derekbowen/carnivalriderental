@@ -54,9 +54,9 @@ describe("operator applications", () => {
 });
 
 describe("operator program page", () => {
-  it("commission is configured at 0 and the service fee is undecided (the page promises neither)", () => {
-    expect(OPERATOR_PROGRAM.operatorCommissionPct).toBe(0);
-    expect(OPERATOR_PROGRAM.customerServiceFeePct).toBeNull();
+  it("listing is free and there is no rental commission (the page may say so)", () => {
+    expect(OPERATOR_PROGRAM.listingFeeUsd).toBe(0);
+    expect(OPERATOR_PROGRAM.rentalCommissionPct).toBe(0);
   });
 
   it("is never indexable until the copy is approved", () => {

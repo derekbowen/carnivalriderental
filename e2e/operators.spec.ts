@@ -6,12 +6,13 @@ test("operator page: early access, no commission or fee promised, noindex", asyn
   expect(res.status()).toBe(200);
   expect(res.headers()["x-robots-tag"]).toContain("noindex");
   await page.goto("/operators");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Rent out your carnival rides. You set the price.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("List your carnival rides free. Customers contact you directly.");
   await expect(page.getByTestId("early-access")).toContainText("isn’t live yet");
   await expect(page.getByTestId("fee-pending")).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   // No commission or fee number is promised anywhere on the page or in the footer strip.
-  expect(await page.locator("body").innerText()).not.toMatch(/\d+(\.\d+)?%|commission/i);
+  expect(await page.locator("body").innerText()).not.toMatch(/\d+(\.\d+)?%|Stripe Connect|connect payouts|set up payments|approve every booking/i);
+  await expect(page.locator("main")).toContainText("Customers contact you directly");
   await expect(page.getByRole("contentinfo").getByRole("link", { name: "For ride operators" })).toHaveAttribute("href", "/operators");
 });
 

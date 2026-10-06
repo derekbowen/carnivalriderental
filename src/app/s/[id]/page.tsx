@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getOperatorListing, marketplaceListingUrl, type OperatorRideDetail } from "@/lib/catalog/operator-search";
+import { getOperatorListing, type OperatorRideDetail } from "@/lib/catalog/operator-search";
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { linkedNearbyCities, linkedRideCities, PSEO_INVENTORY, RIDES, rideHome, ridesNear, toCard } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
@@ -101,14 +101,9 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
       <aside className="space-y-4 lg:pt-10">
         <div className="card p-5">
           <p className="text-lg font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
-          {!ride.price && <p className="mt-1 text-xs text-muted">Pricing depends on your date, location, hours and site. The operator prices your event.</p>}
-          {!ride.claimed && <p className="mt-3 text-sm text-ink-soft">This operator hasn&rsquo;t joined Carnival Ride Rental yet. Requests go to our request desk, not to the operator.</p>}
-          {ride.bookable ? (
-            <a href={marketplaceListingUrl(ride)} className="btn-primary mt-4 w-full">Book this ride</a>
-          ) : (
-            <Link href={paths.requestRide(ride.id)} className="btn-primary mt-4 w-full">Request a quote</Link>
-          )}
-          <p className="mt-2 text-xs text-muted">No payment is taken to send a request. It is a request, not a booking.</p>
+          {!ride.price && <p className="mt-1 text-xs text-muted">The operator prices your event once they know your date, location, hours and site.</p>}
+          <Link href={paths.connectListing(ride.id)} className="btn-primary mt-4 w-full">Connect with operators</Link>
+          <p className="mt-2 text-xs text-muted">Event Access shows how many matching operators can be contacted before you pay, then reveals their direct contact details. The rental is agreed with the operator; nothing here is a booking.</p>
         </div>
       </aside>
     </div>

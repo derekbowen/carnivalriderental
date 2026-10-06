@@ -1,5 +1,7 @@
 # Paid contact model: can we keep Sharetribe and drop its economics? (audit, 2026-10-06)
 
+> **Superseded in part (same day).** The founder adopted the model and corrected one proposal: the Supabase listing/operator mirror in §5–§6 was **not** built. Sharetribe stays the only catalog; the ledger holds only purchases, passes and unlocks. See `PAID_ACCESS_ARCHITECTURE.md` (decision) and `PAID_ACCESS_IMPLEMENTATION.md` (what shipped).
+
 Status: **audit only, nothing changed.** Sources: a read-only crawl of this repo at `8119e06`+ (every Sharetribe and Stripe touchpoint, with line numbers), the live Test Console config (`contract/snapshots/carnivalrental-test-2026-10-06.json`: 3,716 published listings, 189 users, 18 test transactions), and Sharetribe's current documentation (links inline; checked 2026-10-06, after Sharetribe's 1 October 2026 pricing change).
 
 ---

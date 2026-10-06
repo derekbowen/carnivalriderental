@@ -63,13 +63,13 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       <p className="eyebrow mt-6">{s.name}</p>
       <h1 className="mt-2 text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        Planning an event in {s.name}? Find rides from operators near you and send a request. Requests for operators who haven&rsquo;t joined yet go to our request desk, and we tell you so.
+        Planning an event in {s.name}? Browse rides from operators near you, then use Event Access to get direct contact details for the independent operators who can serve your date and city.
       </p>
 
       <section className="mt-10">
-        <h2 className="text-2xl">Rides you can request in {s.name}</h2>
+        <h2 className="text-2xl">Ride types for events in {s.name}</h2>
         <div className="mt-4">
-          <SupplyList cards={cards} requestHref={paths.request(undefined, s.slug)} emptyText={`We have not published ride offerings for ${s.name} yet. You can still send a request and we will look for an operator.`} />
+          <SupplyList cards={cards} requestHref={paths.connect({ state: s.slug })} emptyText={`We have not published ride-type guides for ${s.name} yet. The operator inventory below is live.`} />
         </div>
         <SupplySource snap={snap} />
         <PricingNotice className="mt-6" />
@@ -86,7 +86,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
       />
 
       <div className="mt-12">
-        <RequestCta href={paths.request(undefined, s.slug)} title={`Planning an event in ${s.name}?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." />
+        <RequestCta href={paths.connect({ state: s.slug })} title={`Planning an event in ${s.name}?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." />
       </div>
 
       {OCCASION_GROUPS.map((g) => (

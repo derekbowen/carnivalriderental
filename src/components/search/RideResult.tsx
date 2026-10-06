@@ -1,12 +1,11 @@
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
-import { marketplaceListingUrl, type OperatorCard } from "@/lib/catalog/operator-search";
-import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
+import type { OperatorCard } from "@/lib/catalog/operator-search";
 import { paths } from "@/lib/seo/routes";
 
 /**
- * One operator ride in browse results (homepage, /s, state, city and ride-type pages). Account
- * status and request routing are disclosed on the ride page and the request form, not on every card.
+ * One operator ride in browse results (homepage, /s, state, city and ride-type pages). The CTA is
+ * Event Access for this listing; nothing on a card identifies the operator.
  */
 export function RideResult({ card }: { card: OperatorCard }) {
   return (
@@ -32,13 +31,9 @@ export function RideResult({ card }: { card: OperatorCard }) {
           </p>
         )}
         <div className="mt-auto pt-4">
-          {/* Price slot: an operator-approved rate, else the "Request a quote" button below stands in for it. */}
-          {card.price ? <p className="text-sm font-semibold" data-testid="card-price">{card.price}</p> : card.bookable ? <p className="text-sm font-semibold">{REQUEST_A_QUOTE}</p> : null}
-          {card.bookable ? (
-            <a href={marketplaceListingUrl(card)} className="btn-primary mt-3 w-full">Book this ride</a>
-          ) : (
-            <Link href={paths.requestRide(card.id)} className={`btn-primary w-full ${card.price ? "mt-3" : ""}`}>{REQUEST_A_QUOTE}</Link>
-          )}
+          {/* Price slot: an operator-approved figure, else nothing (the operator prices the event). */}
+          {card.price && <p className="text-sm font-semibold" data-testid="card-price">{card.price}</p>}
+          <Link href={paths.connectListing(card.id)} className={`btn-primary w-full ${card.price ? "mt-3" : ""}`}>Connect with operators</Link>
           <Link href={paths.rideListing(card.id)} className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-accent-strong hover:underline">View ride details</Link>
         </div>
       </div>

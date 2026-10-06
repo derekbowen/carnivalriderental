@@ -24,7 +24,7 @@ test("city page: real supply, breadcrumbs, cards, links, visible-content-only sc
   await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toContainText("Ohio");
   expect(await page.locator('[data-testid="ride-result"]').count()).toBe(12);
   await expect(page.getByText(/Operator ~\d+ mi away, based in [A-Z]{2}/).first()).toBeVisible();
-  await expect(page.getByRole("link", { name: "Request a quote" }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: "Connect with operators" }).first()).toBeVisible();
   // Cards: no repeated unclaimed paragraph, no dollar figure, no forbidden claims.
   const cards = (await page.locator('[data-testid="ride-result"]').allInnerTexts()).join("\n");
   expect(cards).not.toMatch(/\$\d|hasn.t joined|verified|partner|available|book now/i);

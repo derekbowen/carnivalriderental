@@ -90,7 +90,7 @@ export function CategoryHub({
 }) {
   const path = paths.category(page.id);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "Rides", path: paths.rides() }, { name: page.name, path }];
-  const requestHref = paths.request(undefined, undefined, undefined, undefined, page.id);
+  const requestHref = paths.connect({ category: page.id });
   const shown = [...catalogCards, ...fixtureCards];
   const ldCards = structuredDataCards(shown, snap);
   const states = [...new Set(catalogCards.flatMap((c) => c.states))].map((code) => stateByCode(code)).filter((s) => !!s).sort((a, b) => a!.name.localeCompare(b!.name));
@@ -105,7 +105,7 @@ export function CategoryHub({
           description: page.metaDescription,
           type: "CollectionPage",
           crumbs,
-          service: { serviceType: `${page.singular.charAt(0).toUpperCase()}${page.singular.slice(1)} rental` },
+          service: { serviceType: `${page.singular.charAt(0).toUpperCase()}${page.singular.slice(1)} operator discovery and contact access` },
           list: { name: `${page.name} you can request`, cards: ldCards },
           faq: page.faqs,
         })}
@@ -121,7 +121,7 @@ export function CategoryHub({
             <h1 className="mt-2 text-4xl leading-[1.05] text-[var(--cat-hero-ink)] sm:text-5xl">{page.h1}</h1>
             <p className="mt-4 max-w-xl text-lg text-[var(--cat-hero-muted)]">{page.intro}</p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href={requestHref} className="btn-primary">Start an event request</a>
+              <a href={requestHref} className="btn-primary">Connect with operators</a>
               <a href="#listings" className="inline-flex min-h-11 items-center rounded-lg border border-current px-5 text-[15px] font-semibold text-[var(--cat-hero-ink)]">See listings</a>
             </div>
           </div>
@@ -201,7 +201,7 @@ export function CategoryHub({
 
         {/* 8. Final request CTA */}
         <div className="mt-16">
-          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." />
+          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." />
         </div>
       </div>
     </div>

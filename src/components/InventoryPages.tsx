@@ -11,8 +11,8 @@ import type { Faq } from "@/lib/taxonomy";
 /**
  * Inventory-backed pSEO templates (city; ride type + city). Customer-facing intro first, inventory
  * facts on a separate secondary line, computed from the ride snapshot. Nothing identifies an
- * operator. Prices follow src/lib/pricing/public-price.ts ("Request a quote" unless an approved
- * operator rate exists), so no dollar figures appear in copy, FAQs, metadata or structured data.
+ * operator. Prices are the operator's (src/lib/pricing/public-price.ts), so no dollar figures
+ * appear in copy, FAQs, metadata or structured data. The CTA is Event Access (/connect).
  *
  * Structured data is limited to what the page visibly shows: CollectionPage, BreadcrumbList, the
  * site's rental Service (as on every page), FAQPage for the visible FAQ, and an ItemList naming the
@@ -23,7 +23,7 @@ type PlaceCity = City & { stateName: string; stateAbbr: string; stateSlug: strin
 const R = PSEO_INVENTORY.radiusMiles;
 const fmt = (n: number) => n.toLocaleString("en-US");
 const DISTANCE_NOTE = "Distance is measured from operator home bases. Event availability and delivery must be confirmed.";
-const CTA_BODY = "Share your event date, location and site details. A request is not a booking and takes no payment.";
+const CTA_BODY = "Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details.";
 
 function rideItemList(path: string, name: string, titles: string[]) {
   return {
@@ -36,12 +36,12 @@ function rideItemList(path: string, name: string, titles: string[]) {
 }
 
 const REQUEST_FAQ: Faq = {
-  q: "Is sending a request the same as booking?",
-  a: "No. A request takes no payment and is not a booking. Pricing, date availability and delivery are confirmed for your event before anything is booked.",
+  q: "How do I contact the operator of a ride?",
+  a: "Through Event Access: tell us your event date and city, see how many independent operators with matching equipment can be contacted, and unlock their direct contact details (company, phone, email, website). You then deal with the operator directly. Carnival Ride Rental is not a party to the rental.",
 };
 const PRICE_FAQ: Faq = {
   q: "How is a ride priced?",
-  a: "Rides are priced per event. Send your date, location, hours and site details with a quote request; costs such as delivery distance, power, permits or staffing vary by event and are confirmed in the quote.",
+  a: "By the operator, per event. Delivery distance, hours, crew, power, permits and insurance all vary, so operators quote after hearing your date, location and site details. Carnival Ride Rental doesn't set or collect rental prices.",
 };
 
 // ------------------------------------------------------------------------------ city
@@ -82,7 +82,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       {s.total > 0 ? (
         <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} listings from operators based within {R} miles of {c.name}.</p>
       ) : (
-        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. You can still send a request to our request desk.</p>
+        <p className="mt-3 text-sm text-muted" data-testid="inventory-line">We don&rsquo;t list operators based within {R} miles of {c.name} yet. Browse the nearest cities below or search all rides.</p>
       )}
 
       {s.byClass.length > 0 && (
@@ -119,7 +119,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       )}
 
       <div className="mt-12">
-        <RequestCta href={paths.request()} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
+        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
       </div>
 
       {s.total > 0 && <FaqSection faq={faq} />}
@@ -159,7 +159,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
   ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { name: `${copy.label} rental`, serviceType: `${copy.label} rental`, areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq }), rideItemList(path, `${copy.label} listings near ${c.name}`, matches.slice(0, 24).map((r) => r.title))]} />
+      <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { name: `${copy.label} operators near ${c.name}`, serviceType: `${copy.label} operator discovery and contact access`, areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq }), rideItemList(path, `${copy.label} listings near ${c.name}`, matches.slice(0, 24).map((r) => r.title))]} />
       <Breadcrumbs items={crumbs} />
       <h1 className="mt-6 text-4xl">{copy.label} rentals for your {c.name} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">{intro}</p>
@@ -172,7 +172,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
       </ul>
 
       <div className="mt-12">
-        <RequestCta href={paths.request()} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
+        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug, rideType: t.id })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
       </div>
 
       <FaqSection faq={faq} />

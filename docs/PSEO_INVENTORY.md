@@ -28,7 +28,7 @@ The matcher (`src/lib/inventory/match.ts`) maps titles to exactly the 50 canonic
 - **Sitemap:** includes only pages that pass every gate, and never query or filter URLs.
 - **Unknown values:** unknown state, city or ride-type slugs return 404.
 - **Demo content:** a demo content location with the same slug as a real city is ignored.
-- **Card wording:** "Operator ~N mi away, based in XX". That is the operator's home base, not where the ride is now and not the event location. The price slot reads "Request a quote" unless the listing has an operator-approved rate for its rental unit (`src/lib/pricing/public-price.ts`). Category, ride-size and rate-card estimates are never shown publicly.
+- **Card wording:** "Operator ~N mi away, based in XX". That is the operator's home base, not where the ride is now and not the event location. The price slot reads "Priced by the operator" unless the listing has an operator-approved figure (`src/lib/pricing/public-price.ts`). Category, ride-size and rate-card estimates are never shown publicly. The card CTA is "Connect with operators" (Event Access, `/connect`).
 - **Structured data:** CollectionPage, BreadcrumbList, the site's rental Service, FAQPage (only when the FAQ is shown), and an ItemList of the visible ride names. No Offer, price, availability, rating, review, address or Event.
 
 ## Internal linking (measured: `reports/internal-links.json`)

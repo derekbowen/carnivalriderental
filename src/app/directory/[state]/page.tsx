@@ -41,7 +41,7 @@ export default async function StateDirectoryPage({ params }: { params: Promise<P
       <section className="mt-10" aria-labelledby="dir-cities">
         <h2 id="dir-cities" className="text-2xl">Cities in {st.name}</h2>
         {cities.length === 0 ? (
-          <p className="mt-3 text-sm text-ink-soft">We don&rsquo;t list operators near {st.name} cities yet. You can still <Link href={paths.request()} className="text-accent-strong hover:underline">send a request</Link> to our request desk.</p>
+          <p className="mt-3 text-sm text-ink-soft">We don&rsquo;t list operators near {st.name} cities yet. <Link href={paths.search()} className="text-accent-strong hover:underline">Search all rides</Link> or check back as the inventory grows.</p>
         ) : (
           <>
             <p className="mt-1 text-sm text-muted">Ride listings from operators based within {PSEO_INVENTORY.radiusMiles} miles of each city, with ride-type pages where there are enough listings.</p>

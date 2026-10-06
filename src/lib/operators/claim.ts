@@ -1,18 +1,23 @@
 /**
- * Operator inventory states and booking eligibility (marketplace model, founder decision 2026-10-05).
+ * Operator accounts and claims (discovery-and-access model, founder decision 2026-10-06).
  *
  * Imported operator listings belong to placeholder company accounts (claim addresses on our domain).
  * Sharetribe does not allow changing a listing's author, so a claim transfers the ACCOUNT: after a
  * verified ownership check the account's email is changed to the operator's, the operator sets their
- * own password, and every listing (and its source mapping) stays exactly where it is.
+ * own password, and every listing (and its source mapping) stays exactly where it is. Nothing here
+ * concerns payments: operators never connect Stripe and there is no booking eligibility.
  */
 
-/** Console: listing type operator-ride-rental → default-inquiry/release-1 (unitType inquiry). */
+/**
+ * Console: listing type operator-ride-rental → default-inquiry/release-1 (unitType inquiry, Free
+ * messaging). Set on listings only so the hosted Sharetribe listing page renders; no transaction is
+ * ever initiated by our product.
+ */
 export const INQUIRY_ALIAS = "default-inquiry/release-1";
 
 /** First paragraph of every unclaimed listing's description (truthful: the operator has not joined). */
 export const UNCLAIMED_NOTICE =
-  "This operator has not joined Carnival Ride Rental yet. Requests sent from carnivalriderental.us go to the Carnival Ride Rental request desk, which contacts the operator for you. Messages sent from this page are held in the operator's account until they claim it.";
+  "This operator has not joined Carnival Ride Rental yet. Contact details for this operator are available through Event Access on carnivalriderental.us. Messages sent from this page are held in the operator's account until they claim it.";
 
 export function withNotice(description: string): string {
   const d = (description ?? "").trim();
@@ -42,43 +47,17 @@ export function emailMatchesCompanyDomain(email: string, website: string | null 
   return domain === host || domain.endsWith(`.${host}`);
 }
 
-export interface EligibilityInput {
-  /** User metadata.claimStatus, set only by the claim script after verification. */
-  claimStatus: unknown;
-  /** Integration API users/show attributes.stripeConnected (authoritative, read server-side). */
-  stripeConnected: boolean;
-  /** Integration API stripe account requirements, if any are outstanding (payouts disabled). */
-  stripePayoutsEnabled: boolean;
-  /** Listing metadata.rideApproved, set by the team after reviewing the operator's ride. */
-  rideApproved: unknown;
-  /** Listing price set by the operator (minor units), or null. */
-  priceAmount: number | null;
-  /** Commission decision recorded in program config; null = undecided. */
-  commissionDecided: boolean;
-}
-
-/** Every reason this listing must NOT be bookable. Empty = eligible. */
-export function bookingBlockers(i: EligibilityInput): string[] {
-  const out: string[] = [];
-  if (i.claimStatus !== "claimed") out.push("ownership not verified (unclaimed account)");
-  if (i.rideApproved !== true) out.push("ride not approved for booking");
-  if (!i.stripeConnected) out.push("operator has not connected Stripe");
-  else if (!i.stripePayoutsEnabled) out.push("Stripe onboarding incomplete");
-  if (!i.priceAmount || i.priceAmount <= 0) out.push("no operator-approved price");
-  if (!i.commissionDecided) out.push("commission not decided (real-money payments gated)");
-  return out;
-}
-
 // ------------------------------------------------------------------------------ operator anonymity
-// Founder decision 2026-10-05: until an operator claims their account, nothing public on the
-// marketplace identifies the company (customers could look it up and bypass us). Originals are kept
-// in privateData (owner + operator only) and restored on claim.
+// Founder decision 2026-10-05, kept under the access model (2026-10-06): nothing public on the hosted
+// marketplace identifies the company, before OR after a claim (the identity is what Event Access
+// sells). Originals are kept in privateData (owner + Integration API only) and are never restored to
+// public fields; the claim script only changes ownership and metadata.
 
 export const OPERATOR_PLACEHOLDER = {
   firstName: "Carnival",
   lastName: "Ride Rental",
   displayName: "Carnival Ride Rental operator",
-  bio: "Carnival ride operator listed on Carnival Ride Rental. This operator has not joined yet; requests go to the Carnival Ride Rental request desk.",
+  bio: "Carnival ride operator listed on Carnival Ride Rental. Contact details are available through Event Access on carnivalriderental.us.",
 } as const;
 
 /** User publicData keys that identify the company; moved to privateData while unclaimed. */

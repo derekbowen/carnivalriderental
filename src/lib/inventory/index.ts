@@ -82,7 +82,7 @@ export interface NearRide extends InventoryRide {
 
 const nearCache = new Map<string, NearRide[]>();
 /** All rides within the radius of a point, nearest first (memoised per point). */
-export function ridesNear(lat: number, lng: number, radius = PSEO_INVENTORY.radiusMiles): NearRide[] {
+export function ridesNear(lat: number, lng: number, radius: number = PSEO_INVENTORY.radiusMiles): NearRide[] {
   const key = `${lat},${lng},${radius}`;
   const hit = nearCache.get(key);
   if (hit) return hit;
@@ -103,11 +103,10 @@ export function toCard(r: NearRide | InventoryRide): OperatorCard {
     homeState: r.homeState?.toUpperCase() ?? null,
     photo: r.photo ? { src: r.photo, alt: r.title } : null,
     miles: "miles" in r ? r.miles : null,
-    // The snapshot holds no operator-approved prices yet, so every card reads "Request a quote".
+    // The snapshot holds no operator-approved prices yet, so every card reads "Priced by the operator".
     price: null,
     claimed: r.claimed,
     detailsReady: true,
-    bookable: false,
   };
 }
 

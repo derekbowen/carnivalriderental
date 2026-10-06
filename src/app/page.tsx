@@ -19,16 +19,16 @@ export function generateMetadata() {
 
 const COMPARISON = [
   { label: "Finding rides", old: "Search dozens of carnival websites", ours: "Rides from operators across the US, nearest to you first" },
-  { label: "Getting a price", old: "Call around and wait for callbacks", ours: "Request a quote for your date and location in one form" },
-  { label: "Who you deal with", old: "Calls, texts and emails everywhere", ours: "The operator who owns the ride, every message in one inbox" },
-  { label: "If an operator can’t do your date", old: "Start over", ours: "Request another nearby ride in a minute" },
+  { label: "Reaching the owner", old: "Call around and wait for callbacks", ours: "Direct contact details for matching operators, after you see how many there are" },
+  { label: "Who you deal with", old: "Calls, texts and emails everywhere", ours: "The operator who owns the ride, directly, on their terms" },
+  { label: "If an operator can’t do your date", old: "Start over", ours: "Unlock the next matching operator from the same pass" },
 ];
 
 const COMMITMENTS = [
-  { title: "Straight to the operator", body: "Requests go to the operator who owns the ride. If they haven’t joined yet, the request goes to our request desk, and we tell you so." },
-  { title: "Honest about who has your request", body: "We never say an operator received or accepted something unless they did." },
-  { title: "No made-up prices", body: "A ride shows a price only when its operator has approved one. Everything else reads “Request a quote”." },
-  { title: "Confirmed means confirmed", body: "A request is not a booking. A ride is booked only when the operator accepts and payment is completed through the marketplace." },
+  { title: "You deal with the operator", body: "We sell access to the company that owns the ride, not the rental. Price, availability, contract and payment are between you and them." },
+  { title: "Honest match counts", body: "Before you pay, we show exactly how many contactable operators match your event, and we don’t sell access when there are too few." },
+  { title: "No made-up prices or availability", body: "A ride shows a price only when its operator has approved one. We never claim a ride is free on your date; only the operator knows." },
+  { title: "Nothing here is a booking", body: "Event Access unlocks contact details. A booking exists only when you and the operator agree one directly." },
 ];
 
 export default async function HomePage() {
@@ -45,20 +45,20 @@ export default async function HomePage() {
       <JsonLd
         nodes={pageGraph({
           path: paths.home(),
-          name: "Carnival ride rentals for events",
-          description: "Find carnival rides near your event and request them from the operators who own them.",
+          name: "Carnival ride inventory and operator access",
+          description: "Browse carnival ride inventory from independent operators nationwide and get direct contact details for the operators who match your event.",
           type: "WebPage",
-          service: { name: "Carnival ride rentals" },
+          service: { name: "Carnival ride operator discovery" },
         })}
       />
       <section className="bg-ink text-white">
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 pb-20 pt-12 sm:px-6 lg:grid-cols-12 lg:gap-14 lg:px-10 lg:pb-24 lg:pt-16">
           <div className="lg:col-span-6">
             <h1 className="text-[44px] leading-[0.98] text-white sm:text-[60px] lg:text-[68px]">
-              Carnival rides for your event. <span className="text-accent">Straight from the operators.</span>
+              Find the ride. <span className="text-accent">Connect with the company that owns it.</span>
             </h1>
             <p className="mt-6 max-w-lg text-[17px] leading-relaxed text-white/80">
-              Find carnival rides near your event, nearest first, and request the one you want. Requests for operators who haven’t joined yet go to our request desk, and we tell you so.
+              Browse carnival ride inventory from independent operators nationwide, nearest first. Event Access gives you direct contact details for the operators who match your event; the rental is agreed with them.
             </p>
             <form action={paths.search()} method="get" className="mt-8 rounded-2xl bg-surface p-5 text-ink shadow-[0_24px_48px_-24px_rgba(0,0,0,0.5)]" aria-label="Find rides near your event">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -85,7 +85,7 @@ export default async function HomePage() {
               </div>
               <button className="btn-primary mt-4 w-full">Find rides <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></button>
               <p className="mt-3 text-center text-sm text-muted">
-                {total > 0 ? `${total.toLocaleString("en-US")} rides from operators across the US. ` : ""}Not sure what you need? <Link href={paths.request()} className="font-semibold underline">Send a general request</Link>.
+                {total > 0 ? `${total.toLocaleString("en-US")} rides from operators across the US. ` : ""}Not sure what you need? <Link href={paths.connect()} className="font-semibold underline">Start with your event</Link>.
               </p>
             </form>
           </div>
@@ -141,7 +141,7 @@ export default async function HomePage() {
           <div className="grid gap-6 lg:grid-cols-12">
             <h2 id="how-heading" className="text-4xl lg:col-span-5 lg:text-[52px] lg:leading-[1.02]">How it works</h2>
             <p className="text-[17px] leading-relaxed text-ink-soft lg:col-span-6 lg:col-start-7">
-              Carnival Ride Rental is a marketplace. Operators own, deliver and run their rides; we make them easy to find, request and book, with every message in one inbox.
+              Carnival Ride Rental is a discovery and operator-access platform. Independent operators own, deliver and run their rides; we make them easy to find and put you in direct contact with the ones who match your event.
             </p>
           </div>
           <ol className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -154,7 +154,7 @@ export default async function HomePage() {
             ))}
           </ol>
           <p className="mt-12 text-sm font-medium text-ink-soft">
-            Nothing is booked until step 4. A request is not a booking and takes no payment. Pricing is confirmed for your event in the quote.
+            Nothing on this site is a booking. Event Access is a one-time fee for contact details; the rental itself is agreed and paid directly with the operator.
           </p>
         </div>
       </section>
@@ -209,15 +209,16 @@ export default async function HomePage() {
           <div className="bg-surface p-7">
             <h3 className="text-2xl">Reading our prices</h3>
             <dl className="mt-5 space-y-4 text-sm">
-              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-ink px-2 py-0.5 text-xs font-semibold text-white">Request a quote</span></dt><dd className="text-muted">Most rides. Send your date, location, hours and site details; the price for your event is confirmed in the quote. Delivery, power, permits and staffing vary by event.</dd></div>
-              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-accent-wash px-2 py-0.5 text-xs font-semibold text-accent-strong">$ per day</span></dt><dd className="text-muted">Shown only when the ride&rsquo;s operator has approved a rate for that rental length.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-ink px-2 py-0.5 text-xs font-semibold text-white">Priced by the operator</span></dt><dd className="text-muted">Most rides. Operators quote per event once they know your date, location, hours and site. Delivery, power, permits and crew vary.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0"><span className="rounded bg-accent-wash px-2 py-0.5 text-xs font-semibold text-accent-strong">$ per day</span></dt><dd className="text-muted">Shown only when the ride&rsquo;s operator has approved a figure for that rental length. Still not a quote.</dd></div>
             </dl>
           </div>
           <div className="bg-surface p-7">
-            <h3 className="text-2xl">What &ldquo;booked&rdquo; means</h3>
+            <h3 className="text-2xl">What Event Access is</h3>
             <dl className="mt-5 space-y-4 text-sm">
-              <div className="flex gap-4"><dt className="w-36 shrink-0 font-semibold">Request sent</dt><dd className="text-muted">Saved in your inbox. Not a booking, and no payment taken.</dd></div>
-              <div className="flex gap-4"><dt className="w-36 shrink-0 font-semibold">Booked</dt><dd className="text-muted">Only when the operator accepts and payment is completed through the marketplace.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0 font-semibold">One fee</dt><dd className="text-muted">Paid to Carnival Ride Rental, for one event. You see the number of matching, contactable operators before paying.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0 font-semibold">What you get</dt><dd className="text-muted">Company name, phone, email and website for the operators you choose to unlock, for the life of your pass.</dd></div>
+              <div className="flex gap-4"><dt className="w-36 shrink-0 font-semibold">What you don&rsquo;t</dt><dd className="text-muted">A booking, a guaranteed reply, a price, or availability. Those come from the operator.</dd></div>
             </dl>
           </div>
         </div>

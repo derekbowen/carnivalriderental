@@ -1,6 +1,6 @@
-import { PRICE_COPY, PRICING_POLICY } from "@/lib/pricing/policy";
+import { PRICE_COPY } from "@/lib/pricing/policy";
 
-/** "How pricing works" — the same four rules on every template that shows prices or a request CTA. */
+/** "How pricing works" — the same four rules on every template that shows prices or an Event Access CTA. */
 export function PricingNotice({ compact = false, className = "" }: { compact?: boolean; className?: string }) {
   return (
     <section data-testid="pricing-notice" aria-labelledby="pricing-notice-heading" className={`rounded-2xl border border-line bg-surface p-5 ${className}`}>
@@ -9,10 +9,7 @@ export function PricingNotice({ compact = false, className = "" }: { compact?: b
         {PRICE_COPY.steps.map((s, i) => (
           <li key={s.title}>
             <p className="font-semibold">{i + 1}. {s.title}</p>
-            <p className="mt-0.5 text-ink-soft">
-              {s.body}
-              {"pendingNote" in s && !PRICING_POLICY.paymentsLive && <span className="text-muted"> {s.pendingNote}</span>}
-            </p>
+            <p className="mt-0.5 text-ink-soft">{s.body}</p>
           </li>
         ))}
       </ol>

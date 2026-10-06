@@ -46,12 +46,6 @@ export interface OperatorCard {
   claimed: boolean;
   /** The Sharetribe listing page renders (inquiry process alias set); otherwise no details link. */
   detailsReady: boolean;
-  /**
-   * True only when the transactional side has recorded that EVERY booking condition holds
-   * (metadata.bookable, written by `npm run ops:bookable` after authoritative server-side checks;
-   * see src/lib/operators/claim.ts → bookingBlockers). Never inferred from a browser redirect.
-   */
-  bookable: boolean;
 }
 
 export interface SearchResult {
@@ -117,7 +111,6 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
     price: listingPriceLabel({ claimed: a.metadata?.claimStatus === "claimed", price: a.price, priceApproved: a.metadata?.priceApproved, unitType: pd.unitType }),
     claimed: a.metadata?.claimStatus === "claimed",
     detailsReady: typeof pd.transactionProcessAlias === "string" && pd.transactionProcessAlias.length > 0,
-    bookable: a.metadata?.claimStatus === "claimed" && a.metadata?.bookable === true,
   };
 }
 
@@ -221,11 +214,25 @@ export async function getOperatorListing(id: string): Promise<OperatorRideDetail
   }
 }
 
-/** Book link on the Sharetribe marketplace (only rendered for bookable listings). */
-export function marketplaceListingUrl(card: Pick<OperatorCard, "id" | "title">): string {
-  const base = (process.env.SHARETRIBE_MARKETPLACE_URL || "https://carnivalrental-9ecfo8.mysharetribe-test.com").replace(/\/$/, "");
-  const slug = card.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "ride";
-  return `${base}/l/${slug}/${card.id}`;
+/**
+ * Listing → author (operator account) id for a set of listings, via the public API. The included
+ * author resource is the anonymised public profile; only its id is used (src/lib/access/matching.ts).
+ */
+export async function listingAuthorIds(ids: string[]): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  for (let i = 0; i < ids.length; i += 100) {
+    const batch = ids.slice(i, i + 100).filter(isListingId);
+    if (batch.length === 0) continue;
+    const qs = new URLSearchParams({ ids: batch.join(","), "fields.listing": "title", perPage: "100" });
+    const res = await fetch(`${API}/listings/query?${qs}`, { headers: { Authorization: `Bearer ${await anonToken()}`, Accept: "application/json" }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+    if (!res.ok) throw new Error(`listing author lookup failed (HTTP ${res.status})`);
+    const body = (await res.json()) as { data?: ApiListing[] };
+    for (const l of body.data ?? []) {
+      const author = l.relationships?.author?.data?.id;
+      if (author) out.set(l.id, author);
+    }
+  }
+  return out;
 }
 
 // ------------------------------------------------------------------------------- visitor location

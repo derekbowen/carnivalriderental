@@ -15,6 +15,9 @@ import { siteUrl } from "../config";
  *   /events, /events/{occasion}             occasion index (noindex) + occasion hub
  *   /operators                              operator program (early access)
  *   /directory, /directory/{state}          site directory (every location, ride type, listing)
+ *   /connect, /connect/{eventRequest}       Event Access funnel (noindex, no-store)
+ *   /pass/{pass}                            a customer's access pass (private, no-store, noindex)
+ *   /terms, /privacy, /access-policy, /contact
  *
  * City slugs and occasion ids share the /{state}/… namespace; checkSlugNamespaces()
  * fails the build on a collision. Old /locations, /rides/{ride}/{state}/{city} and
@@ -57,26 +60,39 @@ export const paths = {
     if (!/^[0-9a-f-]{36}$/.test(listingId)) throw new Error(`Invalid listing id: "${listingId}"`);
     return `/s/${listingId}`;
   },
-  /** "Request this ride" for an operator listing that can't be booked directly yet. */
-  requestRide: (listingId: string) => {
-    if (!/^[0-9a-f-]{36}$/.test(listingId)) throw new Error(`Invalid listing id: "${listingId}"`);
-    return `/request?listing=${listingId}`;
+  /** Event Access entry. Context from the originating page is carried as query params (never canonical). */
+  connect: (ctx: { listing?: string; rideType?: string; rideClass?: string; state?: string; city?: string; occasion?: string; category?: string } = {}) => {
+    const q = new URLSearchParams();
+    if (ctx.listing) {
+      if (!/^[0-9a-f-]{36}$/.test(ctx.listing)) throw new Error(`Invalid listing id: "${ctx.listing}"`);
+      q.set("listing", ctx.listing);
+    }
+    if (ctx.rideType) q.set("type", seg(ctx.rideType));
+    if (ctx.rideClass) q.set("class", seg(ctx.rideClass));
+    if (ctx.state) q.set("state", seg(ctx.state));
+    if (ctx.city) q.set("city", seg(ctx.city));
+    if (ctx.occasion) q.set("occasion", seg(ctx.occasion));
+    if (ctx.category) q.set("category", seg(ctx.category));
+    const s = q.toString();
+    return s ? `/connect?${s}` : "/connect";
   },
+  /** "Connect with operators" for one listing. */
+  connectListing: (listingId: string) => paths.connect({ listing: listingId }),
+  connectMatches: (eventRequestId: string) => `/connect/${seg(eventRequestId)}`,
+  pass: (passId: string) => `/pass/${seg(passId)}`,
+  passRecover: () => "/pass/recover",
+  terms: () => "/terms",
+  privacy: () => "/privacy",
+  accessPolicy: () => "/access-policy",
+  contact: () => "/contact",
   directory: () => "/directory",
   directoryState: (state: string) => `/directory/${seg(state)}`,
   occasions: () => "/events",
   occasion: (occasion: string) => `/events/${seg(occasion)}`,
   occasionState: (occasion: string, state: string) => `/${seg(state)}/${seg(occasion)}`,
-  request: (ride?: string, state?: string, city?: string, occasion?: string, category?: string) => {
-    const q = new URLSearchParams();
-    if (ride) q.set("ride", seg(ride));
-    if (state) q.set("state", seg(state));
-    if (city) q.set("city", seg(city));
-    if (occasion) q.set("occasion", seg(occasion));
-    if (category) q.set("category", seg(category));
-    const s = q.toString();
-    return s ? `/request?${s}` : "/request";
-  },
+  /** Legacy alias (2026-10-06): the request flow became Event Access; /request redirects to /connect. */
+  request: (ride?: string, state?: string, city?: string, occasion?: string, category?: string) =>
+    paths.connect({ rideType: ride && ride !== "ferris-wheel-rental" ? undefined : ride ? "ferris-wheel" : undefined, state, city, occasion, category }),
 };
 
 export function canonicalUrl(path: string): string {

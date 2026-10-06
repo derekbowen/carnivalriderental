@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { anonymizeText, bookingBlockers, emailMatchesCompanyDomain, UNCLAIMED_NOTICE, withNotice, withoutNotice } from "@/lib/operators/claim";
+import { anonymizeText, emailMatchesCompanyDomain, OPERATOR_PLACEHOLDER, UNCLAIMED_NOTICE, withNotice, withoutNotice } from "@/lib/operators/claim";
 
 describe("ownership verification", () => {
   it("accepts only emails on the company's own website domain", () => {
@@ -19,16 +19,12 @@ describe("unclaimed notice", () => {
   });
 });
 
-describe("booking eligibility", () => {
-  const ready = { claimStatus: "claimed", stripeConnected: true, stripePayoutsEnabled: true, rideApproved: true, priceAmount: 500000, commissionDecided: true };
-  it("all conditions met → bookable", () => expect(bookingBlockers(ready)).toEqual([]));
-  it("connecting Stripe alone is never enough", () => {
-    expect(bookingBlockers({ ...ready, claimStatus: "unclaimed", rideApproved: undefined, priceAmount: null, commissionDecided: false })).toHaveLength(4);
-  });
-  it("each missing condition blocks", () => {
-    expect(bookingBlockers({ ...ready, stripePayoutsEnabled: false })).toEqual(["Stripe onboarding incomplete"]);
-    expect(bookingBlockers({ ...ready, priceAmount: 0 })).toEqual(["no operator-approved price"]);
-    expect(bookingBlockers({ ...ready, commissionDecided: false })).toEqual(["commission not decided (real-money payments gated)"]);
+describe("no payment vocabulary in operator-facing copy", () => {
+  it("the unclaimed notice and placeholder profile mention Event Access, never a request desk, payouts or Stripe", () => {
+    for (const t of [UNCLAIMED_NOTICE, OPERATOR_PLACEHOLDER.bio]) {
+      expect(t).toMatch(/Event Access/);
+      expect(t).not.toMatch(/request desk|payout|Stripe|commission|book/i);
+    }
   });
 });
 

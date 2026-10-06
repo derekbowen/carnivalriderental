@@ -44,7 +44,7 @@ export function ListingCard({ card }: { card: ListingCardModel }) {
         <div className="mt-auto border-t border-line pt-4">
           {/* Card estimates are category figures, never an operator's approved rate (src/lib/pricing/public-price.ts). */}
           <p data-testid="card-request-pricing" className="text-[15px] font-semibold">{REQUEST_A_QUOTE}</p>
-          <p className="text-xs text-muted">Priced per event by the operator.</p>
+          <p className="text-xs text-muted">Per event; ask the operator.</p>
           <p className="mt-1 text-xs text-muted">Sourcing on request</p>
           {card.detail ? (
             <Link href={card.detail.href} className="mt-3 inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-accent-strong hover:underline" aria-label={`View details: ${card.name}`}>

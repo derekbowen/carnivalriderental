@@ -36,7 +36,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
   const otherCards = other.map((r) => cardFromCatalog(r));
   // ItemList = every card shown, in display order (suggested first, then other rides).
   const ldCards = structuredDataCards([...suggestedCards, ...otherCards], snap);
-  const requestHref = paths.request(undefined, s?.slug, undefined, o.id);
+  const requestHref = paths.connect({ state: s?.slug, occasion: o.id });
   const group = groupOf(o);
   const related = o.related.map(occasionById).filter((x): x is Occasion => !!x);
   const cities = s ? getContent().locations.filter((l) => l.stateSlug === s.slug) : [];
@@ -79,7 +79,7 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
       )}
 
       <div className="mt-12">
-        <RequestCta href={requestHref} title="Tell us about your event" body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." />
+        <RequestCta href={requestHref} title="Planning this event?" body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." />
       </div>
 
       <section className="mt-12">

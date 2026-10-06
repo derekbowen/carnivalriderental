@@ -55,7 +55,7 @@ test("occasion + state lists live supply in suggested categories first, labelled
   await expect(page.getByTestId("supply-source")).toContainText("test-harness-file");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   expect(await jsonLdTypes(page)).toEqual(expect.arrayContaining(["BreadcrumbList", "Service", "ItemList", "FAQPage"]));
-  await expect(page.getByRole("main").getByRole("link", { name: "Start an event request" })).toHaveAttribute("href", "/request?state=texas&occasion=bar-mitzvahs");
+  await expect(page.getByRole("main").getByRole("link", { name: "Connect with operators" }).first()).toHaveAttribute("href", "/connect?state=texas&occasion=bar-mitzvahs");
 
   // Arizona: the carousel is not a suggested category for bar mitzvahs, so it is listed under "other rides";
   // the Texas-only Ferris wheel does not appear at all.

@@ -21,20 +21,19 @@ export const PRICING_POLICY = {
 } as const;
 
 export const PRICE_COPY = {
-  estimateLabel: "Request a quote",
-  notFinal: "Your quote sets the price; any price shown is not the final price.",
-  noEstimate: "Request a quote — the final price is set with the operator.",
+  estimateLabel: "Priced by the operator",
+  notFinal: "The operator sets the rental price; any figure shown is theirs and not the final price.",
+  noEstimate: "Priced by the operator — ask them directly for a quote.",
   steps: [
-    { title: "Request a quote", body: "Rides are priced per event. A ride shows a price only when its operator has approved one, and that is not the final price until your quote confirms it." },
+    { title: "Priced by the operator", body: "Rides are priced per event by the independent operator who owns them. A ride shows a figure only when its operator has approved one, and that is not the final price." },
     {
-      title: "The final price can change",
-      body: "The operator may adjust it for your location, event type, travel distance and site conditions. You approve any change before you are committed.",
+      title: "Every event is different",
+      body: "Location, travel distance, hours, crew, power, permits and insurance change the price. Operators quote after hearing your details.",
     },
     {
-      title: "Pay first, then we source",
-      body: "We start sourcing and contact operators only after your request is paid.",
-      pendingNote: "Online payment is not open yet.",
+      title: "Event Access is the fee we charge",
+      body: "It buys direct contact details for matching operators, not the rental. The rental is agreed and paid with the operator.",
     },
-    { title: "A request, not a booking", body: "Your booking is confirmed only when an operator commits and the agreed payment step is complete." },
+    { title: "Not a booking", body: "Nothing on this site reserves a ride. A booking exists only when you and the operator agree one directly." },
   ],
 } as const;

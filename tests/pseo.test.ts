@@ -131,7 +131,7 @@ describe("routes + structured data", () => {
     expect(paths.city("texas", "austin")).toBe("/texas/austin");
     expect(paths.rideCity("ferris-wheel-rental", "texas", "austin")).toBe("/texas/austin/ferris-wheel-rental");
     expect(paths.occasionState("bar-mitzvahs", "new-york")).toBe("/new-york/bar-mitzvahs");
-    expect(paths.request(undefined, "texas", undefined, "bar-mitzvahs")).toBe("/request?state=texas&occasion=bar-mitzvahs");
+    expect(paths.connect({ state: "texas", occasion: "bar-mitzvahs" })).toBe("/connect?state=texas&occasion=bar-mitzvahs");
     expect(() => paths.occasion("Bar Mitzvahs")).toThrow();
   });
 

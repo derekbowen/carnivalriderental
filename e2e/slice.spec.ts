@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { expect, test, type Page } from "@playwright/test";
 import { E2E_INTERNAL } from "../playwright.config";
 
@@ -5,86 +6,30 @@ function futureDate(days = 150) {
   return new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
 }
 
-async function fillRequest(page: Page, city: string) {
-  await page.getByLabel("Event start date").fill(futureDate());
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("City").fill(city);
-  await page.getByLabel("State").fill("TX");
-  await page.getByText("Festival / fair").click();
-  await page.getByRole("button", { name: "Continue" }).click();
-  // Site step: leave every answer as "Not sure".
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("Your name").fill("E2E Planner");
-  await page.getByLabel("Email").fill("planner@example.com");
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("I understand this is a request for a quote, not a confirmed booking.").check();
-}
-
 async function internal(page: Page) {
   const ctx = await page.context().browser()!.newContext({ httpCredentials: E2E_INTERNAL, baseURL: "http://localhost:3100" });
   return ctx.newPage();
 }
 
-test("customer browses the Ferris wheel, submits a request, and it survives reload", async ({ page }) => {
-  await page.goto("/rides");
-  await page.getByRole("link", { name: "Ferris wheel rental" }).first().click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ferris wheel rental");
-  await expect(page.getByText("Sourcing on request").first()).toBeVisible();
-  // Ride-type estimates are category figures, never shown publicly.
-  await expect(page.getByText("Request a quote").first()).toBeVisible();
-  await expect(page.getByText(/DEMO VALUE|Estimated/)).toHaveCount(0);
-  await page.getByRole("link", { name: "Request this ride" }).click();
-  await expect(page.locator("select")).toHaveValue("ferris-wheel-rental");
-
-  await fillRequest(page, "Reloadville");
-  await page.getByRole("button", { name: "Submit request" }).click();
-
-  await expect(page.getByTestId("request-received")).toContainText("not yet booked");
-  await expect(page.getByTestId("fulfilment-title")).toHaveText("Request received");
-  await expect(page.getByTestId("payment-status")).toHaveText("No payment taken");
-
-  const url = page.url().replace("&new=1", "");
-  await page.goto(url);
-  await page.reload();
-  await expect(page.getByTestId("fulfilment-title")).toHaveText("Request received");
-  await expect(page.getByText("Reloadville, TX")).toBeVisible();
-});
-
-test("failed persistence never shows success", async ({ page }) => {
-  await page.route("**/api/requests", (route) => route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ ok: false, error: "server_error", message: "We could not save your request. Nothing was submitted." }) }));
-  await page.goto("/request?ride=ferris-wheel-rental");
-  await fillRequest(page, "Failtown");
-  await page.getByRole("button", { name: "Submit request" }).click();
-  await expect(page.getByTestId("submit-error")).toContainText("could not save");
-  await expect(page.getByTestId("request-received")).toHaveCount(0);
-  expect(page.url()).toContain("/request?");
-});
-
-test("rapid repeated submission creates exactly one request", async ({ page }) => {
-  let posts = 0;
-  page.on("request", (r) => { if (r.url().endsWith("/api/requests") && r.method() === "POST") posts++; });
-  await page.goto("/request?ride=ferris-wheel-rental");
-  await fillRequest(page, "Dupecity");
-  const submit = page.getByRole("button", { name: "Submit request" });
-  await submit.dblclick();
-  await expect(page.getByTestId("request-received")).toBeVisible();
-
-  // Replaying the same idempotency key at the API level also cannot duplicate.
-  const team = await internal(page);
-  await team.goto("/internal");
-  await expect(team.getByRole("row").filter({ hasText: "Dupecity" })).toHaveCount(1);
-  expect(posts).toBeGreaterThanOrEqual(1);
-});
+async function createLegacyRequest(page: Page, city: string): Promise<string> {
+  // The legacy managed-request store is internal tooling now (no public form); seed it through its API.
+  const res = await page.request.post("/api/requests", {
+    data: {
+      idempotencyKey: crypto.randomUUID(),
+      acknowledgedNotABooking: true,
+      brief: { rideSlug: "ferris-wheel-rental", rideFlexibility: "this_ride_only", eventDateStart: futureDate(), dateFlexibility: "fixed", city, state: "TX", eventType: "festival", expectedAttendance: "not_sure", budget: "not_sure", siteSurface: "not_sure", power: "not_sure", contact: { name: "E2E Planner", email: "planner@example.com" } },
+    },
+  });
+  const body = (await res.json()) as { ok: boolean; statusUrl?: string; error?: string; issues?: unknown };
+  if (!body.ok || !body.statusUrl) throw new Error(`legacy request failed: ${JSON.stringify(body)}`);
+  return body.statusUrl;
+}
 
 test("internal console is protected, and status updates reach the customer without leaking supplier data", async ({ page, request }) => {
   expect((await request.get("/internal")).status()).toBe(401);
   expect((await request.post("/internal/api/requests/00000000-0000-0000-0000-000000000000/actions", { data: {} })).status()).toBe(401);
 
-  await page.goto("/request?ride=ferris-wheel-rental");
-  await fillRequest(page, "Statusburg");
-  await page.getByRole("button", { name: "Submit request" }).click();
-  await expect(page.getByTestId("request-received")).toBeVisible();
-  const statusUrl = page.url().replace("&new=1", "");
+  const statusUrl = await createLegacyRequest(page, "Statusburg");
 
   const team = await internal(page);
   await team.goto("/internal");
@@ -142,7 +87,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
     expect(u.search).toBe("");
     origins.add(u.origin);
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
-    await expect(page.getByRole("link", { name: /Start an event request|Request this ride|Request a quote/ }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Connect with operators/ }).first()).toBeVisible();
     for (const href of await page.locator('a[href^="/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")!))) {
       const target = href.split("#")[0] || "/";
       // /preview/* cards point at per-spec test-harness listings that other specs create and delete; a cached
@@ -168,11 +113,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
 
 test("full managed flow: pay first → quote → customer accepts → supplier commits → payment collected → confirmed", async ({ page }) => {
   page.on("dialog", (d) => d.accept());
-  await page.goto("/request?ride=ferris-wheel-rental");
-  await fillRequest(page, "Confirmton");
-  await page.getByRole("button", { name: "Submit request" }).click();
-  await expect(page.getByTestId("request-received")).toBeVisible();
-  const statusUrl = page.url().replace("&new=1", "");
+  const statusUrl = await createLegacyRequest(page, "Confirmton");
 
   const team = await internal(page);
   team.on("dialog", (d) => d.accept());

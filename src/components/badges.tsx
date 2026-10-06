@@ -26,14 +26,14 @@ export function DemoBadge({ label = "Demo record" }: { label?: string }) {
 /**
  * Public price slot for ride-type and demo records. Their planning estimates are category or
  * ride-size figures, not an operator's approved rate, so they are never displayed: the slot always
- * reads "Request a quote" (src/lib/pricing/public-price.ts). The record keeps its estimate privately.
+ * reads "Priced by the operator" (src/lib/pricing/public-price.ts). The record keeps its estimate privately.
  */
 export function EstimateLabel({ size = "sm" }: { estimate?: PlanningEstimate | null; size?: "sm" | "lg" }) {
   return size === "lg" ? (
     <div>
       <p className="text-sm text-muted">Pricing</p>
       <p className="mt-1 font-display text-[30px] leading-tight">{REQUEST_A_QUOTE}</p>
-      <p className="mt-1 text-sm text-muted">Priced per event by the operator for your date, location and site.</p>
+      <p className="mt-1 text-sm text-muted">Per event, for your date, location and site. Ask the operator directly.</p>
     </div>
   ) : (
     <div>

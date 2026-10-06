@@ -5,10 +5,10 @@
  * the account is claimed (the operator is on the marketplace), the listing carries an operator-set
  * price, the team has approved it (listing metadata.priceApproved === true) and the unit is known.
  * Category, ride-size and marketplace rate-card figures (src/lib/pricing/rate-card.ts) are private
- * planning data and are never displayed as a listing's price. Everything else reads "Request a quote".
+ * planning data and are never displayed as a listing's price. Everything else reads "Priced by the operator".
  * Never $0.
  */
-export const REQUEST_A_QUOTE = "Request a quote";
+export const REQUEST_A_QUOTE = "Priced by the operator";
 
 const UNIT: Record<string, string> = { day: "per day", hour: "per hour", night: "per night", item: "each" };
 

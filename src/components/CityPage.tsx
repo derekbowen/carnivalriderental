@@ -62,14 +62,14 @@ export function CityPage({ l }: { l: ServiceLocation }) {
             <li key={r.slug} className="card flex flex-col gap-3 p-5">
               <Link href={paths.rideCity(r.slug, l.stateSlug, l.citySlug)} className="font-display text-lg hover:underline">{r.name} in {l.cityName}</Link>
               <EstimateLabel estimate={r.estimate} />
-              <Link href={paths.request(r.slug, l.stateSlug, l.citySlug)} className="mt-auto text-sm font-semibold text-accent-strong hover:underline">Request this ride →</Link>
+              <Link href={paths.connect({ state: l.stateSlug, city: l.citySlug })} className="mt-auto text-sm font-semibold text-accent-strong hover:underline">Connect with operators →</Link>
             </li>
           ))}
         </ul>
       </section>
 
       <NearbyRides stateCode={l.stateCode.toLowerCase()} stateSlug={l.stateSlug} label={l.stateName} />
-      <div className="mt-16"><RequestCta href={paths.request(undefined, l.stateSlug, l.citySlug)} title={`Planning an event in ${l.cityName}?`} body="Share your date and site details. Requests for operators who haven’t joined yet go to our request desk, and replies arrive in your marketplace inbox." /></div>
+      <div className="mt-16"><RequestCta href={paths.connect({ state: l.stateSlug, city: l.citySlug })} title={`Planning an event in ${l.cityName}?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." /></div>
     </div>
   );
 }

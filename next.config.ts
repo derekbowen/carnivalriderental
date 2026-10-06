@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
       { source: "/locations/:state", destination: "/:state", permanent: true },
       { source: "/rides/:ride/:state/:city", destination: "/:state/:city/:ride", permanent: true },
       { source: "/events/:occasion/:state", destination: "/:state/:occasion", permanent: true },
+      // 2026-10-06: the inquiry/request flow became Event Access. Query strings (listing=…) are preserved.
+      { source: "/request", destination: "/connect", permanent: true },
     ];
   },
 };

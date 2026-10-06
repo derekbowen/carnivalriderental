@@ -49,7 +49,7 @@ test("cards: test samples labelled, fixtures separated, pricing and sourcing tex
   const live = page.getByTestId("supply-list").getByTestId("listing-card");
   await expect(live).toHaveCount(1);
   await expect(live.first()).toContainText("Test sample");
-  await expect(live.first()).toContainText("Request a quote");
+  await expect(live.first()).toContainText("Priced by the operator");
   await expect(live.first()).toContainText("Sourcing on request");
   await expect(live.first().getByRole("img")).toHaveAttribute("alt", /Illustration of ferris wheels — not a photo of a specific ride/);
   await expect(page.getByTestId("fixture-cards")).toContainText("not live listings");
@@ -90,20 +90,13 @@ test("JSON-LD graph mirrors the visible page: breadcrumbs, cards (order + URLs) 
   await expect(page.locator("main")).toContainText("merry-go-round");
 });
 
-test("request CTA pre-fills the ride type", async ({ page }) => {
+test("connect CTA carries the ride type into Event Access", async ({ page }) => {
   await page.goto("/categories/carousels");
-  const cta = page.locator("main").getByRole("link", { name: "Start an event request" }).first();
-  await expect(cta).toHaveAttribute("href", "/request?category=carousels");
-  await page.goto("/request?category=carousels");
-  const future = new Date(Date.now() + 90 * 864e5).toISOString().slice(0, 10);
-  await page.getByLabel("Event start date").fill(future);
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByLabel("City").fill("Austin");
-  await page.getByLabel("State").fill("TX");
-  await page.getByText("Private event", { exact: true }).click();
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.locator("textarea")).toHaveValue(/Ride type: Carousels/);
+  const cta = page.locator("main").getByRole("link", { name: "Connect with operators" }).first();
+  await expect(cta).toHaveAttribute("href", "/connect?category=carousels");
+  await page.goto("/connect?category=carousels");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Connect with carousel operators");
+  await expect(page.locator('input[name="rideType"]')).toHaveValue("carousel");
 });
 
 test("mobile: no sideways scroll on any hub, hero CTA visible above the fold", async ({ browser }) => {
@@ -112,7 +105,7 @@ test("mobile: no sideways scroll on any hub, hero CTA visible above the fold", a
   for (const c of CATS) {
     await page.goto(`/categories/${c}`);
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth), c).toBeLessThanOrEqual(0);
-    await expect(page.locator("main").getByRole("link", { name: "Start an event request" }).first()).toBeInViewport();
+    await expect(page.locator("main").getByRole("link", { name: "Connect with operators" }).first()).toBeInViewport();
   }
   await ctx.close();
 });

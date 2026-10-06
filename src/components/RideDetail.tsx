@@ -31,7 +31,7 @@ export function RideDetail({
   sampleLabel?: string;
 }) {
   const where = location ? ` in ${location.cityName}, ${location.stateCode}` : "";
-  const requestHref = paths.request(ride.slug, location?.stateSlug, location?.citySlug);
+  const requestHref = paths.connect({ state: location?.stateSlug, city: location?.citySlug, category: ride.categorySlug });
   const verified = coverage.length > 0;
   const ridePath = links.ride(ride.slug);
   const currentPath = location ? links.rideCity(ride.slug, location.stateSlug, location.citySlug) : ridePath;
@@ -53,7 +53,7 @@ export function RideDetail({
           description: ride.summary,
           type: "ItemPage",
           crumbs,
-          service: { name: `${ride.name}${where}`, serviceType: ride.name, areaServed: location ? { type: "City", name: `${location.cityName}, ${location.stateName}` } : undefined },
+          service: { name: `${ride.name}${where}: operator discovery`, serviceType: `${ride.name} operator discovery and contact access`, areaServed: location ? { type: "City", name: `${location.cityName}, ${location.stateName}` } : undefined },
         })}
       />
       <Breadcrumbs items={crumbs} />
@@ -135,7 +135,7 @@ export function RideDetail({
 
           {otherLocations.length > 0 && (
             <section aria-labelledby="locations-heading">
-              <h2 id="locations-heading" className="text-2xl">Request this ride in other locations</h2>
+              <h2 id="locations-heading" className="text-2xl">This ride type in other locations</h2>
               <ul className="mt-4 flex flex-wrap gap-2 text-sm">
                 {otherLocations.map((l) => (
                   <li key={l.citySlug}><Link className="inline-block rounded-full border border-line-strong bg-surface px-3 py-1.5 hover:border-ink" href={links.rideCity(ride.slug, l.stateSlug, l.citySlug)}>{l.cityName}, {l.stateCode}</Link></li>
@@ -145,29 +145,29 @@ export function RideDetail({
           )}
         </div>
 
-        <aside className="hidden lg:col-span-4 lg:block" aria-label="Request this ride">
+        <aside className="hidden lg:col-span-4 lg:block" aria-label="Connect with operators">
           <div className="sticky top-24 rounded-2xl border border-line bg-surface p-6 shadow-[0_12px_32px_-20px_rgba(20,33,61,0.25)]">
             <AvailabilityBadge verified={verified} />
             <div className="mt-5"><EstimateLabel estimate={ride.estimate} size="lg" /></div>
-            <Link href={requestHref} className="btn-primary mt-6 w-full">Request this ride <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
+            <Link href={requestHref} className="btn-primary mt-6 w-full">Connect with operators <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
             <div className="mt-5 flex gap-2.5 rounded-lg bg-canvas p-3.5 text-[13px] leading-relaxed text-ink-soft">
               <InfoIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted" aria-hidden="true" />
-              <p>Your quote depends on the ride, transport distance, dates, operating hours and site conditions.</p>
+              <p>Operators price per event: ride, transport distance, dates, operating hours and site conditions all matter. Ask each one directly.</p>
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
-              <li className="flex justify-between gap-3"><span>Payment</span><span className="text-right font-medium text-ink">Paid first — we source only after your request is paid{PRICING_POLICY.paymentsLive ? "" : " (online payment not open yet)"}</span></li>
-              <li className="flex justify-between gap-3"><span>Booked</span><span className="text-right font-medium text-ink">After operator commits and the agreed payment step</span></li>
+              <li className="flex justify-between gap-3"><span>Event Access</span><span className="text-right font-medium text-ink">Direct contact details for matching operators</span></li>
+              <li className="flex justify-between gap-3"><span>The rental</span><span className="text-right font-medium text-ink">Agreed and paid directly with the operator</span></li>
             </ul>
           </div>
         </aside>
       </div>
 
-      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body="Share your dates and site details. We handle operator sourcing, the quote and coordination." /></div>
+      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body="Tell us the date and city. We count the independent operators with matching equipment and a working contact channel, then Event Access gives you their direct contact details." /></div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 py-3 lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
-          <p className="min-w-0 truncate text-sm font-semibold">Request a quote · priced per event</p>
-          <Link href={requestHref} aria-label="Request (mobile)" className="btn-primary shrink-0 !px-4 !py-2.5 text-sm">Request</Link>
+          <p className="min-w-0 truncate text-sm font-semibold">Priced by the operator</p>
+          <Link href={requestHref} aria-label="Connect with operators (mobile)" className="btn-primary shrink-0 !px-4 !py-2.5 text-sm">Connect</Link>
         </div>
       </div>
     </div>

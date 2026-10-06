@@ -27,16 +27,9 @@
     "email:claim-invites": "tsx --env-file-if-exists=.env.local scripts/claim-invites.ts",
     "import:photos": "tsx --env-file-if-exists=.env.local scripts/photo-import.ts",
     "listings:enable-inquiry": "tsx --env-file-if-exists=.env.local scripts/listing-enable-inquiry.ts",
-    "desk:setup": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts setup",
-    "desk:list": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts list",
-    "desk:show": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts show",
-    "desk:reply": "tsx --env-file-if-exists=.env.local scripts/request-desk.ts reply",
     "ops:claim": "tsx --env-file-if-exists=.env.local scripts/operator-claim.ts",
     "qa:operator": "tsx --env-file-if-exists=.env.local scripts/qa-operator.ts",
-    "ops:bookable": "tsx --env-file-if-exists=.env.local scripts/operator-bookable.ts",
     "qa:journey": "tsx --env-file-if-exists=.env.local scripts/qa-journey.ts",
-    "qa:payment": "tsx --env-file-if-exists=.env.local scripts/qa-payment.ts",
-    "stripe:probe": "tsx --env-file-if-exists=.env.local scripts/stripe-probe.ts",
     "ops:anonymize": "tsx --env-file-if-exists=.env.local scripts/operator-anonymize.ts",
     "inventory:export": "tsx --env-file-if-exists=.env.local scripts/inventory-export.ts",
     "geo:cities": "python3 scripts/cities-build.py",
@@ -44,7 +37,8 @@
     "inventory:unmatched": "tsx scripts/inventory-unmatched.ts",
     "photos:gaps": "tsx scripts/photo-gaps.ts",
     "pseo:report": "tsx scripts/pseo-report.ts",
-    "pseo:duplicates": "tsx scripts/pseo-duplicates.ts"
+    "pseo:duplicates": "tsx scripts/pseo-duplicates.ts",
+    "access:migrate": "tsx --env-file-if-exists=.env.local scripts/access-migrate.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

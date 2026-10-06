@@ -7,7 +7,7 @@ import { expect, test } from "@playwright/test";
 test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
 
 // Occasion pages are ISR-cached on first view; use ones no other spec seeds with test supply.
-const PAGES = ["/", "/rides", "/rides/ferris-wheel-rental", "/texas", "/texas/austin", "/ohio/school-carnivals", "/events/company-picnics", "/operators", "/request"];
+const PAGES = ["/", "/rides", "/rides/ferris-wheel-rental", "/texas", "/texas/austin", "/ohio/school-carnivals", "/events/company-picnics", "/operators", "/connect", "/pass/recover"];
 
 test("key pages fit a phone screen with no sideways scrolling", async ({ page }) => {
   for (const path of PAGES) {

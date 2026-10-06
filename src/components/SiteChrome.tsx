@@ -36,7 +36,7 @@ export function SiteHeader() {
         <Link href="/" aria-label={`${BRAND.name} home`}><Logo /></Link>
         <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
           {NAV.map((n) => <Link key={n.href} href={n.href} className="whitespace-nowrap text-sm text-ink-soft transition-colors hover:text-ink">{n.label}</Link>)}
-          <Link href={paths.request()} className="btn-primary !px-4 !py-2 text-sm">Start an event request</Link>
+          <Link href={paths.connect()} className="btn-primary !px-4 !py-2 text-sm">Connect with operators</Link>
         </nav>
         {/* No-JS mobile menu */}
         <details className="relative md:hidden">
@@ -44,7 +44,7 @@ export function SiteHeader() {
           <div className="absolute right-0 mt-2 w-60 rounded-xl border border-line bg-surface p-4 shadow-lg">
             <ul className="flex flex-col gap-3">
               {NAV.map((n) => <li key={n.href}><Link href={n.href} className="block py-1 text-[15px]">{n.label}</Link></li>)}
-              <li><Link href={paths.request()} className="btn-primary mt-1 w-full text-sm">Start an event request</Link></li>
+              <li><Link href={paths.connect()} className="btn-primary mt-1 w-full text-sm">Connect with operators</Link></li>
             </ul>
           </div>
         </details>
@@ -84,12 +84,12 @@ export function SiteFooter() {
         <div className="lg:col-span-4">
           <Logo dark />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-            A marketplace for carnival ride rentals. Find rides near your event and request them from the operators who own them.
+            Carnival ride inventory from independent operators across the US. Find the ride, then connect with the company that owns it.
           </p>
           <p className="mt-5 text-sm text-white/70">
             Questions? <a className="font-semibold text-white hover:underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
           </p>
-          <Link href={paths.request()} className="btn-primary mt-5 inline-flex">Start an event request</Link>
+          <Link href={paths.connect()} className="btn-primary mt-5 inline-flex">Connect with operators</Link>
         </div>
         <nav aria-label="Footer" className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-4 lg:col-span-8">
           <FooterColumn title="Ride types" links={FOOTER_RIDE_TYPES} />
@@ -102,6 +102,10 @@ export function SiteFooter() {
               { href: "/#how-it-works", label: "How it works" },
               { href: paths.operators(), label: "For ride operators" },
               { href: paths.directory(), label: "Site directory" },
+              { href: paths.contact(), label: "Contact" },
+              { href: paths.accessPolicy(), label: "Event Access policy" },
+              { href: paths.terms(), label: "Terms of Use" },
+              { href: paths.privacy(), label: "Privacy" },
             ]}
           />
         </nav>
@@ -119,7 +123,7 @@ export function SiteFooter() {
       </nav>
       <div className="border-t border-white/10">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators own and run the rides listed here. Pricing is by quote unless an operator has approved a rate; a request is not a booking.
+          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access sells contact details, not the rental: price, availability, contract and payment are agreed directly with the operator.
         </p>
       </div>
     </footer>

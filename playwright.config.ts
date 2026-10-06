@@ -32,8 +32,14 @@ export default defineConfig({
       SHARETRIBE_INTEGRATION_CLIENT_ID: "",
       SHARETRIBE_CLIENT_ID: "",
       SHARETRIBE_INTEGRATION_CLIENT_SECRET: "",
-      // Legacy managed request form in e2e (the marketplace request desk is proven against Test separately).
-      REQUEST_DESK_LISTING_ID: "",
+      // Event Access in e2e: fake Stripe gateway (no STRIPE_SECRET_KEY), SQLite ledger, fictional operators.
+      STRIPE_SECRET_KEY: "",
+      ACCESS_DATABASE_URL: "",
+      ACCESS_OPERATOR_SOURCE: "fixture",
+      ACCESS_SESSION_SECRET: "e2e-access-secret-e2e-access-secret",
+      // No email provider in e2e: pass emails are skipped (logged), never sent.
+      EMAILIT_API_KEY: "",
+      RESEND_API_KEY: "",
     },
   },
 });

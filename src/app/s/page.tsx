@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { NearMeButton } from "@/components/search/NearMeButton";
 import { RideResult } from "@/components/search/RideResult";
-import { ipLocation, isRideClass, marketplaceListingUrl, parseNear, RIDE_CLASSES, searchOperatorListings, US_CENTER, type OperatorCard } from "@/lib/catalog/operator-search";
+import { ipLocation, isRideClass, parseNear, RIDE_CLASSES, searchOperatorListings, US_CENTER, type OperatorCard } from "@/lib/catalog/operator-search";
 import { STATE_CENTERS } from "@/lib/taxonomy/state-centers";
 import { US_STATES } from "@/lib/taxonomy";
 import { BRAND } from "@/lib/config";

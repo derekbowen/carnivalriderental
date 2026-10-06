@@ -66,8 +66,8 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
           {shown.length === 0 ? (
             <div className="card p-10 text-center">
               <h2 className="text-xl">No ride offerings in this category yet</h2>
-              <p className="mt-2 text-sm text-ink-soft">You can still tell us what you need and we will try to source it.</p>
-              <Link href={paths.request()} className="btn-primary mt-6">Start an event request</Link>
+              <p className="mt-2 text-sm text-ink-soft">Search the live operator inventory instead, or start Event Access with your event details.</p>
+              <Link href={paths.connect()} className="btn-primary mt-6">Connect with operators</Link>
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2">

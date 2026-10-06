@@ -24,7 +24,8 @@ const included = [
 describe("operator search cards", () => {
   it("maps public fields and distance; no approved rate means no price (Request a quote)", () => {
     const c = toOperatorCard(listing(), included, { lat: 30.27, lng: -97.74 })!;
-    expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", homeState: "TX", bookable: false });
+    expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", homeState: "TX" });
+    expect("bookable" in c).toBe(false);
     expect(c.photo?.src).toBe("https://sharetribe.imgix.net/x/i1");
     expect(c.miles).toBeGreaterThan(60);
     expect(c.miles).toBeLessThan(90);
@@ -44,10 +45,6 @@ describe("operator search cards", () => {
     expect(JSON.stringify(f)).not.toMatch(/Alamo/);
   });
 
-  it("is bookable only when claimed AND marked bookable by the ops check", () => {
-    expect(toOperatorCard(listing({}, {}, { claimStatus: "claimed", bookable: true }), included, null)!.bookable).toBe(true);
-    expect(toOperatorCard(listing({}, {}, { bookable: true }), included, null)!.bookable).toBe(false);
-  });
 
   it("never renders other listing types, unpublished or deleted listings", () => {
     expect(toOperatorCard(listing({}, { listingType: "managed-ride-rental" }), included, null)).toBeNull();
@@ -91,8 +88,8 @@ describe("routes", () => {
   it("builds search and request-ride URLs", () => {
     expect(paths.search()).toBe("/s");
     expect(paths.search({ rideClass: "family", page: 2 })).toBe("/s?class=family&page=2");
-    expect(paths.requestRide("6ac255a8-e335-44cc-93e0-5e60a95b017c")).toBe("/request?listing=6ac255a8-e335-44cc-93e0-5e60a95b017c");
+    expect(paths.connectListing("6ac255a8-e335-44cc-93e0-5e60a95b017c")).toBe("/connect?listing=6ac255a8-e335-44cc-93e0-5e60a95b017c");
     expect(paths.rideListing("6ac255a8-e335-44cc-93e0-5e60a95b017c")).toBe("/s/6ac255a8-e335-44cc-93e0-5e60a95b017c");
-    expect(() => paths.requestRide("../x")).toThrow();
+    expect(() => paths.connectListing("../x")).toThrow();
   });
 });

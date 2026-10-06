@@ -14,6 +14,6 @@ describe("public price rule", () => {
     expect(listingPriceLabel({ ...ok, claimed: false })).toBeNull();
     expect(listingPriceLabel({ ...ok, unitType: undefined })).toBeNull();
     expect(listingPriceLabel({ ...ok, price: null })).toBeNull();
-    expect(REQUEST_A_QUOTE).toBe("Request a quote");
+    expect(REQUEST_A_QUOTE).toBe("Priced by the operator");
   });
 });

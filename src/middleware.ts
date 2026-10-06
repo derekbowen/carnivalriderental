@@ -2,6 +2,8 @@ import { NextResponse, type NextRequest } from "next/server";
 import { checkInternalAuth, checkSiteAccess } from "./lib/auth";
 
 const isInternal = (p: string) => p === "/internal" || p.startsWith("/internal/") || p.startsWith("/api/internal/");
+/** Event Access funnel and passes: never cached by anyone, never indexed. */
+const isPaid = (p: string) => p === "/connect" || p.startsWith("/connect/") || p === "/pass" || p.startsWith("/pass/") || p.startsWith("/api/access/") || p.startsWith("/api/pass/");
 
 function indexingAllowed(): boolean {
   return process.env.APP_ENV === "production" && process.env.PUBLIC_INDEXING === "true";
@@ -33,6 +35,10 @@ export function middleware(req: NextRequest) {
   // Belt and braces: every non-production response is noindex, whatever the page metadata says.
   if (!indexingAllowed() || isInternal(path)) res.headers.set("X-Robots-Tag", "noindex, nofollow");
   if (isInternal(path)) res.headers.set("Cache-Control", "no-store");
+  if (isPaid(path)) {
+    res.headers.set("Cache-Control", "private, no-store");
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
   return res;
 }
 

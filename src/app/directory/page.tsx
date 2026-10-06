@@ -45,8 +45,12 @@ export default function DirectoryPage() {
             { href: paths.home(), label: "Home" },
             { href: paths.search(), label: "Find a ride" },
             { href: "/#how-it-works", label: "How it works" },
-            { href: paths.request(), label: "Start an event request" },
+            { href: paths.connect(), label: "Connect with operators" },
             { href: paths.operators(), label: "For ride operators" },
+            { href: paths.contact(), label: "Contact" },
+            { href: paths.accessPolicy(), label: "Event Access policy" },
+            { href: paths.terms(), label: "Terms of Use" },
+            { href: paths.privacy(), label: "Privacy policy" },
           ]}
         />
       </section>

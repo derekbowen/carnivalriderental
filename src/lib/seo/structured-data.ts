@@ -7,8 +7,9 @@ import { canonicalUrl, paths } from "./routes";
  * schema.org JSON-LD as ONE connected @graph per page. Rules:
  * - Markup describes only what is visible on the page, in the same order.
  * - Stable @id references: `{site}/#organization`, `{page}#webpage|#breadcrumb|#itemlist|#service|#faq`.
- * - No AggregateRating/Review (we have none), no Offer/price (indicative estimates are not offers;
- *   quotes are per event), no availability claims, no addresses, no Event markup for event types.
+ * - No AggregateRating/Review (we have none), no Offer/price for rentals (operators price per event),
+ *   no availability claims, no addresses, no Event markup for event types. The only Offer on the site
+ *   is Event Access itself, on /connect/{id}, where its price is visible.
  * - Demo/test cards are filtered out for production by the caller (structuredDataCards).
  */
 export type Json = Record<string, unknown>;
@@ -49,8 +50,8 @@ export function operatorProgramNode(): Json {
   return {
     "@type": "Service",
     "@id": ids.operatorProgram(),
-    name: "List your carnival rides",
-    serviceType: "Marketplace listing for carnival ride operators",
+    name: "List your carnival rides free",
+    serviceType: "Free inventory listing for carnival ride operators",
     url: canonicalUrl(paths.operators()),
     provider: ref(ids.organization()),
     areaServed: { "@type": "Country", name: "United States" },
@@ -89,12 +90,12 @@ export function webPage(opts: { path: string; name: string; description: string;
   };
 }
 
-/** The real service: we source a ride and operating crew per event and quote it. */
 export type AreaServed = { type: "Country" | "State" | "City"; name: string };
 
 /**
- * Customer side: the real service. We source a ride and operating crew per event and quote it.
- * No Offer/price: prices are estimates until the operator confirms (see src/lib/pricing/policy.ts).
+ * Customer side: what Carnival Ride Rental itself provides. We are not the ride operator and we do
+ * not rent rides: we index operator inventory and sell contact access (Event Access). No Offer or
+ * price for rentals, no availability, no ratings.
  */
 export function rentalService(opts: { path: string; name: string; description: string; areaServed?: AreaServed; serviceType?: string }): Json {
   return {
@@ -102,8 +103,8 @@ export function rentalService(opts: { path: string; name: string; description: s
     "@id": ids.service(opts.path),
     name: opts.name,
     description: opts.description,
-    serviceType: opts.serviceType ?? "Carnival ride rental",
-    category: "Carnival ride rental",
+    serviceType: opts.serviceType ?? "Carnival ride operator discovery and contact access",
+    category: "Event equipment directory",
     url: canonicalUrl(opts.path),
     provider: ref(ids.organization()),
     areaServed: opts.areaServed ? { "@type": opts.areaServed.type, name: opts.areaServed.name } : { "@type": "Country", name: "United States" },
