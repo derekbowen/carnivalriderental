@@ -40,7 +40,7 @@ Founder decision: **Event Access $99** and **Ferris Wheel Event Access $199** (a
 30 days, minimum 3 contactable matches, same refund/recovery/duplicate-unlock behaviour. Fee is for
 operator contact access only. Details: `docs/PAID_ACCESS_IMPLEMENTATION.md` §1b.
 
-Implemented (code on `main`, commit <COMMIT>):
+Implemented (code on `main`, commit `f22348d`):
 - one resolver for matching and pricing (`src/lib/access/pricing.ts`); the tier is persisted with the
   request and re-derived at checkout; nothing posted by the client affects it; a missing/inactive tier
   product makes that tier unavailable (no fallback); stale quotes are expired and requoted at Stripe
@@ -61,9 +61,26 @@ Database: Supabase migration `access_products_ferris_wheel_v1` (2026-10-12) inse
 prices survive deploys. The three pre-existing test purchases (all standard, 9900, expired/refunded)
 are unchanged.
 
-Deployed: <DEPLOYMENT>.
+Deployed: Vercel production `dpl_4FGMmY2a2yWRuf8dkh5DC9T74PN2` (commit `f22348d`), live on carnivalriderental.us since 2026-10-12. `ALLOW_DEMO_CONTENT=false` in production; `PUBLIC_INDEXING=false`, `APP_ENV=preview` unchanged (robots.txt `Disallow: /`, empty sitemap).
 
-Verified on carnivalriderental.us in Stripe test mode: <VERIFICATION>.
+Verified on carnivalriderental.us in Stripe test mode (2026-10-12):
+
+| Check | Result |
+|---|---|
+| Standard search (kiddie jets listing, Columbus OH) | "Event Access — $99" on /connect; 7 matches; offer and pay button $99; Stripe Checkout line item "Event Access" $99.00; purchase `67ef5d15…` paid 9900, one pass |
+| Ferris category entry (`/connect?category=ferris-wheels`) | "Ferris Wheel Event Access — $199"; 13 matches; Stripe Checkout "Ferris Wheel Event Access" $199.00; purchase `46335f79…` paid 19900, one pass (`ae23a287…`, 5 unlocks, 30 days) |
+| Tampering: Ferris listing posted as `rideType=carousel` with `priceCents=9900`, `productId=prod_event_access_v1` to `/api/access/start` and `/api/access/checkout` | still Ferris tier; Stripe Checkout $199.00 |
+| Mini Ferris wheel (`/connect?type=mini-ferris-wheel`) | 6 matches; "Ferris Wheel Event Access" $199 offer and pay button |
+| Fewer than 3 operators (giant Ferris wheel, Anchorage AK) | no offer; a forced POST to `/api/access/checkout` redirected with `error=not_sellable` |
+| Duplicate entitlement | each paid session was processed by the webhook (`checkout.session.completed` → "pass created") and by the return route; exactly one pass per purchase |
+| Return route | `/api/access/return` answers 303 to the pass in ~1.3 s (browser timeouts during the run were the session sandbox's proxy) |
+| Public pages | no demo records or empty-inventory text on `/`, `/rides`, category hubs, city, ride-type city, listing, state and policy pages; Ferris pages show "Ferris Wheel Event Access — $199", general pages "Event Access is $99. Ferris Wheel Event Access is $199." |
+
+Not verified on production (covered offline by `tests/access-pricing.test.ts` and `e2e/pricing.spec.ts`):
+refund revocation by purchased amount (needs the Stripe connector re-authorised or the dashboard),
+pass and recovery emails (no email key in production), giant Ferris wheel checkout where ≥ 3
+operators exist (offline: Anaheim CA). The tamper run left one unpaid $199 session (`8fc66d26…`); Stripe
+expires it after an hour and the webhook marks it expired.
 
 Still owner-only (nothing in this session could complete them):
 - **Sharetribe Live**: not verifiably active; no Live credentials exist anywhere in the project. Runbook
