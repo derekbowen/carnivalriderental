@@ -58,9 +58,12 @@ test("occasion + state lists live supply in suggested categories first, labelled
   await expect(page.getByRole("main").getByRole("link", { name: "Connect with operators" }).first()).toHaveAttribute("href", "/connect?state=texas&occasion=bar-mitzvahs");
 
   // Arizona: the carousel is not a suggested category for bar mitzvahs, so it is listed under "other rides";
-  // the Texas-only Ferris wheel does not appear at all.
+  // the Texas-only Ferris wheel does not appear at all. With no managed-catalog supply for the suggested
+  // categories, the page shows real operator inventory nearest Arizona instead of an empty state.
   await page.goto("/arizona/bar-mitzvahs");
-  await expect(page.getByTestId("supply-empty")).toBeVisible();
+  await expect(page.getByTestId("supply-empty")).toHaveCount(0);
+  expect(await page.getByTestId("inventory-cards").getByTestId("ride-result").count()).toBeGreaterThan(0);
+  await expect(page.locator("main")).not.toContainText(/published yet|Demo record/);
   await expect(page.getByRole("heading", { name: "Other rides you can request in Arizona" })).toBeVisible();
   await expect(page.locator("main")).not.toContainText("[TEST] Ferris wheel rental");
 });

@@ -4,6 +4,9 @@ import { supplyFor } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
+import { ridesForCategory, ridesNear, rideTypesInCategory, toCard } from "@/lib/inventory";
+import { STATE_CENTERS } from "@/lib/taxonomy/state-centers";
+import { RideResult } from "./search/RideResult";
 import { COMMON_FAQ, groupOf, occasionById, US_STATES, type Occasion, type UsState } from "@/lib/taxonomy";
 import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
 import { PricingNotice } from "./PricingNotice";
@@ -40,6 +43,12 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
   const group = groupOf(o);
   const related = o.related.map(occasionById).filter((x): x is Occasion => !!x);
   const cities = s ? getContent().locations.filter((l) => l.stateSlug === s.slug) : [];
+  // Real operator inventory for the suggested categories: nearest to the state when there is one, else a national selection.
+  const centre = s ? STATE_CENTERS[s.code] : undefined;
+  const suggestedTypes = new Set(o.suggestedCategories.flatMap((id) => rideTypesInCategory(id).map((t) => t.id)));
+  const inventory = (centre
+    ? ridesNear(centre[0], centre[1]).filter((r) => r.rideType && suggestedTypes.has(r.rideType)).slice(0, 9)
+    : o.suggestedCategories.flatMap((id) => ridesForCategory(id, 3))).map(toCard);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -65,7 +74,15 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
         <h2 className="text-2xl">Rides for {o.plural}{s ? ` in ${s.name}` : ""}</h2>
         <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Availability and price are confirmed with the operator; nothing is booked until you agree terms with them.</p>
         <div className="mt-4">
-          <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText={`No ride offerings are published for ${o.plural}${s ? ` in ${s.name}` : ""} yet. Tell us your date and city to see which operators have related equipment nearby.`} />
+          {suggestedCards.length > 0 ? (
+            <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText="" />
+          ) : inventory.length > 0 ? (
+            <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-testid="inventory-cards">
+              {inventory.map((c) => <li key={c.id}><RideResult card={c} /></li>)}
+            </ul>
+          ) : (
+            <SupplyList cards={[]} requestHref={requestHref} emptyText={`We don’t list operators with these ride types${s ? ` near ${s.name}` : ""} yet. Tell us your date and city and we’ll look for related equipment nearby.`} />
+          )}
         </div>
         <SupplySource snap={snap} />
         <PricingNotice className="mt-6" />

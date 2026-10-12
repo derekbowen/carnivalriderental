@@ -3,6 +3,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { OperatorMatch } from "@/components/access/OperatorMatch";
+import { formatPrice } from "@/lib/access/config";
 import { accessDb } from "@/lib/access/db";
 import { accessAvailability, passCookieName, passIdsFromCookie } from "@/lib/access/runtime";
 import { passView } from "@/lib/access/service";
@@ -47,13 +48,13 @@ export default async function PassPage({ params, searchParams }: { params: Promi
   }
   const view = await passView(await accessDb(), id);
   if (!view) notFound();
-  const { pass, event, product, unlocks, remaining, usable, blockedReason } = view;
+  const { pass, event, product, purchase, unlocks, remaining, usable, blockedReason } = view;
   const byOp = new Map(unlocks.map((u) => [u.operatorId, u]));
   const typeLabel = event.rideType ? rideTypeCopy(event.rideType, rideTypeFor(event.rideType)?.name ?? event.rideType).label : event.rideClass ? `${event.rideClass} rides` : "carnival rides";
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">{product.name}</p>
+      <p className="eyebrow" data-testid="pass-product">{product.name} · {formatPrice(purchase.amountCents, purchase.currency)} paid, one time</p>
       <h1 className="mt-2 text-4xl">Your operator contacts for {event.city}, {event.state}</h1>
       <p className="mt-2 text-ink-soft">{typeLabel} · {event.eventDate} · pass valid until {pass.expiresAt.slice(0, 10)}</p>
       <div className="mt-5 flex flex-wrap gap-3 text-sm" data-testid="pass-status">

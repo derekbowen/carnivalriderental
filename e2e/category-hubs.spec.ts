@@ -3,8 +3,9 @@ import { expect, test } from "@playwright/test";
 import { HARNESS_FILE, writeCategorySamples } from "./harness";
 
 /**
- * Five pilot category hubs on one template. Supply comes from the labelled test harness
- * (data/e2e-catalog.json, Test samples) plus development fixtures — never live listings.
+ * Five pilot category hubs on one template. Supply is the operator inventory snapshot (real
+ * listings, no identity) plus the labelled test harness (data/e2e-catalog.json, Test samples).
+ * Demo fixtures never appear.
  */
 const FILE = HARNESS_FILE;
 const CATS = ["ferris-wheels", "carousels", "swing-rides", "thrill-rides", "kiddie-rides"];
@@ -38,29 +39,41 @@ test("all five hubs render the shared template, noindex, with themed hero and se
   expect((await request.get("/categories/family-rides")).status()).toBe(404);
 });
 
-test("cards: test samples labelled, fixtures separated, pricing and sourcing text, destinations resolve", async ({ page, request }) => {
+test("cards: real inventory first, test samples labelled, no demo fixtures, pricing and sourcing text, destinations resolve", async ({ page, request }) => {
   await page.goto("/categories/ferris-wheels");
+  // Inventory: real operator listings of the category, linking to our own listing pages.
+  const inventory = page.getByTestId("inventory-cards").getByTestId("ride-result");
+  expect(await inventory.count()).toBeGreaterThanOrEqual(6);
+  await expect(page.getByTestId("inventory-line")).toContainText(/\d+ Ferris wheel listings from independent operators nationwide/);
+  await expect(page.getByTestId("inventory-types")).toContainText("Ferris wheel");
+  const rideHrefs = await inventory.getByRole("link").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
+  expect(rideHrefs.filter((h) => h.startsWith("/s/")).length).toBeGreaterThanOrEqual(6);
+  expect((await request.get(rideHrefs.find((h) => h.startsWith("/s/"))!)).status()).toBe(200);
+  // Managed-catalog test sample, labelled.
   const live = page.getByTestId("supply-list").getByTestId("listing-card");
   await expect(live).toHaveCount(1);
   await expect(live.first()).toContainText("Test sample");
   await expect(live.first()).toContainText("Priced by the operator");
   await expect(live.first()).toContainText("Availability confirmed by the operator");
   await expect(live.first().getByRole("img")).toHaveAttribute("alt", /Illustration of ferris wheels — not a photo of a specific ride/);
-  await expect(page.getByTestId("fixture-cards")).toContainText("not live listings");
-  await expect(page.getByTestId("fixture-cards").getByTestId("listing-card").first()).toContainText("Demo record");
+  // Demo fixtures are gone from category navigation.
+  await expect(page.getByTestId("fixture-cards")).toHaveCount(0);
+  await expect(page.locator("main")).not.toContainText(/Demo record|published yet/);
   // No promotional badges, ratings or booking claims anywhere on the cards.
-  for (const t of await page.getByTestId("listing-card").allInnerTexts()) expect(t).not.toMatch(/popular|top rated|★|instant|book now|favorite/i);
+  for (const t of [...(await page.getByTestId("listing-card").allInnerTexts()), ...(await inventory.allInnerTexts())]) expect(t).not.toMatch(/popular|top rated|★|instant|book now|favorite/i);
   // Every details link resolves.
   const hrefs = await page.getByTestId("listing-card").getByRole("link").evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
-  expect(hrefs).toEqual(["/preview/rides/test-ferris-wheel-rental", "/rides/ferris-wheel-rental"]);
+  expect(hrefs).toEqual(["/preview/rides/test-ferris-wheel-rental"]);
   for (const h of hrefs) expect((await request.get(h)).status(), h).toBe(200);
   await expect(page.getByTestId("listing-card").getByRole("link").first()).toHaveText(/dev preview/);
 });
 
-test("empty state: thrill rides has no supply and says so", async ({ page }) => {
+test("no empty-inventory messaging: thrill rides has no managed-catalog supply but shows real inventory", async ({ page }) => {
   await page.goto("/categories/thrill-rides");
-  await expect(page.getByTestId("supply-empty")).toContainText("No thrill ride listings are published yet");
+  await expect(page.getByTestId("supply-empty")).toHaveCount(0);
   await expect(page.getByTestId("listing-card")).toHaveCount(0);
+  expect(await page.getByTestId("inventory-cards").getByTestId("ride-result").count()).toBeGreaterThanOrEqual(6);
+  await expect(page.locator("main")).not.toContainText(/published yet|Demo record/);
 });
 
 test("JSON-LD graph mirrors the visible page: breadcrumbs, cards (order + URLs) and FAQs", async ({ page }) => {

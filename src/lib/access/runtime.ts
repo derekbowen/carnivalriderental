@@ -3,7 +3,7 @@
  * and a small in-memory rate limiter. Server only (imports the ledger and the Integration client).
  */
 import { appEnv, siteUrl } from "../config";
-import { activeProduct, type AccessProduct } from "./config";
+import { activeProduct, activeProducts, DEFAULT_PRODUCT, FERRIS_PRODUCT, type AccessProduct, type AccessProducts } from "./config";
 import { operatorSource, type OperatorSource } from "./contacts";
 import { accessDb, accessStorageMode, type AccessDb } from "./db";
 import { cookieHeader, decodeSession, encodeSession, PASS_COOKIE, sessionSecret } from "./session";
@@ -47,6 +47,33 @@ export async function activeProductOrNull(): Promise<AccessProduct | null> {
   }
 }
 
+/** Both tiers from the ledger, or null when Event Access can't be sold on this environment at all. */
+export async function activeProductsOrNull(): Promise<AccessProducts | null> {
+  if (!accessAvailability().enabled) return null;
+  try {
+    return await activeProducts(await accessDb());
+  } catch (e) {
+    console.error("[access] ledger unavailable:", (e as Error).message);
+    return null;
+  }
+}
+
+const SEEDED: AccessProducts = { standard: { ...DEFAULT_PRODUCT, active: true }, ferris: { ...FERRIS_PRODUCT, active: true } };
+let displayCache: { at: number; value: AccessProducts } | null = null;
+/**
+ * Prices for public copy (FAQs, category hubs, listing pages): the live product rows when the
+ * ledger is reachable, else the seeded defaults so static pages still read correctly. A tier that
+ * is deliberately inactive in the database comes back null and the copy says it is unavailable.
+ * Memoised briefly: pSEO pages render in bulk and must not query the ledger per page.
+ */
+export async function accessProductsForDisplay(): Promise<AccessProducts> {
+  if (displayCache && Date.now() - displayCache.at < 60_000) return displayCache.value;
+  const live = await activeProductsOrNull();
+  const value = live ?? SEEDED;
+  displayCache = { at: Date.now(), value };
+  return value;
+}
+
 export interface AccessRuntime {
   db: AccessDb;
   gateway: StripeGateway;
@@ -84,8 +111,12 @@ export const passCookieName = PASS_COOKIE;
 
 // ------------------------------------------------------------------------------ rate limit
 const buckets = new Map<string, { n: number; reset: number }>();
-/** Fixed-window limiter per key (process-local; enough to blunt abuse of the public endpoints). */
+/**
+ * Fixed-window limiter per key (process-local; enough to blunt abuse of the public endpoints).
+ * `ACCESS_RATE_LIMIT=off` switches it off for local/e2e runs only (never outside APP_ENV=development).
+ */
 export function rateLimited(key: string, max: number, windowMs: number, now = Date.now()): boolean {
+  if (process.env.ACCESS_RATE_LIMIT === "off" && appEnv() === "development") return false;
   const b = buckets.get(key);
   if (!b || b.reset < now) {
     buckets.set(key, { n: 1, reset: now + windowMs });

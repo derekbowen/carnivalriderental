@@ -1,4 +1,4 @@
-# Launch status (2026-10-06, after the discovery-and-access pivot)
+# Launch status (2026-10-12; pivot 2026-10-06, two-tier pricing 2026-10-12)
 
 Read `PROJECT_BRIEF.md` for the model, `PAID_ACCESS_ARCHITECTURE.md` for where the ledger lives, and `PAID_ACCESS_IMPLEMENTATION.md` for what was built and how to roll back.
 
@@ -32,6 +32,54 @@ Event Access is **live in Stripe test mode** on carnivalriderental.us and verifi
 - **Sharetribe Console**: "Approve users who want to join" is on. "Make marketplace private" was tried and **must stay off**: it makes the anonymous Marketplace API return 403 and empties the public catalog. Commission 0 and rotating the Marketplace client secret remain owner actions.
 - **Email**: no provider key in Vercel production, so pass emails are skipped and logged; the pass still works via the return URL and cookie. Set `EMAILIT_API_KEY` (EMAIL_MODE stays `test`) to exercise the magic-link email.
 - **Go-live switch** (owner): rotate the Supabase database password (it was shared in chat during setup), connect the live Stripe mode, create the live webhook, swap `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET` to live values, legal review of `/terms`, `/privacy`, `/access-policy`. Indexing stays off until the separate index-readiness audit.
+
+## 4b. Two-tier pricing and launch preparation (2026-10-12)
+
+Founder decision: **Event Access $99** and **Ferris Wheel Event Access $199** (any Ferris wheel variant:
+`ferris-wheel`, `giant-ferris-wheel`, `mini-ferris-wheel`); both one event, up to 5 distinct operators,
+30 days, minimum 3 contactable matches, same refund/recovery/duplicate-unlock behaviour. Fee is for
+operator contact access only. Details: `docs/PAID_ACCESS_IMPLEMENTATION.md` §1b.
+
+Implemented (code on `main`, commit <COMMIT>):
+- one resolver for matching and pricing (`src/lib/access/pricing.ts`); the tier is persisted with the
+  request and re-derived at checkout; nothing posted by the client affects it; a missing/inactive tier
+  product makes that tier unavailable (no fallback); stale quotes are expired and requoted at Stripe
+  and in the ledger; refunds are judged against the purchased amount; passes bind to their own request
+  and match snapshot;
+- price copy everywhere reads the product rows (`accessProductsForDisplay`, `lib/access/copy.ts`):
+  Ferris hub/ride-type city/listing/connect pages say "Ferris Wheel Event Access — $199"; general pages
+  say "Event Access is $99. Ferris Wheel Event Access is $199."; the pay button, Stripe line item, pass
+  page and pass email carry the product name and amount;
+- demo records and empty-inventory messaging removed from `/rides`, category hubs, state and occasion
+  pages (inventory-backed; `/s?type=` filtered search added); `ALLOW_DEMO_CONTENT=false` in Vercel
+  production;
+- tests: `tests/access-pricing.test.ts` (21), `e2e/pricing.spec.ts` (7) plus the updated suites.
+
+Database: Supabase migration `access_products_ferris_wheel_v1` (2026-10-12) inserted
+`prod_ferris_wheel_access_v1` / `ferris-wheel-access`, 19900 usd, 5 unlocks, 30 days, min 3, active;
+`prod_event_access_v1` untouched (9900). The app's seed is `ON CONFLICT DO NOTHING`, so DB-managed
+prices survive deploys. The three pre-existing test purchases (all standard, 9900, expired/refunded)
+are unchanged.
+
+Deployed: <DEPLOYMENT>.
+
+Verified on carnivalriderental.us in Stripe test mode: <VERIFICATION>.
+
+Still owner-only (nothing in this session could complete them):
+- **Sharetribe Live**: not verifiably active; no Live credentials exist anywhere in the project. Runbook
+  prepared: `docs/SHARETRIBE_LIVE_CUTOVER.md` (proof of activation → config copy → imports → snapshot
+  regeneration → production credentials → verification).
+- **Pass emails in production**: add `RESEND_API_KEY` (value in `.env.local`; the Resend account's
+  `carnivalriderental.us` domain is verified for sending) to Vercel production, keep `EMAIL_MODE`
+  unset (= test → `qa@carnivalriderental.us`), redeploy, then open an emailed `/pass/open?t=…` link in a
+  private window. The fresh-browser path is covered by `e2e/pricing.spec.ts`.
+- **Stripe live account and live webhook**: not verified (the Stripe connector needs re-authorisation
+  in the claude.ai connector settings). Production stays on `sk_test` and the sandbox webhook
+  `we_1UNUzEIdwlV6NJQtbdNVGtYu`.
+- **Credential rotations**: Supabase database password (shared in chat on 2026-10-06), Sharetribe
+  Marketplace client secret, Test Integration secret after the Live cutover.
+- **Indexing**: still off everywhere (`PUBLIC_INDEXING=false`, `APP_ENV=preview`, pilot disabled);
+  release checklist prepared in `docs/PSEO_INDEXING_PLAN.md` §5b.
 
 ## 5. Known gaps (not hidden)
 

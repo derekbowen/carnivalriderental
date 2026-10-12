@@ -28,7 +28,9 @@ test("find → evaluate → connect: honest match count, server-side price, no c
   expect(n).toBeGreaterThanOrEqual(3);
   const cards = page.getByTestId("operator-match");
   expect(await cards.count()).toBe(n);
-  await expect(page.getByTestId("offer-price")).toHaveText("$99");
+  // The entry listing on /ohio/columbus/ferris-wheel is a Ferris wheel: the server prices it at the Ferris tier.
+  await expect(page.getByTestId("offer-product")).toHaveText("Ferris Wheel Event Access");
+  await expect(page.getByTestId("offer-price")).toHaveText("$199");
   await expect(page.getByTestId("offer")).toContainText(`Unlocks up to 5 of these ${n} operators`);
   // Nothing identifying before payment: not in the HTML, not in JSON-LD.
   const html = await (await request.get(page.url())).text();
@@ -41,7 +43,9 @@ test("find → evaluate → connect: honest match count, server-side price, no c
 });
 
 test("pay → pass → unlock → contact; re-open is free; limit enforced; entitlement boundary", async ({ page, request, context }) => {
-  await startRequest(page, "/ohio/columbus");
+  await startRequest(page, "/ohio/columbus"); // first card is a kiddie ride: standard tier
+  await expect(page.getByTestId("offer-product")).toHaveText("Event Access");
+  await expect(page.getByTestId("offer-price")).toHaveText("$99");
   await page.getByTestId("pay-button").click();
   await expect(page).toHaveURL(/\/api\/access\/dev-checkout\?cs=cs_test_fake_/);
   await page.locator("#pay").click();

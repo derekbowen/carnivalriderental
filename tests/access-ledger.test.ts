@@ -7,7 +7,8 @@ import { activateFromSession, activatePurchase, createCheckout, getPass, getPurc
 import { fakeStripe } from "@/lib/access/stripe";
 
 const SITE = "http://test.local";
-const columbus = { email: "buyer@example.com", eventDate: "2030-06-01", city: "Columbus", state: "OH", rideType: "ferris-wheel" };
+// A standard-tier request (carousel). Ferris wheel requests are priced at their own tier: see access-pricing.test.ts.
+const columbus = { email: "buyer@example.com", eventDate: "2030-06-01", city: "Columbus", state: "OH", rideType: "carousel" };
 
 async function paidPass(db: AccessDb, source: OperatorSource, stripe = fakeStripe(SITE)) {
   const { event, sellable } = await startEventRequest(db, source, columbus, { cache: memoryContactCache() });

@@ -6,10 +6,11 @@
  *
  * Access is sold per operator: several matching rides from one company are one match.
  */
-import { CITIES, PSEO_INVENTORY, RIDES, ridesNear, type InventoryRide, type NearRide } from "../inventory";
+import { CITIES, PSEO_INVENTORY, ridesNear, type NearRide } from "../inventory";
 import { STATE_CENTERS } from "../taxonomy/state-centers";
 import { MATCH_RADIUS_MILES, MAX_MATCHED_OPERATORS } from "./config";
 import { channelsOf, isContactable, type ContactChannels, type OperatorSource } from "./contacts";
+import { resolveCriteria, type AccessTier } from "./pricing";
 
 export interface MatchInput {
   lat: number;
@@ -43,7 +44,8 @@ export interface MatchResult {
   operators: MatchedOperator[];
   contactableCount: number;
   candidateListings: number;
-  criteria: { rideType: string | null; rideClass: string | null; listingId: string | null; radiusMiles: number };
+  /** The resolved ride requirement (pricing.ts): the same object prices the request. */
+  criteria: { rideType: string | null; rideClass: string | null; listingId: string | null; tier: AccessTier; radiusMiles: number };
 }
 
 /** Cache of contactability flags (the DB table in production, a Map in tests). */
@@ -68,17 +70,11 @@ export function geocode(city: string, state: string): { lat: number; lng: number
   return centre ? { lat: centre[0], lng: centre[1], resolved: "state" } : null;
 }
 
-function criteriaFor(input: MatchInput): { rideType: string | null; rideClass: string | null; listing: InventoryRide | null } {
-  const listing = input.listingId ? RIDES.find((r) => r.id === input.listingId) ?? null : null;
-  if (listing) return { rideType: listing.rideType, rideClass: listing.rideType ? null : listing.rideClass, listing };
-  return { rideType: input.rideType ?? null, rideClass: input.rideType ? null : input.rideClass ?? null, listing: null };
-}
-
 const toMatched = (r: NearRide): MatchedListing => ({ id: r.id, title: r.title, rideType: r.rideType, rideClass: r.rideClass, photo: r.photo, thumb: r.thumb, miles: r.miles });
 
 export async function matchOperators(input: MatchInput, source: OperatorSource, cache: ContactStatusCache, opts: { radiusMiles?: number; maxCandidates?: number; now?: () => Date } = {}): Promise<MatchResult> {
   const radius = opts.radiusMiles ?? Math.max(MATCH_RADIUS_MILES, PSEO_INVENTORY.radiusMiles);
-  const { rideType, rideClass, listing } = criteriaFor(input);
+  const { rideType, rideClass, listing, tier } = resolveCriteria(input);
   let candidates = ridesNear(input.lat, input.lng, radius).filter((r) => (rideType ? r.rideType === rideType : rideClass ? r.rideClass === rideClass : true));
   if (listing && !candidates.some((c) => c.id === listing.id)) {
     const miles = Math.round(Math.hypot(listing.lat - input.lat, listing.lng - input.lng) * 69);
@@ -126,5 +122,5 @@ export async function matchOperators(input: MatchInput, source: OperatorSource, 
     .slice(0, MAX_MATCHED_OPERATORS)
     .map((o, i) => ({ ...o, label: `Operator ${String.fromCharCode(65 + (i % 26))}${i >= 26 ? Math.floor(i / 26) + 1 : ""}` }));
 
-  return { operators: ranked, contactableCount: ranked.length, candidateListings: candidates.length, criteria: { rideType, rideClass, listingId: listing?.id ?? null, radiusMiles: radius } };
+  return { operators: ranked, contactableCount: ranked.length, candidateListings: candidates.length, criteria: { rideType, rideClass, listingId: listing?.id ?? null, tier, radiusMiles: radius } };
 }

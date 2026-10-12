@@ -2,6 +2,7 @@ import { RIDE_CLASSES } from "@/lib/catalog/operator-search";
 import { RIDE_TYPES } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { US_STATES } from "@/lib/taxonomy";
+import { PriceHint } from "./PriceHint";
 
 /** Short, honest event-type list for the request context (free text is not needed before payment). */
 export const EVENT_TYPES: { id: string; label: string }[] = [
@@ -25,8 +26,15 @@ export interface ConnectPrefill {
   sourcePath?: string | null;
 }
 
+/** Formatted prices of both tiers for the selector hint (display only; the server resolves the tier it charges). */
+export interface ConnectPricing {
+  standard: string | null;
+  ferris: string | null;
+  ferrisTypes: string[];
+}
+
 /** Plain HTML form (no JS required) → POST /api/access/start. Fewer than ten fields before payment. */
-export function ConnectForm({ prefill, today, error }: { prefill: ConnectPrefill; today: string; error?: string | null }) {
+export function ConnectForm({ prefill, today, error, pricing }: { prefill: ConnectPrefill; today: string; error?: string | null; pricing?: ConnectPricing | null }) {
   const lockedType = prefill.listingId || prefill.rideType;
   return (
     <form method="post" action="/api/access/start" className="space-y-5" data-testid="connect-form">
@@ -60,6 +68,7 @@ export function ConnectForm({ prefill, today, error }: { prefill: ConnectPrefill
               <option value="">Any ride type</option>
               {RIDE_TYPES.map((t) => <option key={t.id} value={t.id}>{rideTypeCopy(t.id, t.name).label}</option>)}
             </select>
+            {pricing && <PriceHint standard={pricing.standard} ferris={pricing.ferris} ferrisTypes={pricing.ferrisTypes} />}
           </div>
         )}
         {!lockedType && (

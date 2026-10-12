@@ -16,9 +16,9 @@ export const idempotencyUuid = (logicalKey: string) => {
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-export function passEmail(p: { passUrl: string; productName: string; unlockLimit: number; matched: number; expiresOn: string; eventSummary: string }): { subject: string; html: string; text: string } {
+export function passEmail(p: { passUrl: string; productName: string; amountLabel?: string; unlockLimit: number; matched: number; expiresOn: string; eventSummary: string }): { subject: string; html: string; text: string } {
   const lines = [
-    `Thanks for buying ${p.productName} from ${BRAND.name}.`,
+    `Thanks for buying ${p.productName}${p.amountLabel ? ` (${p.amountLabel}, one-time)` : ""} from ${BRAND.name}. This fee is for operator contact access only; the rental itself is arranged and paid with the operator.`,
     `Your event: ${p.eventSummary}.`,
     `We matched ${p.matched} independent operator${p.matched === 1 ? "" : "s"} with relevant equipment near your event. You can unlock up to ${p.unlockLimit} of them until ${p.expiresOn}.`,
     `Open your pass: ${p.passUrl}`,

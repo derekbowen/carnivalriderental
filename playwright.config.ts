@@ -38,6 +38,8 @@ export default defineConfig({
       ACCESS_DATABASE_URL: "",
       ACCESS_OPERATOR_SOURCE: "fixture",
       ACCESS_SESSION_SECRET: "e2e-access-secret-e2e-access-secret",
+      // Many requests from one IP in a few minutes: the per-IP limiter would otherwise 429 the later specs.
+      ACCESS_RATE_LIMIT: "off",
       // No email provider in e2e: pass emails are skipped (logged), never sent.
       EMAILIT_API_KEY: "",
       RESEND_API_KEY: "",

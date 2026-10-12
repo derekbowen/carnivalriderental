@@ -87,6 +87,40 @@ Adjacent city pages share one template, so the only thing that differs between t
 - The 200-mile radius drives the overlap. Changing it is a separate product decision; rerun `pseo:report` and `pseo:duplicates` after any change.
 - Indexing itself is still **off**. This decision only limits what can be indexed once the founder turns indexing on.
 
+## 5b. Release checklist (prepared 2026-10-12; nothing switched on)
+
+Prepared so the release is a sequence of known switches, each verifiable, with the private pages
+excluded at every layer. State on 2026-10-12: `PUBLIC_INDEXING=false`, `APP_ENV=preview`,
+`PSEO_PILOT.enabled=false`, `copyApproved=false`; `npm run pseo:report` → 0 indexable; robots.txt is
+the blanket `Disallow: /`; the sitemap is empty.
+
+What is already done for the release (deployed, verified by tests):
+- Demo fixtures are gone from every public page family (`/rides`, category hubs, state and occasion
+  pages are inventory-backed) and `ALLOW_DEMO_CONTENT=false` is set in Vercel production, so step 4
+  of section 4 no longer has a demo-content side effect to check.
+- Private pages are excluded three ways and must stay so: robots `disallow` for `/internal`, `/api`,
+  `/requests`, `/request`, `/connect`, `/pass` (src/app/robots.ts), `robots: noindex` metadata plus
+  `X-Robots-Tag: noindex` and `Cache-Control: private, no-store` on `/connect*` and `/pass*`
+  (e2e/access.spec.ts, e2e/privacy.spec.ts), and none of them are in `sitemap.ts` (only routes whose
+  publication gate passes are listed). `/s` and `/s/{id}` stay `noindex, follow`.
+- Price copy on public pages reads product rows and never contains a bare universal "$99"; the only
+  `Offer` JSON-LD is on the private matches page (e2e/structured-data.spec.ts asserts no `offers` or
+  `price` in public graphs).
+
+Release steps (founder go for each; indexing is a separate authorisation from payments):
+1. Approve the pilot list; write the reviewer name and date into `src/lib/inventory/pilot.ts` and set
+   `PSEO_PILOT.enabled = true` (or set `PSEO_INVENTORY.copyApproved = true` for the whole family; the
+   near-duplicate gate still applies). Run `npm run pseo:duplicates` and `npm run pseo:report`: the
+   report must list exactly the intended paths as indexable.
+2. Vercel production: `APP_ENV=production`, `PUBLIC_INDEXING=true`. Deploy `main`.
+3. Verify on the domain: `robots.txt` shows `Allow: /` with the six disallows and the sitemap line;
+   `sitemap.xml` lists exactly the approved URLs; each returns 200, `index, follow`, a self-canonical
+   and no `X-Robots-Tag`; `/connect`, `/pass/…` and every non-approved inventory URL still answer
+   `noindex` (the headers check in `e2e/access.spec.ts` is the same assertion).
+4. Submit the sitemap in Google Search Console; do not request indexing of private URLs; watch
+   coverage and "Duplicate without user-selected canonical" for 4–6 weeks before widening.
+Rollback: set `PUBLIC_INDEXING=false` (blanket disallow and sitewide noindex return on the next deploy).
+
 ## 6. What stays off
 
 `copyApproved`, `PSEO_PILOT.enabled`, `APP_ENV`, `PUBLIC_INDEXING`, the robots change and the sitemap submission all remain unchanged until the founder says go.

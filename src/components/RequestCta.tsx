@@ -2,8 +2,8 @@ import { ArrowRightIcon } from "lucide-react";
 import Link from "next/link";
 import { paths } from "@/lib/seo/routes";
 
-/** The obvious route into Event Access, on every SEO page family. */
-export function RequestCta({ href, title, body }: { href: string; title: string; body: string }) {
+/** The obvious route into Event Access, on every SEO page family. `price` is the tier line built from the product rows (lib/access/copy). */
+export function RequestCta({ href, title, body, price }: { href: string; title: string; body: string; price?: string }) {
   return (
     <section className="overflow-hidden rounded-2xl bg-ink text-white">
       <div className="awning h-2" aria-hidden="true" />
@@ -11,6 +11,7 @@ export function RequestCta({ href, title, body }: { href: string; title: string;
         <div>
           <h2 className="text-3xl text-white">{title}</h2>
           <p className="mt-2 max-w-xl text-sm text-white/75">{body}</p>
+          {price && <p className="mt-3 text-sm font-semibold text-accent" data-testid="access-price">{price}</p>}
           <p className="mt-3 text-xs text-white/60">
             Not sure what to ask an operator? Read <Link href={paths.guide("how-to-rent-carnival-rides")} className="font-semibold text-accent hover:underline">how to rent carnival rides</Link> first.
           </p>

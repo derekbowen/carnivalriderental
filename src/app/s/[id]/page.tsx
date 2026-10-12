@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { accessPriceCopy } from "@/lib/access/copy";
+import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { getOperatorListing, type OperatorRideDetail } from "@/lib/catalog/operator-search";
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { RideResult } from "@/components/search/RideResult";
@@ -72,6 +74,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
   const typeLabel = snap?.rideType ? rideTypeCopy(snap.rideType, snap.rideType) : null;
   const similar = snap ? similarRides(snap) : [];
   const otherOperators = operatorCount(similar);
+  const pricing = accessPriceCopy(await accessProductsForDisplay(), snap?.rideType ?? null);
   const crumbs = [...(place?.crumbs ?? [{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]), { name: ride.title, path: paths.rideListing(id) }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -112,7 +115,8 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
           <p className="text-lg font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
           {!ride.price && <p className="mt-1 text-xs text-muted">The operator prices your event once they know your date, location, hours and site.</p>}
           <Link href={paths.connectListing(ride.id)} className="btn-primary mt-4 w-full">Connect with operators</Link>
-          <p className="mt-2 text-xs text-muted">Event Access shows how many matching operators serve your event before you pay, then gives you their direct contact details. The rental is agreed with the operator; nothing here is a booking.</p>
+          <p className="mt-3 text-sm font-semibold" data-testid="access-price">{pricing.ctaLine}</p>
+          <p className="mt-2 text-xs text-muted">{pricing.tier === "ferris" ? "Ferris wheel requests use Ferris Wheel Event Access. " : ""}Event Access shows how many matching operators serve your event before you pay, then gives you their direct contact details. The fee is for operator contact access only; the rental is agreed with the operator and nothing here is a booking.</p>
         </div>
         {otherOperators > 0 && typeLabel && (
           <div className="card p-5" data-testid="similar-operators">

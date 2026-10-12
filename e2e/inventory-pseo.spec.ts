@@ -28,7 +28,10 @@ test("city page: real supply, breadcrumbs, cards, links, visible-content-only sc
   // Cards: no repeated unclaimed paragraph, no dollar figure, no forbidden claims.
   const cards = (await page.locator('[data-testid="ride-result"]').allInnerTexts()).join("\n");
   expect(cards).not.toMatch(/\$\d|hasn.t joined|verified|partner|available|book now/i);
-  expect(await page.locator("main").innerText()).not.toMatch(/\$\d|Estimated/);
+  // The only dollar figures are the Event Access fee (both tiers, from the product rows); never a rental price or estimate.
+  const main = await page.locator("main").innerText();
+  expect(main).toContain("Event Access is $99. Ferris Wheel Event Access is $199.");
+  expect(main.replace(/(Ferris Wheel )?Event Access (is|—) \$\d+/g, "")).not.toMatch(/\$\d|Estimated/);
   await expect(page.getByRole("link", { name: "View ride details" }).first()).toBeVisible();
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/ohio\/columbus$/);

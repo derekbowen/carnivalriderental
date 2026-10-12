@@ -1,17 +1,22 @@
 import { CheckIcon, PlugIcon, RulerIcon, TruckIcon, UsersIcon } from "lucide-react";
+import Link from "next/link";
+import { accessFaq, type AccessPriceCopy } from "@/lib/access/copy";
 import type { ListingCardModel } from "@/lib/catalog/card";
 import { structuredDataCards } from "@/lib/catalog/card";
+import type { OperatorCard } from "@/lib/catalog/operator-search";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import type { CategoryPage, CategoryTheme } from "@/lib/content/category-pages";
 import { categoryPageById } from "@/lib/content/category-pages";
-import type { ServiceLocation } from "@/lib/content/types";
+import type { TypeStats } from "@/lib/inventory";
+import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
+import { FOOTER_CITIES } from "@/lib/seo/footer-links";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { stateByCode } from "@/lib/taxonomy";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
 import { CTA_BODY, HOW_IT_WORKS, RequestCta } from "./RequestCta";
-import { ListingCard } from "./ListingCard";
 import { PricingNotice } from "./PricingNotice";
+import { RideResult } from "./search/RideResult";
 
 /**
  * THE category hub template (/categories/{id}). Five pilot categories share it; only the config
@@ -73,28 +78,41 @@ const PLANNING = [
   { key: "audience", title: "Your audience", icon: UsersIcon },
 ] as const;
 
+const fmt = (n: number) => n.toLocaleString("en-US");
+
 export function CategoryHub({
   page,
   snap,
   catalogCards,
-  fixtureCards,
-  cities,
+  inventory,
+  inventoryTypes,
+  pricing,
 }: {
   page: CategoryPage;
   snap: CatalogSnapshot;
-  /** Live catalog cards (real supply and labelled test samples). */
+  /** Managed-catalog cards (published offerings and labelled test samples); empty in production today. */
   catalogCards: ListingCardModel[];
-  /** Development fixtures: only passed outside production; always labelled, never supply. */
-  fixtureCards: ListingCardModel[];
-  cities: ServiceLocation[];
+  /** Real operator listings of this category from the inventory snapshot (lib/inventory ridesForCategory). */
+  inventory: OperatorCard[];
+  /** Inventory counts per ride type in this category. */
+  inventoryTypes: TypeStats[];
+  /** Event Access price copy for this hub's ride requirement (lib/access/copy), from the product rows. */
+  pricing: AccessPriceCopy;
 }) {
   const path = paths.category(page.id);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "Rides", path: paths.rides() }, { name: page.name, path }];
   const requestHref = paths.connect({ category: page.id });
-  const shown = [...catalogCards, ...fixtureCards];
-  const ldCards = structuredDataCards(shown, snap);
-  const states = [...new Set(catalogCards.flatMap((c) => c.states))].map((code) => stateByCode(code)).filter((s) => !!s).sort((a, b) => a!.name.localeCompare(b!.name));
+  const ldCards = structuredDataCards(catalogCards, snap);
+  const listings = inventoryTypes.reduce((n, t) => n + t.count, 0);
+  const states = [...new Set([...catalogCards.flatMap((c) => c.states), ...inventory.map((c) => c.homeState).filter((x): x is string => !!x)])]
+    .map((code) => stateByCode(code.toLowerCase()) ?? stateByCode(code.toUpperCase()))
+    .filter((s) => !!s)
+    .sort((a, b) => a!.name.localeCompare(b!.name))
+    .slice(0, 12);
+  const cities = FOOTER_CITIES.slice(0, 8);
   const related = page.related.map((id) => categoryPageById(id)).filter((p): p is CategoryPage => !!p);
+  // The visible FAQ and FAQPage JSON-LD are the same list, including the price entry.
+  const faqs = [...page.faqs, accessFaq(pricing)];
 
   return (
     <div data-cat-theme={page.theme}>
@@ -107,7 +125,7 @@ export function CategoryHub({
           crumbs,
           service: { serviceType: `${page.singular.charAt(0).toUpperCase()}${page.singular.slice(1)} operator discovery and contact access` },
           list: { name: `${page.name} you can request`, cards: ldCards },
-          faq: page.faqs,
+          faq: faqs,
         })}
       />
 
@@ -138,17 +156,35 @@ export function CategoryHub({
         <section id="listings" aria-labelledby="listings-heading" className="scroll-mt-24">
           <h2 id="listings-heading" className="text-3xl">{page.name} you can request</h2>
           <p className="mt-1 text-sm text-muted">Listings are drawn from operators’ public information. Nothing is booked until you and the operator agree terms directly.</p>
-          <div className="mt-6">
-            <SupplyList cards={catalogCards} requestHref={requestHref} emptyText={`No ${page.singular} listings are published yet. Tell us your date and city to see which operators have related equipment nearby.`} />
-          </div>
-          <SupplySource snap={snap} />
-          <PricingNotice className="mt-6" />
-          {fixtureCards.length > 0 && (
-            <div data-testid="fixture-cards" className="mt-8 rounded-2xl border border-dashed border-demo/40 p-4 sm:p-5">
-              <p className="text-sm font-semibold text-demo">Demo records — development fixtures, not live listings</p>
-              <ul className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{fixtureCards.map((c) => <li key={c.key}><ListingCard card={c} /></li>)}</ul>
+          {inventory.length > 0 ? (
+            <>
+              <p className="mt-3 text-sm text-ink-soft" data-testid="inventory-line">
+                {fmt(listings)} {page.singular} listing{listings === 1 ? "" : "s"} from independent operators nationwide, {inventoryTypes.length > 1 ? `across ${inventoryTypes.length} ride types` : "one ride type"}. A selection is shown; search by location for the nearest, and each company counts once however many rides it lists.
+              </p>
+              <ul className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-testid="inventory-cards">
+                {inventory.map((c) => <li key={c.id}><RideResult card={c} /></li>)}
+              </ul>
+              <nav aria-label={`Browse ${page.name.toLowerCase()} by ride type`} className="mt-5 flex flex-wrap gap-2" data-testid="inventory-types">
+                {inventoryTypes.filter((t) => t.count > 0).map((t) => (
+                  <Link key={t.type.id} href={paths.search({ rideType: t.type.id })} className="inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-4 text-sm hover:border-ink">
+                    {rideTypeCopy(t.type.id, t.type.name).label} <span className="ml-1.5 text-muted">{fmt(t.count)} · {fmt(t.operators)} operator{t.operators === 1 ? "" : "s"}</span>
+                  </Link>
+                ))}
+              </nav>
+            </>
+          ) : (
+            <div className="mt-6">
+              <SupplyList cards={[]} requestHref={requestHref} emptyText={`No ${page.singular} listings are in the inventory yet. Tell us your date and city to see which operators have related equipment nearby.`} />
             </div>
           )}
+          {catalogCards.length > 0 && (
+            <div className="mt-8" data-testid="catalog-offerings">
+              <p className="text-sm font-semibold">Published offerings</p>
+              <div className="mt-3"><SupplyList cards={catalogCards} requestHref={requestHref} emptyText="" /></div>
+            </div>
+          )}
+          <SupplySource snap={snap} />
+          <PricingNotice className="mt-6" />
         </section>
 
         {/* 4. Category-specific planning guidance */}
@@ -184,10 +220,12 @@ export function CategoryHub({
               </li>
             ))}
           </ol>
+          <p className="mt-6 text-lg font-semibold" data-testid="access-price">{pricing.ctaLine}</p>
+          <p className="mt-1 max-w-3xl text-sm text-ink-soft">{pricing.sentence} {pricing.terms}</p>
         </section>
 
         {/* 6. FAQs (JSON-LD mirrors these exactly) */}
-        <FaqSection faq={page.faqs} />
+        <FaqSection faq={faqs} />
 
         {/* 7. Related categories and locations */}
         <LinkGrid title="Related ride types" links={related.map((r) => ({ href: paths.category(r.id), label: r.h1 }))} />
@@ -195,13 +233,13 @@ export function CategoryHub({
           title={`Where to find a ${page.singular}`}
           links={[
             ...states.map((s) => ({ href: paths.state(s!.slug), label: `Carnival ride rentals in ${s!.name}` })),
-            ...cities.map((l) => ({ href: paths.city(l.stateSlug, l.citySlug), label: `${l.cityName}, ${l.stateCode}` })),
+            ...cities,
           ]}
         />
 
         {/* 8. Final request CTA */}
         <div className="mt-16">
-          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body={CTA_BODY} />
+          <RequestCta href={requestHref} title={`Want a ${page.singular} at your event?`} body={CTA_BODY} price={pricing.ctaLine} />
         </div>
       </div>
     </div>

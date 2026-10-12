@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { PricingNotice } from "@/components/PricingNotice";
 import { NearbyRides } from "@/components/search/NearbyRides";
-import { CITIES, ridesNear, PSEO_INVENTORY } from "@/lib/inventory";
+import { InventoryTypeGrid } from "@/components/InventoryTypeGrid";
+import { CITIES, ridesNear, PSEO_INVENTORY, typeStatsForState } from "@/lib/inventory";
 import { HOW_IT_WORKS, RequestCta } from "@/components/RequestCta";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "@/components/pseo";
 import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
@@ -41,6 +42,7 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
   const cards = supply.map((r) => cardFromCatalog(r));
   const ldCards = structuredDataCards(cards, snap);
   const cities = getContent().locations.filter((l) => l.stateSlug === s.slug);
+  const types = typeStatsForState(s.code);
   const path = paths.state(s.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: s.name, path }];
   const { title, description } = copy(s.name);
@@ -68,8 +70,14 @@ export default async function StatePage({ params }: { params: Promise<P> }) {
 
       <section className="mt-10">
         <h2 className="text-2xl">Ride types for events in {s.name}</h2>
+        <p className="mt-1 text-sm text-muted">From operators based in {s.name} or listing it as a service area. Counts are listings and distinct operators; availability on your date is confirmed with the operator.</p>
         <div className="mt-4">
-          <SupplyList cards={cards} requestHref={paths.connect({ state: s.slug })} emptyText={`We have not published ride-type guides for ${s.name} yet. The operator inventory below is live.`} />
+          {types.length > 0 ? (
+            <InventoryTypeGrid items={types.slice(0, 12)} hrefFor={(id) => paths.search({ rideType: id, state: s.slug })} />
+          ) : (
+            <SupplyList cards={[]} requestHref={paths.connect({ state: s.slug })} emptyText={`We don’t list operators based in or serving ${s.name} yet. Nearby operators may still travel; tell us your date and city.`} />
+          )}
+          {cards.length > 0 && <div className="mt-6"><SupplyList cards={cards} requestHref={paths.connect({ state: s.slug })} emptyText="" /></div>}
         </div>
         <SupplySource snap={snap} />
         <PricingNotice className="mt-6" />

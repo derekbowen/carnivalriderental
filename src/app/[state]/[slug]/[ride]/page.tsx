@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { RideDetail } from "@/components/RideDetail";
 import { InventoryRideCityPage, rideCityCopy } from "@/components/InventoryPages";
+import { accessPriceCopy } from "@/lib/access/copy";
+import { CATEGORY_CONTEXT } from "@/lib/access/pricing";
+import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { cityBySlugs, inventoryMetadata, inventoryRideCityGate, PSEO_INVENTORY, ridesNear, rideTypeFor } from "@/lib/inventory";
 import { getCategory, getContent, getLocation, getRide, getVerifiedCoverage } from "@/lib/content";
 import { seoMetadata } from "@/lib/seo/metadata";
@@ -55,6 +58,7 @@ export default async function RideCityPage({ params }: { params: Promise<P> }) {
   const d = load(p);
   if (!d) notFound();
   const others = getContent().locations.filter((l) => l.citySlug !== d.location.citySlug);
+  const pricing = accessPriceCopy(await accessProductsForDisplay(), CATEGORY_CONTEXT[d.ride.categorySlug]?.rideType ?? null);
   return (
     <RideDetail
       ride={d.ride}
@@ -62,6 +66,7 @@ export default async function RideCityPage({ params }: { params: Promise<P> }) {
       location={d.location}
       coverage={getVerifiedCoverage(d.ride.slug, d.location.stateSlug, d.location.citySlug)}
       otherLocations={others}
+      pricing={pricing}
     />
   );
 }

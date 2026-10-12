@@ -14,12 +14,13 @@
 import crypto from "node:crypto";
 import { z } from "zod";
 import { US_STATES } from "../taxonomy";
-import { activeProduct, formatPrice, type AccessProduct, rowToProduct } from "./config";
+import { formatPrice, productForTier, type AccessProduct, rowToProduct } from "./config";
 import { isContactable, revealFields, type OperatorSource, type ContactChannels } from "./contacts";
 import type { AccessDb, Row, Sql } from "./db";
 import { nowIso } from "./db";
 import { magicLinkEmail, passEmail, sendNow } from "./email";
 import { geocode, matchOperators, type ContactStatusCache, type MatchedOperator } from "./matching";
+import { resolveCriteria, tierForRideType, type AccessTier } from "./pricing";
 import { hashToken, newToken } from "./session";
 import type { CheckoutSession, StripeEvent, StripeGateway } from "./stripe";
 
@@ -58,7 +59,10 @@ export interface EventRequest {
   lng: number;
   operators: MatchedOperator[];
   matchedOperators: number;
+  /** The product the request was quoted at when it was created (see quoteForEvent for the live quote). */
   productId: string;
+  /** Re-derived from the persisted, already-resolved ride requirement; never from the client. */
+  tier: AccessTier;
   status: "matched" | "insufficient";
   createdAt: string;
 }
@@ -80,6 +84,7 @@ const rowToEvent = (r: Row): EventRequest => ({
   operators: JSON.parse(String(r.match_json)) as MatchedOperator[],
   matchedOperators: Number(r.matched_operators),
   productId: String(r.product_id),
+  tier: tierForRideType(r.ride_type ? String(r.ride_type) : null),
   status: r.status as EventRequest["status"],
   createdAt: String(r.created_at),
 });
@@ -107,27 +112,56 @@ export class AccessError extends Error {
   }
 }
 
+const tierUnavailable = (tier: AccessTier) => new AccessError("unavailable", tier === "ferris" ? "Ferris Wheel Event Access is not available right now" : "Event Access is not configured");
+
+/**
+ * Step 1. The ride requirement is resolved once (pricing.ts: authoritative listing classification
+ * first, then canonical ride type, then class) and that single resolution both selects the product
+ * tier and drives matching. Nothing the client sends (price, product id, hidden fields, referrer)
+ * is consulted for pricing. The resolved criteria and the product are persisted with the request.
+ */
 export async function startEventRequest(db: AccessDb, source: OperatorSource, raw: unknown, opts: { cache?: ContactStatusCache; today?: () => string } = {}): Promise<{ event: EventRequest; product: AccessProduct; sellable: boolean }> {
   const parsed = eventRequestInput.safeParse(raw);
   if (!parsed.success) throw new AccessError("invalid", parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; "));
   const input = parsed.data;
   const today = (opts.today ?? (() => new Date().toISOString().slice(0, 10)))();
   if (input.eventDate < today) throw new AccessError("invalid", "eventDate: pick a date from today onwards");
-  const product = await activeProduct(db);
-  if (!product) throw new AccessError("unavailable", "Event Access is not configured");
+  const criteria = resolveCriteria({ listingId: input.listingId, rideType: input.rideType, rideClass: input.rideClass });
+  const product = await productForTier(db, criteria.tier);
+  if (!product) throw tierUnavailable(criteria.tier);
   const geo = geocode(input.city, input.state);
   if (!geo) throw new AccessError("geocode", "We couldn't place that city");
-  const match = await matchOperators({ lat: geo.lat, lng: geo.lng, state: input.state, listingId: input.listingId, rideType: input.rideType, rideClass: input.rideClass }, source, opts.cache ?? dbContactCache(db));
+  const match = await matchOperators({ lat: geo.lat, lng: geo.lng, state: input.state, listingId: criteria.listingId, rideType: criteria.rideType, rideClass: criteria.rideClass }, source, opts.cache ?? dbContactCache(db));
+  if (match.criteria.tier !== criteria.tier || match.criteria.rideType !== criteria.rideType) throw new Error("matching and pricing resolved different criteria");
   const sellable = match.contactableCount >= product.minimumMatches;
   const id = crypto.randomUUID();
   const t = nowIso();
   await db.query(
     `INSERT INTO access_event_requests (id, email, event_date, city, state, zip, event_type, ride_type, ride_class, listing_id, attendance, budget_cents, lat, lng, match_json, matched_operators, product_id, status, source_path, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, input.email, input.eventDate, input.city, input.state, input.zip, input.eventType, match.criteria.rideType ?? input.rideType, match.criteria.rideClass ?? input.rideClass, input.listingId, input.attendance, input.budgetUsd === null ? null : input.budgetUsd * 100, geo.lat, geo.lng, JSON.stringify(match.operators), match.contactableCount, product.id, sellable ? "matched" : "insufficient", input.sourcePath, t],
+    [id, input.email, input.eventDate, input.city, input.state, input.zip, input.eventType, criteria.rideType, criteria.rideClass, criteria.listingId, input.attendance, input.budgetUsd === null ? null : input.budgetUsd * 100, geo.lat, geo.lng, JSON.stringify(match.operators), match.contactableCount, product.id, sellable ? "matched" : "insufficient", input.sourcePath, t],
   );
   const event = (await getEventRequest(db, id))!;
   return { event, product, sellable };
+}
+
+export interface Quote {
+  tier: AccessTier;
+  /** The active product for the request's tier, or null when that tier is not for sale (no fallback to another tier). */
+  product: AccessProduct | null;
+  /** True when the request was stored against a different product (e.g. a Ferris request quoted before the Ferris tier existed). */
+  requoted: boolean;
+  sellable: boolean;
+}
+
+/**
+ * The live quote for a stored request: the tier comes from the persisted, resolved ride requirement
+ * and the product from the database, never from the stored product id alone. The amount shown on the
+ * matches page and the amount charged at checkout both come from here.
+ */
+export async function quoteForEvent(db: AccessDb, event: EventRequest): Promise<Quote> {
+  const product = await productForTier(db, event.tier);
+  return { tier: event.tier, product, requoted: !!product && product.id !== event.productId, sellable: !!product && event.status === "matched" && event.matchedOperators >= product.minimumMatches };
 }
 
 export async function getEventRequest(db: AccessDb, id: string): Promise<EventRequest | null> {
@@ -174,16 +208,32 @@ export async function getPurchase(db: Sql, id: string): Promise<Purchase | null>
   return rows[0] ? rowToPurchase(rows[0]) : null;
 }
 
-/** Creates the pending purchase (server-side price) and the Stripe Checkout Session. */
+/**
+ * Step 2. Creates the pending purchase (server-side price) and the Stripe Checkout Session. The
+ * product is re-derived from the stored request's resolved criteria (quoteForEvent), so a request
+ * can only ever be charged at its own tier: a Ferris request is never sold at the standard price and
+ * a standard request is never upgraded by anything the client posts. Older unpaid quotes for the
+ * same request at a different product or amount are expired (ledger and Stripe) and the request is
+ * requoted at the current terms, which the matches page shows before this step.
+ */
 export async function createCheckout(db: AccessDb, gateway: StripeGateway, eventRequestId: string, siteUrl: string): Promise<{ purchase: Purchase; url: string }> {
   const event = await getEventRequest(db, eventRequestId);
   if (!event) throw new AccessError("not_found", "Unknown event request");
-  const prodRows = await db.query(`SELECT * FROM access_products WHERE id = ?`, [event.productId]);
-  const product = prodRows[0] ? rowToProduct(prodRows[0]) : null;
-  if (!product || !product.active) throw new AccessError("unavailable", "Event Access is not available");
-  if (event.status !== "matched" || event.matchedOperators < product.minimumMatches) throw new AccessError("not_sellable", "Not enough contactable operators for this event");
+  const quote = await quoteForEvent(db, event);
+  const product = quote.product;
+  if (!product) throw tierUnavailable(quote.tier);
+  if (!quote.sellable) throw new AccessError("not_sellable", "Not enough contactable operators for this event");
   const id = crypto.randomUUID();
   const t = nowIso();
+  const stale = (await db.query(`SELECT * FROM access_purchases WHERE event_request_id = ? AND status = 'pending'`, [event.id])).map(rowToPurchase);
+  for (const old of stale) {
+    if (old.productId === product.id && old.amountCents === product.priceCents && old.currency === product.currency) continue;
+    // A session the customer already paid is never voided: the webhook/return path activates it at the terms it was bought at.
+    const outcome = old.stripeCheckoutSessionId ? await gateway.expireCheckoutSession(old.stripeCheckoutSessionId) : "expired";
+    if (outcome === "complete") continue;
+    await db.query(`UPDATE access_purchases SET status = 'expired', updated_at = ? WHERE id = ? AND status = 'pending'`, [t, old.id]);
+  }
+  if (quote.requoted) await db.query(`UPDATE access_event_requests SET product_id = ? WHERE id = ?`, [product.id, event.id]);
   await db.query(
     `INSERT INTO access_purchases (id, event_request_id, product_id, email, unlock_limit, validity_days, amount_cents, currency, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`,
     [id, event.id, product.id, event.email, product.unlockLimit, product.validityDays, product.priceCents, product.currency, t, t],
@@ -237,10 +287,12 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     if (!p) throw new AccessError("not_found", "Unknown purchase");
     const existing = await tx.query(`SELECT * FROM access_passes WHERE purchase_id = ?`, [purchaseId]);
     if (existing[0]) return { pass: rowToPass(existing[0]), created: false, purchase: p };
-    if (p.status !== "pending") throw new AccessError("forbidden", `purchase is ${p.status}`);
+    // 'expired' is included on purpose: a session Stripe verifies as paid always yields a pass, even if
+    // the ledger had written the quote off (expiry webhook raced the payment, or a requote crossed it).
+    if (p.status !== "pending" && p.status !== "expired") throw new AccessError("forbidden", `purchase is ${p.status}`);
     const t = now.toISOString();
     const updated = await tx.query(
-      `UPDATE access_purchases SET status = 'paid', paid_at = ?, updated_at = ?, stripe_checkout_session_id = COALESCE(stripe_checkout_session_id, ?), stripe_payment_intent_id = COALESCE(?, stripe_payment_intent_id) WHERE id = ? AND status = 'pending' RETURNING id`,
+      `UPDATE access_purchases SET status = 'paid', paid_at = ?, updated_at = ?, stripe_checkout_session_id = COALESCE(stripe_checkout_session_id, ?), stripe_payment_intent_id = COALESCE(?, stripe_payment_intent_id) WHERE id = ? AND status IN ('pending', 'expired') RETURNING id`,
       [t, t, verified.sessionId, verified.paymentIntentId, purchaseId],
     );
     if (updated.length === 0) throw new AccessError("forbidden", "purchase already processed");
@@ -256,7 +308,7 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     const link = await issueMagicLink(db, result.pass.id);
     await sendNow(
       result.pass.email,
-      passEmail({ passUrl: `${opts.siteUrl}/pass/open?t=${link.token}`, productName: product?.name ?? "Event Access", unlockLimit: result.pass.unlockLimit, matched: event?.matchedOperators ?? 0, expiresOn: result.pass.expiresAt.slice(0, 10), eventSummary: event ? `${event.city}, ${event.state} on ${event.eventDate}` : "" }),
+      passEmail({ passUrl: `${opts.siteUrl}/pass/open?t=${link.token}`, productName: product?.name ?? "Event Access", amountLabel: formatPrice(result.purchase.amountCents, result.purchase.currency), unlockLimit: result.pass.unlockLimit, matched: event?.matchedOperators ?? 0, expiresOn: result.pass.expiresAt.slice(0, 10), eventSummary: event ? `${event.city}, ${event.state} on ${event.eventDate}` : "" }),
       `pass:${result.pass.id}:welcome`,
     );
   }
@@ -325,7 +377,10 @@ export async function handleStripeEvent(db: AccessDb, event: StripeEvent, siteUr
       case "charge.refunded": {
         if (!purchaseId) { result = "no purchase"; break; }
         const refunded = typeof o.amount_refunded === "number" ? o.amount_refunded : 0;
-        const amount = typeof o.amount === "number" ? o.amount : 0;
+        // "Full" is judged against what this purchase actually cost (the ledger's snapshot), so a $99
+        // refund on a $199 Ferris pass is partial and a $199 one revokes it.
+        const purchase = await getPurchase(db, purchaseId);
+        const amount = purchase?.amountCents ?? (typeof o.amount === "number" ? o.amount : 0);
         const full = amount > 0 && refunded >= amount;
         await db.query(`UPDATE access_purchases SET status = ?, refund_cents = ?, refunded_at = ?, updated_at = ? WHERE id = ?`, [full ? "refunded" : "partially_refunded", refunded, t, t, purchaseId]);
         if (full) await revokePass(db, purchaseId, "refunded");
@@ -397,6 +452,8 @@ export interface PassView {
   pass: Pass;
   event: EventRequest;
   product: AccessProduct;
+  /** The terms this pass was bought at (amount, limit, validity), snapshotted at purchase time. */
+  purchase: Purchase;
   unlocks: Unlock[];
   remaining: number;
   usable: boolean;
@@ -413,7 +470,7 @@ export async function passView(db: AccessDb, passId: string, now = new Date()): 
   const unlocks = (await db.query(`SELECT * FROM access_unlocks WHERE pass_id = ? ORDER BY first_revealed_at`, [passId])).map(rowToUnlock);
   const expired = pass.expiresAt <= now.toISOString();
   const blockedReason = pass.status === "revoked" ? "This pass was revoked (refund or dispute). Operators you already unlocked stay visible." : expired ? "This pass has expired. Operators you already unlocked stay visible." : null;
-  return { pass, event, product, unlocks, remaining: Math.max(0, pass.unlockLimit - pass.unlockedCount), usable: pass.status === "active" && !expired, blockedReason };
+  return { pass, event, product, purchase, unlocks, remaining: Math.max(0, pass.unlockLimit - pass.unlockedCount), usable: pass.status === "active" && !expired, blockedReason };
 }
 
 /**

@@ -5,10 +5,11 @@ import { HOW_IT_WORKS } from "@/components/RequestCta";
 import { PlaceholderImage } from "@/components/RideImage";
 import { RideResult } from "@/components/search/RideResult";
 import { FaqSection, JsonLd } from "@/components/pseo";
-import { DEFAULT_PRODUCT, type AccessProduct } from "@/lib/access/config";
+import { DEFAULT_PRODUCT, type AccessProduct, type AccessProducts } from "@/lib/access/config";
+import { bothTiersSentence } from "@/lib/access/copy";
+import { accessProductsForDisplay } from "@/lib/access/runtime";
 
 type ProductLimits = Pick<AccessProduct, "unlockLimit" | "validityDays">;
-import { activeProductOrNull } from "@/lib/access/runtime";
 import { getOperatorListing, ipLocation, rideClassShowcase, searchOperatorListings, US_CENTER } from "@/lib/catalog/operator-search";
 import { BRAND, SITE_DESCRIPTION } from "@/lib/config";
 import { operatorCount, RIDES } from "@/lib/inventory";
@@ -55,13 +56,17 @@ const eventAccessIncludes = (p: ProductLimits) => [
   "No percentage commission added to the rental",
 ];
 
-const faqFor = (p: ProductLimits): Faq[] => [
+const faqFor = (products: AccessProducts): Faq[] => {
+  const p: ProductLimits = products.standard ?? DEFAULT_PRODUCT;
+  return [
   { q: "Does Carnival Ride Rental rent the rides?", a: "No. Every ride here belongs to an independent carnival operator. We show their inventory, help you find the rides that fit your event and area, and give you direct contact details for matching operators through Event Access. The rental is arranged and paid directly with the operator." },
   { q: "Is a ride available on my date?", a: "Only the operator knows. A listing means the operator owns the ride and serves the area; it is not a confirmation that the ride is free on your date. Confirm availability with each operator you contact." },
   { q: "How much does it cost to rent a carnival ride?", a: "Operators price per event. Travel distance, hours, crew, power, permits and insurance all change the figure, so operators quote after hearing your date, location and site details. We don't set or collect rental prices." },
-  { q: "What does Event Access include?", a: `A one-time fee for one event. It includes direct contact details for up to ${p.unlockLimit} matching operators, ${p.validityDays} days of access, and our buyer guidance. You see how many operators match before you pay, and there is no commission on the rental.` },
+  { q: "What does Event Access include?", a: `A one-time fee for one event. It includes direct contact details for up to ${p.unlockLimit} distinct matching operators, ${p.validityDays} days of access, and our buyer guidance. You see how many operators match before you pay, and there is no commission on the rental.` },
+  { q: "How much does Event Access cost?", a: `${bothTiersSentence(products)} Ferris Wheel Event Access applies when your request is for a Ferris wheel (standard, giant or mini); every other request is Event Access. Both are one-time fees for operator contact access only, shown before you pay. The rental price is set by the operator.` },
   { q: "Can I browse without paying?", a: "Yes. Ride photos, details, service areas, nearby counts, event guides and the buyer guide are free. Event Access is only for reaching the operators directly." },
-];
+  ];
+};
 
 /**
  * Hero: four real operator photos from the public snapshot, one each of a Ferris wheel, a thrill
@@ -88,8 +93,9 @@ export default async function HomePage() {
   const where = approx ?? US_CENTER;
   const classes = await rideClassShowcase();
   const nearby = await searchOperatorListings({ origin: where });
-  const product: ProductLimits = (await activeProductOrNull()) ?? DEFAULT_PRODUCT;
-  const FAQ = faqFor(product);
+  const products = await accessProductsForDisplay();
+  const product: ProductLimits = products.standard ?? DEFAULT_PRODUCT;
+  const FAQ = faqFor(products);
   const total = classes.reduce((n, c) => n + c.count, 0) || RIDES.length;
   const operators = operatorCount(RIDES);
   const heroPhotos = await Promise.all(
@@ -351,6 +357,8 @@ export default async function HomePage() {
                 <li key={item} className="flex items-start gap-2.5 text-[15px]"><CheckIcon className="mt-1 h-4 w-4 shrink-0 text-ok" aria-hidden="true" />{item}</li>
               ))}
             </ul>
+            <p className="mt-5 text-[15px] font-semibold" data-testid="home-price">{bothTiersSentence(products)}</p>
+            <p className="mt-1 text-sm text-muted">Ferris Wheel Event Access applies to any Ferris wheel request (standard, giant or mini). Both are one-time fees for operator contact access, shown before you pay.</p>
             <dl className="mt-6 grid gap-4 border-t border-line pt-6 text-sm sm:grid-cols-2">
               <div><dt className="font-semibold">Rental prices</dt><dd className="mt-1 text-muted">Set by each operator per event. A ride shows a figure only when its operator has approved one.</dd></div>
               <div><dt className="font-semibold">Booking</dt><dd className="mt-1 text-muted">Only you and the operator can make one. Event Access gets you to the right conversation faster.</dd></div>

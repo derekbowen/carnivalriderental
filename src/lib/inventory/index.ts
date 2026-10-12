@@ -45,6 +45,8 @@ export interface RideType {
   id: string;
   name: string;
   searchPhrases: string[];
+  /** Category hub this type belongs to (contract manifest category id), when it has one. */
+  categoryId?: string;
 }
 
 export const RIDES = (ridesFile as { rides: InventoryRide[] }).rides;
@@ -73,6 +75,70 @@ export function similarRides(ride: InventoryRide, radius: number = PSEO_INVENTOR
   if (!ride.rideType) return [];
   const own = operatorKey(ride.id);
   return ridesNear(ride.lat, ride.lng, radius).filter((r) => r.rideType === ride.rideType && r.id !== ride.id && operatorKey(r.id) !== own);
+}
+
+/** Ride types that belong to a category hub, taxonomy order. */
+export const rideTypesInCategory = (categoryId: string): RideType[] => RIDE_TYPES.filter((t) => t.categoryId === categoryId);
+
+export interface TypeStats {
+  type: RideType;
+  /** Listings of this type in the snapshot. */
+  count: number;
+  /** Distinct operators behind them. */
+  operators: number;
+  /** A representative operator photo, when any listing of the type has one. */
+  photo: string | null;
+}
+const typeStatsCache = new Map<string, TypeStats>();
+/** Inventory counts for one ride type (whole snapshot, no location). */
+export function typeStats(t: RideType): TypeStats {
+  const hit = typeStatsCache.get(t.id);
+  if (hit) return hit;
+  const rides = RIDES.filter((r) => r.rideType === t.id);
+  const out = { type: t, count: rides.length, operators: operatorCount(rides), photo: rides.find((r) => r.photo)?.photo ?? null };
+  typeStatsCache.set(t.id, out);
+  return out;
+}
+
+/** Type stats for the rides an area can draw on: based in the state or listing it as a service state. */
+export function typeStatsForState(stateCode: string): TypeStats[] {
+  const code = stateCode.toLowerCase();
+  const rides = RIDES.filter((r) => r.rideType && (r.homeState?.toLowerCase() === code || r.serviceStates.some((s) => s.toLowerCase() === code)));
+  const byType = new Map<string, InventoryRide[]>();
+  for (const r of rides) byType.set(r.rideType!, [...(byType.get(r.rideType!) ?? []), r]);
+  return RIDE_TYPES.filter((t) => byType.has(t.id))
+    .map((t) => ({ type: t, count: byType.get(t.id)!.length, operators: operatorCount(byType.get(t.id)!), photo: byType.get(t.id)!.find((r) => r.photo)?.photo ?? null }))
+    .sort((a, b) => b.count - a.count || a.type.id.localeCompare(b.type.id));
+}
+
+/**
+ * Inventory rides for a category hub (no location): the category's ride types, photographed
+ * listings first, at most one per operator so several companies are represented. Deterministic.
+ */
+export function ridesForCategory(categoryId: string, limit = 12): InventoryRide[] {
+  const types = new Set(rideTypesInCategory(categoryId).map((t) => t.id));
+  const pool = RIDES.filter((r) => r.rideType && types.has(r.rideType)).sort((a, b) => Number(!!b.photo) - Number(!!a.photo) || a.id.localeCompare(b.id));
+  const seen = new Set<string>();
+  const out: InventoryRide[] = [];
+  for (const r of pool) {
+    const op = operatorKey(r.id);
+    if (seen.has(op)) continue;
+    seen.add(op);
+    out.push(r);
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+export const SNAPSHOT_PAGE_SIZE = 24;
+/** Ride search by canonical ride type, nearest to a point first, from the inventory snapshot (the live API has no ride-type field). */
+export function snapshotSearch(q: { origin: { lat: number; lng: number }; rideType: string; page?: number }): { cards: OperatorCard[]; totalItems: number; totalPages: number; page: number } {
+  const all = RIDES.filter((r) => r.rideType === q.rideType)
+    .map((r) => ({ ...r, miles: Math.round(milesBetween(q.origin, r)) }))
+    .sort((a, b) => a.miles - b.miles || a.id.localeCompare(b.id));
+  const totalPages = Math.max(1, Math.ceil(all.length / SNAPSHOT_PAGE_SIZE));
+  const page = Math.min(Math.max(1, q.page ?? 1), totalPages);
+  return { cards: all.slice((page - 1) * SNAPSHOT_PAGE_SIZE, page * SNAPSHOT_PAGE_SIZE).map(toCard), totalItems: all.length, totalPages, page };
 }
 
 export const PSEO_INVENTORY = {

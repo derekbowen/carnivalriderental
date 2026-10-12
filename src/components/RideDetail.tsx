@@ -1,5 +1,6 @@
 import { ArrowRightIcon, CircleDashedIcon, InfoIcon } from "lucide-react";
 import Link from "next/link";
+import type { AccessPriceCopy } from "@/lib/access/copy";
 import type { RideCategory, RideOffering, ServiceLocation, VerifiedCoverage } from "@/lib/content/types";
 import { categoryPageById } from "@/lib/content/category-pages";
 import { paths } from "@/lib/seo/routes";
@@ -20,6 +21,7 @@ export function RideDetail({
   otherLocations,
   links = { ride: paths.ride, rideCity: paths.rideCity },
   sampleLabel,
+  pricing,
 }: {
   ride: RideOffering;
   category: RideCategory | undefined;
@@ -29,6 +31,8 @@ export function RideDetail({
   links?: { ride: (slug: string) => string; rideCity: (slug: string, state: string, city: string) => string };
   /** Overrides the demo badge text, e.g. "Test sample". */
   sampleLabel?: string;
+  /** Event Access price copy for this ride's category (lib/access/copy); omitted on internal previews. */
+  pricing?: AccessPriceCopy;
 }) {
   const where = location ? ` in ${location.cityName}, ${location.stateCode}` : "";
   const requestHref = paths.connect({ state: location?.stateSlug, city: location?.citySlug, category: ride.categorySlug });
@@ -155,14 +159,14 @@ export function RideDetail({
               <p>Operators price per event: ride, transport distance, dates, operating hours and site conditions all matter. Ask each one directly.</p>
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
-              <li className="flex justify-between gap-3"><span>Event Access</span><span className="text-right font-medium text-ink">Direct contact details for matching operators</span></li>
+              <li className="flex justify-between gap-3"><span>Event Access</span><span className="text-right font-medium text-ink" data-testid="access-price">{pricing?.ctaLine ?? "Direct contact details for matching operators"}</span></li>
               <li className="flex justify-between gap-3"><span>The rental</span><span className="text-right font-medium text-ink">Agreed and paid directly with the operator</span></li>
             </ul>
           </div>
         </aside>
       </div>
 
-      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body={CTA_BODY} /></div>
+      <div className="mt-16"><RequestCta href={requestHref} title={`Planning an event${where}?`} body={CTA_BODY} price={pricing?.ctaLine} /></div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 py-3 lg:hidden">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">

@@ -16,7 +16,7 @@ The funnel is **Find → Evaluate → Connect**:
 2. They evaluate rides for free: title, type, class, photo, verified facts, approximate location, home state, service states, distance, event fit, related rides.
 3. They start Event Access with their event (date, city, state, ride type). Before any payment the server counts the unique, contactable, relevant operators and says so honestly.
 4. They pay Carnival Ride Rental through our own standard Stripe account (Checkout; no Stripe Connect; no operator payout).
-5. A server-verified payment creates a durable **access pass** (initially: up to 5 unique operators, 30 days, $99; all configurable in `access_products`).
+5. A server-verified payment creates a durable **access pass** (two products, founder decision 2026-10-12: **Event Access $99** and **Ferris Wheel Event Access $199** for requests whose resolved ride type is any Ferris wheel variant; each covers one event, up to 5 distinct operators, 30 days; all figures live in `access_products`, the tier is resolved server-side by `src/lib/access/pricing.ts` from the same validated ride requirement that drives matching).
 6. On the pass page they unlock operators one at a time. The server retrieves the operator's contact details from Sharetribe (Integration API) and records exactly what was revealed.
 7. The customer and operator deal directly. We are not a party to the rental.
 

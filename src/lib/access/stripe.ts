@@ -38,6 +38,13 @@ export interface StripeGateway {
     cancelUrl: string;
   }): Promise<{ id: string; url: string }>;
   retrieveCheckoutSession(id: string): Promise<CheckoutSession | null>;
+  /**
+   * Expires an open session so a stale quote can't be paid. Returns "complete" when the customer
+   * already paid it (the caller must then honour that purchase), "expired" when it is now closed,
+   * "unknown" when Stripe couldn't tell us (treated as expired by the ledger; the return path and
+   * webhook still activate on verified payment).
+   */
+  expireCheckoutSession(id: string): Promise<"expired" | "complete" | "unknown">;
   /** Verifies the signature and parses the event. Throws on a bad signature. */
   parseWebhook(rawBody: string, signatureHeader: string | null): StripeEvent;
 }
@@ -142,6 +149,19 @@ export function realStripe(secretKey: string, webhookSecret: string | null): Str
         return null;
       }
     },
+    async expireCheckoutSession(id) {
+      try {
+        const s = toSession(await call("POST", `/checkout/sessions/${encodeURIComponent(id)}/expire`, {}));
+        return s.status === "complete" ? "complete" : "expired";
+      } catch (e) {
+        // Stripe refuses to expire a session that is already complete or expired: read which.
+        const s = await this.retrieveCheckoutSession(id);
+        if (s?.status === "complete" || s?.paymentStatus === "paid") return "complete";
+        if (s?.status === "expired") return "expired";
+        console.warn("[access] could not expire checkout session:", (e as Error).message);
+        return "unknown";
+      }
+    },
     parseWebhook(rawBody, signatureHeader) {
       if (!webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
       if (!verifyStripeSignature(rawBody, signatureHeader, webhookSecret)) throw new Error("invalid Stripe signature");
@@ -154,23 +174,32 @@ export function realStripe(secretKey: string, webhookSecret: string | null): Str
 
 // ------------------------------------------------------------------------------ fake
 /** Deterministic in-process Stripe for local development, unit tests and e2e. */
-export function fakeStripe(_siteUrl = ""): StripeGateway & { complete(id: string, outcome?: "paid" | "expired"): CheckoutSession | null; sessions: Map<string, CheckoutSession & { successUrl: string; cancelUrl: string }> } {
-  const sessions = new Map<string, CheckoutSession & { successUrl: string; cancelUrl: string }>();
+export type FakeSession = CheckoutSession & { successUrl: string; cancelUrl: string; productName: string; productDescription: string };
+export function fakeStripe(_siteUrl = ""): StripeGateway & { complete(id: string, outcome?: "paid" | "expired"): CheckoutSession | null; sessions: Map<string, FakeSession> } {
+  const sessions = new Map<string, FakeSession>();
   return {
     mode: "fake",
     sessions,
     async createCheckoutSession(p) {
       const id = `cs_test_fake_${crypto.randomBytes(8).toString("hex")}`;
       const url = `/api/access/dev-checkout?cs=${id}`; // relative: the stand-in page lives on this app
-      sessions.set(id, { id, url, paymentStatus: "unpaid", status: "open", paymentIntentId: null, purchaseId: p.purchaseId, amountTotal: p.amountCents, currency: p.currency, successUrl: p.successUrl, cancelUrl: p.cancelUrl });
+      sessions.set(id, { id, url, paymentStatus: "unpaid", status: "open", paymentIntentId: null, purchaseId: p.purchaseId, amountTotal: p.amountCents, currency: p.currency, successUrl: p.successUrl, cancelUrl: p.cancelUrl, productName: p.productName, productDescription: p.productDescription });
       return { id, url };
     },
     async retrieveCheckoutSession(id) {
       return sessions.get(id) ?? null;
     },
+    async expireCheckoutSession(id) {
+      const s = sessions.get(id);
+      if (!s) return "unknown";
+      if (s.status === "complete" || s.paymentStatus === "paid") return "complete";
+      Object.assign(s, { status: "expired" });
+      return "expired";
+    },
     complete(id, outcome = "paid") {
       const s = sessions.get(id);
       if (!s) return null;
+      if (s.status === "expired") return s; // Stripe refuses payment on an expired session
       if (outcome === "paid") Object.assign(s, { paymentStatus: "paid", status: "complete", paymentIntentId: `pi_fake_${id.slice(-8)}` });
       else Object.assign(s, { status: "expired" });
       return s;

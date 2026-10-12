@@ -22,7 +22,9 @@ export async function GET(req: Request) {
   if (outcome === "cancel") return redirect(s.cancelUrl);
   const html = `<!doctype html><html><head><meta name="robots" content="noindex"><title>Test checkout</title></head><body style="font-family:system-ui;max-width:480px;margin:40px auto;padding:0 16px">
     <h1>Test checkout (no real payment)</h1>
-    <p>This stands in for Stripe Checkout in development. Amount: ${esc(String(((s.amountTotal ?? 0) / 100).toFixed(2)))} ${esc((s.currency ?? "usd").toUpperCase())}</p>
+    <p>This stands in for Stripe Checkout in development.</p>
+    <p id="line-item"><strong>${esc(s.productName)}</strong><br><span id="line-description">${esc(s.productDescription)}</span></p>
+    <p>Amount: <span id="amount">${esc(String(((s.amountTotal ?? 0) / 100).toFixed(2)))} ${esc((s.currency ?? "usd").toUpperCase())}</span></p>
     <p><a id="pay" href="/api/access/dev-checkout?cs=${esc(cs)}&amp;outcome=paid" style="display:inline-block;background:#f5b400;padding:12px 18px;border-radius:8px;color:#0b1b3f;font-weight:700;text-decoration:none">Pay now (test)</a></p>
     <p><a id="cancel" href="/api/access/dev-checkout?cs=${esc(cs)}&amp;outcome=cancel">Cancel</a> · <a id="expire" href="/api/access/dev-checkout?cs=${esc(cs)}&amp;outcome=expired">Simulate expired session</a></p>
   </body></html>`;

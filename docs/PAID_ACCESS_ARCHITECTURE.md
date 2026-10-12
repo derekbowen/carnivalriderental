@@ -6,7 +6,7 @@ Companion to `PAID-CONTACT-MODEL-AUDIT.md` (the feasibility audit) and `PAID_ACC
 
 **Sharetribe is the authoritative catalog and operator database.** Operators, company ownership, ride listings, photos, ride attributes, service geography, listing approval, operator self-management and private operator contact details stay in Sharetribe. Nothing copies the catalog anywhere else. The public pSEO layer keeps reading its build-time snapshot (`src/lib/inventory/rides.json`), which carries no operator identity, exactly as before.
 
-**The only durable state added by the pivot is the access ledger:** the product configuration, the customer's event request, the Stripe purchase, the entitlement (pass), which operators were revealed, refund/revocation state, webhook idempotency and the audit trail. That state references Sharetribe IDs (listing IDs, operator user IDs); it never duplicates listing content.
+**The only durable state added by the pivot is the access ledger:** the product configuration (two tiers since 2026-10-12: `event-access` and `ferris-wheel-access`; the tier of a request is resolved in code from its validated ride requirement, `src/lib/access/pricing.ts`, and persisted with the request), the customer's event request, the Stripe purchase, the entitlement (pass), which operators were revealed, refund/revocation state, webhook idempotency and the audit trail. That state references Sharetribe IDs (listing IDs, operator user IDs); it never duplicates listing content.
 
 ## Current-state verification (live Test marketplace, 2026-10-06)
 

@@ -1,5 +1,18 @@
 # Email (Emailit; Resend fallback) — transactional and outreach
 
+Production status (2026-10-12): **no provider key is set on Vercel production**, so Event Access pass and
+recovery emails are skipped and logged there (`[access] email send failed` / "email provider not
+configured"); the pass still opens through the Checkout return URL and the signed cookie, and "Lost my
+link" cannot send until a key exists. Verified this session with the repo's `RESEND_API_KEY`: the Resend
+account that holds `carnivalriderental.us` reports the domain **verified** for sending, and the receiving
+API returns mail delivered to `support@`/`qa@` test addresses, so the test inbox works. Owner action to
+finish delivery: add `RESEND_API_KEY` (the value in `.env.local`) to Vercel production as a sensitive
+variable (the session sandbox refuses to copy secrets out of `.env.local`), leave `EMAIL_MODE` unset
+(= `test`, everything to `qa@carnivalriderental.us`), redeploy, make one test-mode purchase and open the
+emailed `/pass/open?t=…` link in a private window. The fresh-browser open path is covered offline by
+`e2e/pricing.spec.ts`. Emailit stays the founder's chosen provider once its domain review completes
+(`EMAILIT_API_KEY` wins when set; `EMAIL_PROVIDER=resend` forces Resend).
+
 Provider (2026-10-05): **Emailit** for transactional and marketing mail. The key is `EMAILIT_API_KEY` in `.env.local`. The Emailit account is shared with another business: only ever send from carnivalriderental.us addresses, and never read or touch the other domains' mail or settings. Domain status in Emailit on 2026-10-05: SPF, DKIM, return-path and DMARC all OK, verification **pending Emailit's manual review**; nothing sends until Emailit approves it. Resend still receives inbound mail (root MX), so keep the Resend domain until inbound moves.
 
 Status (2026-10-04): built and proven in **test mode**. A demo request's "request received" email was sent through Resend from `notifications@carnivalriderental.us`, delivered, and received back at `qa@carnivalriderental.us` with the subject `[TEST → pipeline-test@example.com] We received your request BAC-SCW6CH`. No email has gone to a customer or operator.

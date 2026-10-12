@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid } from "@/components/pseo";
 import { CTA_BODY, RequestCta } from "@/components/RequestCta";
+import { accessFaq, accessPriceCopy } from "@/lib/access/copy";
+import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { RideResult } from "@/components/search/RideResult";
 import { cityStats, linkedNearbyCities, linkedRideCities, operatorCount, PSEO_INVENTORY, ridesNear, toCard, type City, type RideType } from "@/lib/inventory";
 import { countNoun, rideTypeCopy, titleCase } from "@/lib/inventory/ride-type-copy";
@@ -55,8 +57,9 @@ export function cityCopy(c: PlaceCity) {
   };
 }
 
-export function InventoryCityPage({ c }: { c: PlaceCity }) {
+export async function InventoryCityPage({ c }: { c: PlaceCity }) {
   const s = cityStats(c);
+  const pricing = accessPriceCopy(await accessProductsForDisplay());
   const near = ridesNear(c.lat, c.lng);
   const path = paths.city(c.stateSlug, c.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path }];
@@ -69,6 +72,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
     { q: `How many rides can I browse near ${c.name}?`, a: `${fmt(s.total)} ride listings from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. A listing is not a confirmation that a ride is free on your date; availability and delivery are confirmed with the operator directly.` },
     PRICE_FAQ,
     REQUEST_FAQ,
+    accessFaq(pricing),
   ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -118,7 +122,7 @@ export function InventoryCityPage({ c }: { c: PlaceCity }) {
       )}
 
       <div className="mt-12">
-        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
+        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} price={pricing.ctaLine} />
       </div>
 
       {s.total > 0 && <FaqSection faq={faq} />}
@@ -140,8 +144,9 @@ export function rideCityCopy(c: PlaceCity, t: RideType) {
   };
 }
 
-export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
+export async function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
   const copy = rideTypeCopy(t.id, t.name);
+  const pricing = accessPriceCopy(await accessProductsForDisplay(), t.id);
   const matches = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id);
   const path = paths.rideCity(t.id, c.stateSlug, c.slug);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: c.stateName, path: paths.state(c.stateSlug) }, { name: c.name, path: paths.city(c.stateSlug, c.slug) }, { name: `${copy.label} rentals`, path }];
@@ -156,6 +161,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
     { q: `How many ${copy.many} can I browse near ${c.name}?`, a: `${countNoun(matches.length, copy)} from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. Availability on your date and delivery are confirmed with the operator directly.` },
     PRICE_FAQ,
     REQUEST_FAQ,
+    accessFaq(pricing),
   ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -178,7 +184,7 @@ export function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideType }) {
       </ul>
 
       <div className="mt-12">
-        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug, rideType: t.id })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} />
+        <RequestCta href={paths.connect({ state: c.stateSlug, city: c.slug, rideType: t.id })} title={`Planning an event in ${c.name}?`} body={CTA_BODY} price={pricing.ctaLine} />
       </div>
 
       <FaqSection faq={faq} />
