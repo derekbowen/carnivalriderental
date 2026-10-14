@@ -182,6 +182,12 @@ test("zero exact matches: closest alternatives first, labelled as alternatives, 
   await expect(page.getByTestId("offer-price")).toHaveText("$99");
   expect(await (await request.get(page.url())).text()).not.toMatch(FIXTURE_CONTACT);
 
+  // "Email me these results" is wired; e2e has no email provider, so it says it couldn't send (never claims it did).
+  await expect(page.getByTestId("save-search-button")).toHaveText(/^Email me these \d+ Riverside options$/);
+  await page.getByTestId("save-search-button").click();
+  await expect(page).toHaveURL(/\?saved=0$/);
+  await expect(page.getByText("We couldn’t email your results just now.")).toBeVisible();
+
   // Back on the original request, the manual search is one click and is acknowledged.
   await page.goto(original);
   await page.getByTestId("manual-search").click();
