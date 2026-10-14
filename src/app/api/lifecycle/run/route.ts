@@ -8,13 +8,13 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 /**
- * Scheduled lifecycle pass (Supabase pg_cron calls it every 10 minutes; docs/EMAIL.md). It only sends
- * what the rules make due, once per logical email, and a run lock skips calls less than 4 minutes
- * apart, so an extra call can't send anything earlier or twice. LIFECYCLE_RUN_TOKEN, when set, is
- * required as a bearer token.
+ * Scheduled lifecycle pass: Vercel Cron calls it every 10 minutes (vercel.json; docs/EMAIL.md). It
+ * only sends what the rules make due, once per logical email, and a run lock skips calls less than
+ * 4 minutes apart, so an extra call can't send anything earlier or twice. LIFECYCLE_RUN_TOKEN or CRON_SECRET, when set, is required as
+ * a bearer token (Vercel Cron sends CRON_SECRET automatically).
  */
 async function handle(req: Request) {
-  const token = process.env.LIFECYCLE_RUN_TOKEN;
+  const token = process.env.LIFECYCLE_RUN_TOKEN || process.env.CRON_SECRET;
   if (token && req.headers.get("authorization") !== `Bearer ${token}`) return Response.json({ error: "unauthorized" }, { status: 401 });
   if (!accessAvailability().enabled) return Response.json({ ran: false, reason: "access unavailable" }, { status: 503 });
   try {
