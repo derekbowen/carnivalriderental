@@ -150,6 +150,7 @@ Still owner-only (nothing in this session could complete them):
 - Contact coverage: of 319 companies, 87 have an email on file and 265 a phone; operators with no channel are never offered. Expect some reports of stale contacts; the pass has a "didn't work" button and the team can restore credits (`restoreUnlockCredit`).
 - The 3,716 listing descriptions still carry the old unclaimed notice text on the hosted marketplace (it mentions the request desk). Our pages never show descriptions. A bulk rewrite is optional (`listings:enable-inquiry` can be adapted).
 - Rate limiting is per server instance (in-memory), adequate for launch, not for abuse at scale.
+- Vercel BotID guards the three public form endpoints (`/api/access/start`, `/api/access/checkout`, `/api/pass/recover`; `src/lib/access/bot.ts`). The forms submit with fetch (`ProtectedForm`) so BotID can attach its headers; the Stripe webhook and the Checkout return URL are not guarded. The check runs only on Vercel and fails open (logged as `[access] BotID check failed`). If real visitors report "Something went wrong" on these forms, revert the BotID commit and redeploy.
 - The legacy managed-request flow (`/internal`, `/api/requests`, SQLite) remains as internal tooling only; it has no public entry and will be archived in a later cleanup.
 
 ## 6. Live environment (not started)

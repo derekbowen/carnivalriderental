@@ -143,3 +143,11 @@ export function clientIp(req: Request): string | null {
 }
 
 export const redirect = (location: string, headers: Record<string, string> = {}) => new Response(null, { status: 303, headers: { Location: location, "Cache-Control": "private, no-store", ...headers } });
+
+/** The form posts (ProtectedForm) ask for JSON: they get `{ location }` and navigate themselves. */
+export const wantsJson = (req: Request) => (req.headers.get("accept") ?? "").includes("application/json");
+/** 303 redirect for native form posts, `{ location }` for fetch submissions. */
+export const respond = (req: Request, location: string, headers: Record<string, string> = {}) =>
+  wantsJson(req) ? Response.json({ location }, { headers: { "Cache-Control": "private, no-store", ...headers } }) : redirect(location, headers);
+/** A refused request (bot, rate limit): JSON for fetch submissions, plain text otherwise. */
+export const refuse = (req: Request, status: number, message: string) => (wantsJson(req) ? Response.json({ error: message }, { status }) : new Response(message, { status }));

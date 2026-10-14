@@ -3,6 +3,7 @@ import { RIDE_TYPES } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { US_STATES } from "@/lib/taxonomy";
 import { PriceHint } from "./PriceHint";
+import { ProtectedForm } from "@/components/access/ProtectedForm";
 
 /** Short, honest event-type list for the request context (free text is not needed before payment). */
 export const EVENT_TYPES: { id: string; label: string }[] = [
@@ -33,11 +34,11 @@ export interface ConnectPricing {
   ferrisTypes: string[];
 }
 
-/** Plain HTML form (no JS required) → POST /api/access/start. Fewer than ten fields before payment. */
+/** Event form → POST /api/access/start (fetch via ProtectedForm for BotID; still posts natively without JS). Fewer than ten fields before payment. */
 export function ConnectForm({ prefill, today, error, pricing }: { prefill: ConnectPrefill; today: string; error?: string | null; pricing?: ConnectPricing | null }) {
   const lockedType = prefill.listingId || prefill.rideType;
   return (
-    <form method="post" action="/api/access/start" className="space-y-5" data-testid="connect-form">
+    <ProtectedForm action="/api/access/start" className="space-y-5" testId="connect-form">
       {error && (
         <p role="alert" className="rounded-lg border border-pop/40 bg-pop/10 px-4 py-3 text-sm">
           {error === "invalid" ? "Please check the highlighted fields." : error === "geocode" ? "We couldn't place that city. Check the spelling and state." : error === "expired" ? "That checkout session expired. Start again below." : "Event Access isn't available right now. Nothing was charged."}
@@ -85,6 +86,6 @@ export function ConnectForm({ prefill, today, error, pricing }: { prefill: Conne
       </div>
       <button type="submit" className="btn-primary w-full sm:w-auto">See matching operators</button>
       <p className="text-xs text-muted">No payment on this step. Next you'll see how many contactable operators match before deciding.</p>
-    </form>
+    </ProtectedForm>
   );
 }

@@ -101,6 +101,7 @@ Coverage added: pricing from configuration; minimum-match refusal; input validat
 - Stripe webhook delivery to a preview or local environment is impossible without a tunnel; the return-URL verification covers the customer path, the webhook covers refunds/disputes. A daily reconciliation job is not built yet (Stripe retries webhooks for 3 days).
 - Contact data quality (see `LAUNCH_STATUS.md` §5) is the main chargeback exposure. The access policy's refund rules and the unlock audit are the mitigations.
 - In-memory rate limits reset per instance.
+- Bot protection is Vercel BotID on the form endpoints (`src/lib/access/bot.ts`, `src/instrumentation-client.ts`); it fails open on errors, so a BotID outage leaves only the rate limits.
 - The claim script now keeps profiles anonymous, but an operator editing their own profile in the hosted app could publish their name; the private-marketplace Console setting is the backstop.
 
 ## 11. Rollback

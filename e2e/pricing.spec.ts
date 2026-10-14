@@ -231,6 +231,7 @@ test("the emailed pass link opens the pass in a fresh browser; re-opening an unl
 test("requote: a Ferris request stored at the old standard product shows and charges $199, and the stale $99 quote is expired", async ({ page }) => {
   const id = await submit(page, "/connect?type=ferris-wheel");
   await page.getByTestId("pay-button").click(); // a $199 pending checkout exists; now simulate the pre-change state
+  await expect(page).toHaveURL(/\/api\/access\/dev-checkout\?cs=/);
   const cs = new URL(page.url()).searchParams.get("cs")!;
   const db = new DatabaseSync(LEDGER);
   db.prepare(`UPDATE access_event_requests SET product_id = 'prod_event_access_v1' WHERE id = ?`).run(id);

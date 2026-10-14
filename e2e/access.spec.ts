@@ -105,6 +105,7 @@ test("pay → pass → unlock → contact; re-open is free; limit enforced; enti
 test("refund revokes the pass and blocks new unlocks (webhook by purchase lookup)", async ({ page, request }) => {
   await startRequest(page, "/ohio/columbus");
   await page.getByTestId("pay-button").click();
+  await expect(page).toHaveURL(/\/api\/access\/dev-checkout\?cs=/);
   const cs = new URL(page.url()).searchParams.get("cs")!;
   await page.locator("#pay").click();
   await expect(page).toHaveURL(/\/pass\//);

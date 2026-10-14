@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BRAND } from "@/lib/config";
+import { ProtectedForm } from "@/components/access/ProtectedForm";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: `Find your pass | ${BRAND.name}`, robots: { index: false, follow: false } };
@@ -15,10 +16,10 @@ export default async function RecoverPage({ searchParams }: { searchParams: Prom
       ) : (
         <p className="mt-3 text-ink-soft">Enter the email you used at checkout and we&rsquo;ll send a link that opens your pass on this device.</p>
       )}
-      <form method="post" action="/api/pass/recover" className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <ProtectedForm action="/api/pass/recover" className="mt-6 flex flex-col gap-3 sm:flex-row">
         <input className="input flex-1" type="email" name="email" required placeholder="you@example.com" aria-label="Email" />
         <button className="btn-primary" type="submit">Email me the link</button>
-      </form>
+      </ProtectedForm>
     </div>
   );
 }
