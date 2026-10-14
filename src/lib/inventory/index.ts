@@ -415,7 +415,8 @@ export function inventoryRoutes(): { path: string; family: string; gate: GateRes
 export function inventoryMetadata(opts: { path: string; title: string; description: string; gate: GateResult }) {
   const thin = opts.gate.reasons.some((r) => r.startsWith("only "));
   return {
-    title: `${opts.title} | Carnival Ride Rental`,
+    // The brand suffix only when the whole title still fits the ~60 characters search results show.
+    title: `${opts.title} | Carnival Ride Rental`.length <= 60 ? `${opts.title} | Carnival Ride Rental` : opts.title,
     description: opts.description,
     ...(thin ? {} : { alternates: { canonical: canonicalUrl(opts.path) } }),
     robots: opts.gate.indexable ? { index: true, follow: true } : { index: false, follow: !thin },

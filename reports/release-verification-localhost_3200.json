@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-14T12:07:53.651Z",
+  "checkedAt": "2026-10-14T12:28:07.869Z",
   "base": "http://localhost:3200",
-  "passed": 1036,
+  "passed": 1038,
   "failed": 0,
   "results": [
     {
@@ -4061,6 +4061,11 @@
       "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
     },
     {
+      "check": "/rides?category=ferris-wheels: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
       "check": "/california/san-francisco: excluded (noindex or 404) and not in the sitemap",
       "ok": true,
       "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
@@ -4162,6 +4167,11 @@
     {
       "check": "/connect?listing={old Test Ferris id} → its Live listing, Ferris Wheel Event Access tier",
       "ok": true
+    },
+    {
+      "check": "/guides (no index page): 404, one 'Page not found' title, noindex",
+      "ok": true,
+      "detail": "status 404, titles [\"Page not found | Carnival Ride Rental\"]"
     },
     {
       "check": "/s/{unknown id} → 404 (never redirected elsewhere)",

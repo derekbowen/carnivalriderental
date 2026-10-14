@@ -95,7 +95,7 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
     expansion.nextCityCandidates[0]?.path,
     expansion.nextRideCityCandidates[0]?.path,
   ].filter((p): p is string => !!p);
-  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", ...geoExcluded, "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
+  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", "/rides?category=ferris-wheels", ...geoExcluded, "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
   for (const path of excluded) {
     const r = await get(path);
     const robotsMeta = metaRobots(r.text) ?? "";
@@ -120,6 +120,10 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
     const c = await get(`/connect?listing=${ferrisOld[0]}`);
     check("/connect?listing={old Test Ferris id} → its Live listing, Ferris Wheel Event Access tier", c.text.includes('<p class="eyebrow">Ferris Wheel Event Access</p>') && c.text.includes('data-testid="connect-context"'));
   }
+  // A missing URL is a real 404 with its own title (never a soft 404 that reads like the homepage).
+  const missing = await get("/guides");
+  const titles = [...missing.text.matchAll(/<title>([^<]*)<\/title>/g)].map((m) => m[1]);
+  check("/guides (no index page): 404, one 'Page not found' title, noindex", missing.status === 404 && titles.length === 1 && /Page not found/.test(titles[0]) && /noindex/.test(metaRobots(missing.text) ?? ""), `status ${missing.status}, titles ${JSON.stringify(titles)}`);
   const unknown = await get("/s/00000000-0000-4000-8000-000000000000", "manual");
   check("/s/{unknown id} → 404 (never redirected elsewhere)", unknown.status === 404, `status ${unknown.status}`);
 

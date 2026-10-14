@@ -16,14 +16,16 @@ const DESCRIPTION = "Browse carnival ride types backed by real operator inventor
 const CATEGORY_ORDER = ["ferris-wheels", "carousels", "swing-rides", "kiddie-rides", "family-rides", "thrill-rides"];
 const fmt = (n: number) => n.toLocaleString("en-US");
 
-// Filtered views (?category=) canonicalise to /rides and are never indexed separately.
-export function generateMetadata() {
-  return seoMetadata({
+// Filtered views (?category= or any other query) canonicalise to /rides and are never indexed
+// separately: noindex, follow, so crawlers still reach the ride types they link to.
+export async function generateMetadata({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const meta = seoMetadata({
     path: paths.rides(),
     title: "Carnival ride rentals",
     description: DESCRIPTION,
     gate: coreHubGate(paths.rides()),
   });
+  return Object.keys(await searchParams).length ? { ...meta, robots: { index: false, follow: true } } : meta;
 }
 
 /**
