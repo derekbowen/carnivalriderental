@@ -113,15 +113,18 @@ export function CategoryHub({
     .slice(0, 12);
   // Ride type + city pages of this hub's ride type in the approved indexing cohort, first, so the hub
   // passes authority to its own city pages (e.g. Ferris wheel rentals near Columbus) before the
-  // general city list. Only pages that meet their supply threshold on the current snapshot.
+  // general city list. Only pages that meet their supply threshold on the current snapshot; wave 1
+  // first, then the strongest of wave 2, capped so the hub stays readable (the sitemap lists them all).
   const hubType = CATEGORY_CONTEXT[page.id]?.rideType;
   const cohortRideCities = hubType
-    ? PSEO_PILOT.paths.flatMap((p) => {
-        const [, st, slug, type] = p.split("/");
-        const c = type === hubType ? cityBySlugs(st, slug) : null;
-        if (!c || ridesNear(c.lat, c.lng).filter((r) => r.rideType === hubType).length < PSEO_INVENTORY.rideCityMinRides) return [];
-        return [{ href: paths.rideCity(hubType, c.stateSlug, c.slug), label: `${rideTypeCopy(hubType, page.singular).label} rentals near ${c.name}, ${c.stateAbbr}` }];
-      })
+    ? PSEO_PILOT.paths
+        .flatMap((p) => {
+          const [, st, slug, type] = p.split("/");
+          const c = type === hubType ? cityBySlugs(st, slug) : null;
+          if (!c || ridesNear(c.lat, c.lng).filter((r) => r.rideType === hubType).length < PSEO_INVENTORY.rideCityMinRides) return [];
+          return [{ href: paths.rideCity(hubType, c.stateSlug, c.slug), label: `${rideTypeCopy(hubType, page.singular).label} rentals near ${c.name}, ${c.stateAbbr}` }];
+        })
+        .slice(0, 24)
     : [];
   const cities = FOOTER_CITIES.slice(0, 8);
   const related = page.related.map((id) => categoryPageById(id)).filter((p): p is CategoryPage => !!p);

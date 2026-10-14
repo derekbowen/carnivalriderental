@@ -6,11 +6,12 @@
  *
  * Checks, and writes reports/release-verification-<host>.json:
  * - robots.txt: no blanket Disallow, private paths disallowed, the real sitemap advertised;
- * - sitemap.xml lists exactly the eligible cohort (reports/indexing-cohort.json), as canonical
- *   production URLs, no query strings, no lastmod stamped from the build;
- * - every sitemap URL: 200, indexable in HTML and headers, self-canonical, no private contact data,
- *   no Offer/price in JSON-LD;
- * - samples of every excluded family answer noindex (or 404 / auth) and are not in the sitemap;
+ * - sitemap.xml lists exactly the eligible indexed set (reports/indexing-cohort.json: wave 1 + wave 2),
+ *   as canonical production URLs, no query strings, no lastmod stamped from the build;
+ * - every sitemap URL (fetched 8 at a time): 200, indexable in HTML and headers, self-canonical, no
+ *   private contact data, no Offer/price in JSON-LD;
+ * - samples of every excluded family answer noindex (or 404 / auth) and are not in the sitemap,
+ *   including near-duplicate non-heads and gated pages not yet authorized (from the committed reports);
  * - old Test listing URLs answer 308 to the same listing in Live;
  * - Event Access with test-mode keys on production says "opening soon" and offers no checkout.
  */
@@ -21,6 +22,8 @@ const CANONICAL = "https://carnivalriderental.us";
 const cohort = JSON.parse(fs.readFileSync("reports/indexing-cohort.json", "utf8")) as { cohort: { path: string; eligible: boolean }[] };
 const rides = JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: { id: string }[] };
 const testToLive = JSON.parse(fs.readFileSync("src/lib/inventory/test-to-live.json", "utf8")) as { map: Record<string, string> };
+const dupes = JSON.parse(fs.readFileSync("reports/pseo-duplicates.json", "utf8")) as { groupHeadOf: Record<string, string> };
+const expansion = JSON.parse(fs.readFileSync("reports/indexing-expansion.json", "utf8")) as { nextCityCandidates: { path: string }[]; nextRideCityCandidates: { path: string }[] };
 
 const results: { check: string; ok: boolean; detail?: string }[] = [];
 const check = (name: string, ok: boolean, detail?: string) => {
@@ -31,6 +34,18 @@ const local = (u: string) => u.replace(CANONICAL, base);
 async function get(path: string, redirect: RequestRedirect = "follow") {
   const res = await fetch(`${base}${path}`, { redirect, headers: { "User-Agent": "CarnivalRideRental-ReleaseCheck/1.0", Accept: "text/html,application/xml" }, signal: AbortSignal.timeout(60000) });
   return { status: res.status, headers: res.headers, text: redirect === "manual" ? "" : await res.text() };
+}
+/** Map with bounded concurrency, results in input order. */
+async function pool<T, R>(items: T[], n: number, fn: (x: T) => Promise<R>): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(n, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      out[i] = await fn(items[i]);
+    }
+  }));
+  return out;
 }
 const metaRobots = (html: string) => /<meta name="robots" content="([^"]*)"/i.exec(html)?.[1] ?? null;
 const canonicalOf = (html: string) => /<link rel="canonical" href="([^"]*)"/i.exec(html)?.[1] ?? null;
@@ -55,8 +70,8 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
   check("sitemap URLs are canonical HTTPS production URLs without query strings", locs.every((u) => u.startsWith(`${CANONICAL}`) && !u.includes("?")));
   check("sitemap carries no build-time lastmod", !sm.text.includes("<lastmod>"));
 
-  // every cohort URL
-  for (const u of locs) {
+  // every indexed URL, 8 at a time (results reported in sitemap order)
+  const pageChecks = await pool(locs, 8, async (u) => {
     const path = u.replace(CANONICAL, "") || "/";
     const r = await get(path);
     const robotsMeta = metaRobots(r.text) ?? "";
@@ -64,12 +79,23 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
     const canon = canonicalOf(r.text);
     const leaks = PRIVATE.filter((re) => re.test(r.text.replace(/"(photo|thumb|src|url)":"[^"]*"/g, "").replace(/src="[^"]*"/g, "")));
     const ld = [...r.text.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join("\n");
-    check(`${path}: 200, index, self-canonical, no private data, no Offer`, r.status === 200 && /(^|,\s*)index/.test(robotsMeta) && !/noindex/.test(robotsMeta) && !/noindex/.test(header) && norm(canon ?? "") === norm(u) && leaks.length === 0 && !/"Offer"|"price"/.test(ld), `status ${r.status}, robots "${robotsMeta}", x-robots-tag "${header}", canonical ${canon}, leaks ${leaks.length}`);
-  }
+    const ok = r.status === 200 && /(^|,\s*)index/.test(robotsMeta) && !/noindex/.test(robotsMeta) && !/noindex/.test(header) && norm(canon ?? "") === norm(u) && leaks.length === 0 && !/"Offer"|"price"/.test(ld);
+    return { path, ok, detail: `status ${r.status}, robots "${robotsMeta}", x-robots-tag "${header}", canonical ${canon}, leaks ${leaks.length}` };
+  });
+  for (const c of pageChecks) check(`${c.path}: 200, index, self-canonical, no private data, no Offer`, c.ok, c.ok ? undefined : c.detail);
 
   // excluded families: noindex and not listed
   const live = rides.rides[0]?.id;
-  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", "/texas/dallas", "/california/san-francisco", "/ohio/columbus/carousel", "/categories/carousels", "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
+  // Geo samples that must stay out: near-duplicate non-heads (never indexable) and the strongest gated
+  // pages not yet authorized (next in reports/indexing-expansion.json).
+  const nonHeads = Object.entries(dupes.groupHeadOf).filter(([p, h]) => p !== h);
+  const geoExcluded = [
+    nonHeads.find(([p]) => p.split("/").length === 3)?.[0],
+    nonHeads.find(([p]) => p.split("/").length === 4)?.[0],
+    expansion.nextCityCandidates[0]?.path,
+    expansion.nextRideCityCandidates[0]?.path,
+  ].filter((p): p is string => !!p);
+  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", ...geoExcluded, "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
   for (const path of excluded) {
     const r = await get(path);
     const robotsMeta = metaRobots(r.text) ?? "";

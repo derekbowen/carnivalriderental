@@ -4,14 +4,23 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 describe("indexing pilot allowlist", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); });
 
-  it("is enabled for the recorded first cohort, and every listed path is a real page that meets its supply gate", async () => {
-    const { PSEO_PILOT } = await import("@/lib/inventory/pilot");
+  it("is enabled for the recorded waves, and every listed path is a real page that meets its supply gate", async () => {
+    const { PSEO_PILOT, FIRST_COHORT_PATHS } = await import("@/lib/inventory/pilot");
     const { inventoryRoutes } = await import("@/lib/inventory");
+    const wave2 = JSON.parse(fs.readFileSync("src/lib/inventory/indexing-wave-2.json", "utf8"));
     expect(PSEO_PILOT.enabled).toBe(true);
     // The authorization and the content review are recorded separately (the founder did not review pages).
     expect(PSEO_PILOT.authorization).toMatch(/Founder instruction, 2026-10-14/);
+    expect(PSEO_PILOT.authorization).toMatch(/lets index 1000 pages/);
     expect(PSEO_PILOT.contentReview).toMatch(/NOT by the founder/);
-    expect([...PSEO_PILOT.corePaths]).toEqual(["/", "/rides", "/categories/ferris-wheels"]);
+    expect(wave2.authorization).toMatch(/Founder instruction, 2026-10-14/);
+    expect(wave2.contentReview).toMatch(/NOT reviewed page by page by the founder/);
+    // Wave 1 first and unchanged; wave 2 adds category hubs and city / ride + city pages up to the target.
+    expect([...PSEO_PILOT.corePaths]).toEqual(["/", "/rides", "/categories/ferris-wheels", ...wave2.categoryPaths]);
+    expect(PSEO_PILOT.paths.slice(0, FIRST_COHORT_PATHS.length)).toEqual([...FIRST_COHORT_PATHS]);
+    const all = [...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths];
+    expect(new Set(all).size).toBe(all.length);
+    expect(all.length).toBe(wave2.targetIndexableUrls);
     const routes = new Map(inventoryRoutes().map((r) => [r.path, r]));
     for (const p of PSEO_PILOT.paths) {
       expect(routes.has(p), p).toBe(true);
