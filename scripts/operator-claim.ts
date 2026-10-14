@@ -24,6 +24,7 @@
  * Test marketplace only unless --target live --founder-go. Never run for a company that asked to
  * be removed (imports/photos/takedowns.json).
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { AUTH, createClient, INTEG, MKT } from "./lib/sharetribe-client";

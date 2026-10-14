@@ -12,6 +12,7 @@
  * Resumable (ledger), idempotent (skips listings that already have the alias and notice), Test only
  * unless --target live is given with a founder go. Respects Test rate limits via the shared client.
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import fs from "node:fs";
 import path from "node:path";
 import { createClient, INTEG } from "./lib/sharetribe-client";

@@ -6,8 +6,10 @@
  * company, city, website or description text (founder decision 2026-10-05). Geolocation is the
  * listing's already-rounded (~11 km) operator base, used only for distance.
  *
- *   npm run inventory:export
+ *   npm run inventory:export                    # Test (default)
+ *   npm run inventory:export -- --target live   # Live (SHARETRIBE_LIVE_* credentials)
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import fs from "node:fs";
 import { rideFacts } from "../src/lib/catalog/operator-search";
 import { rideTypeFor } from "../src/lib/inventory/match";

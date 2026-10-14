@@ -8,6 +8,7 @@
  *                                                           # and add it to imports/photos/takedowns.json
  * Options: --company id1,id2  --only externalId1,…  --limit N
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import { spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";

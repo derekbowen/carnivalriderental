@@ -14,6 +14,7 @@
  * Claimed accounts are never touched. Resumable (ledgers), idempotent, Test only unless
  * --target live --founder-go.
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import fs from "node:fs";
 import { createClient, INTEG } from "./lib/sharetribe-client";
 import { anonymizeText, IDENTITY_PUBLIC_KEYS, INQUIRY_ALIAS, OPERATOR_PLACEHOLDER, withNotice, withoutNotice } from "../src/lib/operators/claim";

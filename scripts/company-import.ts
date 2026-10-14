@@ -22,6 +22,7 @@
  * State (committed, credential-free): imports/company-accounts/<marketplace>/mapping.json (externalId → user id)
  * and ledger.jsonl (one line per row per run). Reruns read both and look accounts up by email before creating.
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import fs from "node:fs";

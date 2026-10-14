@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
 /**
@@ -6,6 +7,8 @@ import { expect, test, type Page } from "@playwright/test";
  * entitlement boundary, refund revocation and the privacy of anonymous surfaces.
  */
 const FIXTURE_CONTACT = /Fixture Amusements|555 010 00|example\.test|Pat Fixture/;
+/** Any real listing from the inventory snapshot (ids change when the catalog is re-imported, e.g. Test → Live). */
+const A_LISTING = (JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: { id: string }[] }).rides[0].id;
 
 async function startRequest(page: Page, from: string) {
   await page.goto(from);
@@ -140,7 +143,7 @@ test("cancelled or expired checkout never creates a pass; weak inventory is not 
 });
 
 test("public surfaces never carry operator contact data or payment copy from the old model", async ({ request }) => {
-  for (const path of ["/", "/s", "/ohio/columbus", "/ohio/columbus/ferris-wheel", "/s/6ac25d13-69ba-4a14-9d1d-6c5ef96615c4", "/directory/ohio", "/rides", "/operators"]) {
+  for (const path of ["/", "/s", "/ohio/columbus", "/ohio/columbus/ferris-wheel", `/s/${A_LISTING}`, "/directory/ohio", "/rides", "/operators"]) {
     const res = await request.get(path);
     expect(res.status(), path).toBe(200);
     const html = await res.text();

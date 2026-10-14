@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import { expect, test, type Page } from "@playwright/test";
 import { hashToken, newToken } from "../src/lib/access/session";
@@ -9,8 +10,17 @@ import { hashToken, newToken } from "../src/lib/access/session";
  * emailed pass link opens the pass on a fresh device.
  */
 const LEDGER = "data/e2e.sqlite";
-const FERRIS_LISTING = "6ac25d1b-2f4f-4232-b23d-99a51fa286bc"; // "Ferris Wheel", operator based in OH (inventory snapshot)
-const GIANT_LISTING = "6ac255de-46d4-42ba-9d0c-d4541a6398d4"; // giant-ferris-wheel, operator based in IL
+// Listings come from the inventory snapshot, not hard-coded ids, so the suite survives a re-import
+// (Test → Live listing ids differ).
+type SnapRide = { id: string; rideType: string | null; homeState: string | null };
+const SNAPSHOT = (JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: SnapRide[] }).rides;
+const pick = (pred: (r: SnapRide) => boolean, what: string) => {
+  const r = SNAPSHOT.find(pred);
+  if (!r) throw new Error(`inventory snapshot has no ${what}`);
+  return r.id;
+};
+const FERRIS_LISTING = pick((r) => r.rideType === "ferris-wheel" && r.homeState === "oh", "Ferris wheel based in Ohio");
+const GIANT_LISTING = pick((r) => r.rideType === "giant-ferris-wheel", "giant Ferris wheel");
 const EVENT = { eventDate: "2030-06-15", city: "Columbus", state: "OH", email: "buyer@example.com" };
 const BOTH = "Event Access is $99. Ferris Wheel Event Access is $199.";
 const FERRIS = "Ferris Wheel Event Access — $199";
@@ -32,6 +42,12 @@ async function expectOffer(page: Page, product: string, price: string) {
   await expect(page.getByTestId("offer-product")).toHaveText(product);
   await expect(page.getByTestId("offer-price")).toHaveText(price);
   await expect(page.getByTestId("pay-button")).toContainText(price);
+}
+/** A Ferris-tier request: the $199 offer when enough operators match, otherwise the "won't charge" box naming the Ferris product. Never $99. */
+async function expectFerrisTier(page: Page) {
+  if (await page.getByTestId("offer").count()) await expectOffer(page, "Ferris Wheel Event Access", "$199");
+  else await expect(page.getByTestId("not-sellable")).toContainText("Ferris Wheel Event Access");
+  await expect(page.locator("main")).not.toContainText("$99");
 }
 async function payAndOpenPass(page: Page) {
   await page.getByTestId("pay-button").click();
@@ -81,20 +97,19 @@ test("every Ferris entry point is priced at the Ferris tier: category hub, ride-
 
 test("giant and mini variants are $199; fewer than 3 qualifying operators prevents checkout at either tier", async ({ page, request }) => {
   await submit(page, "/connect?type=mini-ferris-wheel");
-  await expectOffer(page, "Ferris Wheel Event Access", "$199");
+  await expectFerrisTier(page);
+  await submit(page, "/connect?type=giant-ferris-wheel");
+  await expectFerrisTier(page);
+  await submit(page, `/connect?listing=${GIANT_LISTING}`);
+  await expectFerrisTier(page);
 
-  // Columbus has only two contactable giant-wheel operators in the fixture: priced at the tier, but not for sale.
-  const thin = await submit(page, "/connect?type=giant-ferris-wheel");
-  await expect(page.getByTestId("match-heading")).toContainText("2 direct operator matches");
+  // No inventory within 200 miles of Anchorage: priced at the Ferris tier, but never for sale.
+  const thin = await submit(page, "/connect?type=giant-ferris-wheel", { ...EVENT, city: "Anchorage", state: "AK" });
+  await expect(page.getByTestId("match-heading")).toContainText("No direct operator matches yet");
   await expect(page.getByTestId("not-sellable")).toContainText("Ferris Wheel Event Access with at least 3");
   expect(await page.getByTestId("pay-button").count()).toBe(0);
   const forced = await request.post("/api/access/checkout", { form: { event: thin }, maxRedirects: 0 });
   expect(forced.headers()["location"]).toContain("error=not_sellable");
-
-  await submit(page, "/connect?type=giant-ferris-wheel", { ...EVENT, city: "Anaheim", state: "CA" });
-  await expectOffer(page, "Ferris Wheel Event Access", "$199");
-  await submit(page, `/connect?listing=${GIANT_LISTING}`, { ...EVENT, city: "Anaheim", state: "CA" });
-  await expectOffer(page, "Ferris Wheel Event Access", "$199");
 });
 
 test("standard requests stay $99 (even when matched operators own Ferris wheels), and general pages state both tiers", async ({ page }) => {

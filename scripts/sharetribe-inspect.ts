@@ -5,6 +5,7 @@
  * Writes a secret-free snapshot to contract/snapshots/<marketplace>-<date>.json and prints a summary.
  * Transaction processes and CLI search schemas are NOT readable with these credentials (Sharetribe CLI only).
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import fs from "node:fs";
 import { integrationGet, sharetribeConnection } from "../src/lib/integrations/sharetribe";
 

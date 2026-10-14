@@ -15,6 +15,7 @@
  * API cannot create drafts; pendingApproval listings are visible in Console only, never in public queries.
  * No images are uploaded. No transaction process is bound, so these listings cannot be booked.
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";

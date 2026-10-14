@@ -6,8 +6,10 @@
  * author id) so pages can deduplicate rides by owner. The key cannot be reversed into an account,
  * and the file holds no names, contacts or locations. Reads ONLY the public Marketplace API.
  *
- *   npm run inventory:operators
+ *   npm run inventory:operators                    # Test (default)
+ *   npm run inventory:operators -- --target live   # Live (SHARETRIBE_LIVE_* credentials)
  */
+import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import crypto from "node:crypto";
 import fs from "node:fs";
 import { AUTH, MKT } from "./lib/sharetribe-client";

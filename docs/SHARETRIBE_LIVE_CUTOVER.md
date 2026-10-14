@@ -1,25 +1,38 @@
-# Sharetribe Live cutover runbook (prepared 2026-10-12; Live NOT verified active)
+# Sharetribe Live cutover runbook (updated 2026-10-14; Live NOT yet created)
 
-Status on 2026-10-12: the founder intends to pay for the Sharetribe Live plan. **Nothing in this repo or its
-environments proves Live is active**: `.env.local` and Vercel hold only Test-marketplace credentials
-(`carnivalrental-9ecfo8.mysharetribe-test.com`), and the hosted Live hostname of the same marketplace
-(`carnivalrental-9ecfo8.mysharetribe.com`) redirects to `www.mysharetribe.com`, which is what an
-unactivated Live environment does. Treat Live as not started until step 1 passes.
+Status on 2026-10-14: the founder has paid for the Live plan. The Live environment itself does not
+exist yet: the Live hostname `carnivalrental-9ecfo8.mysharetribe.com` still redirects to
+`www.mysharetribe.com`, and no Live API credentials exist. Paying is not the last step; the
+**"Go live"** button in Console creates the Live environment as a copy of Test's configuration.
 
-Everything below is owner-driven because it needs Live credentials from the Console. Each step is
-idempotent and refuses to touch the Test marketplace by accident (`--target live --confirm-live "<name>"`).
+Users and listings can't be copied from Test to Live (Sharetribe docs: "Users and listings created
+in the Test and/or Dev environments cannot be moved to the Live environment"). Sharetribe's only bulk
+path is its migration service (an Intermediary-format file, a test import, then a one-time Live
+import). Our own import scripts recreate the same companies, listings and photos in Live
+deterministically, with deduplication and provenance, so they are the route used here.
 
-## 1. Prove Live is active
+Scripts select Live with `--target live`, which reads the `SHARETRIBE_LIVE_*` variables
+(`scripts/lib/target-env.ts`); the Test values keep their usual names, so nothing is swapped by hand.
 
-1. Console → environment switcher shows **Live** with an active plan (not "Build"/"Hold").
-2. Console (Live) → Build → Applications: create/read the **Live Marketplace API client** (public client
-   id) and a **Live Integration API application** (client id + secret). Never paste Stripe keys here.
-3. Put them in `.env.local` *for the cutover session only*, replacing the Test values of the same names
-   (`SHARETRIBE_CLIENT_ID`, `SHARETRIBE_INTEGRATION_CLIENT_ID`, `SHARETRIBE_INTEGRATION_CLIENT_SECRET`;
-   keep the Test values in a comment, the scripts' `--target test` guard will need them back).
-4. `npm run sharetribe:inspect && npm run contract:diff` → the printed marketplace name must not be the
-   Test marketplace, and the inspect must say VERIFIED for the operator listing type, fields and
-   `default-inquiry` process. UNVERIFIED is never a pass.
+## 1. Create Live and its API credentials (owner, Console)
+
+1. In the Test environment, click **Go live** (top right). The Live environment appears in the
+   environment picker (top left), configured as a copy of Test.
+2. Switch to **Live** → Build → Advanced → Applications → **Add a new application**:
+   - "carnivalriderental.us web", type **Marketplace API** → client ID;
+   - "carnivalriderental.us server", type **Integration API** → client ID and client secret (the
+     secret is shown once; store it in a password manager).
+3. Live → General → Marketplace name: note it (the scripts ask for it in `--confirm-live`).
+4. Live → General → Access control: "Approve users who want to join" on; **"Make marketplace private"
+   OFF** (private marketplaces return 403 to the anonymous Marketplace API and empty our catalog).
+5. Do not connect a Stripe account or a payout provider in Sharetribe (we never take rental
+   payments; never paste Carnival Ride Rental's Stripe keys into Sharetribe). A map provider is
+   optional; our pages don't use Sharetribe's maps.
+6. Put the three values in `.env.local` as `SHARETRIBE_LIVE_CLIENT_ID`,
+   `SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID`, `SHARETRIBE_LIVE_INTEGRATION_CLIENT_SECRET` (optionally
+   `SHARETRIBE_LIVE_MARKETPLACE_URL`), or as cloud-environment secrets for a new session.
+7. `npm run sharetribe:inspect -- --target live && npm run contract:diff`: the marketplace name must
+   be the Live one and the listing type, fields and `default-inquiry` process must be VERIFIED.
 
 ## 2. Copy configuration Test → Live
 
@@ -36,12 +49,12 @@ no payout provider is configured (we never collect rental payments). Re-run step
 All against Live, dry run first, then `--apply`:
 
 ```
-npm run import:companies -- --target live --confirm-live "<Live name>"            # dry run
+npm run import:companies -- --target live --confirm-live "<Live name>"            # dry run (all commands below read SHARETRIBE_LIVE_*)
 npm run import:companies -- --apply --target live --confirm-live "<Live name>"
 npm run import:listings  -- --target live --confirm-live "<Live name>"            # dry run
 npm run import:listings  -- --apply --target live --confirm-live "<Live name>"
-npm run import:photos                                                              # dry run (counts)
-npm run import:photos -- --apply                                                   # provenance recorded
+npm run import:photos -- --target live                                             # dry run (counts)
+npm run import:photos -- --apply --target live                                     # provenance recorded
 npm run listings:enable-inquiry -- --apply --target live                           # founder go
 npm run ops:anonymize -- --apply --target live --founder-go                        # public profiles anonymised
 npm run ops:claim -- --company <id> --email <operator email> --apply               # each claimed operator
@@ -58,8 +71,8 @@ companies, 3,716 operator listings, photos per `docs/LISTING_IMPORT.md`.
 Live listing ids differ from Test ids, so every snapshot must be rebuilt from Live:
 
 ```
-npm run inventory:export      # src/lib/inventory/rides.json (ids, ride types, photos, geo)
-npm run inventory:operators   # src/lib/inventory/operators.json (anonymous owner hashes)
+npm run inventory:export -- --target live      # src/lib/inventory/rides.json (ids, ride types, photos, geo)
+npm run inventory:operators -- --target live   # src/lib/inventory/operators.json (anonymous owner hashes)
 npm run inventory:validate
 npm run pseo:report
 npm run pseo:duplicates       # regenerates reports/pseo-duplicates.json; index-eligible.json is by path, re-check it
