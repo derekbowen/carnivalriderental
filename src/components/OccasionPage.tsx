@@ -1,0 +1,123 @@
+import type { CatalogSnapshot } from "@/lib/catalog/source";
+import { getContent } from "@/lib/content";
+import { supplyFor } from "@/lib/seo/pseo";
+import { paths } from "@/lib/seo/routes";
+import { pageGraph } from "@/lib/seo/structured-data";
+import { cardFromCatalog, structuredDataCards } from "@/lib/catalog/card";
+import { ridesForCategory, ridesNear, rideTypesInCategory, toCard } from "@/lib/inventory";
+import { STATE_CENTERS } from "@/lib/taxonomy/state-centers";
+import { RideResult } from "./search/RideResult";
+import { COMMON_FAQ, groupOf, occasionById, US_STATES, type Occasion, type UsState } from "@/lib/taxonomy";
+import { Breadcrumbs, categoryLabel, FaqSection, JsonLd, LinkGrid, SupplyList, SupplySource } from "./pseo";
+import { PricingNotice } from "./PricingNotice";
+import { CTA_BODY, RequestCta } from "./RequestCta";
+
+export function occasionCopy(o: Occasion, s?: UsState) {
+  const where = s ? ` in ${s.name}` : "";
+  return {
+    title: `Carnival ride rentals for ${o.plural}${where}`,
+    description: `Rent carnival rides for ${o.plural}${where}: Ferris wheels, carousels, swing, kiddie and family rides from independent operators, priced per event by the operator.`,
+  };
+}
+
+/**
+ * Template for /events/{occasion} and /events/{occasion}/{state}. Section order is the
+ * page template defined in docs/PSEO_TEMPLATES.md — keep them in sync.
+ */
+export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: CatalogSnapshot }) {
+  const path = s ? paths.occasionState(o.id, s.slug) : paths.occasion(o.id);
+  const { title, description } = occasionCopy(o, s);
+  const crumbs = [
+    { name: "Home", path: paths.home() },
+    { name: "Events", path: paths.occasions() },
+    { name: o.name, path: paths.occasion(o.id) },
+    ...(s ? [{ name: s.name, path }] : []),
+  ];
+  const suggested = supplyFor(snap, { stateCode: s?.code, categories: o.suggestedCategories });
+  const other = supplyFor(snap, { stateCode: s?.code }).filter((r) => !o.suggestedCategories.includes(r.categoryId));
+  const suggestedCards = suggested.map((r) => cardFromCatalog(r));
+  const otherCards = other.map((r) => cardFromCatalog(r));
+  // ItemList = every card shown, in display order (suggested first, then other rides).
+  const ldCards = structuredDataCards([...suggestedCards, ...otherCards], snap);
+  const requestHref = paths.connect({ state: s?.slug, occasion: o.id });
+  const group = groupOf(o);
+  const related = o.related.map(occasionById).filter((x): x is Occasion => !!x);
+  const cities = s ? getContent().locations.filter((l) => l.stateSlug === s.slug) : [];
+  // Real operator inventory for the suggested categories: nearest to the state when there is one, else a national selection.
+  const centre = s ? STATE_CENTERS[s.code] : undefined;
+  const suggestedTypes = new Set(o.suggestedCategories.flatMap((id) => rideTypesInCategory(id).map((t) => t.id)));
+  const inventory = (centre
+    ? ridesNear(centre[0], centre[1]).filter((r) => r.rideType && suggestedTypes.has(r.rideType)).slice(0, 9)
+    : o.suggestedCategories.flatMap((id) => ridesForCategory(id, 3))).map(toCard);
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <JsonLd
+        nodes={pageGraph({
+          path,
+          name: title,
+          description,
+          type: "CollectionPage",
+          crumbs,
+          service: { areaServed: s ? { type: "State", name: s.name } : undefined },
+          list: { name: `Rides for ${o.plural}${s ? ` in ${s.name}` : ""}`, cards: ldCards },
+          faq: COMMON_FAQ,
+        })}
+      />
+      <Breadcrumbs items={crumbs} />
+      <p className="eyebrow mt-6">{group.name}</p>
+      <h1 className="mt-2 text-4xl">{title}</h1>
+      <p className="mt-4 max-w-3xl text-lg text-ink-soft">{o.intro}</p>
+      {s && <p className="mt-2 max-w-3xl text-ink-soft">Browse rides from operators serving {s.name}, then connect with them directly. Availability on your date and site is confirmed with the operator.</p>}
+
+      <section className="mt-10">
+        <h2 className="text-2xl">Rides for {o.plural}{s ? ` in ${s.name}` : ""}</h2>
+        <p className="mt-1 text-sm text-muted">Often chosen for {o.plural}: {o.suggestedCategories.map(categoryLabel).join(", ")}. Availability and price are confirmed with the operator; nothing is booked until you agree terms with them.</p>
+        <div className="mt-4">
+          {suggestedCards.length > 0 ? (
+            <SupplyList cards={suggestedCards} requestHref={requestHref} emptyText="" />
+          ) : inventory.length > 0 ? (
+            <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" data-testid="inventory-cards">
+              {inventory.map((c) => <li key={c.id}><RideResult card={c} /></li>)}
+            </ul>
+          ) : (
+            <SupplyList cards={[]} requestHref={requestHref} emptyText={`We don’t list operators with these ride types${s ? ` near ${s.name}` : ""} yet. Tell us your date and city and we’ll look for related equipment nearby.`} />
+          )}
+        </div>
+        <SupplySource snap={snap} />
+        <PricingNotice className="mt-6" />
+      </section>
+
+      {other.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-2xl">Other rides you can request{s ? ` in ${s.name}` : ""}</h2>
+          <div className="mt-4"><SupplyList cards={otherCards} requestHref={requestHref} emptyText="" /></div>
+        </section>
+      )}
+
+      <div className="mt-12">
+        <RequestCta href={requestHref} title="Planning this event?" body={CTA_BODY} />
+      </div>
+
+      <section className="mt-12">
+        <h2 className="text-2xl">Planning notes</h2>
+        <ul className="mt-3 list-disc space-y-1 pl-5 text-ink-soft">{group.planningNotes.map((n) => <li key={n}>{n}</li>)}</ul>
+      </section>
+
+      {s ? (
+        <>
+          <LinkGrid title={`Cities in ${s.name}`} links={cities.map((l) => ({ href: paths.city(l.stateSlug, l.citySlug), label: `${l.cityName}, ${l.stateCode}` }))} />
+          <LinkGrid title="More in this area" links={[{ href: paths.state(s.slug), label: `All carnival ride rentals in ${s.name}` }, { href: paths.occasion(o.id), label: `Carnival rides for ${o.plural} nationwide` }]} />
+          <LinkGrid title={`Related events in ${s.name}`} links={related.map((r) => ({ href: paths.occasionState(r.id, s.slug), label: `Carnival rides for ${r.plural}` }))} />
+        </>
+      ) : (
+        <>
+          <LinkGrid title={`Carnival rides for ${o.plural} by state`} links={US_STATES.map((st) => ({ href: paths.occasionState(o.id, st.slug), label: st.name }))} />
+          <LinkGrid title="Related events" links={related.map((r) => ({ href: paths.occasion(r.id), label: `Carnival rides for ${r.plural}` }))} />
+        </>
+      )}
+
+      <FaqSection faq={COMMON_FAQ} />
+    </div>
+  );
+}

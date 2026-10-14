@@ -1,0 +1,29 @@
+{
+  "$comment": "Our catalog store (source of truth for URL slugs, publication and provenance approvals), keyed by offerKey. Sharetribe holds the listing fields; this file holds what Sharetribe must not decide. Version-controlled; edits are reviewed like code.",
+  "offerings": {
+    "ofr-test-ferris-wheel-family": {
+      "slug": "test-ferris-wheel-rental",
+      "isTestSample": true,
+      "estimateProvenance": null,
+      "notes": "Company-controlled Test sample. Never publishable."
+    },
+    "ofr-test-carousel-family": {
+      "slug": "test-carousel-rental",
+      "isTestSample": true,
+      "estimateProvenance": null,
+      "notes": "Test sample with unknown optional information (no reviewed event types)."
+    },
+    "ofr-test-swing-ride-family": {
+      "slug": "test-swing-ride-rental",
+      "isTestSample": true,
+      "estimateProvenance": null,
+      "notes": "Test sample covering TX and AZ."
+    },
+    "ofr-test-kiddie-ride-family": {
+      "slug": "test-kiddie-ride-rental",
+      "isTestSample": true,
+      "estimateProvenance": null,
+      "notes": "Test sample covering only OK (exclusion check)."
+    }
+  }
+}

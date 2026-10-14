@@ -1,0 +1,27 @@
+import type { Listing } from '../types/ride';
+
+export const listings: Listing[] = [
+{ id: 'l1', rideSlug: 'giant-observation-wheel', base: 'Orlando', state: 'FL', detail: '32 m, 36 gondolas' },
+{ id: 'l2', rideSlug: 'giant-observation-wheel', base: 'Dallas', state: 'TX', detail: '30 m, 30 gondolas' },
+{ id: 'l3', rideSlug: 'giant-observation-wheel', base: 'Riverside', state: 'CA', detail: '34 m, 42 gondolas' },
+{ id: 'l4', rideSlug: 'classic-ferris-wheel', base: 'Toledo', state: 'OH', detail: '20 m, 16 seats' },
+{ id: 'l5', rideSlug: 'classic-ferris-wheel', base: 'Zanesville', state: 'OH', detail: '18 m, 12 seats' },
+{ id: 'l6', rideSlug: 'classic-ferris-wheel', base: 'Lancaster', state: 'PA', detail: '20 m, 16 seats' },
+{ id: 'l7', rideSlug: 'classic-ferris-wheel', base: 'Fresno', state: 'CA', detail: '19 m, 14 seats' },
+{ id: 'l8', rideSlug: 'classic-ferris-wheel', base: 'Macon', state: 'GA', detail: '18 m, 12 seats' },
+{ id: 'l9', rideSlug: 'double-deck-venetian-carousel', base: 'Newark', state: 'NJ', detail: '68 riders' },
+{ id: 'l10', rideSlug: 'double-deck-venetian-carousel', base: 'Tampa', state: 'FL', detail: '72 riders' },
+{ id: 'l11', rideSlug: 'heritage-carousel', base: 'San Marcos', state: 'TX', detail: '30 riders' },
+{ id: 'l12', rideSlug: 'heritage-carousel', base: 'Joliet', state: 'IL', detail: '36 riders' },
+{ id: 'l13', rideSlug: 'heritage-carousel', base: 'Charlotte', state: 'NC', detail: '32 riders' },
+{ id: 'l14', rideSlug: 'heritage-carousel', base: 'Tacoma', state: 'WA', detail: '30 riders' },
+{ id: 'l15', rideSlug: 'wave-swinger', base: 'Grand Rapids', state: 'MI', detail: '48 seats' },
+{ id: 'l16', rideSlug: 'wave-swinger', base: 'Commerce', state: 'GA', detail: '48 seats' },
+{ id: 'l17', rideSlug: 'wave-swinger', base: 'Houston', state: 'TX', detail: '40 seats' },
+{ id: 'l18', rideSlug: 'tower-swing', base: 'Los Angeles', state: 'CA', detail: '45 m class' },
+{ id: 'l19', rideSlug: 'kiddie-ferris-wheel', base: 'Raleigh', state: 'NC', detail: '6 tubs' },
+{ id: 'l20', rideSlug: 'kiddie-ferris-wheel', base: 'Mesa', state: 'AZ', detail: '8 tubs' },
+{ id: 'l21', rideSlug: 'kiddie-ferris-wheel', base: 'Columbus', state: 'OH', detail: '6 tubs' },
+{ id: 'l22', rideSlug: 'trackless-kiddie-train', base: 'Phoenix', state: 'AZ', detail: '3 cars, battery' },
+{ id: 'l23', rideSlug: 'trackless-kiddie-train', base: 'Richmond', state: 'VA', detail: '4 cars, petrol' },
+{ id: 'l24', rideSlug: 'trackless-kiddie-train', base: 'Worcester', state: 'MA', detail: '3 cars, battery' }];

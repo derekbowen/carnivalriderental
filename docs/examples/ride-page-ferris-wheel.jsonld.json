@@ -1,0 +1,117 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "http://localhost:3000/#organization",
+      "name": "Book a Carnival",
+      "legalName": "10000 Solutions LLC",
+      "url": "http://localhost:3000",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "http://localhost:3000/#website",
+      "url": "http://localhost:3000",
+      "name": "Book a Carnival",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@id": "http://localhost:3000/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "http://localhost:3000/operators#service",
+      "name": "List your carnival rides",
+      "serviceType": "Marketplace listing for carnival ride operators",
+      "url": "http://localhost:3000/operators",
+      "provider": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Carnival ride owners and operators"
+      }
+    },
+    {
+      "@type": "ItemPage",
+      "@id": "http://localhost:3000/rides/ferris-wheel-rental#webpage",
+      "url": "http://localhost:3000/rides/ferris-wheel-rental",
+      "name": "Ferris wheel rental",
+      "description": "Request a Ferris wheel with a professional operating crew for your event. We source a suitable wheel and operator, then send you a confirmed scope and price.",
+      "inLanguage": "en-US",
+      "isPartOf": {
+        "@id": "http://localhost:3000/#website"
+      },
+      "publisher": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "breadcrumb": {
+        "@id": "http://localhost:3000/rides/ferris-wheel-rental#breadcrumb"
+      },
+      "about": {
+        "@id": "http://localhost:3000/rides/ferris-wheel-rental#service"
+      },
+      "mentions": {
+        "@id": "http://localhost:3000/operators#service"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "http://localhost:3000/rides/ferris-wheel-rental#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "http://localhost:3000"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Rides",
+          "item": "http://localhost:3000/rides"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Ferris wheels",
+          "item": "http://localhost:3000/categories/ferris-wheels"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Ferris wheel rental",
+          "item": "http://localhost:3000/rides/ferris-wheel-rental"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "http://localhost:3000/rides/ferris-wheel-rental#service",
+      "name": "Ferris wheel rental",
+      "description": "Request a Ferris wheel with a professional operating crew for your event. We source a suitable wheel and operator, then send you a confirmed scope and price.",
+      "serviceType": "Ferris wheel rental",
+      "category": "Carnival ride rental",
+      "url": "http://localhost:3000/rides/ferris-wheel-rental",
+      "provider": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Event organizers"
+      }
+    }
+  ]
+}

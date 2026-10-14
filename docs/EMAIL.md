@@ -1,0 +1,74 @@
+# Email (Emailit; Resend fallback) — transactional and outreach
+
+Production status (2026-10-12): **no provider key is set on Vercel production**, so Event Access pass and
+recovery emails are skipped and logged there (`[access] email send failed` / "email provider not
+configured"); the pass still opens through the Checkout return URL and the signed cookie, and "Lost my
+link" cannot send until a key exists. Verified this session with the repo's `RESEND_API_KEY`: the Resend
+account that holds `carnivalriderental.us` reports the domain **verified** for sending, and the receiving
+API returns mail delivered to `support@`/`qa@` test addresses, so the test inbox works. Owner action to
+finish delivery: add `RESEND_API_KEY` (the value in `.env.local`) to Vercel production as a sensitive
+variable (the session sandbox refuses to copy secrets out of `.env.local`), leave `EMAIL_MODE` unset
+(= `test`, everything to `qa@carnivalriderental.us`), redeploy, make one test-mode purchase and open the
+emailed `/pass/open?t=…` link in a private window. The fresh-browser open path is covered offline by
+`e2e/pricing.spec.ts`. Emailit stays the founder's chosen provider once its domain review completes
+(`EMAILIT_API_KEY` wins when set; `EMAIL_PROVIDER=resend` forces Resend).
+
+Provider (2026-10-05): **Emailit** for transactional and marketing mail. The key is `EMAILIT_API_KEY` in `.env.local`. The Emailit account is shared with another business: only ever send from carnivalriderental.us addresses, and never read or touch the other domains' mail or settings. Domain status in Emailit on 2026-10-05: SPF, DKIM, return-path and DMARC all OK, verification **pending Emailit's manual review**; nothing sends until Emailit approves it. Resend still receives inbound mail (root MX), so keep the Resend domain until inbound moves.
+
+Status (2026-10-04): built and proven in **test mode**. A demo request's "request received" email was sent through Resend from `notifications@carnivalriderental.us`, delivered, and received back at `qa@carnivalriderental.us` with the subject `[TEST → pipeline-test@example.com] We received your request BAC-SCW6CH`. No email has gone to a customer or operator.
+
+## Who sends what
+
+| Sender | Emails |
+|---|---|
+| Sharetribe (its managed SendGrid; can't use Resend) | account emails: verify email, password reset; transaction-process emails. In Test the sender address is fixed (only the name can change). In Live, set a custom sender in Console → General → Outgoing email address (CNAMEs on our domain). |
+| **Emailit** (this module; founder choice 2026-10-05, Resend kept as fallback via `EMAIL_PROVIDER=resend`) | our app's emails: request received, payment received, quote ready, internal paid alert; operator claim invitations (outreach) |
+
+Domain `carnivalriderental.us`:
+- verified for sending and receiving in Resend (DKIM, SPF via `send.`);
+- DMARC `p=none` is published;
+- receiving catches `claims@` (replies to invites), `qa@` (test inbox) and the 184 company claim addresses.
+
+## How it works
+
+- **Outbox:** `email_outbox` table in the app DB. The request service writes the email in the same transaction as the event that causes it (`src/lib/email/notify.ts`). Each logical email has a dedupe key, so retries never double-send.
+- **Dispatch:** `npm run email:dispatch` sends pending rows via the configured provider (`EMAILIT_API_KEY` set → Emailit v2 API, open/click tracking off; else Resend), with an Idempotency-Key per row. Failures are retried, up to 5 attempts.
+- **Test mode (default):** `EMAIL_MODE` is unset or `test`. Every email goes to `EMAIL_TEST_RECIPIENT` (default `qa@carnivalriderental.us`) and the subject names the intended recipient. `EMAIL_MODE=live` is a founder decision.
+
+Outreach gates, all enforced in code:
+- the campaign must be listed in `EMAIL_APPROVED_CAMPAIGNS` (live mode), otherwise the row is `blocked`;
+- every outreach email needs an unsubscribe link: an HMAC link to `/api/email/unsubscribe`, plus a `List-Unsubscribe` one-click header (RFC 8058);
+- unsubscribed addresses are `suppressed` forever;
+- a warm-up daily cap applies: 25 → 50 → 100 → 200 → 400 sends per UTC day;
+- `BUSINESS_POSTAL_ADDRESS` is required (CAN-SPAM). Invites can't be queued without it.
+
+## Claim invitations (`npm run email:claim-invites`)
+
+- **Recipients:** imported, unclaimed companies with a contact email in the workbook. Today that's 77 of 184, of which 46 already have accounts; the number grows as the account import finishes.
+- **One invite per company.** The copy is factual. It says the profile is unclaimed and unpublished, and offers claim, correction or removal by reply. It makes no fee, traffic or feature claims (operator copy isn't approved).
+- **Steps:**
+  1. Dry run.
+  2. `--enqueue` (needs the postal address).
+  3. `email:dispatch`.
+
+  In test mode the invites land in `qa@`, so you can review them before any approval.
+
+## Env (`.env.local`)
+
+| Name | Purpose |
+|---|---|
+| `RESEND_API_KEY` | send/receive (set) |
+| `EMAIL_MODE` | `test` (default) or `live` |
+| `EMAIL_TEST_RECIPIENT` | default `qa@carnivalriderental.us` |
+| `EMAIL_ADMIN_RECIPIENT` | founder alert on paid requests (optional) |
+| `EMAIL_FROM_TRANSACTIONAL` / `EMAIL_FROM_OUTREACH` / `EMAIL_REPLY_TO` | defaults on `carnivalriderental.us` |
+| `EMAIL_UNSUBSCRIBE_SECRET` | HMAC for unsubscribe links (set) |
+| `BUSINESS_POSTAL_ADDRESS` | **required for outreach — not set** |
+| `EMAIL_APPROVED_CAMPAIGNS` | e.g. `claim-invite-v1`, founder approval |
+
+## Before real sends
+
+1. A postal address for the footer (a PO box or registered agent address is fine).
+2. A separate outreach subdomain (`hello.carnivalriderental.us`): add it in Resend and add its DNS records in Cloudflare, then set `EMAIL_FROM_OUTREACH`. This keeps outreach complaints away from transactional delivery.
+3. Founder go: `EMAIL_MODE=live` plus the approved campaign.
+4. A scheduled dispatcher on the deployed ATM (cron). Today dispatch is a command.

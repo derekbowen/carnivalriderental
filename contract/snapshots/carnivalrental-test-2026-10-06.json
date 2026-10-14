@@ -1,0 +1,799 @@
+{
+  "capturedAt": "2026-10-06T01:44:32.098Z",
+  "marketplaceName": "CarnivalRental Test",
+  "marketplaceApiClient": "verified",
+  "counts": {
+    "listingsPublished": 3716,
+    "listingsDraft": 0,
+    "listingsClosed": 0,
+    "listingsPendingApproval": 0,
+    "users": 189,
+    "transactions": 18
+  },
+  "assets": {
+    "listings/listing-types.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "listingTypes": [
+          {
+            "availabilityType": "oneSeat",
+            "transactionFields": [],
+            "label": "Daily booking",
+            "id": "daily-booking",
+            "priceVariations": {
+              "enabled": false
+            },
+            "messagingOptions": {
+              "fileAttachments": true
+            },
+            "unitType": "day",
+            "transactionProcess": {
+              "name": "default-booking",
+              "alias": "default-booking/release-1"
+            },
+            "defaultListingFields": {
+              "description": true,
+              "availability": true,
+              "payoutDetails": true,
+              "images": true,
+              "pickup": false,
+              "title": true,
+              "files": false,
+              "shipping": false,
+              "location": true,
+              "price": true,
+              "stock": false
+            }
+          },
+          {
+            "label": "Operator ride rental",
+            "id": "operator-ride-rental",
+            "transactionProcess": {
+              "name": "default-inquiry",
+              "alias": "default-inquiry/release-1"
+            },
+            "transactionFields": [],
+            "messagingOptions": {
+              "fileAttachments": true
+            },
+            "defaultListingFields": {
+              "description": true,
+              "availability": false,
+              "payoutDetails": false,
+              "images": true,
+              "pickup": false,
+              "title": true,
+              "files": false,
+              "shipping": false,
+              "location": true,
+              "price": true,
+              "stock": false
+            },
+            "unitType": "inquiry"
+          }
+        ]
+      }
+    },
+    "listings/listing-categories.json": {
+      "status": "not-configured"
+    },
+    "listings/listing-fields.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "listingFields": [
+          {
+            "label": "Example field",
+            "key": "exampleField",
+            "scope": "public",
+            "schemaType": "enum",
+            "enumOptions": [
+              {
+                "label": "Example option 1",
+                "option": "option1"
+              },
+              {
+                "label": "Example option 2",
+                "option": "option2"
+              },
+              {
+                "label": "Example option 3",
+                "option": "option3"
+              }
+            ],
+            "filterConfig": {
+              "indexForSearch": true,
+              "group": "primary"
+            }
+          },
+          {
+            "label": "Ride class",
+            "key": "rideClass",
+            "scope": "public",
+            "schemaType": "enum",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "enumOptions": [
+              {
+                "label": "Kiddie ride",
+                "option": "kiddie"
+              },
+              {
+                "label": "Family ride",
+                "option": "family"
+              },
+              {
+                "label": "Major ride",
+                "option": "major"
+              },
+              {
+                "label": "Spectacular",
+                "option": "spectacular"
+              },
+              {
+                "label": "Roller coaster",
+                "option": "coaster"
+              },
+              {
+                "label": "Fun house / walk-through",
+                "option": "funhouse"
+              },
+              {
+                "label": "Dark ride",
+                "option": "dark-ride"
+              },
+              {
+                "label": "Water ride",
+                "option": "water"
+              },
+              {
+                "label": "Other attraction",
+                "option": "other"
+              }
+            ],
+            "filterConfig": {
+              "indexForSearch": true,
+              "showFilter": true,
+              "group": "primary"
+            }
+          },
+          {
+            "label": "States served",
+            "key": "serviceStates",
+            "scope": "public",
+            "schemaType": "multi-enum",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "enumOptions": [
+              {
+                "label": "Alabama",
+                "option": "al"
+              },
+              {
+                "label": "Alaska",
+                "option": "ak"
+              },
+              {
+                "label": "Arizona",
+                "option": "az"
+              },
+              {
+                "label": "Arkansas",
+                "option": "ar"
+              },
+              {
+                "label": "California",
+                "option": "ca"
+              },
+              {
+                "label": "Colorado",
+                "option": "co"
+              },
+              {
+                "label": "Connecticut",
+                "option": "ct"
+              },
+              {
+                "label": "Delaware",
+                "option": "de"
+              },
+              {
+                "label": "District of Columbia",
+                "option": "dc"
+              },
+              {
+                "label": "Florida",
+                "option": "fl"
+              },
+              {
+                "label": "Georgia",
+                "option": "ga"
+              },
+              {
+                "label": "Hawaii",
+                "option": "hi"
+              },
+              {
+                "label": "Idaho",
+                "option": "id"
+              },
+              {
+                "label": "Illinois",
+                "option": "il"
+              },
+              {
+                "label": "Indiana",
+                "option": "in"
+              },
+              {
+                "label": "Iowa",
+                "option": "ia"
+              },
+              {
+                "label": "Kansas",
+                "option": "ks"
+              },
+              {
+                "label": "Kentucky",
+                "option": "ky"
+              },
+              {
+                "label": "Louisiana",
+                "option": "la"
+              },
+              {
+                "label": "Maine",
+                "option": "me"
+              },
+              {
+                "label": "Maryland",
+                "option": "md"
+              },
+              {
+                "label": "Massachusetts",
+                "option": "ma"
+              },
+              {
+                "label": "Michigan",
+                "option": "mi"
+              },
+              {
+                "label": "Minnesota",
+                "option": "mn"
+              },
+              {
+                "label": "Mississippi",
+                "option": "ms"
+              },
+              {
+                "label": "Missouri",
+                "option": "mo"
+              },
+              {
+                "label": "Montana",
+                "option": "mt"
+              },
+              {
+                "label": "Nebraska",
+                "option": "ne"
+              },
+              {
+                "label": "Nevada",
+                "option": "nv"
+              },
+              {
+                "label": "New Hampshire",
+                "option": "nh"
+              },
+              {
+                "label": "New Jersey",
+                "option": "nj"
+              },
+              {
+                "label": "New Mexico",
+                "option": "nm"
+              },
+              {
+                "label": "New York",
+                "option": "ny"
+              },
+              {
+                "label": "North Carolina",
+                "option": "nc"
+              },
+              {
+                "label": "North Dakota",
+                "option": "nd"
+              },
+              {
+                "label": "Ohio",
+                "option": "oh"
+              },
+              {
+                "label": "Oklahoma",
+                "option": "ok"
+              },
+              {
+                "label": "Oregon",
+                "option": "or"
+              },
+              {
+                "label": "Pennsylvania",
+                "option": "pa"
+              },
+              {
+                "label": "Rhode Island",
+                "option": "ri"
+              },
+              {
+                "label": "South Carolina",
+                "option": "sc"
+              },
+              {
+                "label": "South Dakota",
+                "option": "sd"
+              },
+              {
+                "label": "Tennessee",
+                "option": "tn"
+              },
+              {
+                "label": "Texas",
+                "option": "tx"
+              },
+              {
+                "label": "Utah",
+                "option": "ut"
+              },
+              {
+                "label": "Vermont",
+                "option": "vt"
+              },
+              {
+                "label": "Virginia",
+                "option": "va"
+              },
+              {
+                "label": "Washington",
+                "option": "wa"
+              },
+              {
+                "label": "West Virginia",
+                "option": "wv"
+              },
+              {
+                "label": "Wisconsin",
+                "option": "wi"
+              },
+              {
+                "label": "Wyoming",
+                "option": "wy"
+              }
+            ],
+            "showConfig": {
+              "unselectedOptions": true
+            },
+            "filterConfig": {
+              "indexForSearch": true,
+              "showFilter": true,
+              "group": "primary"
+            }
+          },
+          {
+            "label": "Home state",
+            "key": "homeState",
+            "scope": "public",
+            "schemaType": "enum",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "enumOptions": [
+              {
+                "label": "Alabama",
+                "option": "al"
+              },
+              {
+                "label": "Alaska",
+                "option": "ak"
+              },
+              {
+                "label": "Arizona",
+                "option": "az"
+              },
+              {
+                "label": "Arkansas",
+                "option": "ar"
+              },
+              {
+                "label": "California",
+                "option": "ca"
+              },
+              {
+                "label": "Colorado",
+                "option": "co"
+              },
+              {
+                "label": "Connecticut",
+                "option": "ct"
+              },
+              {
+                "label": "Delaware",
+                "option": "de"
+              },
+              {
+                "label": "District of Columbia",
+                "option": "dc"
+              },
+              {
+                "label": "Florida",
+                "option": "fl"
+              },
+              {
+                "label": "Georgia",
+                "option": "ga"
+              },
+              {
+                "label": "Hawaii",
+                "option": "hi"
+              },
+              {
+                "label": "Idaho",
+                "option": "id"
+              },
+              {
+                "label": "Illinois",
+                "option": "il"
+              },
+              {
+                "label": "Indiana",
+                "option": "in"
+              },
+              {
+                "label": "Iowa",
+                "option": "ia"
+              },
+              {
+                "label": "Kansas",
+                "option": "ks"
+              },
+              {
+                "label": "Kentucky",
+                "option": "ky"
+              },
+              {
+                "label": "Louisiana",
+                "option": "la"
+              },
+              {
+                "label": "Maine",
+                "option": "me"
+              },
+              {
+                "label": "Maryland",
+                "option": "md"
+              },
+              {
+                "label": "Massachusetts",
+                "option": "ma"
+              },
+              {
+                "label": "Michigan",
+                "option": "mi"
+              },
+              {
+                "label": "Minnesota",
+                "option": "mn"
+              },
+              {
+                "label": "Mississippi",
+                "option": "ms"
+              },
+              {
+                "label": "Missouri",
+                "option": "mo"
+              },
+              {
+                "label": "Montana",
+                "option": "mt"
+              },
+              {
+                "label": "Nebraska",
+                "option": "ne"
+              },
+              {
+                "label": "Nevada",
+                "option": "nv"
+              },
+              {
+                "label": "New Hampshire",
+                "option": "nh"
+              },
+              {
+                "label": "New Jersey",
+                "option": "nj"
+              },
+              {
+                "label": "New Mexico",
+                "option": "nm"
+              },
+              {
+                "label": "New York",
+                "option": "ny"
+              },
+              {
+                "label": "North Carolina",
+                "option": "nc"
+              },
+              {
+                "label": "North Dakota",
+                "option": "nd"
+              },
+              {
+                "label": "Ohio",
+                "option": "oh"
+              },
+              {
+                "label": "Oklahoma",
+                "option": "ok"
+              },
+              {
+                "label": "Oregon",
+                "option": "or"
+              },
+              {
+                "label": "Pennsylvania",
+                "option": "pa"
+              },
+              {
+                "label": "Rhode Island",
+                "option": "ri"
+              },
+              {
+                "label": "South Carolina",
+                "option": "sc"
+              },
+              {
+                "label": "South Dakota",
+                "option": "sd"
+              },
+              {
+                "label": "Tennessee",
+                "option": "tn"
+              },
+              {
+                "label": "Texas",
+                "option": "tx"
+              },
+              {
+                "label": "Utah",
+                "option": "ut"
+              },
+              {
+                "label": "Vermont",
+                "option": "vt"
+              },
+              {
+                "label": "Virginia",
+                "option": "va"
+              },
+              {
+                "label": "Washington",
+                "option": "wa"
+              },
+              {
+                "label": "West Virginia",
+                "option": "wv"
+              },
+              {
+                "label": "Wisconsin",
+                "option": "wi"
+              },
+              {
+                "label": "Wyoming",
+                "option": "wy"
+              }
+            ],
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Manufacturer",
+            "key": "manufacturer",
+            "scope": "public",
+            "schemaType": "text",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Model",
+            "key": "rideModel",
+            "scope": "public",
+            "schemaType": "text",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Rider rules",
+            "key": "riderRules",
+            "scope": "public",
+            "schemaType": "text",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Minimum rider height (in)",
+            "key": "minRiderHeightIn",
+            "scope": "public",
+            "schemaType": "long",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "numberConfig": {
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Footprint length (ft)",
+            "key": "footprintLengthFt",
+            "scope": "public",
+            "schemaType": "long",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "numberConfig": {
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Footprint width (ft)",
+            "key": "footprintWidthFt",
+            "scope": "public",
+            "schemaType": "long",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "numberConfig": {
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          },
+          {
+            "label": "Ride height (ft)",
+            "key": "rideHeightFt",
+            "scope": "public",
+            "schemaType": "long",
+            "listingTypeConfig": {
+              "limitToListingTypeIds": true,
+              "listingTypeIds": [
+                "operator-ride-rental"
+              ]
+            },
+            "numberConfig": {
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "filterConfig": {
+              "indexForSearch": false
+            }
+          }
+        ]
+      }
+    },
+    "listings/listing-search.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "mainSearch": {
+          "searchType": "location"
+        },
+        "dateRangeFilter": {
+          "enabled": false,
+          "schemaType": "dates",
+          "dateRangeMode": "day",
+          "availability": "time-full"
+        },
+        "priceFilter": {
+          "enabled": true,
+          "schemaType": "price",
+          "min": 0,
+          "max": 500
+        },
+        "keywordsFilter": {
+          "enabled": false
+        },
+        "categoryFilter": {
+          "enabled": true,
+          "schemaType": "category"
+        }
+      }
+    },
+    "transactions/commission.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "providerCommission": {
+          "percentage": 10
+        }
+      }
+    },
+    "transactions/minimum-transaction-size.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "listingMinimumPrice": {
+          "amount": 500,
+          "type": "subunit"
+        }
+      }
+    },
+    "users/user-types.json": {
+      "status": "ok",
+      "version": "f0rg-KGzcSvUML7Kja37_g",
+      "data": {
+        "userTypes": []
+      }
+    },
+    "users/user-fields.json": {
+      "status": "not-configured"
+    }
+  },
+  "notReadableWithTheseCredentials": [
+    "transaction processes (Sharetribe CLI)",
+    "CLI-defined search schemas (Sharetribe CLI)",
+    "Stripe configuration (Console)"
+  ]
+}

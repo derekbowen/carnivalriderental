@@ -1,0 +1,1073 @@
+{
+  "generatedFrom": [
+    "src/lib/inventory/rides.json",
+    "imports/photos/carnivalrental-test/ledger.jsonl",
+    "imports/photos/carnivalrental-test/exceptions.json"
+  ],
+  "withoutPhoto": 211,
+  "counts": {
+    "no operator-website photo in the source data (approved without photo)": 159,
+    "source URL did not return a usable image (HTML/bot-check page or unsupported format)": 22,
+    "photo URL no longer exists on the operator site (HTTP 404)": 6,
+    "operator site refused the download (HTTP 403)": 2,
+    "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry": 19,
+    "operator site refused the download (HTTP 406)": 3
+  },
+  "listings": [
+    {
+      "id": "6ac25599-1428-4571-8d5e-e142e4a04b72",
+      "title": "Critter Track",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac255a5-a7cf-4a85-a733-9f5c528536e3",
+      "title": "Glass House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac255b6-622d-426a-bc89-e5b94df82dde",
+      "title": "Obstacle Course",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac255ba-283f-4552-8577-6e3781e649e2",
+      "title": "Side Winder",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2564d-11e0-46f4-8540-0842f1cc5c8e",
+      "title": "Combination",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25650-cf6a-40e1-9fe0-6a180c822475",
+      "title": "Dizzy Dragon",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25652-adc8-4bf9-834b-2abe45065ec1",
+      "title": "Downdraft",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25654-9699-42ce-800d-ef4b1c20c3e2",
+      "title": "Dragon Wagon",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25656-4c54-4473-83a0-73a52f69badd",
+      "title": "Edge",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25658-b13f-41bc-b213-0053ce159ec1",
+      "title": "Expo Wheel - 65 Ft Tall",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2565a-779e-43e6-9552-b2b079a3e464",
+      "title": "Ferris Wheel - 45 Ft Tall",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2565c-5f66-440a-8d0c-9f195ef9ab6e",
+      "title": "Flying Dragon",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2565e-8127-4e9a-a8c0-6357489dd74c",
+      "title": "Freakout",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25660-5c34-433f-b773-068e2f272758",
+      "title": "Frog Hopper",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25662-c697-48f3-8ad0-c2cbce633610",
+      "title": "Motorcycles",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25665-c425-492f-8c8a-4a7a1475f1c7",
+      "title": "Pharoah's Fury",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25667-b489-4cac-b40d-87d44eaa887e",
+      "title": "Scooter",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25669-35bf-4caa-8df0-8263ca01bada",
+      "title": "Slide",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2566b-46dd-4bab-9b71-1e34af6974ec",
+      "title": "Swings",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2566d-8427-4f08-a7f7-b58e58daaeba",
+      "title": "Tea Cups",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2566f-758b-4d78-8def-78885400359f",
+      "title": "Tilt",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25671-cfc7-430b-a2a6-1716432855c4",
+      "title": "Wacky Shack",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25673-9600-41f5-969d-2c4d8a2a4dc8",
+      "title": "Zero Gravity",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac256ef-004f-4b22-a011-c1673b759bc1",
+      "title": "Convoy",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25706-0e28-430a-b6b6-6aa435d4246b",
+      "title": "Happy Pond",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25724-d4ae-491c-ac23-020566fec4c6",
+      "title": "Musical Chairs",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25752-7aa3-46f4-a58f-a63a4ab15865",
+      "title": "Wave Swinger",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2575c-6b9b-496f-8eae-96bf78dabf3e",
+      "title": "Zeus",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac2577e-0434-4a45-8a88-b24f90a7063d",
+      "title": "Castle Pillow",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2578b-20bc-4152-97f2-2bdd4044d824",
+      "title": "Crazy Sub #1",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac257cc-2837-417c-b8d5-1761634cf8a1",
+      "title": "Mario Land",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac257ce-de5d-4765-8855-7fb027945f97",
+      "title": "Merry Go Round",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2580d-1e03-47ee-a412-4469478dfa84",
+      "title": "Sea Doo",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2583b-f003-464f-b0e2-52c3067b323a",
+      "title": "VW Bug",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2585d-06a3-4a0a-a505-ddb13d23cfc3",
+      "title": "Looney Airport",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25880-4b9d-4503-a1e9-42363f41c41d",
+      "title": "Dizzy Dragon",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac258b9-3cad-43b7-9676-4c782f979bd7",
+      "title": "Scooter",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac258c1-65ca-4bce-b0d7-19bc1591747b",
+      "title": "Super Trucks",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25a63-c841-4205-b634-b5f9209f1a8c",
+      "title": "Elephants",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25bf8-cb86-4d6a-81c0-3b3d049a47ff",
+      "title": "Bulgy the Whale",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25bfa-0a23-4b35-ade2-a98ecb9a7384",
+      "title": "Ferris Wheel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25bfc-7a63-46d0-b535-96e6a1a0e88d",
+      "title": "Fun House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25bfe-064f-42d5-a9be-58de96649409",
+      "title": "Fun Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c00-e099-44dd-84db-9c2729916da5",
+      "title": "Glass House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c02-2417-43a8-b788-7c79a7d492df",
+      "title": "Go-Gator",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c07-183c-4ffe-9c2f-1548ff8547c7",
+      "title": "Gravatron",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c0d-dfb9-4f24-9b38-d661d88af954",
+      "title": "Merry Go Round",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c0f-1902-4c9a-a820-311307b79006",
+      "title": "Mind Winder",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c13-2ba4-4dae-9b6a-359bd5c23cbb",
+      "title": "Paratrooper",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c17-82f9-4fdc-9714-ee883831ba2c",
+      "title": "Sizzler",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c1a-e46c-49c2-856a-38473fe69e9b",
+      "title": "Space Sled",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25c1e-5dfe-48e7-8061-8f67a6860ab0",
+      "title": "Wreaking Ball",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25ca0-0742-4d23-8305-4ca21f7ce00b",
+      "title": "Gravitron",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25caa-c64b-44af-890a-c771c14afd4a",
+      "title": "Raiders",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25cad-47a2-4cb3-97a1-f89f30b4a295",
+      "title": "Spinning Flowers",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25cb1-3e84-42d9-9346-19a5efb88930",
+      "title": "Super Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25cb3-0e7f-46e1-8dfa-a26fe1bcfaa2",
+      "title": "Surf City",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25d2c-56ad-425d-9147-b61610c1d361",
+      "title": "Round Up",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25d2e-4f24-4d9a-9a82-31f81342ec8c",
+      "title": "Sea Ray",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25d7e-b20f-4814-baf7-4a76f339ebe4",
+      "title": "Sizzler",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25d9d-4a78-468d-a822-c0620284d643",
+      "title": "Kiddie Swing",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac25dd4-8e38-4d22-8c7e-d665a01c1a48",
+      "title": "Mini Carousel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac25ee1-0129-4df2-8bb8-ba92e3adf6a2",
+      "title": "Motorcycle Jump",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac25ef4-90c1-48d4-b356-9d89852ccbb7",
+      "title": "Round Up",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac25f19-0b91-4fdf-9781-e1e2381e3a05",
+      "title": "Whacky Apple Worm",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac25f22-63d0-4d94-a5d6-df39e3a98b60",
+      "title": "Aladdin",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25f42-3efa-4d16-a651-43b44c030702",
+      "title": "Gotham Slide",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac25ff2-b68a-42a9-a97e-f99edb5c76b3",
+      "title": "Canoes",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac26014-bf03-4a43-be7c-93b3f85aba81",
+      "title": "Kids Town",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a4a3-f868-4cf9-b218-269e0409282f",
+      "title": "Super Trooper",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a540-51c0-4bf6-a1c5-f93ab710077c",
+      "title": "Bounce House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a58a-472d-4dc3-8cfd-253d67e228de",
+      "title": "Ball Crawl Fun House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5de-c270-4e7a-b47d-75417ed8356c",
+      "title": "Airport Copters",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5e0-2309-4c89-8e53-225a04fb2d3f",
+      "title": "Antique M G R",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5e2-3c15-4281-b871-9fba14964749",
+      "title": "Astro Wheel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5e4-615f-4a0e-a88b-632340e67c37",
+      "title": "Balloon Race",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5e6-f1da-4f05-8791-b2a95b89fcd0",
+      "title": "Bayern Rallye",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5e8-3043-4111-93bf-e17a3674744d",
+      "title": "Bear Affair",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5ea-b216-4adf-8c76-0566f16c5589",
+      "title": "Boats",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5ec-4dd6-42f9-ba69-a6cca62b81c8",
+      "title": "Circus Jumbo",
+      "reason": "source URL did not return a usable image (HTML/bot-check page or unsupported format)"
+    },
+    {
+      "id": "6ac2a5f0-2ca8-4af0-8b48-022938d4cce9",
+      "title": "Cliff Hanger",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5f3-deca-42bd-b561-78fa8fd94e8f",
+      "title": "Combination",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5f5-a4fd-468f-a50f-8a46f21c8000",
+      "title": "Construction Zone",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5f7-e19a-43de-94de-cf8ea63bd8c3",
+      "title": "Convoy Race",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5f9-66fe-4a6a-ba53-16c657427fb6",
+      "title": "Cosmic Chaos",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5fb-6e99-410d-80e2-362abcd1294b",
+      "title": "Discothek",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5fd-b41e-483a-b165-7f60fa6b9f37",
+      "title": "Dragon Wagon",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a5ff-698a-4a68-a377-eacf7e52a6de",
+      "title": "Dune Buggies",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a601-0418-4d5f-b0b6-87b4a175b420",
+      "title": "El Nino",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a605-197f-4e9c-9192-1f7fe2b60e17",
+      "title": "Enterprise",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a60a-029b-4df1-8717-99cd7e56086e",
+      "title": "Fire Brigade",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a60c-b102-4e26-b65c-f58ed35029f5",
+      "title": "Flying Tigers",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a610-dd5b-4a6e-a3d5-d2b1da0cd6bc",
+      "title": "Fun Zone",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a612-fb11-40c0-803e-f108aa7cd2ea",
+      "title": "Funny Farm",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a614-cd31-408d-9c46-3ff7874c1ba5",
+      "title": "Gators",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a616-c10a-4004-a650-f25337a0e6d9",
+      "title": "Ghost Pirates",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a618-9fcf-4f60-8571-77eec043d1b6",
+      "title": "Giant Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a61a-8387-4fc3-a6b7-49697b0c7864",
+      "title": "Giant Wheel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a61d-333f-4e59-97f3-da9076830a25",
+      "title": "Ground Cycles",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a61f-3e77-42ec-bc14-387cd4be28ab",
+      "title": "Hard Rocker",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a621-1a19-47fa-a9b4-e776769b3173",
+      "title": "Haunted House",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a623-9775-4cf1-8ca8-de756631de99",
+      "title": "Helicopters",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a625-d846-4758-b7a0-64cdbeaefdf8",
+      "title": "Indian Rivers",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a627-a5bd-4dd7-ba1e-d0e7ee1405d4",
+      "title": "Inferno",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a629-a51c-4bb1-8883-48df1917b64d",
+      "title": "Jumbo",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a62b-16d8-4f5e-ad35-f6e8acb6a951",
+      "title": "Jump Cycles",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a62d-a28e-4356-8fc9-78701fedadb0",
+      "title": "Jungle Jim",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a632-a492-4629-adde-f2f2aac15290",
+      "title": "Lolli Swing",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a634-c6b5-406c-a066-e9d2a58da8a2",
+      "title": "Mardi Gras",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a636-8a2e-4d53-8102-4a3e1c02f1fa",
+      "title": "Matterhorn",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a638-c290-4a7e-9838-ed4eb2956864",
+      "title": "MGR",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a63a-f945-4fa1-8f2d-ce56ec2501fd",
+      "title": "Midget Racer",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a63c-0904-4462-9f9e-7f4d9f68223d",
+      "title": "Monster",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a63e-7e3b-41c2-b10f-872c0fe2f292",
+      "title": "Paratrooper",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a640-a4e1-4e7b-bf3e-37e3c284bdf0",
+      "title": "Party Animal",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a642-ad03-4e3f-8f2f-6429edc58bc2",
+      "title": "Phoenix Wheel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a644-3ce6-4f71-91cd-28c693eecc5f",
+      "title": "Quad Racer",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a647-f91b-4f15-b96e-67da5b64e8a6",
+      "title": "Rainier Rush",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a649-ab18-4955-a2ca-90bc74610a6e",
+      "title": "Rat Race",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a64b-a977-48d4-80ad-1edd64a793ed",
+      "title": "Rock Star",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a64d-b611-435a-a9aa-1830124982dd",
+      "title": "Scrambler",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a64f-8412-476c-864d-fe08aca507e4",
+      "title": "Sea Dragon",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a653-95c2-49d3-8e2e-37e6fe064e06",
+      "title": "Sinbad",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a655-335f-487c-87b6-676c7c3f2b1b",
+      "title": "Skooters",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a657-933c-436e-8fbb-d185a46900ff",
+      "title": "Sky Diver",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a659-2fb8-4a95-a667-b860292808f4",
+      "title": "Sky Fighter",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a65c-68e9-4d74-b702-963c1a43f76c",
+      "title": "Sky Ride",
+      "reason": "photo URL no longer exists on the operator site (HTTP 404)"
+    },
+    {
+      "id": "6ac2a65e-aca9-427d-8223-e727252edbb9",
+      "title": "Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a660-f724-4db5-b790-353485ee244d",
+      "title": "Spider",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a664-985b-478d-bf3c-7f72bf77953a",
+      "title": "Starship 2000",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a666-3f88-4eb3-ac0d-2ed8c2135f55",
+      "title": "Super Jets",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a668-948e-4449-9c96-1b01c6702635",
+      "title": "Super Loops",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a66a-99f9-48cc-ad24-25d771e40e5a",
+      "title": "Super Orbiter",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a66c-8626-4bde-aae8-09db491c3f0e",
+      "title": "Taz's Twister",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a66e-1dcd-47c2-af05-f0fc4d49d92f",
+      "title": "Tiger Express",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a671-731e-447b-bfa9-6725a61a8cf9",
+      "title": "Tilt A Whirl",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a673-1726-4721-a3a2-5424239906d1",
+      "title": "Tornado",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a675-f35f-4913-9989-cd39d464a4c0",
+      "title": "Train",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a677-c842-4722-846a-c35a63940845",
+      "title": "Vertigo",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a679-c2b1-4981-aafb-2e643d04fcb2",
+      "title": "Wave Swinger",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a67b-de06-44e0-b85a-f2e376a09d86",
+      "title": "Wild Cat",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a67d-a2e2-44de-99da-dab04a71c713",
+      "title": "Wild Thing",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a67f-e1a7-43d5-b2c1-52a70bc214fc",
+      "title": "Zero Gravity",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a681-cac6-4be5-8810-430e66f538c3",
+      "title": "Zipper",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a73e-b5da-42d0-9f1c-0ead8a010886",
+      "title": "Jitterbug Swings",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a743-1d19-40f9-9fe1-da28f9a288bc",
+      "title": "Panda Bears",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a755-8f0d-4bef-a858-925f0b895cb0",
+      "title": "Viking Ship",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a75a-4ccc-4d89-9433-d215f016e4f1",
+      "title": "Mindwinder",
+      "reason": "operator site refused the download (HTTP 403)"
+    },
+    {
+      "id": "6ac2a760-4dd8-4d80-8c4d-203030c07739",
+      "title": "Train",
+      "reason": "operator site refused the download (HTTP 403)"
+    },
+    {
+      "id": "6ac2a83c-f1a4-41a1-86ef-d31dc1cb2ffc",
+      "title": "Dry Boats",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a841-7433-4c30-b979-b1354779a115",
+      "title": "Fire Trucks",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a843-2b5b-4c9f-ae0d-e0379400cd24",
+      "title": "Flying Jumbos",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a849-7d72-4f0c-92d2-3cf830e97caa",
+      "title": "Hillbilly Express",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a84d-bda9-47ba-bdf0-f77fe54d4f04",
+      "title": "Hurricane",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a84f-42c9-4d14-9387-87d1639c394b",
+      "title": "Kiddie Swing",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a851-2750-458c-8116-3b415f6a8f8a",
+      "title": "Merry Go Round",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a85a-6a24-476e-a117-caad38d97e38",
+      "title": "Safari Jeeps",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a862-22fa-4713-acbc-952894dc0059",
+      "title": "Swinger",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2a99b-e1c0-495a-b858-42bf9e2fe04d",
+      "title": "Das Deutsche Karussell",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2aa04-6577-4837-b45e-8d759b19d23a",
+      "title": "Baja Jeeps",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa06-ea74-4406-b445-2d9ad1111982",
+      "title": "Circus Train",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa08-2c3f-4ba0-ae7e-02007a790b8e",
+      "title": "Dizzy Dragon",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa0a-78cb-479c-acdc-0305b412bfd8",
+      "title": "Ferris Wheel",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa0d-020d-492b-9a7d-a1083b9129ce",
+      "title": "Fire Department",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa0f-2004-41ec-a799-c10cf11cc869",
+      "title": "Fun Slide",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa11-77c6-4559-8616-43c474a76d9c",
+      "title": "Go Gator",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa13-f22d-484c-a7df-58b98f3fbbc9",
+      "title": "Gondola Wheel",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa15-6292-4dee-a2da-094aa6f248d7",
+      "title": "Helicopter",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa17-74f4-4e86-b992-4d9b9e751e0a",
+      "title": "Kiddie Ferris Wheel",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa19-c4a2-46e9-aee5-c9a39a223059",
+      "title": "Merry Go Round",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa1b-0181-41c5-9592-5b5b327831ea",
+      "title": "Paratrooper",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa1d-8b28-4a9b-a152-cffbd251ed4a",
+      "title": "Rapid Slide",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa1f-622b-4e1d-a9df-70246119121b",
+      "title": "Rock O Plane",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa22-5aa9-4ea3-9bd2-97dff2fcb42d",
+      "title": "Sizzler",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa24-7d7d-4451-a286-e799a6bd852e",
+      "title": "Sky Fighter",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa26-1a25-441e-883e-9070cd3b503c",
+      "title": "Swinger",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa28-2498-44d0-9b80-c049eecd1475",
+      "title": "Tempest",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2aa2a-75ec-481a-a23c-f32cd0901e4e",
+      "title": "Turbo Tubs",
+      "reason": "operator site returned HTTP 503 (temporarily unavailable or blocking) after retry"
+    },
+    {
+      "id": "6ac2ab5a-1a98-445f-8894-7ea4054a82c0",
+      "title": "Helicopters",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2ab65-dc4d-464b-9acd-6544a6e2b227",
+      "title": "Magic Carpets",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2ac46-4bb4-4d98-a46d-67665d784f28",
+      "title": "Umbrella Combo",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2ac4c-1e5f-4ceb-8d3a-d41f7e9f79ae",
+      "title": "Zero Gravity",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2ac50-a113-40ae-bbf2-41b4e77e1de2",
+      "title": "Beach Buggies",
+      "reason": "operator site refused the download (HTTP 406)"
+    },
+    {
+      "id": "6ac2ac70-d00a-44af-af18-639bdcb001f6",
+      "title": "Kiddie Drop Tower",
+      "reason": "operator site refused the download (HTTP 406)"
+    },
+    {
+      "id": "6ac2acaa-4719-4f37-b078-64cec08692d3",
+      "title": "Zero Gravity",
+      "reason": "operator site refused the download (HTTP 406)"
+    },
+    {
+      "id": "6ac2acc6-93a2-41e6-acc1-a68b87d0c3e7",
+      "title": "Little Eli Scrambler",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2ae37-54c2-46a9-8645-9526b9505ae9",
+      "title": "Mirror Maze",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2afa7-e8c4-4690-ad76-de2beb51f65e",
+      "title": "Dark Ride",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2afb1-4fb0-4544-b98e-6151fb9b1477",
+      "title": "Kiddie Boat",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2afba-0275-41e5-bf9b-948c5c495aaa",
+      "title": "Power Surge",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b064-f396-478f-ada0-19f77248899a",
+      "title": "Lady Bugs",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b070-4792-4133-a347-a9e6703128cf",
+      "title": "Power Surge",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b07b-7c95-4128-86e9-288ad74e35c3",
+      "title": "Sky Fighter",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b212-9853-41db-ba5d-e9c3aa456ff9",
+      "title": "Autobahn",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b221-dcb8-4d18-9389-a311f0288d07",
+      "title": "Giant Wheel",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b22e-01b5-461a-b70f-4cc88b310d8f",
+      "title": "Mini Breakdance",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b232-7e7c-4c75-9404-a88ce95c257d",
+      "title": "Motorcycles",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b24b-8325-4d32-8165-9a44207f72ae",
+      "title": "Super Fun Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b24f-e834-4054-a818-8a5b277f24e9",
+      "title": "Tractors",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b33a-cddd-449b-b0a8-ae006b2cf3e4",
+      "title": "Boats",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b35c-9d3d-465c-8b88-ab2f53dc81ff",
+      "title": "Planes",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b362-8d17-4c4b-9c85-dff9256c0e95",
+      "title": "Scrambler #1",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b3a4-d5da-421d-afbf-e62d04dedff0",
+      "title": "Jets",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b3d4-3f38-41ea-8d99-1dff785392e9",
+      "title": "Tubs of Fun",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b5b3-8709-47a5-9750-a2867e9c3789",
+      "title": "Mardi Gras",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b629-863b-4df2-a3cc-07a4c1e12e01",
+      "title": "Swinger",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b668-fbfe-475f-b678-ebbfa6bb1700",
+      "title": "Big Bounceland",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b694-a5c6-4bbc-bc0c-2cd283f5760e",
+      "title": "Dune Buggies",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b6b3-8d1a-4bb0-8862-c0c932632006",
+      "title": "Inflatable Bounce",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b6b6-758d-40c0-9d4a-e4d0a337ca6c",
+      "title": "Inflatable Slide",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    },
+    {
+      "id": "6ac2b6f2-2354-463e-9350-7fb0b43f5d69",
+      "title": "Safari Jeeps",
+      "reason": "no operator-website photo in the source data (approved without photo)"
+    }
+  ]
+}

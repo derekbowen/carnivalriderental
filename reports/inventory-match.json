@@ -1,0 +1,2427 @@
+{
+  "generatedFrom": "src/lib/inventory/rides.json",
+  "rides": 3714,
+  "matched": 2054,
+  "unmatched": 1660,
+  "ambiguous": 275,
+  "byType": {
+    "giant-slide": 156,
+    "fun-house": 152,
+    "ferris-wheel": 131,
+    "kiddie-cars": 127,
+    "carousel": 116,
+    "kiddie-train": 87,
+    "gravitron": 78,
+    "sizzler-style-ride": 71,
+    "kiddie-coaster": 66,
+    "wave-swinger": 63,
+    "family-coaster": 61,
+    "zipper-style-ride": 60,
+    "giant-ferris-wheel": 54,
+    "tilt-ride": 53,
+    "music-express": 53,
+    "paratrooper": 51,
+    "tornado-ride": 49,
+    "kiddie-motorcycles": 46,
+    "kiddie-carousel": 42,
+    "kiddie-jets": 42,
+    "spinning-teacups": 40,
+    "scrambler": 39,
+    "kamikaze": 39,
+    "chair-swing-ride": 35,
+    "kiddie-swing-ride": 32,
+    "helicopter-ride": 32,
+    "bumper-cars": 30,
+    "mirror-maze": 30,
+    "mini-ferris-wheel": 24,
+    "round-up": 23,
+    "swinging-pirate-ship": 20,
+    "kiddie-pirate-ship": 19,
+    "kiddie-boats": 18,
+    "haunted-house": 16,
+    "kiddie-drop-tower": 16,
+    "orbiter": 16,
+    "freak-out": 11,
+    "pendulum-ride": 10,
+    "ring-of-fire": 10,
+    "tower-swing-ride": 8,
+    "drop-tower": 8,
+    "dark-ride": 5,
+    "pony-cart-ride": 4,
+    "trackless-train": 3,
+    "kiddie-bumper-cars": 3,
+    "bumper-boats": 3,
+    "double-decker-carousel": 1,
+    "kiddie-whip": 1,
+    "inverter": 0,
+    "go-karts": 0
+  },
+  "typesWithNoRides": [
+    "inverter",
+    "go-karts"
+  ],
+  "unmatchedTitles": [
+    "1001 Nachts [spectacular]",
+    "4x4 [kiddie]",
+    "ALIEN [major]",
+    "ALOHA [major]",
+    "ATV's [kiddie]",
+    "Adventure [kiddie]",
+    "Agri-Lift [spectacular]",
+    "Ai [spectacular]",
+    "Air Maxx [major]",
+    "Air Maxx [spectacular]",
+    "Air Raid [spectacular]",
+    "Air Scramble [spectacular]",
+    "Air Show [kiddie]",
+    "Airport 8 [kiddie]",
+    "Airport Copters [kiddie]",
+    "Airstrike [major]",
+    "Aladdin [kiddie]",
+    "Aladin [other]",
+    "Alakazam [spectacular]",
+    "Ali Baba [major]",
+    "Ali Baba [spectacular]",
+    "Ali-Baba Flying Carpet [major]",
+    "Alien Abduction [major]",
+    "Alien Abduction [spectacular]",
+    "Alien Adventure [kiddie]",
+    "Alien Invasion [major]",
+    "Alien Invasion [spectacular]",
+    "Alligator [kiddie]",
+    "Alpine Bobs [spectacular]",
+    "Alter Ego [spectacular]",
+    "Antique M G R [other]",
+    "Apocalypse [major]",
+    "Apple Go Round [kiddie]",
+    "Apple Worm [kiddie]",
+    "Apple [kiddie]",
+    "Arctic Blast [spectacular]",
+    "Area 51 [major]",
+    "Area 51 [other]",
+    "Artic Blast [major]",
+    "Astroliner [family]",
+    "Astroliner [major]",
+    "Atlantis [major]",
+    "Auto Combo [kiddie]",
+    "Autobahn [major]",
+    "Avenger [major]",
+    "Avengers [major]",
+    "Axis [major]",
+    "BEES [kiddie]",
+    "Baby Dino [kiddie]",
+    "Baby Elephants [kiddie]",
+    "Baja Buggie [kiddie]",
+    "Baja Buggies [kiddie]",
+    "Baja Buggy / Jump Around [kiddie]",
+    "Baja Buggy [kiddie]",
+    "Baja Jumping Buggies [kiddie]",
+    "Ballistic [family]",
+    "Ballistic [major]",
+    "Balloon Fiesta [family]",
+    "Barn Stormer [family]",
+    "Barnyard [kiddie]",
+    "Barnyard [other]",
+    "Barrel of Fun [family]",
+    "Barrel of Fun [kiddie]",
+    "Basketballs [other]",
+    "Bayern Rallye [other]",
+    "Bayou Lagoon [kiddie]",
+    "Bayren Kurve [spectacular]",
+    "Beach Buggies [kiddie]",
+    "Beach Buggy [kiddie]",
+    "Beach Party [family]",
+    "Beach Shack [family]",
+    "Bear Affair [family]",
+    "Bear Affair [kiddie]",
+    "Bear Affair [other]",
+    "Bears & Dragons Spinner [family]",
+    "Bears & Dragons [kiddie]",
+    "Beast [spectacular]",
+    "Bee Bikes [kiddie]",
+    "Bees [family]",
+    "Berries [kiddie]",
+    "Berry Go Round [family]",
+    "Berry Go Round [kiddie]",
+    "Berry go Round [kiddie]",
+    "Berry-Go-Round [family]",
+    "Berry-Go-Round [kiddie]",
+    "Berry-go-Round [family]",
+    "Big Bounceland [kiddie]",
+    "Big Kahuna [spectacular]",
+    "Big Splash [major]",
+    "Big Surf [major]",
+    "Big Top Circus [kiddie]",
+    "Black Out [spectacular]",
+    "Black Widow [major]",
+    "Blast Off [family]",
+    "Blizzard [family]",
+    "Block City [kiddie]",
+    "Bounce House [other]",
+    "Bounce Houses [other]",
+    "Bounce [other]",
+    "Bouncing Barn [kiddie]",
+    "Buccaneer [kiddie]",
+    "Bug N Around [kiddie]",
+    "Buggin Around [kiddie]",
+    "Bulgy The Whale [kiddie]",
+    "Bulgy the Whale [kiddie]",
+    "Bullet [major]",
+    "Bumble Bee Bop [kiddie]",
+    "Bumble Bee [kiddie]",
+    "Bumble Bee's [kiddie]",
+    "Bumble Bees [family]",
+    "Bumble Bees [kiddie]",
+    "Burnout [major]",
+    "Buzz Buzz [kiddie]",
+    "CANDY RUSH [kiddie]",
+    "CANOE [kiddie]",
+    "CRAZY BUS [kiddie]",
+    "CRAZY DANCE [major]",
+    "CUCKOO HAUS [kiddie]",
+    "Candy Land [kiddie]",
+    "Candyland Adventure [spectacular]",
+    "Candyland Bounce [other]",
+    "Candyland [kiddie]",
+    "Canoes [kiddie]",
+    "Casino [major]",
+    "Casino [other]",
+    "Castle Bounce [other]",
+    "Castle Mania #1 [other]",
+    "Castle Mania #2 [other]",
+    "Castle Pillow [other]",
+    "Castle of The Dead [major]",
+    "Catch 'N' Air [major]",
+    "Catch N Air [major]",
+    "Catch N Air [spectacular]",
+    "Central Park [family]",
+    "Central Park [kiddie]",
+    "Centrifuge [major]",
+    "Chair Jet [major]",
+    "Chaos [spectacular]",
+    "Chilly WIlly [kiddie]",
+    "Circus Jumbo [family]",
+    "Clatterpillar [kiddie]",
+    "Cliff Hanger 2 [major]",
+    "Cliff Hanger [major]",
+    "Cliff Hanger [other]",
+    "Cliff Hanger [spectacular]",
+    "Cliffhanger [family]",
+    "Cliffhanger [major]",
+    "Clown Around [kiddie]",
+    "Clown-A-Round [kiddie]",
+    "Club Scene [major]",
+    "Cobra [kiddie]",
+    "Cobra [major]",
+    "Combination [kiddie]",
+    "Combination [other]",
+    "Combos [kiddie]",
+    "Construction Bounce [kiddie]",
+    "Construction Zone [kiddie]",
+    "Convoy [kiddie]",
+    "Cool Bears [kiddie]",
+    "Copter Command [kiddie]",
+    "Cortina Bob [major]",
+    "Cosmic Chaos [other]",
+    "Cosmic Commander [kiddie]",
+    "Cow Bounce [other]",
+    "Crazy Bus [family]",
+    "Crazy Bus [kiddie]",
+    "Crazy Cabs [family]",
+    "Crazy Cabs [major]",
+    "Crazy Dance [major]",
+    "Crazy Dance [spectacular]",
+    "Crazy Dumbos [kiddie]",
+    "Crazy Mouse [spectacular]",
+    "Crazy Space [kiddie]",
+    "Crazy Sub #1 [kiddie]",
+    "Crazy Sub #2 [kiddie]",
+    "Crazy Sub [kiddie]",
+    "Crazy Surf [major]",
+    "Crazy Train [spectacular]",
+    "Critter Track [kiddie]",
+    "Crocodile Mile [kiddie]",
+    "Crop Cruisers [kiddie]",
+    "Crop Duster [family]",
+    "Cruiser [kiddie]",
+    "Cruisin' Classics [kiddie]",
+    "Crystal Lils [family]",
+    "Crystal Lils [major]",
+    "Cub Country [family]",
+    "Cuda [major]",
+    "Cyborg [spectacular]",
+    "Cycle Jump [kiddie]",
+    "Cyclone [major]",
+    "Cyclops 2.0 [major]",
+    "Cyclops [spectacular]",
+    "DINO [kiddie]",
+    "Dancing Dragons [kiddie]",
+    "Das Deutsche Karussell [family]",
+    "Daytona [kiddie]",
+    "Defender [spectacular]",
+    "Delusion [spectacular]",
+    "Dino Go Round [kiddie]",
+    "Dino [kiddie]",
+    "Dinoride [kiddie]",
+    "Dinos & Elephants [kiddie]",
+    "Dinos [kiddie]",
+    "Dinosaurs [kiddie]",
+    "Dino’s [kiddie]",
+    "Discothek [other]",
+    "Disk’O [major]",
+    "Dive Bomber [kiddie]",
+    "Dive Bomber [major]",
+    "Dizzy Dogs [family]",
+    "Dizzy Dragon [family]",
+    "Dizzy Dragon [kiddie]",
+    "Dizzy Dragons [family]",
+    "Dizzy Dragons [kiddie]",
+    "Dora Bounce House [other]",
+    "Double Shock [spectacular]",
+    "Down Draft [major]",
+    "Down on the Farm Tractor Ride [kiddie]",
+    "Downdraft [major]",
+    "Downdraft [spectacular]",
+    "Dozer Land [kiddie]",
+    "Dragons [kiddie]",
+    "Dreamland [major]",
+    "Drive In Go Round [kiddie]",
+    "Drummer Boy [kiddie]",
+    "Drums [kiddie]",
+    "Ducks [kiddie]",
+    "Dune Buggies [kiddie]",
+    "Dune Buggy Jump [kiddie]",
+    "Dune Buggy [kiddie]",
+    "Durant Railway [kiddie]",
+    "Eclipse [spectacular]",
+    "Edge [major]",
+    "El Nino [other]",
+    "Electric Dance Party [major]",
+    "Elephant Ride [family]",
+    "Elephants [kiddie]",
+    "Eli Eagle 16 [family]",
+    "Eli Eagle 16 [major]",
+    "Endeavor [major]",
+    "Endeavor [spectacular]",
+    "Enterprise [major]",
+    "Enterprise [spectacular]",
+    "Euro Bungee [kiddie]",
+    "Euro Bungee [other]",
+    "Euro Bungy [other]",
+    "Everglades Adventure [kiddie]",
+    "Expedition [major]",
+    "Extreme Scream [major]",
+    "Extreme Scream [other]",
+    "Extreme [major]",
+    "Extreme [spectacular]",
+    "F-80 [kiddie]",
+    "Face to Face Race [other]",
+    "Falling Star [spectacular]",
+    "Farm Tractors [kiddie]",
+    "Fast and Furious [spectacular]",
+    "Fender Bender [kiddie]",
+    "Fiesta [kiddie]",
+    "Fighter [major]",
+    "Fire Ball [major]",
+    "Fire Ball [other]",
+    "Fire Ball [spectacular]",
+    "Fire Brigade [kiddie]",
+    "Fire Chief [family]",
+    "Fire Chief [kiddie]",
+    "Fire Dog Bounce [other]",
+    "Fire House [kiddie]",
+    "Firedog Bounce [other]",
+    "Firehouse [kiddie]",
+    "Firestorm [family]",
+    "Flash Dance [spectacular]",
+    "Flashback [major]",
+    "Flatline 360 [spectacular]",
+    "Flipper [major]",
+    "Flying Bees [kiddie]",
+    "Flying Bobs [kiddie]",
+    "Flying Bobs [major]",
+    "Flying Bobs [spectacular]",
+    "Flying Circus [spectacular]",
+    "Flying Dinos [kiddie]",
+    "Flying Dragon [kiddie]",
+    "Flying Dragons [kiddie]",
+    "Flying Dragoon [kiddie]",
+    "Flying Dumbos [kiddie]",
+    "Flying Dutchman [major]",
+    "Flying Elephant [major]",
+    "Flying Elephants [family]",
+    "Flying Elephants [kiddie]",
+    "Flying Jumbo [major]",
+    "Flying Jumbos [family]",
+    "Flying Puppies [family]",
+    "Flying Puppies [kiddie]",
+    "Flying Saucers [kiddie]",
+    "Flying Tigers [kiddie]",
+    "Flying Tigers [other]",
+    "Flying Turtles [kiddie]",
+    "Footloose [spectacular]",
+    "Freestyle [major]",
+    "Frenzy [major]",
+    "Frolic [family]",
+    "Fruit Cup [kiddie]",
+    "Full Tilt [major]",
+    "Fun Factory [other]",
+    "Fun Zone [family]",
+    "Fun Zone [other]",
+    "Funnel Force [major]",
+    "Funny Farm [family]",
+    "Funny Farm [kiddie]",
+    "Funny Farm [other]",
+    "G-Force [major]",
+    "G-Force [spectacular]",
+    "GROOVY BUS [kiddie]",
+    "Galleon Race [family]",
+    "Gator Land [kiddie]",
+    "Gators [kiddie]",
+    "Gee Whiz [family]",
+    "Gee Whiz [major]",
+    "Genesis [major]",
+    "Gentle Giant [spectacular]",
+    "Giant Scooters [spectacular]",
+    "Glass House [kiddie]",
+    "Go Gator [kiddie]",
+    "Go-Gator [kiddie]",
+    "Gold Miner [kiddie]",
+    "Grand Prix [major]",
+    "Granny Bug [kiddie]",
+    "Granny Bugs [kiddie]",
+    "Gravatron [major]",
+    "Groovy Bus [kiddie]",
+    "Ground Cycles [kiddie]",
+    "Gyro Extreme [other]",
+    "HUSTLER [major]",
+    "Hampton Combo [kiddie]",
+    "Hampton Gators [kiddie]",
+    "Hampton Motor Cycle Jump [kiddie]",
+    "Hampton QuadRunners [kiddie]",
+    "Hampton [kiddie]",
+    "Hang Glider [major]",
+    "Hangover [major]",
+    "Happy Pond [kiddie]",
+    "Happy Sailor [kiddie]",
+    "Hard Rock [spectacular]",
+    "Hard Rocker [other]",
+    "Hawaiian Express [spectacular]",
+    "Haywire [major]",
+    "Helix 360 [major]",
+    "Hero Raiders [kiddie]",
+    "Hi Roller [major]",
+    "Hi Roller [other]",
+    "High Flyer [major]",
+    "High Roller [major]",
+    "High Roller [spectacular]",
+    "Hillbilly Express [kiddie]",
+    "Hip Hop Bear [kiddie]",
+    "Hip Hop [kiddie]",
+    "Hit in 2000 [spectacular]",
+    "Hog Rally [kiddie]",
+    "Hog Wild [kiddie]",
+    "Honey Pots [kiddie]",
+    "HonkyTonk [family]",
+    "Hop Around [kiddie]",
+    "Hot Rods [family]",
+    "Hot Rods [kiddie]",
+    "Hot Wheels [family]",
+    "Hot Wheelz #1 [major]",
+    "Hot Wheelz #2 [kiddie]",
+    "Hot Wheelz #3 [kiddie]",
+    "Hulk [spectacular]",
+    "Hustler [family]",
+    "Hustler [major]",
+    "Hydra [spectacular]",
+    "Hyper Loop [major]",
+    "Hyper Loop [spectacular]",
+    "Hyperdrive [major]",
+    "Ice Jet [major]",
+    "Ice Jet [spectacular]",
+    "Indian Rivers [other]",
+    "Indy 500 [spectacular]",
+    "Infernal Combustion [major]",
+    "Inferno [other]",
+    "Inferno [spectacular]",
+    "Infinity [spectacular]",
+    "Inflatable Bounce Castle [other]",
+    "Inflatable Bounce [kiddie]",
+    "Insanity [spectacular]",
+    "Insomniac [major]",
+    "Invader [spectacular]",
+    "Invasion [kiddie]",
+    "Inversion [spectacular]",
+    "JUMBO [kiddie]",
+    "Jalopy Junction [family]",
+    "Jalopy Junction [kiddie]",
+    "Jekyll & Hyde [major]",
+    "JetSki [kiddie]",
+    "Jetsons [kiddie]",
+    "Jitter Bug [kiddie]",
+    "Jitterbug [kiddie]",
+    "Joker 360 [other]",
+    "Joker [major]",
+    "Joker's Remix [major]",
+    "Jumbo Dumbo Elephant Ride [kiddie]",
+    "Jumbo Dumbos [family]",
+    "Jumbo Elephants [family]",
+    "Jumbo [family]",
+    "Jumbo [major]",
+    "Jumbo [other]",
+    "Jumbo the Elephant [family]",
+    "Jumbos [kiddie]",
+    "Jumbos [major]",
+    "Jump Around [kiddie]",
+    "Jump Cycle [kiddie]",
+    "Jump Cycles [kiddie]",
+    "Jumpin' Jumbos [kiddie]",
+    "Jumping Cycles [kiddie]",
+    "Jumping Jumbo [kiddie]",
+    "Jumping Jumbos [kiddie]",
+    "Jumping Jumbos [other]",
+    "Jumping Star [kiddie]",
+    "Jumps [kiddie]",
+    "Jungle Bounce [kiddie]",
+    "Jungle Crawl [kiddie]",
+    "Jungle Explorer [kiddie]",
+    "Jungle Jim [other]",
+    "Jungle Mania [kiddie]",
+    "Jungle Mania [other]",
+    "Jungle Safari [kiddie]",
+    "Jungle Walk [kiddie]",
+    "Jungle of Fun [kiddie]",
+    "Justice League Bounce [kiddie]",
+    "KITE FLYER [major]",
+    "Khaos [spectacular]",
+    "Kid Power [kiddie]",
+    "Kiddie Combo [kiddie]",
+    "Kiddie Elephants #1 [kiddie]",
+    "Kiddie Elephants #2 [kiddie]",
+    "Kiddie Whales [kiddie]",
+    "Kiddiepilllar [kiddie]",
+    "Kids Town [kiddie]",
+    "King XXL [spectacular]",
+    "Kite Flyer [family]",
+    "Kite Flyer [major]",
+    "Kong Tower [spectacular]",
+    "Konga [major]",
+    "Kraken [spectacular]",
+    "Lady Bug [kiddie]",
+    "Lady Bugs [kiddie]",
+    "Ladybugs [kiddie]",
+    "Light House Dive [kiddie]",
+    "Lightning [spectacular]",
+    "Little Dipper [kiddie]",
+    "Little Dragons [kiddie]",
+    "Loch Ness Monster [kiddie]",
+    "Looney Airport [kiddie]",
+    "Looney Train [family]",
+    "Loop Fighter [spectacular]",
+    "Loop O Plane [family]",
+    "Loop O Plane [major]",
+    "Loop- O- Plane [major]",
+    "Loop-O-Plane [major]",
+    "Loop-o-Plane [major]",
+    "Love Bugs [kiddie]",
+    "MEGA DROP [spectacular]",
+    "MGR [other]",
+    "Mach 1 [spectacular]",
+    "Madagascar Bus [family]",
+    "Madagascar [kiddie]",
+    "Magic Carpet [family]",
+    "Magic Carpets [family]",
+    "Magic Dragon [kiddie]",
+    "Magical Express [kiddie]",
+    "Magnum [spectacular]",
+    "Mantis [major]",
+    "Mardi Gras [family]",
+    "Mardi Gras [major]",
+    "Mardi Gras [other]",
+    "Mario Land [kiddie]",
+    "Mario Land [other]",
+    "Mario Play-Station [other]",
+    "Martian Madness [kiddie]",
+    "Mechanical Bull \"PRIME TIME\" [other]",
+    "Mechanical Bull Wild West [other]",
+    "Mechanical Bull [other]",
+    "Mechanical Shark [other]",
+    "Mechanical Unicorn Ride [other]",
+    "Medusa [spectacular]",
+    "Mega Bounce [spectacular]",
+    "Mega Drop [major]",
+    "Mega Drop [spectacular]",
+    "Mega Flip [spectacular]",
+    "Megaloop [spectacular]",
+    "Mickey Bounce House [other]",
+    "Mickey Bounce [kiddie]",
+    "Midway Sky Eye [spectacular]",
+    "Mighty Mac [kiddie]",
+    "Mighty Macks [kiddie]",
+    "Mind Winder Tubs [major]",
+    "Mind Winder [family]",
+    "Mind Winder [kiddie]",
+    "Mind Winder [major]",
+    "Mindwinder [family]",
+    "Mindwinder [major]",
+    "Mini Bounce Land [kiddie]",
+    "Mini Breakdance [family]",
+    "Mini Dinos [kiddie]",
+    "Mini Disco [kiddie]",
+    "Mini Dumbos [kiddie]",
+    "Mini Enterprise Combo [kiddie]",
+    "Mini Enterprise [kiddie]",
+    "Mini Himilaya [kiddie]",
+    "Mini Indy [kiddie]",
+    "Mini Scooters [kiddie]",
+    "MiniTrooper [kiddie]",
+    "Mixer [family]",
+    "Moby Dick [major]",
+    "Moby Dick [other]",
+    "Moby Dick [spectacular]",
+    "Monkey Mayhem [kiddie]",
+    "Monster [major]",
+    "Moon Buggy [kiddie]",
+    "Mud Warrior [other]",
+    "Music Fest [major]",
+    "Music Fest [spectacular]",
+    "Musical Chairs [kiddie]",
+    "Musical Chairs [major]",
+    "Musical Chairs [other]",
+    "Mystery Machine [kiddie]",
+    "NYC Taxi [family]",
+    "Nemesis 360 [major]",
+    "Nemesis 360 [spectacular]",
+    "Nemo [kiddie]",
+    "Nemos [kiddie]",
+    "Nitro [spectacular]",
+    "Noah's Ark [kiddie]",
+    "OMG 360 [major]",
+    "OMG [major]",
+    "OMG [spectacular]",
+    "Obstacle Course Inflatable [other]",
+    "Obstacle Course [other]",
+    "Ocean Rage [major]",
+    "Octopus [major]",
+    "Odyssey [major]",
+    "Oh Chute [family]",
+    "Olympic Bobsled [spectacular]",
+    "Orbitor [major]",
+    "Orient Express [family]",
+    "Orient Express [kiddie]",
+    "Orient Express [major]",
+    "Orient Express [other]",
+    "Oscars Goldfish [kiddie]",
+    "Overdrive [other]",
+    "Overdrive [spectacular]",
+    "Oxygen [spectacular]",
+    "P.L.U.R [spectacular]",
+    "Panda Bears [kiddie]",
+    "Party Animal [other]",
+    "Pelican Splash [kiddie]",
+    "Peter Paul Dinos [kiddie]",
+    "Peter Paul Dragons [kiddie]",
+    "Peter Paul [kiddie]",
+    "Phantom's Revenge [family]",
+    "Phantom's Revenge [kiddie]",
+    "Phantoms Revenge [family]",
+    "Pharaoh's Fury [family]",
+    "Pharaoh's Fury [major]",
+    "Pharaoh's Fury [spectacular]",
+    "Pharaohs Fury #1 [spectacular]",
+    "Pharaohs Fury #2 [spectacular]",
+    "Pharaohs Fury [major]",
+    "Pharaohs Fury [spectacular]",
+    "Pharaoh’s Fury [major]",
+    "Pharaoh’s Fury [spectacular]",
+    "Pharoah Fury [family]",
+    "Pharoah's Fury [major]",
+    "Pharoah’s Fury [major]",
+    "Phoenix [family]",
+    "Pineapple Express [major]",
+    "Pit Stop Scooter [major]",
+    "Pit Stop [kiddie]",
+    "Playstation [other]",
+    "Pokemon [kiddie]",
+    "Polar Express [major]",
+    "Polar Express [spectacular]",
+    "Pooh Bear [kiddie]",
+    "Pop-A-Wheelie [kiddie]",
+    "Predator [major]",
+    "Princess Bounce [kiddie]",
+    "Pumpkin Bounce House [other]",
+    "Pumpkin Spin [kiddie]",
+    "Puppy Belly Bounce [kiddie]",
+    "Puppy Chase [kiddie]",
+    "Puppy Love [kiddie]",
+    "Puppy Roll [family]",
+    "Puppy Roll [kiddie]",
+    "Quad Runner [kiddie]",
+    "Quad Runners [kiddie]",
+    "Quadrunners [kiddie]",
+    "Quads [kiddie]",
+    "Quadzilla [family]",
+    "Quadzilla [kiddie]",
+    "Quasar [major]",
+    "Quasar [spectacular]",
+    "RECKLESS [family]",
+    "ROCKSTAR [major]",
+    "Radical Run I [other]",
+    "Raging Waters [kiddie]",
+    "Raiders [kiddie]",
+    "Raiders [other]",
+    "Rainbow Rock #1 [family]",
+    "Rainbow Rock #2 [family]",
+    "Rainbow Rock [family]",
+    "Rainbow Rock [kiddie]",
+    "Rainbow Rocks [family]",
+    "Rainier Rush [other]",
+    "Rampage [major]",
+    "Ramrods [major]",
+    "Randi's Adventure Land [kiddie]",
+    "Raptor Attack [kiddie]",
+    "Raptor [major]",
+    "Rat Race [other]",
+    "Rave Wave [major]",
+    "Reactor [spectacular]",
+    "Reckless [kiddie]",
+    "Red Baron [kiddie]",
+    "Remix II [spectacular]",
+    "Remix [major]",
+    "Renegade [family]",
+    "Rescue 911 [kiddie]",
+    "Rip Cord [major]",
+    "Rip Tide [spectacular]",
+    "Riptide [spectacular]",
+    "Roadsters [kiddie]",
+    "Roc-O-Plane [major]",
+    "Rock & Roll [spectacular]",
+    "Rock Climb [other]",
+    "Rock Climbing Wall [other]",
+    "Rock It [major]",
+    "Rock N Cars [family]",
+    "Rock N Cars [major]",
+    "Rock N Out [family]",
+    "Rock N Tug [family]",
+    "Rock N Tug [kiddie]",
+    "Rock O Plane [major]",
+    "Rock O' Plane [major]",
+    "Rock Star [major]",
+    "Rock Star [other]",
+    "Rock Star [spectacular]",
+    "Rock Wall [other]",
+    "Rock-N-Cars [major]",
+    "Rock-N-Roll [major]",
+    "Rock-N-Tug [kiddie]",
+    "Rock-O-Plane [major]",
+    "Rock-O-Plane [spectacular]",
+    "Rock-o-Plane [major]",
+    "Rockin Tug [family]",
+    "Rockin Tug [kiddie]",
+    "Rockin' Tug [family]",
+    "Rockin' Tug [kiddie]",
+    "Rockin' Tug [other]",
+    "Rockin-Tug Boat [family]",
+    "Rockin’ Tug [family]",
+    "Rockstar [major]",
+    "Rockstar [spectacular]",
+    "Rocktown [kiddie]",
+    "Rockwall [other]",
+    "Rodeo [kiddie]",
+    "Rok N Roll [major]",
+    "Rok n Roll [major]",
+    "Rolo Plane [major]",
+    "Round-Up [major]",
+    "Rumble in the Jungle [kiddie]",
+    "Runaway Train [family]",
+    "SPIN CYCLE EXTREME TUBS [major]",
+    "STORM [major]",
+    "SUPER SHOT [spectacular]",
+    "SUPER SONIC [major]",
+    "SUPERFLY [other]",
+    "Saber Tooth [other]",
+    "Saddle Up [kiddie]",
+    "Safari Bus [kiddie]",
+    "Samba Balloon [kiddie]",
+    "Samba Balloons [family]",
+    "Samba Balloons [kiddie]",
+    "Samba [kiddie]",
+    "Samurai [major]",
+    "Santa's Flying Reindeer [family]",
+    "Saturn 16 [major]",
+    "Scat [major]",
+    "Scooter #1 [family]",
+    "Scooter #2 [family]",
+    "Scooter 1800 [major]",
+    "Scooter [family]",
+    "Scooter [major]",
+    "Scooters [family]",
+    "Scorcher [family]",
+    "Scorpion [major]",
+    "Screamer [major]",
+    "Screamer [spectacular]",
+    "Sea Doo [kiddie]",
+    "Sea Ray [kiddie]",
+    "Sea Ray [major]",
+    "Sea Ray [spectacular]",
+    "Seven Seas [major]",
+    "Shake Up [spectacular]",
+    "Ships Ahoy [family]",
+    "Shock Drop [major]",
+    "Side Winder [major]",
+    "Side-By-Side [kiddie]",
+    "Silver Streak [family]",
+    "Silver Streak [major]",
+    "Silver Streak [other]",
+    "Sinbad [other]",
+    "Skid Steer [kiddie]",
+    "Skipper The Dolphin [kiddie]",
+    "Skooters [other]",
+    "Sky Diver [major]",
+    "Sky Diver [other]",
+    "Sky Diver [spectacular]",
+    "Sky Fighter [kiddie]",
+    "Sky Fighter [other]",
+    "Sky Hawk [major]",
+    "Sky Jump [other]",
+    "Sky Quest [major]",
+    "Sky Ride [family]",
+    "Sky Ride [other]",
+    "Sky Ride [spectacular]",
+    "Sky Rider [major]",
+    "Skyfall [spectacular]",
+    "Skyfighter [kiddie]",
+    "Skyliner [spectacular]",
+    "Sleigh Ride [spectacular]",
+    "Slime Bucket [kiddie]",
+    "Slime Buckets [kiddie]",
+    "Snooty [other]",
+    "Snow Convoy [kiddie]",
+    "Snowmobile [kiddie]",
+    "Sound Wave [spectacular]",
+    "Space Age [kiddie]",
+    "Space Bugs [kiddie]",
+    "Space Chase [kiddie]",
+    "Space Loop [major]",
+    "Space Odyssey [major]",
+    "Space Shuttle [major]",
+    "Space Shuttles [kiddie]",
+    "Space Sled [major]",
+    "Space Wheels [family]",
+    "Space [kiddie]",
+    "Spaceport [spectacular]",
+    "Speed Buggies [kiddie]",
+    "Speed [spectacular]",
+    "Speedy Gonzalez [kiddie]",
+    "Spider Jump [other]",
+    "Spider Mania [kiddie]",
+    "Spider [family]",
+    "Spider [major]",
+    "Spider [spectacular]",
+    "Spidermania [kiddie]",
+    "Spin Bear [kiddie]",
+    "Spin Move [major]",
+    "Spin Out [kiddie]",
+    "Spin Out [major]",
+    "Spin Puppies [kiddie]",
+    "Spin the Apple [kiddie]",
+    "Spin-The-Apple [family]",
+    "SpinCity [major]",
+    "Spindle [other]",
+    "Spinner [kiddie]",
+    "Spinner [other]",
+    "Spinning Berry [family]",
+    "Spinning Flowers [kiddie]",
+    "Spring Tower [other]",
+    "Squadron [kiddie]",
+    "Stampede [spectacular]",
+    "Star Dancer [major]",
+    "Star Dancer [spectacular]",
+    "Star Fighter [spectacular]",
+    "Star Scream [spectacular]",
+    "Star Tower [major]",
+    "Star Trooper [major]",
+    "Storm [major]",
+    "Strawberries [family]",
+    "Street Fighter 360 [spectacular]",
+    "Stretch Raiders [other]",
+    "Sub Zero [major]",
+    "Sun Valley Flyer [family]",
+    "Super Loop [major]",
+    "Super Loops [other]",
+    "Super Shot [major]",
+    "Super Shot [spectacular]",
+    "Super Sonic [kiddie]",
+    "Super Spinner [other]",
+    "Super Trooper [major]",
+    "Super Trooper [spectacular]",
+    "Superman 360 [spectacular]",
+    "Superman [spectacular]",
+    "Supernova 360 [spectacular]",
+    "Surf City [kiddie]",
+    "Surf City [other]",
+    "Surf Shack [major]",
+    "Surf's Up [major]",
+    "Surfer [major]",
+    "Surfs Up [family]",
+    "Surfs Up [major]",
+    "Swamp Splash [water]",
+    "Swamp Thing [major]",
+    "T Rex [major]",
+    "THOR [spectacular]",
+    "Tango [spectacular]",
+    "Tarantula [family]",
+    "Tea Party [kiddie]",
+    "Tea Time [kiddie]",
+    "Techno Power [spectacular]",
+    "Tempest [family]",
+    "Tempest [major]",
+    "Texas Star [spectacular]",
+    "The Beast [major]",
+    "The Beast [spectacular]",
+    "The Brute [major]",
+    "The Casino [major]",
+    "The Conjuring [major]",
+    "The Lone Star Scooter [family]",
+    "The Orient Express [kiddie]",
+    "The Spider [kiddie]",
+    "Thea's Zoo [other]",
+    "Thor [major]",
+    "Thunder Bolt [major]",
+    "Thunder Fest [spectacular]",
+    "Thunder Struck [major]",
+    "Thunderbolt [major]",
+    "Tidal Wave [major]",
+    "Tidal Wave [spectacular]",
+    "Tiger Bounce [other]",
+    "Tiger Express [other]",
+    "Tigger Bounce [other]",
+    "Tilt [family]",
+    "Tilt- A- Whirl #1 [major]",
+    "Tilt- A- Whirl #2 [major]",
+    "Time Zone [major]",
+    "Tinseltown [family]",
+    "Tiny Tractors [kiddie]",
+    "Tip Top [major]",
+    "Tip-Top [major]",
+    "Tippy Canoe [kiddie]",
+    "Titan [major]",
+    "Titan [spectacular]",
+    "Toddler Town [kiddie]",
+    "Tommy Kangaroo [kiddie]",
+    "Toon Town Theatre [family]",
+    "Toon Town [family]",
+    "Toon Town [kiddie]",
+    "Top Gun [spectacular]",
+    "Touchdown [spectacular]",
+    "Toy Town [kiddie]",
+    "Trabant [major]",
+    "Tractor Ride [kiddie]",
+    "Tractor [kiddie]",
+    "Tractors [kiddie]",
+    "Traffic Jam [major]",
+    "Train [other]",
+    "Trapeze [major]",
+    "Treasure Hunt [kiddie]",
+    "Tree House [kiddie]",
+    "Treehouse [other]",
+    "Triple Twist [major]",
+    "Tropical Wave [other]",
+    "Tubs [family]",
+    "Tubs of Fun [kiddie]",
+    "Tubs of Fun [other]",
+    "Tulsa [kiddie]",
+    "Turbo Tubs [family]",
+    "Turbo [spectacular]",
+    "Turn Tike [kiddie]",
+    "Turtle Parade [kiddie]",
+    "Turtles [kiddie]",
+    "Tweety Bounce [other]",
+    "Twist [family]",
+    "Twist [major]",
+    "Typhoon [major]",
+    "Typhoon [spectacular]",
+    "UFO Area 51 [major]",
+    "Under the Sea [kiddie]",
+    "Undersea Adventure [kiddie]",
+    "Unit 2 Gondola [major]",
+    "Up Up & Away [kiddie]",
+    "Up Up & Away! [kiddie]",
+    "Up Up and Away Balloon Ride [kiddie]",
+    "Up Up and Away [kiddie]",
+    "VW Bug [kiddie]",
+    "VW Bugs [kiddie]",
+    "Velocity [other]",
+    "Vertigo [major]",
+    "Vertigo [other]",
+    "Vertigo [spectacular]",
+    "Viper [family]",
+    "Viper [major]",
+    "Virus [spectacular]",
+    "Viva Las Vegas [spectacular]",
+    "Volkswagon [kiddie]",
+    "Volkswagons [kiddie]",
+    "Vortex II [major]",
+    "Vortex [major]",
+    "Vortex [spectacular]",
+    "Wacky Bounce [kiddie]",
+    "Wacky Castle [other]",
+    "Wacky Dog [family]",
+    "Wacky Dog [major]",
+    "Walking Dead [major]",
+    "Wally Gator Ride [kiddie]",
+    "Wave Runner [kiddie]",
+    "Wave Runners [kiddie]",
+    "Wave Thunder [kiddie]",
+    "Wave Thunder [other]",
+    "Wet Boats [water]",
+    "Whales [kiddie]",
+    "Wheelie [kiddie]",
+    "Whirlwind [family]",
+    "Whirly Bird [kiddie]",
+    "White Water [water]",
+    "Wiggle Worm [family]",
+    "Wiggle Wurm [family]",
+    "Wiggle Wurm [kiddie]",
+    "Wild Cat [other]",
+    "Wild Jungle [kiddie]",
+    "Wild River [major]",
+    "Wild Thing [other]",
+    "Willie the Whale [kiddie]",
+    "Wind Glider [family]",
+    "Wind Glider [major]",
+    "Wind Jammer [kiddie]",
+    "Wind Jammer [major]",
+    "Wind Surfer [major]",
+    "Windjammer [family]",
+    "Winky the Whale [kiddie]",
+    "Wipe Out [major]",
+    "Wipeout [major]",
+    "Wizzer [kiddie]",
+    "Wreaking Ball [family]",
+    "Wrecking Ball [family]",
+    "Wrecking Ball [major]",
+    "X Drive [spectacular]",
+    "X-Factory [major]",
+    "X-Scream [spectacular]",
+    "X-Treme [major]",
+    "Xtreme Scream [major]",
+    "Xtreme [major]",
+    "Y-Factor [major]",
+    "Yellow Stone [family]",
+    "Yoppi [family]",
+    "Zender [major]",
+    "Zeus [major]",
+    "Zeus [spectacular]",
+    "Zodiac [major]",
+    "Zombie Circus [major]",
+    "Zoogvogal [major]",
+    "Zoom [kiddie]",
+    "Zooss Ville Parade [kiddie]",
+    "Zumur [major]"
+  ],
+  "ambiguousSample": [
+    {
+      "title": "Carnival Trackless Train",
+      "chosen": "trackless-train",
+      "alsoMatches": [
+        "kiddie-train"
+      ]
+    },
+    {
+      "title": "Classic Trackless Train",
+      "chosen": "trackless-train",
+      "alsoMatches": [
+        "kiddie-train"
+      ]
+    },
+    {
+      "title": "Little Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Dora Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Kiddie Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Kid Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Motorcycle Race",
+      "chosen": "kiddie-motorcycles",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Baby Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Lolly Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Happy Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Haunted Mansion",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "MonkeyMaze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Family Swinger",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "wave-swinger"
+      ]
+    },
+    {
+      "title": "Ghost Manor Dark Ride",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "dark-ride"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Big Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Childrens Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Pirates Revenge",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Cars & Motorcycle Jump",
+      "chosen": "kiddie-motorcycles",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Hampton Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon Roller Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Superjet Roller Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kid Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Spookhouse",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Cobra Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Grand Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Boomers Pirate Ship",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Carousel Mini",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Ferris Wheel -Mini",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Giant Wheel 1",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Giant Wheel 2",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Happy Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Jakes Pirate Jet",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship",
+        "kiddie-jets"
+      ]
+    },
+    {
+      "title": "Kids Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Magic Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Nemo Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Pirates of the Magical Midway",
+      "chosen": "fun-house",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Ring of Fire",
+      "chosen": "family-coaster",
+      "alsoMatches": [
+        "ring-of-fire"
+      ]
+    },
+    {
+      "title": "Umbrella Jeeps",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Umbrella Jet Ski",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-jets"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Mini Pirate Ship",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Pirates Pond",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Ring of Fire",
+      "chosen": "family-coaster",
+      "alsoMatches": [
+        "ring-of-fire"
+      ]
+    },
+    {
+      "title": "Helicopters & Space Jets",
+      "chosen": "helicopter-ride",
+      "alsoMatches": [
+        "kiddie-jets"
+      ]
+    },
+    {
+      "title": "Kiddie Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Boats and Trains",
+      "chosen": "kiddie-train",
+      "alsoMatches": [
+        "kiddie-boats"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Jeeps and Motorcycles",
+      "chosen": "kiddie-motorcycles",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Pirate's Revenge",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Kiddie Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Mini Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Umbrella Cars",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Umbrella MotorCycles",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-motorcycles"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Grand Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Happy Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Haunted Mansion",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "dark-ride"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Plane Train",
+      "chosen": "kiddie-train",
+      "alsoMatches": [
+        "kiddie-jets"
+      ]
+    },
+    {
+      "title": "Wacky Worm Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Balloon Fiesta Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Wacky Worm Roller Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Lolly Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Baby Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Twister Swing",
+      "chosen": "chair-swing-ride",
+      "alsoMatches": [
+        "sizzler-style-ride"
+      ]
+    },
+    {
+      "title": "Freak Show Haunted Mansion",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Little Beauty Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Kiddie Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Children Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Kiddie Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Merry-Go-Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon Roller Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Mini Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Ghost Pirates",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Haunted House",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Lil' Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Buzz Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Swing Carousel",
+      "chosen": "carousel",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Pirates Revenge",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "30 Horse Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Balloon Fiesta Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Cub Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Cub Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Fantasy Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Fantasy Carousel #2",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Global Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Lolli Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Vertigo Swings",
+      "chosen": "tower-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Wacky Worm Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Candyland Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Little Wagon Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Pirate Island",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Lil Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Pirate Revenge",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Ghoster Coaster",
+      "chosen": "family-coaster",
+      "alsoMatches": [
+        "haunted-house"
+      ]
+    },
+    {
+      "title": "Mini Pirate Ship",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Umbrella Boats",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-boats"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Swing Carousel",
+      "chosen": "carousel",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "CAROUSEL",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "CENTURY WHEEL",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "MONKEY MAZE",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Dragon Wagon",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "The Kiddie Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Lolli Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Coaster",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Mini Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Dragon Wagon",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Kiddie Drop Tower",
+      "chosen": "kiddie-drop-tower",
+      "alsoMatches": [
+        "drop-tower"
+      ]
+    },
+    {
+      "title": "Pirate Ship",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Balloon Ferris Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Little Eli Scrambler",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "scrambler"
+      ]
+    },
+    {
+      "title": "Little Eli Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Pirate's Revenge",
+      "chosen": "kiddie-pirate-ship",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Merry-go-Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Bumper Boats",
+      "chosen": "kiddie-bumper-cars",
+      "alsoMatches": [
+        "bumper-boats",
+        "kiddie-boats"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Motorcycle Race",
+      "chosen": "kiddie-motorcycles",
+      "alsoMatches": [
+        "kiddie-cars"
+      ]
+    },
+    {
+      "title": "Train of Terror",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "dark-ride"
+      ]
+    },
+    {
+      "title": "Century Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Double Decker Carousel",
+      "chosen": "double-decker-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Haunted Mansion",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Wacky Worm",
+      "chosen": "kiddie-coaster",
+      "alsoMatches": [
+        "family-coaster"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Mirror Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Little Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Monkey Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Little Wheel",
+      "chosen": "mini-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Merry Go Round",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Pirate Ship Bounce N Slide",
+      "chosen": "giant-slide",
+      "alsoMatches": [
+        "swinging-pirate-ship"
+      ]
+    },
+    {
+      "title": "Carousel",
+      "chosen": "kiddie-carousel",
+      "alsoMatches": [
+        "carousel"
+      ]
+    },
+    {
+      "title": "Happy Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Magic Maze",
+      "chosen": "mirror-maze",
+      "alsoMatches": [
+        "fun-house"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
+      ]
+    }
+  ]
+}

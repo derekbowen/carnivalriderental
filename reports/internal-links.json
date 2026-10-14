@@ -1,0 +1,127 @@
+{
+  "generatedAt": "2026-10-05T16:14:12.746Z",
+  "method": "Full crawl of a local production build: every state, city and ride type + city page (17,5xx pages). Body links only (header/footer excluded) for inbound counts and reciprocity; click depth uses all links from /.",
+  "before": {
+    "nonOk": [
+      [
+        "/directory",
+        404
+      ]
+    ],
+    "inbound": {
+      "eligibleCity": {
+        "pages": 359,
+        "zeroInbound": 0,
+        "oneInbound": 1,
+        "median": 19,
+        "p10": 9
+      },
+      "eligibleRideCity": {
+        "pages": 2038,
+        "zeroInbound": 2,
+        "oneInbound": 9,
+        "median": 20,
+        "p10": 7
+      },
+      "allRideCity": {
+        "pages": 15931,
+        "zeroInbound": 4,
+        "oneInbound": 17,
+        "median": 27,
+        "p10": 11
+      },
+      "allCityPages": {
+        "pages": 1580,
+        "zeroInbound": 1,
+        "oneInbound": 3,
+        "median": 22,
+        "p10": 10
+      }
+    },
+    "cityLinksToItsRideCity": "15577/15931",
+    "missingSample": [
+      "/connecticut/stamford/helicopter-ride",
+      "/illinois/champaign/helicopter-ride",
+      "/illinois/danville/tornado-ride",
+      "/illinois/danville/freak-out",
+      "/illinois/urbana/scrambler"
+    ],
+    "missingCount": 354,
+    "rideCityLinksBackToCity": "15931/15931",
+    "nearbyCityLinks": {
+      "pairs": 18960,
+      "reciprocated": 13430,
+      "pct": 70.8
+    },
+    "sameRideNearbyLinks": {
+      "pairs": 189369,
+      "reciprocated": 134482,
+      "pct": 71
+    },
+    "listingDetailPagesLinked": 2324,
+    "clickDepthFromHome_eligible": {
+      "1": 12,
+      "2": 423,
+      "3": 1799,
+      "4": 138,
+      "5": 8,
+      "6": 4,
+      "7": 5,
+      "Infinity": 8
+    }
+  },
+  "after": {
+    "nonOk": [],
+    "inbound": {
+      "eligibleCity": {
+        "pages": 359,
+        "zeroInbound": 0,
+        "oneInbound": 0,
+        "median": 23,
+        "p10": 16
+      },
+      "eligibleRideCity": {
+        "pages": 2038,
+        "zeroInbound": 0,
+        "oneInbound": 0,
+        "median": 33,
+        "p10": 19
+      },
+      "allRideCity": {
+        "pages": 15931,
+        "zeroInbound": 0,
+        "oneInbound": 0,
+        "median": 35,
+        "p10": 22
+      },
+      "allCityPages": {
+        "pages": 1580,
+        "zeroInbound": 0,
+        "oneInbound": 0,
+        "median": 26,
+        "p10": 15
+      }
+    },
+    "cityLinksToItsRideCity": "15931/15931",
+    "missingSample": [],
+    "missingCount": 0,
+    "rideCityLinksBackToCity": "15931/15931",
+    "nearbyCityLinks": {
+      "pairs": 24468,
+      "reciprocated": 24468,
+      "pct": 100
+    },
+    "sameRideNearbyLinks": {
+      "pairs": 246922,
+      "reciprocated": 246922,
+      "pct": 100
+    },
+    "listingDetailPagesLinked": 3714,
+    "clickDepthFromHome_eligible": {
+      "1": 12,
+      "2": 428,
+      "3": 1942,
+      "4": 15
+    }
+  }
+}

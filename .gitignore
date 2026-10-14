@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+data/*.sqlite*
+.env
+.env.local
+.env.*.local
+test-results/
+playwright-report/
+*.tsbuildinfo
+next-env.d.ts
+data/e2e-catalog.json
+research/*.xlsx
+!research/operator-research-template.xlsx
+data/preview-catalog.json
+imports/company-accounts/source/

@@ -1,0 +1,175 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "http://localhost:3000/#organization",
+      "name": "Book a Carnival",
+      "legalName": "10000 Solutions LLC",
+      "url": "http://localhost:3000",
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "http://localhost:3000/#website",
+      "url": "http://localhost:3000",
+      "name": "Book a Carnival",
+      "inLanguage": "en-US",
+      "publisher": {
+        "@id": "http://localhost:3000/#organization"
+      }
+    },
+    {
+      "@type": "Service",
+      "@id": "http://localhost:3000/operators#service",
+      "name": "List your carnival rides",
+      "serviceType": "Marketplace listing for carnival ride operators",
+      "url": "http://localhost:3000/operators",
+      "provider": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "Carnival ride owners and operators"
+      }
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "http://localhost:3000/categories/carousels#webpage",
+      "url": "http://localhost:3000/categories/carousels",
+      "name": "Carousel and merry-go-round rentals",
+      "description": "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event. We source the carousel and operating crew and send one written quote.",
+      "inLanguage": "en-US",
+      "isPartOf": {
+        "@id": "http://localhost:3000/#website"
+      },
+      "publisher": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "breadcrumb": {
+        "@id": "http://localhost:3000/categories/carousels#breadcrumb"
+      },
+      "mainEntity": {
+        "@id": "http://localhost:3000/categories/carousels#itemlist"
+      },
+      "about": {
+        "@id": "http://localhost:3000/categories/carousels#service"
+      },
+      "mentions": {
+        "@id": "http://localhost:3000/operators#service"
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "http://localhost:3000/categories/carousels#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "http://localhost:3000"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Rides",
+          "item": "http://localhost:3000/rides"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Carousels",
+          "item": "http://localhost:3000/categories/carousels"
+        }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "http://localhost:3000/categories/carousels#service",
+      "name": "Carousel and merry-go-round rentals",
+      "description": "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event. We source the carousel and operating crew and send one written quote.",
+      "serviceType": "Carousel rental",
+      "category": "Carnival ride rental",
+      "url": "http://localhost:3000/categories/carousels",
+      "provider": {
+        "@id": "http://localhost:3000/#organization"
+      },
+      "areaServed": {
+        "@type": "Country",
+        "name": "United States"
+      },
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Event organizers"
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "http://localhost:3000/categories/carousels#itemlist",
+      "name": "Carousels you can request",
+      "numberOfItems": 2,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "[TEST] Carousel rental",
+          "url": "http://localhost:3000/preview/rides/test-carousel-rental"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Carousel rental",
+          "url": "http://localhost:3000/rides/carousel-rental"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "http://localhost:3000/categories/carousels#faq",
+      "isPartOf": {
+        "@id": "http://localhost:3000/categories/carousels#webpage"
+      },
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Is a merry-go-round the same as a carousel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "For event rentals, yes \u2014 the two names are used for the same kind of ride. Search for either and you are in the right place; we source them all under carousel rentals."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a carousel be set up indoors?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sometimes. It depends on the model, the room's height, the floor and the way in. Tell us about the room and we check with operators before quoting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Who sets up and runs the carousel?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The carnival operator we arrange for your event delivers, sets up and operates the ride with their own crew. We coordinate the details with you and with them."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "When is the carousel actually booked?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Only after you accept our written quote, the operator commits to your date, and the agreed payment step is complete. A request on its own doesn't reserve a ride."
+          }
+        }
+      ]
+    }
+  ]
+}

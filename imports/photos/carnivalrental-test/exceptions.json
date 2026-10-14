@@ -1,0 +1,380 @@
+[
+ {
+  "externalId": "alpine-amusements--combination",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2564d-11e0-46f4-8540-0842f1cc5c8e",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--dizzy-dragon",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25650-cf6a-40e1-9fe0-6a180c822475",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--downdraft",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25652-adc8-4bf9-834b-2abe45065ec1",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--dragon-wagon",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25654-9699-42ce-800d-ef4b1c20c3e2",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--edge",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25656-4c54-4473-83a0-73a52f69badd",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--expo-wheel-65-ft-tall",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25658-b13f-41bc-b213-0053ce159ec1",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--ferris-wheel-45-ft-tall",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2565a-779e-43e6-9552-b2b079a3e464",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--flying-dragon",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2565c-5f66-440a-8d0c-9f195ef9ab6e",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--freakout",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2565e-8127-4e9a-a8c0-6357489dd74c",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--frog-hopper",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25660-5c34-433f-b773-068e2f272758",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--motorcycles",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25662-c697-48f3-8ad0-c2cbce633610",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--pharoahs-fury",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25665-c425-492f-8c8a-4a7a1475f1c7",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--scooter",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25667-b489-4cac-b40d-87d44eaa887e",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--slide",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25669-35bf-4caa-8df0-8263ca01bada",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--swings",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2566b-46dd-4bab-9b71-1e34af6974ec",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--tea-cups",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2566d-8427-4f08-a7f7-b58e58daaeba",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--tilt",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac2566f-758b-4d78-8def-78885400359f",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--wacky-shack",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25671-cfc7-430b-a2a6-1716432855c4",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "alpine-amusements--zero-gravity",
+  "companyId": "alpine-amusements",
+  "listingId": "6ac25673-9600-41f5-969d-2c4d8a2a4dc8",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "amusement-midway-providers-amp--zeus",
+  "companyId": "amusement-midway-providers-amp",
+  "listingId": "6ac2575c-6b9b-496f-8eae-96bf78dabf3e",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "cole-shows-amusement-co--kiddie-swing",
+  "companyId": "cole-shows-amusement-co",
+  "listingId": "6ac25d9d-4a78-468d-a822-c0620284d643",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "deggeller-attractions--motorcycle-jump",
+  "companyId": "deggeller-attractions",
+  "listingId": "6ac25ee1-0129-4df2-8bb8-ba92e3adf6a2",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "deggeller-attractions--round-up",
+  "companyId": "deggeller-attractions",
+  "listingId": "6ac25ef4-90c1-48d4-b356-9d89852ccbb7",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "deggeller-attractions--whacky-apple-worm",
+  "companyId": "deggeller-attractions",
+  "listingId": "6ac25f19-0b91-4fdf-9781-e1e2381e3a05",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "dreamland-amusements--aladdin",
+  "companyId": "dreamland-amusements",
+  "listingId": "6ac25f22-63d0-4d94-a5d6-df39e3a98b60",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "dreamland-amusements--gotham-slide",
+  "companyId": "dreamland-amusements",
+  "listingId": "6ac25f42-3efa-4d16-a651-43b44c030702",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "funtastic-shows--circus-jumbo",
+  "companyId": "funtastic-shows",
+  "listingId": "6ac2a5ec-4dd6-42f9-ba69-a6cca62b81c8",
+  "outcome": "bad_image",
+  "detail": "not a JPEG/PNG/GIF"
+ },
+ {
+  "externalId": "funtastic-shows--sky-ride",
+  "companyId": "funtastic-shows",
+  "listingId": "6ac2a65c-68e9-4d74-b702-963c1a43f76c",
+  "outcome": "failed",
+  "detail": "download HTTP 404"
+ },
+ {
+  "externalId": "green-mountain-amusements--mindwinder",
+  "companyId": "green-mountain-amusements",
+  "listingId": "6ac2a75a-4ccc-4d89-9433-d215f016e4f1",
+  "outcome": "failed",
+  "detail": "download HTTP 403"
+ },
+ {
+  "externalId": "green-mountain-amusements--train",
+  "companyId": "green-mountain-amusements",
+  "listingId": "6ac2a760-4dd8-4d80-8c4d-203030c07739",
+  "outcome": "failed",
+  "detail": "download HTTP 403"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--baja-jeeps",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa04-6577-4837-b45e-8d759b19d23a",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--circus-train",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa06-ea74-4406-b445-2d9ad1111982",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--dizzy-dragon",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa08-2c3f-4ba0-ae7e-02007a790b8e",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--ferris-wheel",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa0a-78cb-479c-acdc-0305b412bfd8",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--fire-department",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa0d-020d-492b-9a7d-a1083b9129ce",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--fun-slide",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa0f-2004-41ec-a799-c10cf11cc869",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--go-gator",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa11-77c6-4559-8616-43c474a76d9c",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--gondola-wheel",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa13-f22d-484c-a7df-58b98f3fbbc9",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--helicopter",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa15-6292-4dee-a2da-094aa6f248d7",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--kiddie-ferris-wheel",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa17-74f4-4e86-b992-4d9b9e751e0a",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--merry-go-round",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa19-c4a2-46e9-aee5-c9a39a223059",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--paratrooper",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa1b-0181-41c5-9592-5b5b327831ea",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--rapid-slide",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa1d-8b28-4a9b-a152-cffbd251ed4a",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--rock-o-plane",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa1f-622b-4e1d-a9df-70246119121b",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--sizzler",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa22-5aa9-4ea3-9bd2-97dff2fcb42d",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--sky-fighter",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa24-7d7d-4451-a286-e799a6bd852e",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--swinger",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa26-1a25-441e-883e-9070cd3b503c",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--tempest",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa28-2498-44d0-9b80-c049eecd1475",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "knoxs-great-american-midway--turbo-tubs",
+  "companyId": "knoxs-great-american-midway",
+  "listingId": "6ac2aa2a-75ec-481a-a23c-f32cd0901e4e",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "midwest-rides-and-concessions--beach-buggies",
+  "companyId": "midwest-rides-and-concessions",
+  "listingId": "6ac2ac50-a113-40ae-bbf2-41b4e77e1de2",
+  "outcome": "failed",
+  "detail": "download HTTP 406"
+ },
+ {
+  "externalId": "midwest-rides-and-concessions--kiddie-drop-tower",
+  "companyId": "midwest-rides-and-concessions",
+  "listingId": "6ac2ac70-d00a-44af-af18-639bdcb001f6",
+  "outcome": "failed",
+  "detail": "download HTTP 406"
+ },
+ {
+  "externalId": "midwest-rides-and-concessions--zero-gravity",
+  "companyId": "midwest-rides-and-concessions",
+  "listingId": "6ac2acaa-4719-4f37-b078-64cec08692d3",
+  "outcome": "failed",
+  "detail": "download HTTP 406"
+ },
+ {
+  "externalId": "shaw-and-sons-amusements--rok-n-roll",
+  "companyId": "shaw-and-sons-amusements",
+  "listingId": "6ac2b2f5-ffcd-491e-8f50-3265dd7171d4",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ },
+ {
+  "externalId": "smokeys-greater-shows--kamikaze",
+  "companyId": "smokeys-greater-shows",
+  "listingId": "6ac2b3ad-2aa8-459a-8891-5942f18b4cfe",
+  "outcome": "failed",
+  "detail": "download HTTP 503"
+ }
+]
