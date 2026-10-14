@@ -18,7 +18,9 @@ import { formatPrice, productForTier, type AccessProduct, rowToProduct } from ".
 import { isContactable, revealFields, type OperatorSource, type ContactChannels } from "./contacts";
 import type { AccessDb, Row, Sql } from "./db";
 import { nowIso } from "./db";
-import { magicLinkEmail, passEmail, sendNow } from "./email";
+import { BRAND } from "../config";
+import { magicLinkEmail, manualSearchEmail, passEmail, sendNow } from "./email";
+import { computeFallbacks, matchForSpec, requirementNoun, sameOffer, specForOffer, type FallbackOffer } from "./fallback";
 import { geocode, matchOperators, type ContactStatusCache, type MatchedOperator } from "./matching";
 import { resolveCriteria, tierForRideType, type AccessTier } from "./pricing";
 import { hashToken, newToken } from "./session";
@@ -131,7 +133,8 @@ export async function startEventRequest(db: AccessDb, source: OperatorSource, ra
   if (!product) throw tierUnavailable(criteria.tier);
   const geo = geocode(input.city, input.state);
   if (!geo) throw new AccessError("geocode", "We couldn't place that city");
-  const match = await matchOperators({ lat: geo.lat, lng: geo.lng, state: input.state, listingId: criteria.listingId, rideType: criteria.rideType, rideClass: criteria.rideClass }, source, opts.cache ?? dbContactCache(db));
+  const cache = opts.cache ?? dbContactCache(db);
+  const match = await matchOperators({ lat: geo.lat, lng: geo.lng, state: input.state, listingId: criteria.listingId, rideType: criteria.rideType, rideClass: criteria.rideClass }, source, cache);
   if (match.criteria.tier !== criteria.tier || match.criteria.rideType !== criteria.rideType) throw new Error("matching and pricing resolved different criteria");
   const sellable = match.contactableCount >= product.minimumMatches;
   const id = crypto.randomUUID();
@@ -142,7 +145,120 @@ export async function startEventRequest(db: AccessDb, source: OperatorSource, ra
     [id, input.email, input.eventDate, input.city, input.state, input.zip, input.eventType, criteria.rideType, criteria.rideClass, criteria.listingId, input.attendance, input.budgetUsd === null ? null : input.budgetUsd * 100, geo.lat, geo.lng, JSON.stringify(match.operators), match.contactableCount, product.id, sellable ? "matched" : "insufficient", input.sourcePath, t],
   );
   const event = (await getEventRequest(db, id))!;
+  if (!sellable) {
+    // The request is already saved; alternatives are a best effort and never block it.
+    try {
+      await offerFallbacks(db, event, source, cache);
+    } catch (e) {
+      console.error("[access] fallback offers failed:", (e as Error).message);
+    }
+  }
   return { event, product, sellable };
+}
+
+// ------------------------------------------------------------------------------ 1b. zero-match fallbacks and funnel (fallback.ts)
+export type FunnelEventName = "zero_exact_match" | "fallback_match_shown" | "fallback_match_clicked" | "manual_search_requested";
+
+async function recordFunnel(db: Sql, e: { name: FunnelEventName; eventRequestId: string; resultEventRequestId?: string | null; requestedRideType: string | null; requestedRideClass: string | null; offer?: FallbackOffer | null; detail?: unknown }): Promise<void> {
+  await db.query(
+    `INSERT INTO access_funnel_events (id, name, event_request_id, result_event_request_id, requested_ride_type, requested_ride_class, fallback_kind, fallback_ride_type, radius_miles, detail_json, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [crypto.randomUUID(), e.name, e.eventRequestId, e.resultEventRequestId ?? null, e.requestedRideType, e.requestedRideClass, e.offer?.kind ?? null, e.offer?.rideType ?? null, e.offer?.radiusMiles ?? null, e.detail === undefined ? null : JSON.stringify(e.detail), nowIso()],
+  );
+}
+
+/** The exact search can't be sold: record it, then compute and record the viable alternatives (if any). */
+async function offerFallbacks(db: AccessDb, event: EventRequest, source: OperatorSource, cache: ContactStatusCache): Promise<FallbackOffer[]> {
+  const requested = { requestedRideType: event.rideType, requestedRideClass: event.rideClass };
+  await recordFunnel(db, { name: "zero_exact_match", eventRequestId: event.id, ...requested, detail: { exactOperators: event.matchedOperators } });
+  const offers = await computeFallbacks({ lat: event.lat, lng: event.lng, state: event.state, rideType: event.rideType, rideClass: event.rideClass }, source, cache, async (tier) => (await productForTier(db, tier))?.minimumMatches ?? null);
+  if (offers.length) await recordFunnel(db, { name: "fallback_match_shown", eventRequestId: event.id, ...requested, detail: { offers } });
+  return offers;
+}
+
+/**
+ * Requests saved before the fallback chain existed (2026-10-14) get their alternatives on first view.
+ * Runs once per request: the zero_exact_match row marks it done. Best effort, like at creation.
+ */
+export async function ensureFallbacks(db: AccessDb, source: OperatorSource, event: EventRequest, cache?: ContactStatusCache): Promise<void> {
+  if (event.status !== "insufficient") return;
+  if ((await db.query(`SELECT id FROM access_funnel_events WHERE event_request_id = ? AND name = 'zero_exact_match'`, [event.id])).length) return;
+  try {
+    await offerFallbacks(db, event, source, cache ?? dbContactCache(db));
+  } catch (e) {
+    console.error("[access] fallback offers failed:", (e as Error).message);
+  }
+}
+
+export interface FallbackView {
+  /** Alternatives offered for this (unsellable) request, best first. */
+  offers: FallbackOffer[];
+  manualRequested: boolean;
+  /** Set when this request is itself an alternative the customer picked: what they originally asked for. */
+  origin: { eventRequestId: string; offer: FallbackOffer; requestedRideType: string | null; requestedRideClass: string | null } | null;
+}
+
+export async function fallbackView(db: Sql, eventId: string): Promise<FallbackView> {
+  const rows = await db.query(`SELECT * FROM access_funnel_events WHERE event_request_id = ? OR result_event_request_id = ? ORDER BY created_at`, [eventId, eventId]);
+  const shown = rows.find((r) => r.name === "fallback_match_shown" && r.event_request_id === eventId);
+  const clicked = rows.find((r) => r.name === "fallback_match_clicked" && r.result_event_request_id === eventId);
+  return {
+    offers: shown?.detail_json ? ((JSON.parse(String(shown.detail_json)) as { offers?: FallbackOffer[] }).offers ?? []) : [],
+    manualRequested: rows.some((r) => r.name === "manual_search_requested" && r.event_request_id === eventId),
+    origin: clicked
+      ? { eventRequestId: String(clicked.event_request_id), offer: JSON.parse(String(clicked.detail_json)) as FallbackOffer, requestedRideType: clicked.requested_ride_type ? String(clicked.requested_ride_type) : null, requestedRideClass: clicked.requested_ride_class ? String(clicked.requested_ride_class) : null }
+      : null,
+  };
+}
+
+/**
+ * The customer picks one of the offered alternatives (by its position in the offers shown for that
+ * request). The offer is re-matched now, so contactability is current, and saved as a new event
+ * request with the offer's own ride requirement: its tier and price come from that requirement
+ * (quoteForEvent), exactly as for a request typed into the form. Picking the same offer again reopens
+ * the request it already created.
+ */
+export async function createAlternativeRequest(db: AccessDb, source: OperatorSource, eventId: string, offerIndex: number, opts: { cache?: ContactStatusCache } = {}): Promise<{ event: EventRequest; reused: boolean }> {
+  const original = await getEventRequest(db, eventId);
+  if (!original) throw new AccessError("not_found", "Unknown event request");
+  const offer = (await fallbackView(db, eventId)).offers[offerIndex];
+  if (!offer) throw new AccessError("invalid", "That alternative isn't available for this request");
+  const prior = (await db.query(`SELECT * FROM access_funnel_events WHERE event_request_id = ? AND name = 'fallback_match_clicked'`, [eventId])).find((r) => r.detail_json && sameOffer(JSON.parse(String(r.detail_json)) as FallbackOffer, offer));
+  if (prior?.result_event_request_id) {
+    const existing = await getEventRequest(db, String(prior.result_event_request_id));
+    if (existing) return { event: existing, reused: true };
+  }
+  const product = await productForTier(db, offer.tier);
+  if (!product) throw tierUnavailable(offer.tier);
+  const m = await matchForSpec({ lat: original.lat, lng: original.lng, state: original.state, rideType: original.rideType, rideClass: original.rideClass }, specForOffer(offer), source, opts.cache ?? dbContactCache(db));
+  if (m.criteria.tier !== offer.tier || m.criteria.rideType !== offer.rideType) throw new Error("fallback matching and pricing resolved different criteria");
+  if (m.contactableCount < product.minimumMatches) throw new AccessError("not_sellable", "That alternative no longer has enough contactable operators");
+  const id = crypto.randomUUID();
+  const sourcePath = (await db.query(`SELECT source_path FROM access_event_requests WHERE id = ?`, [original.id]))[0]?.source_path ?? null;
+  await db.transaction(async (tx) => {
+    await tx.query(
+      `INSERT INTO access_event_requests (id, email, event_date, city, state, zip, event_type, ride_type, ride_class, listing_id, attendance, budget_cents, lat, lng, match_json, matched_operators, product_id, status, source_path, created_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?, ?, 'matched', ?, ?)`,
+      [id, original.email, original.eventDate, original.city, original.state, original.zip, original.eventType, m.criteria.rideType, m.criteria.rideClass, original.attendance, original.budgetCents, original.lat, original.lng, JSON.stringify(m.operators), m.contactableCount, product.id, sourcePath, nowIso()],
+    );
+    await recordFunnel(tx, { name: "fallback_match_clicked", eventRequestId: original.id, resultEventRequestId: id, requestedRideType: original.rideType, requestedRideClass: original.rideClass, offer, detail: { ...offer, operators: m.contactableCount, nearestMiles: Math.min(...m.operators.map((o) => o.miles)) } });
+  });
+  return { event: (await getEventRequest(db, id))!, reused: false };
+}
+
+/**
+ * The customer asks us to search by hand (free). Recorded once per request; the team is emailed the
+ * event details (the customer's own request, never operator data). The email is best effort: the
+ * ledger row is the record the team works from.
+ */
+export async function requestManualSearch(db: AccessDb, eventId: string, opts: { send?: typeof sendNow } = {}): Promise<{ created: boolean }> {
+  const event = await getEventRequest(db, eventId);
+  if (!event) throw new AccessError("not_found", "Unknown event request");
+  const view = await fallbackView(db, eventId);
+  if (view.manualRequested) return { created: false };
+  await recordFunnel(db, { name: "manual_search_requested", eventRequestId: event.id, requestedRideType: event.rideType, requestedRideClass: event.rideClass, detail: { exactOperators: event.matchedOperators, offersShown: view.offers.length } });
+  const content = manualSearchEmail({ ride: requirementNoun(event.rideType, event.rideClass), city: event.city, state: event.state, zip: event.zip, eventDate: event.eventDate, eventType: event.eventType, attendance: event.attendance, budgetCents: event.budgetCents, customerEmail: event.email, requestId: event.id, exactOperators: event.matchedOperators, offersShown: view.offers.length });
+  await (opts.send ?? sendNow)(`support@${BRAND.domain}`, content, `manual-search:${event.id}`);
+  return { created: true };
 }
 
 export interface Quote {

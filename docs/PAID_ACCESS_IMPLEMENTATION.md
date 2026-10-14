@@ -34,6 +34,52 @@ Rules, all in `src/lib/access/pricing.ts` + `service.ts` and covered by `tests/a
 - Copy reads the rows: `accessProductsForDisplay()` (runtime.ts, 60 s memo, seeded defaults when the ledger is unreachable) → `lib/access/copy.ts`. Ferris surfaces show "Ferris Wheel Event Access — $199"; general surfaces "Event Access is $99. Ferris Wheel Event Access is $199." Stripe Checkout line items carry the product's name and description.
 - Seed: `ensureDefaultProducts` runs `INSERT … ON CONFLICT (id) DO NOTHING` for both rows on every product lookup and in `npm run access:migrate`; it never updates an existing row, so prices managed in the database survive deploys. Supabase migration `access_products_ferris_wheel_v1` inserted the Ferris row in production on 2026-10-12.
 
+## 1c. Zero-match fallback and funnel (founder decision 2026-10-14)
+
+When the exact search can't be sold (fewer contactable operators than the tier's minimum), the matches page shows the closest viable alternatives before the free manual search, each labelled as an alternative, never as an exact match. Code: `src/lib/access/fallback.ts` (chain, aliases, related types), `service.ts` (`offerFallbacks`, `fallbackView`, `createAlternativeRequest`, `requestManualSearch`), `components/access/Alternatives.tsx`, routes `/api/access/alternative` and `/api/access/manual-search` (BotID-protected, rate-limited). Tests: `tests/access-fallback.test.ts`, the "zero exact matches" test in `e2e/access.spec.ts`.
+
+Chain, computed once on the server when the zero-match request is saved:
+
+```
+exact ride type (normal match)
+↓ alias      unclassified rides whose title uses an exact name for the ride (taxonomy name + search phrases + EXTRA_ALIASES; whole phrases, never single words like "express")
+↓ related    RELATED_RIDE_TYPES, curated per type (trackless train → kiddie train), up to 2
+↓ category   any type in the same category hub, only when no alias/related offer is viable
+↓ radius     the requested ride (with aliases) at 400, then 750 miles; the first viable one
+↓ manual     always: "Have us manually search for a …" (free; emails support@, recorded once)
+```
+
+- An offer is shown only if it is itself sellable: at least the minimum contactable operators for the tier its own ride requirement resolves to, with that tier's product active (an inactive tier's offers never appear). Offers store counts and distances only.
+- Picking an offer re-matches it (current contactability) and saves a **new** event request with the offer's ride requirement; its tier and price come from `quoteForEvent` like any other request. Picking the same offer again reopens that request. The new request's page says "Alternative to your … request, not an exact match" and links back.
+- Funnel events live in `access_funnel_events` (no identity or contact data):
+
+| Event | Recorded when |
+|---|---|
+| `zero_exact_match` | a request is saved that can't be sold (`detail_json.exactOperators` is usually 0; 1–2 when some but too few operators matched) |
+| `fallback_match_shown` | at least one alternative was offered (`detail_json.offers`) |
+| `fallback_match_clicked` | the customer picked one (`fallback_kind`, `fallback_ride_type`, `radius_miles`, `result_event_request_id`) |
+| `manual_search_requested` | the customer asked for the free manual search |
+
+Where the taxonomy is too rigid (Supabase SQL editor):
+
+```sql
+-- Share of zero-match requests that were offered an alternative, clicked one, or asked for a manual search, by requested ride.
+SELECT requested_ride_type,
+       count(*) FILTER (WHERE name = 'zero_exact_match')        AS zero_match,
+       count(*) FILTER (WHERE name = 'fallback_match_shown')    AS shown,
+       count(*) FILTER (WHERE name = 'fallback_match_clicked')  AS clicked,
+       count(*) FILTER (WHERE name = 'manual_search_requested') AS manual
+FROM access_funnel_events GROUP BY 1 ORDER BY zero_match DESC;
+
+-- Which alternatives people take, and whether they then pay.
+SELECT f.requested_ride_type, f.fallback_kind, f.fallback_ride_type, count(*) AS clicks,
+       count(p.id) FILTER (WHERE p.status IN ('paid', 'partially_refunded')) AS paid
+FROM access_funnel_events f LEFT JOIN access_purchases p ON p.event_request_id = f.result_event_request_id
+WHERE f.name = 'fallback_match_clicked' GROUP BY 1, 2, 3 ORDER BY clicks DESC;
+```
+
+A high click rate from one requested type to one related type (for example trackless train → kiddie train) is the signal to widen that type, add aliases, or classify more listings; edit `RELATED_RIDE_TYPES` / `EXTRA_ALIASES` in `fallback.ts`.
+
 ## 2. Files
 
 New (`src/lib/access/`): `schema.sql`, `db.ts` (Postgres/SQLite driver, portable SQL), `config.ts` (products; `DEFAULT_PRODUCT` and `FERRIS_PRODUCT` seeds, `productForTier`, `activeProducts`), `pricing.ts` (the one resolver: authoritative listing classification → canonical ride type → class; tier; `CATEGORY_CONTEXT`), `copy.ts` (price copy built from product rows), `stripe.ts` (gateway: real via REST, fake for dev/e2e; signature verification), `session.ts` (cookie, magic-link tokens), `contacts.ts` (operator source: Sharetribe or fixture; permitted reveal fields; never our placeholder addresses), `matching.ts` (geocode, candidates from the public snapshot, listing → author via public API, contactability, deterministic ranking, per-operator dedupe), `service.ts` (business rules and invariants), `email.ts`, `runtime.ts` (availability, cookies, rate limit, request origin).

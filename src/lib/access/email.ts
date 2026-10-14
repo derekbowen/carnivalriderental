@@ -36,6 +36,26 @@ export function magicLinkEmail(p: { passUrl: string; productName: string }): { s
   return { subject: `Open your ${p.productName} pass`, html: `<p>Here is the link to open your ${esc(p.productName)} pass on ${esc(BRAND.name)}:</p><p><a href="${esc(p.passUrl)}">${esc(p.passUrl)}</a></p><p>If you didn't ask for this, ignore this email.</p>`, text };
 }
 
+/** Team notification: a customer asked for a manual search (their own request details; no operator data). */
+export function manualSearchEmail(p: { ride: string; city: string; state: string; zip: string | null; eventDate: string; eventType: string | null; attendance: number | null; budgetCents: number | null; customerEmail: string; requestId: string; exactOperators: number; offersShown: number }): { subject: string; html: string; text: string } {
+  const rows: [string, string][] = [
+    ["Ride", p.ride],
+    ["Where", `${p.city}, ${p.state}${p.zip ? ` ${p.zip}` : ""}`],
+    ["Event date", p.eventDate],
+    ["Event type", p.eventType ?? "not given"],
+    ["Attendance", p.attendance === null ? "not given" : p.attendance.toLocaleString("en-US")],
+    ["Budget", p.budgetCents === null ? "not given" : `$${(p.budgetCents / 100).toLocaleString("en-US")}`],
+    ["Customer email", p.customerEmail],
+    ["Exact contactable operators", String(p.exactOperators)],
+    ["Alternatives shown", String(p.offersShown)],
+    ["Request id", p.requestId],
+  ];
+  const subject = `Manual search: ${p.ride} near ${p.city}, ${p.state} (${p.eventDate})`;
+  const text = [`A customer asked us to search by hand (free). Reply to them at ${p.customerEmail}.`, ...rows.map(([k, v]) => `${k}: ${v}`)].join("\n");
+  const html = `<p>A customer asked us to search by hand (free).</p><table>${rows.map(([k, v]) => `<tr><td style="padding:2px 12px 2px 0;color:#666">${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>`;
+  return { subject, html, text };
+}
+
 export async function sendNow(to: string, content: { subject: string; html: string; text: string }, idempotencyKey: string): Promise<{ sent: boolean; deliveredTo: string | null; error?: string }> {
   const cfg = emailConfig();
   // Every outcome is logged (recipient masked) so production shows whether pass emails actually go out.
