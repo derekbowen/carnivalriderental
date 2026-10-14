@@ -8,6 +8,7 @@ import { actionSchema } from "@/lib/concierge/schema";
 import { captureEmail, conversation, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator } from "@/lib/concierge/service";
 import { conciergeEnabled } from "@/lib/concierge/flags";
 import { lifecycleDeps } from "@/lib/lifecycle/runtime";
+import { paths } from "@/lib/seo/routes";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
 
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
   if (!req.headers.get("content-type")?.startsWith("application/json")) return response({ error: "JSON required" }, 415);
   if (rateLimited(`concierge:${clientIp(req) ?? "anon"}`, 40, 10 * 60e3)) return response({ error: "Too many requests. Please try again later." }, 429);
   let token: string | undefined;
+  let action = "unknown";
   try {
     const text = await req.text();
     if (text.length > 16000) return response({ error: "Request too large" }, 413);
@@ -31,6 +33,9 @@ export async function POST(req: Request) {
     const parsed = actionSchema.safeParse(raw);
     if (!parsed.success) return response({ error: "Check the event fields and try again." }, 400);
     const a = parsed.data;
+    action = a.action;
+    // Every chat message is two AI calls; a tighter limit than the rest of the API bounds the cost.
+    if (a.action === "chat" && rateLimited(`concierge-ai:${clientIp(req) ?? "anon"}`, 20, 10 * 60e3)) return response({ error: "You've sent a lot of messages. Please wait a few minutes, or use the event form." }, 429);
     let db;
     try { db = await accessDb(); } catch {
       // Informational support may run without a ledger. Never pretend a lead/request was saved.
@@ -52,13 +57,13 @@ export async function POST(req: Request) {
       // One lifecycle system: the saved-search email and any later reminder come from src/lib/lifecycle.
       const captured = await captureEmail(await accessRuntime(), s, a.email, a.followupConsent, lifecycleDeps());
       result.message = captured.message;
-      result.captured = { emailed: captured.emailed, remind: a.followupConsent };
+      result.captured = { emailed: captured.emailed, remind: a.followupConsent, alternativesUrl: captured.alternativesUrl ?? null };
     } else if (a.action === "listing") {
       await recordListingView(db, s, a.listingId);
     } else if (a.action === "chat") {
       // Contact questions never cause a privileged read, even if prompted to ignore the paywall.
       if (/\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
-        result.message = "Operator contacts require Event Access and an eligible unlock. Use your verified pass below; I cannot bypass the paywall.";
+        result.message = "Operator phone numbers, emails and addresses are only shown after you buy Event Access and unlock an operator, so I can't share them here and I cannot bypass the paywall. If you already have a pass, open it with \"My pass\". To reach our team, email support@carnivalriderental.us.";
       } else {
         try {
           await saveLead(db, s, await extractLead(a.message, s.details));
@@ -69,7 +74,8 @@ export async function POST(req: Request) {
           result.search = search;
           result.selectedRideType = selected;
           result.message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability });
-        } catch {
+        } catch (e) {
+          console.error("[concierge] AI step failed:", String((e as Error).message).slice(0, 200));
           result.message = "Automatic interpretation is unavailable right now. You can still enter your event details below and search without AI.";
         }
       }
@@ -84,7 +90,7 @@ export async function POST(req: Request) {
       const rt = await accessRuntime();
       const { event, product, sellable } = await createEventRequest(rt, s, a.rideType);
       await db.query(`UPDATE concierge_sessions SET searched = 1, search_type = ? WHERE id = ?`, [a.rideType, s.id]);
-      result.offer = { eventId: event.id, operators: event.matchedOperators, productName: product.name, price: priceLabel(product), unlockLimit: product.unlockLimit, validityDays: product.validityDays, sellable };
+      result.offer = { eventId: event.id, operators: event.matchedOperators, productName: product.name, price: priceLabel(product), unlockLimit: product.unlockLimit, validityDays: product.validityDays, sellable, alternativesUrl: sellable ? null : paths.connectMatches(event.id) };
       // Show the authoritative quote first; checkout submission stays on the existing server route.
     } else if (a.action === "availability") {
       result.request = await requestAvailability(db, s, a.listingId);
@@ -112,7 +118,8 @@ export async function POST(req: Request) {
     return response({ ...result, details: s.details }, 200, token);
   } catch (e) {
     if (e instanceof AccessError) return response({ error: e.code === "invalid" ? "Add a valid future event date, city, state and email, then try again." : e.message }, e.code === "forbidden" ? 403 : 400, token);
-    // Never serialize SDK, SQL or network errors (may carry credentials or protected fields).
+    // Never serialize SDK, SQL or network errors (may carry credentials or protected fields); log the message only.
+    console.error("[concierge] request failed:", action, String((e as Error).message).slice(0, 200));
     return response({ error: "Concierge is temporarily unavailable. Please use Find a ride or try again later." }, 503, token);
   }
 }

@@ -11,6 +11,9 @@ import { leadSchema, type Lead } from "./schema";
 import { emptyLead } from "./defaults";
 import { CONCIERGE_SOURCE_PATH, recordLifecycleEvent, sessionHasEvent } from "../lifecycle/events";
 import { sendSavedSearch, type LifecycleDeps } from "../lifecycle/engine";
+import { sendNow } from "../access/email";
+import { BRAND } from "../config";
+import { availabilityRequestEmail } from "./notify";
 
 export const SESSION_COOKIE = "cr_concierge";
 export interface Conversation { id: string; details: Lead; eventId: string | null; searched: boolean; searchType: string | null }
@@ -22,11 +25,15 @@ export async function conversation(db: AccessDb, token?: string): Promise<{ sess
   await recordLifecycleEvent(db, "chat_started", "chat", { sessionId: id });
   return { session: { id, details: { ...emptyLead }, eventId: null, searched: false, searchType: null }, token: fresh };
 }
+/**
+ * Saves the lead. The link to the session's last event request stays: reusableRequest only reuses it
+ * when the email, date, place and ride still match, so a chat turn that repeats the same details
+ * never creates a second request (or a second saved-search email).
+ */
 export async function saveLead(db: AccessDb, session: Conversation, raw: unknown) {
   const details = leadSchema.parse(raw);
-  await db.query(`UPDATE concierge_sessions SET details_json = ?, event_request_id = NULL WHERE id = ?`, [JSON.stringify(details), session.id]);
+  await db.query(`UPDATE concierge_sessions SET details_json = ? WHERE id = ?`, [JSON.stringify(details), session.id]);
   session.details = details;
-  session.eventId = null;
 }
 
 /** search_submitted, plus email_capture_offered the first time results are shown before an email was given. */
@@ -96,7 +103,7 @@ export async function createEventRequest(rt: AccessRuntime, session: Conversatio
  * again. Nothing else is scheduled here; any later reminder comes from the lifecycle engine's own
  * rules, and for chat searches only with that consent.
  */
-export async function captureEmail(rt: AccessRuntime, session: Conversation, email: string, followupConsent: boolean, deps: LifecycleDeps): Promise<{ message: string; emailed: boolean; eventId: string | null }> {
+export async function captureEmail(rt: AccessRuntime, session: Conversation, email: string, followupConsent: boolean, deps: LifecycleDeps): Promise<{ message: string; emailed: boolean; eventId: string | null; alternativesUrl?: string }> {
   const address = email.trim().toLowerCase();
   if (session.details.email?.trim().toLowerCase() !== address) await saveLead(rt.db, session, { ...session.details, email: address });
   await recordLifecycleEvent(rt.db, "email_capture_accepted", "chat", { sessionId: session.id, eventRequestId: session.eventId, consent: followupConsent });
@@ -107,7 +114,8 @@ export async function captureEmail(rt: AccessRuntime, session: Conversation, ema
   const rideType = session.searchType ?? d.requestedRides[0]?.rideType ?? null;
   const { event, sellable } = await createEventRequest(rt, session, rideType);
   if (!sellable) {
-    return { message: "Saved. There aren't enough contactable operators for this search yet, so there's nothing to email; you can ask us to search by hand from your matches page.", emailed: false, eventId: event.id };
+    // The no-match fallback chain (access/fallback.ts) already ran for this request; send them to it.
+    return { message: "Saved. There aren't enough contactable operators for this exact search yet, so there's nothing to email. The closest alternatives, and a free manual search, are on your matches page.", emailed: false, eventId: event.id, alternativesUrl: paths.connectMatches(event.id) };
   }
   const r = await sendSavedSearch(rt.db, event.id, deps);
   const emailed = r.outcome === "sent" || (r.outcome === "skipped" && r.reason?.startsWith("already") === true);
@@ -138,13 +146,26 @@ export async function unlockOperator(rt: AccessRuntime, authorizedIds: string[],
   // Existing service enforces purchase validity, category-bound match snapshot, eligibility, status and atomic balance.
   return accessUnlock(rt.db, rt.source, passId, operatorId, meta);
 }
-export async function requestAvailability(db: AccessDb, session: Conversation, listingId: string | null) {
-  if (listingId && !RIDES.some(r => r.id === listingId)) throw new AccessError("invalid", "Unknown ride");
+const AVAILABILITY_MESSAGE = "Request saved for review and sent to our team. No operator has confirmed availability, and no message has been sent to operators yet.";
+
+/**
+ * "Request Availability" / "Request My Event": saved, then emailed to the team (support@) so someone
+ * actually reviews it. Pressing it again for the same ride within a day returns the same request
+ * and sends nothing new.
+ */
+export async function requestAvailability(db: AccessDb, session: Conversation, listingId: string | null, opts: { send?: typeof sendNow } = {}) {
+  const listing = listingId ? RIDES.find(r => r.id === listingId) : null;
+  if (listingId && !listing) throw new AccessError("invalid", "Unknown ride");
   if (!session.details.eventDate || !session.details.city || !session.details.state || !session.details.email) throw new AccessError("invalid", "Add event date, city, state and email before requesting availability");
   if (session.details.eventDate < nowIso().slice(0, 10)) throw new AccessError("invalid", "Choose a future event date");
+  const recent = await db.query(`SELECT id, listing_id, details_json, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);
+  const same = recent.find(r => (r.listing_id ? String(r.listing_id) : null) === listingId && String(r.details_json) === JSON.stringify(session.details) && Date.now() - Date.parse(String(r.created_at)) < 864e5);
+  if (same) return { id: String(same.id), status: "received", message: AVAILABILITY_MESSAGE };
   const id = crypto.randomUUID();
   await db.query(`INSERT INTO concierge_requests (id, session_id, listing_id, details_json, status, created_at) VALUES (?, ?, ?, ?, 'received', ?)`, [id, session.id, listingId, JSON.stringify(session.details), nowIso()]);
-  return { id, status: "received", message: "Request saved for review. No operator has confirmed availability, and no message has been sent to operators yet." };
+  // Best effort, like the manual-search notice: a failed email never loses the saved request.
+  await (opts.send ?? sendNow)(`support@${BRAND.domain}`, availabilityRequestEmail({ requestId: id, details: session.details, listing: listing ? { id: listing.id, title: listing.title } : null }), `availability:${id}`);
+  return { id, status: "received", message: AVAILABILITY_MESSAGE };
 }
 export async function getRequestStatus(db: AccessDb, session: Conversation) {
   return db.query(`SELECT id, listing_id, status, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);

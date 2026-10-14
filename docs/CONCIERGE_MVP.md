@@ -94,6 +94,18 @@ Then validate anonymous search, both **Stripe test-mode** checkout tiers, return
 
 See `reports/concierge-validation.md` for the final command outcomes and limitations. Browser screenshots use fictional buyer/operator contacts and a fake Stripe gateway; they are not evidence of Live purchases or operator availability.
 
+## Pre-launch review (2026-10-14)
+
+Fixed before switching the concierge on (`tests/concierge-review.test.ts`):
+
+- **No duplicate requests after chatting.** Every chat turn used to clear the session's link to its event request, so pressing "Email me these options" or "See access offer" again after more chat created a new request, and could send another saved-search email. The link now stays; `reusableRequest` reuses it only while the email, date, place and ride still match.
+- **Tolerant AI extraction.** The model fills a loose schema (US states and ride types as fixed lists). `mergeLead` validates each field on its own and keeps the previous value for anything missing or malformed, so one bad field no longer fails the whole turn. Uses `generateText` with structured output (`generateObject` is deprecated in AI SDK 7).
+- **Well-formed history for Claude.** `chatMessages` drops the widget's leading greeting, merges repeated roles, keeps the newest 6,000 characters and ends on the customer's message.
+- **Availability requests reach the team.** They are emailed to support@, like a manual search, and the same request pressed again within a day is not duplicated.
+- **No dead end on a no-match search.** The chat links to the request's matches page, where the no-match alternatives and the free manual search live.
+- **Operations.** AI and request failures are logged (message only, never payloads). Chat messages have their own per-IP limit (20 per 10 minutes) because each is two AI calls.
+- **Display.** Unlocked contacts show labelled fields with phone, email and website links. The floating widget is hidden on `/concierge`, which already is the full concierge.
+
 ## Email: one lifecycle system
 
 The chat has no email engine of its own. Its email capture feeds the lifecycle system in `src/lib/lifecycle` (`docs/EMAIL.md`), the same one that serves the web funnel:
