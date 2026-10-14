@@ -26,10 +26,13 @@ Sections 1–6 below are the history before the cutover.
 1. ~~Stripe live mode~~ done 2026-10-14 (see Commerce). The first real purchase confirms webhook delivery
    end to end (`checkout.session.completed` → pass); the two QA sessions expire unpaid within 24 h and
    their `checkout.session.expired` events should mark the QA purchases expired.
-2. **Purchaser email:** no email provider key in Vercel production (pass and recovery emails are
-   skipped and logged). The Resend account connected to this workspace holds other businesses'
-   domains only and was not used. Add this business's own provider key (`EMAILIT_API_KEY` or a Resend
-   key whose account owns `carnivalriderental.us`), keep `EMAIL_MODE=test` until verified.
+2. **Purchaser email:** `EMAILIT_API_KEY` set in Vercel production by the founder on 2026-10-14 (13:04
+   UTC) and redeployed. Verified: Emailit accepts mail from `notifications@carnivalriderental.us`
+   (domain approved), and a production "Lost my link" request for `qa@` issued 2 pass links and sent
+   both with no send error. **`EMAIL_MODE` is still unset (= `test`)**: every email, including real
+   buyers' pass emails, goes to `qa@carnivalriderental.us`. Setting `EMAIL_MODE=live` in Vercel
+   production (and redeploying) is the founder's switch; outreach stays blocked regardless (no
+   approved campaigns, no postal address). The key was pasted in chat: rotate it with the others.
 3. **Search Console:** submit `https://carnivalriderental.us/sitemap.xml` (1,000 URLs) in the property
    verified by the `google-site-verification` TXT record on `carnivalriderental.us`, then watch coverage
    for "Crawled – currently not indexed" and "Duplicate without user-selected canonical" on ride + city
