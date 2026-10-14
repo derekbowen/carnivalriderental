@@ -93,7 +93,9 @@ describe("lifecycle rules", () => {
   });
 
   it("chases only the newest search, never a zero-match one, a past date or our own and test domains", async () => {
-    await startEventRequest(db, source, request, { cache: memoryContactCache() });
+    const first = await startEventRequest(db, source, request, { cache: memoryContactCache() });
+    // A real replacement search comes later; without this both can share a millisecond and tie on created_at.
+    await db.query(`UPDATE access_event_requests SET created_at = ? WHERE id = ?`, [new Date(Date.now() - 1000).toISOString(), first.event.id]);
     const second = await startEventRequest(db, source, { ...request, rideType: "carousel" }, { cache: memoryContactCache() });
     const plans = await duePlans(db, later(61 * MIN));
     expect(plans.map((p) => p.options[0].eventRequestId)).toEqual(second.sellable ? [second.event.id] : []);
