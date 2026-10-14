@@ -7,6 +7,8 @@ initBotId({
   protect: [
     { path: "/api/access/start", method: "POST" },
     { path: "/api/access/checkout", method: "POST" },
+    { path: "/api/access/alternative", method: "POST" },
+    { path: "/api/access/manual-search", method: "POST" },
     { path: "/api/pass/recover", method: "POST" },
   ],
 });

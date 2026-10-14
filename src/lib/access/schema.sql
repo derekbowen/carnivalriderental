@@ -120,3 +120,26 @@ CREATE TABLE IF NOT EXISTS operator_contact_status (
   claimed INTEGER NOT NULL,
   checked_at TEXT NOT NULL
 );
+
+-- Zero-match funnel (founder decision 2026-10-14, src/lib/access/fallback.ts). One row per event:
+-- zero_exact_match        the exact search couldn't be sold (fewer contactable operators than the minimum)
+-- fallback_match_shown    alternatives were offered; detail_json holds the offers (counts and distances only)
+-- fallback_match_clicked  the customer picked one; result_event_request_id is the request it created
+-- manual_search_requested the customer asked us to search by hand
+-- No identity or contact data: offers are anonymous counts, and the customer's details stay on the request.
+CREATE TABLE IF NOT EXISTS access_funnel_events (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL CHECK (name IN ('zero_exact_match', 'fallback_match_shown', 'fallback_match_clicked', 'manual_search_requested')),
+  event_request_id TEXT NOT NULL REFERENCES access_event_requests(id),
+  result_event_request_id TEXT REFERENCES access_event_requests(id),
+  requested_ride_type TEXT,
+  requested_ride_class TEXT,
+  fallback_kind TEXT,
+  fallback_ride_type TEXT,
+  radius_miles INTEGER,
+  detail_json TEXT,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS access_funnel_events_request ON access_funnel_events (event_request_id);
+CREATE INDEX IF NOT EXISTS access_funnel_events_result ON access_funnel_events (result_event_request_id);
+CREATE INDEX IF NOT EXISTS access_funnel_events_name ON access_funnel_events (name, created_at);
