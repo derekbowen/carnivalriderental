@@ -158,21 +158,33 @@ export function authorNames(author: CompanyRow): string[] {
 }
 
 /**
+ * Whether the title or public data (everything public except the description, which the anonymous form
+ * rewrites) names the author's company. Same matcher as the Live read-back (`migrate:live verify`).
+ */
+export function namesCompanyOutsideDescription(pay: Pick<ListingPayload, "title" | "publicData">, author: CompanyRow): boolean {
+  const lower = [pay.title, JSON.stringify(pay.publicData)].join("\n").toLowerCase();
+  return authorNames(author).some((n) => n.length >= 4 && lower.includes(n.toLowerCase()));
+}
+
+/**
  * Anonymous-at-creation listing (Live, 2026-10-14): the state ops:anonymize leaves in Test, written in
  * the create call itself. Company names, links and emails are removed from the description, the
  * unclaimed notice leads it, the inquiry process alias is set so hosted pages render, the cleaned
- * original stays in privateData, and the import id and company slug are privateData only.
+ * original stays in privateData, and the import id and company slug are privateData only. A title or
+ * public field that names the company is held at planning (listingPrivacy); this refuses it again here.
  */
 export function buildAnonymousListingPayload(row: ListingRow, author: CompanyRow): ListingPayload {
   const base = buildListingPayload(row);
   const original = base.description ?? "";
-  return {
+  const out: ListingPayload = {
     ...base,
     description: withNotice(anonymizeText(original, authorNames(author))),
     publicData: { ...base.publicData, transactionProcessAlias: INQUIRY_ALIAS, unitType: "inquiry" },
     privateData: { ...base.privateData, originalDescription: original, importExternalId: row.externalId, companyId: row.metadata.companyId },
     metadata: Object.fromEntries(Object.entries(base.metadata).filter(([k]) => (PUBLIC_LISTING_METADATA_KEYS as readonly string[]).includes(k))),
   };
+  if (namesCompanyOutsideDescription(out, author)) throw new Error("title or public data names the company: hold the row for privacy review");
+  return out;
 }
 
 /** Import id of a remote listing: privateData (anonymous form) or public metadata (Test's original form). */
@@ -258,6 +270,7 @@ export function listingPrivacy(row: ListingRow, author: CompanyRow): string[] {
   if (/\bnamed by\b|gazette|\(pdf\b/i.test(text)) out.push("description contains a research note");
   if (/\b[A-Z]{2}\s+\d{5}(-\d{4})?\b/.test(text)) out.push("public text contains a ZIP code");
   for (const n of personNames(author)) if (lower.includes(n)) out.push("public text names a person from the company's private contacts");
+  if (namesCompanyOutsideDescription(pay, author)) out.push("title or public data names the company (only the description is anonymised)");
   const street = author.privateData.hqStreet;
   if (street && street.length >= 5 && lower.includes(street.toLowerCase())) out.push("public text contains the company street address");
   return out;

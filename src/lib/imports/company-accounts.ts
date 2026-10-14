@@ -427,6 +427,38 @@ export interface RowDeps {
 
 // The marker lives in privateData (operator-readable), not public metadata: externalIds embed private directory ids.
 const ours = (u: RemoteUser, externalId: string) => u.privateData?.importExternalId === externalId;
+
+/**
+ * Fold the marketplace's own record into the mapping before a run. The mapping file is gitignored, so a
+ * fresh checkout has none, and the email lookup alone misses an operator who claimed the account and
+ * changed its email: the row would get a second account. Every imported account keeps
+ * privateData.importExternalId (claiming changes metadata only), so the marketplace is the durable map.
+ * Conflicts (two accounts for one row, or a mapping that disagrees with the marketplace) block the run.
+ */
+export function recoverMapping(mapping: Mapping, users: RemoteUser[], now: string): { added: number; conflicts: string[] } {
+  const byExt = new Map<string, RemoteUser[]>();
+  for (const u of users) {
+    const ext = u.privateData?.importExternalId;
+    if (typeof ext === "string") byExt.set(ext, [...(byExt.get(ext) ?? []), u]);
+  }
+  let added = 0;
+  const conflicts: string[] = [];
+  for (const [ext, found] of byExt) {
+    if (found.length > 1) {
+      conflicts.push(`${ext}: ${found.length} accounts carry this import id (${found.map((u) => u.id).join(", ")})`);
+      continue;
+    }
+    const [u] = found;
+    const mapped = mapping[ext];
+    if (mapped) {
+      if (mapped.userId !== u.id) conflicts.push(`${ext}: mapping says ${mapped.userId}, the marketplace says ${u.id}`);
+      continue;
+    }
+    mapping[ext] = { userId: u.id, email: u.email, companyId: String(u.privateData.companyId ?? u.metadata?.companyId ?? ""), createdAt: now };
+    added++;
+  }
+  return { added, conflicts };
+}
 const metadataComplete = (u: RemoteUser, want: Record<string, unknown>) => Object.entries(want).every(([k, v]) => JSON.stringify(u.metadata?.[k]) === JSON.stringify(v));
 
 /** Import one row. Idempotent: safe to call again after any failure or interruption. */
