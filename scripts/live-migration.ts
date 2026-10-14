@@ -498,6 +498,7 @@ async function wave() {
     if (ok) categoryPaths.push(p);
   }
   const fixed = FIRST_COHORT_CORE_PATHS.length + FIRST_COHORT_PATHS.length + categoryPaths.length;
+  if (size < fixed) throw new Error(`--size ${size} is below the fixed set (${fixed}: wave 1 + ${categoryPaths.length} eligible category hubs); refusing to enable more URLs than asked`);
   const { candidates } = await gatedCandidates(new Set([...FIRST_COHORT_PATHS, ...FIRST_COHORT_CORE_PATHS]), distinct);
   const picked = candidates.slice(0, Math.max(0, size - fixed));
   const minOps = picked.length ? picked[picked.length - 1].contactableOperators : null;
