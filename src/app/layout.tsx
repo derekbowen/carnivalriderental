@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { EnvBanner, SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { BRAND, publicIndexingEnabled, SITE_DESCRIPTION, siteUrl } from "@/lib/config";
 import "./globals.css";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
+        <SpeedInsights />
       </body>
     </html>
   );
