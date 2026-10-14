@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { beforeEach, describe, expect, it } from "vitest";
 import { activeProducts, DEFAULT_PRODUCT, FERRIS_PRODUCT, productForTier, tierOfProduct } from "@/lib/access/config";
 import { fixtureSource, type OperatorSource } from "@/lib/access/contacts";
@@ -14,7 +15,11 @@ const SITE = "http://test.local";
 const base = { email: "buyer@example.com", eventDate: "2030-06-01", city: "Columbus", state: "OH" };
 const standard = { ...base, rideType: "carousel" };
 const ferris = { ...base, rideType: "ferris-wheel" };
-const ferrisListing = RIDES.find((r) => r.rideType === "ferris-wheel" && r.homeState === "oh")!;
+// The fixture operator source derives each listing's operator from a hash of its id; bucket 6 is the
+// deliberately uncontactable operator, which matching (correctly) leaves out. Pick a Ferris listing in
+// Ohio whose fixture operator can be contacted, so this does not depend on which ids the snapshot holds.
+const fixtureBucket = (id: string) => parseInt(crypto.createHash("sha1").update(id).digest("hex").slice(0, 2), 16) % 7;
+const ferrisListing = RIDES.find((r) => r.rideType === "ferris-wheel" && r.homeState === "oh" && fixtureBucket(r.id) !== 6)!;
 const carouselListing = RIDES.find((r) => r.rideType === "carousel")!;
 const cache = () => ({ cache: memoryContactCache() });
 

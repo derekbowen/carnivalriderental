@@ -208,7 +208,7 @@ const PHONE = /(?:\+?1[\s.-]?)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\b/;
  */
 async function verify() {
   const { planListings, authorNames, PUBLIC_LISTING_METADATA_KEYS } = await import("../src/lib/imports/operator-listings");
-  const { PUBLIC_USER_METADATA_KEYS } = await import("../src/lib/imports/company-accounts");
+  const { PUBLIC_USER_METADATA_KEYS, personNames } = await import("../src/lib/imports/company-accounts");
   const { OPERATOR_PLACEHOLDER, IDENTITY_PUBLIC_KEYS, UNCLAIMED_NOTICE } = await import("../src/lib/operators/claim");
   const { integ, anon } = await liveTokens();
   const plan = planListings(readJson("imports/company-accounts/source/workbook.json"));
@@ -282,11 +282,15 @@ async function verify() {
     const row = companyRows.get(company);
     const lower = text.toLowerCase();
     if (row) for (const n of authorNames(row)) if (n.length >= 4 && lower.includes(n.toLowerCase())) leaks.push(`${l.id}: company name in public listing text`);
+    if (row) for (const n of personNames(row)) if (lower.includes(n)) leaks.push(`${l.id}: contact or owner name in public listing text`);
     if (company && lower.includes(company)) leaks.push(`${l.id}: company slug in public listing data`);
     const au = included.get(`user:${l.relationships?.author?.data?.id}`);
     const p = au?.attributes.profile;
     if (!p) leaks.push(`${l.id}: author not returned publicly (matching needs it)`);
     else {
+      const authorText = JSON.stringify([p.displayName, p.bio, p.publicData ?? {}, p.metadata ?? {}]).toLowerCase();
+      if (row) for (const n of [...authorNames(row), ...personNames(row)]) if (n.length >= 4 && authorText.includes(n.toLowerCase())) leaks.push(`${l.id}: author profile names the company or a contact`);
+      if (EMAIL.test(authorText) || LINK.test(authorText) || PHONE.test(authorText)) leaks.push(`${l.id}: author profile carries an email, link or phone`);
       if (p.displayName !== OPERATOR_PLACEHOLDER.displayName) leaks.push(`${l.id}: author displayName not anonymous`);
       if (IDENTITY_PUBLIC_KEYS.some((k) => p.publicData?.[k] != null)) leaks.push(`${l.id}: author publicData identifies the company`);
       if (Object.keys(p.metadata ?? {}).some((k) => !(PUBLIC_USER_METADATA_KEYS as readonly string[]).includes(k))) leaks.push(`${l.id}: author public metadata ${Object.keys(p.metadata ?? {}).join(",")}`);
@@ -297,11 +301,15 @@ async function verify() {
     const img = included.get(`image:${l.relationships?.images?.data?.[0]?.id}`);
     return img?.attributes.variants?.["landscape-crop"]?.url ? [img.attributes.variants["landscape-crop"].url] : [];
   });
-  const sample = photoUrls.filter((_, i) => i % Math.max(1, Math.floor(photoUrls.length / 40)) === 0).slice(0, 40);
+  // Every photo the public API returns must actually serve an image (HEAD, 8 at a time).
+  const sample = photoUrls;
   const badPhotos: string[] = [];
-  for (const u of sample) {
-    const r = await fetch(u, { headers: { Accept: "image/jpeg,image/png,image/*" }, signal: AbortSignal.timeout(20000) }).catch(() => null);
-    if (!r?.ok || !(r.headers.get("content-type") ?? "").startsWith("image/")) badPhotos.push(`HTTP ${r?.status} ${r?.headers.get("content-type")}`);
+  for (let i = 0; i < sample.length; i += 8) {
+    await Promise.all(sample.slice(i, i + 8).map(async (u) => {
+      let r = await fetch(u, { method: "HEAD", headers: { Accept: "image/jpeg,image/png,image/*" }, signal: AbortSignal.timeout(30000) }).catch(() => null);
+      if (!r?.ok) r = await fetch(u, { headers: { Accept: "image/jpeg,image/png,image/*", Range: "bytes=0-1023" }, signal: AbortSignal.timeout(30000) }).catch(() => null);
+      if (!r?.ok || !(r.headers.get("content-type") ?? "").startsWith("image/")) badPhotos.push(`HTTP ${r?.status} ${r?.headers.get("content-type")}`);
+    }));
   }
 
   const states: Record<string, number> = {};
@@ -315,7 +323,7 @@ async function verify() {
     accounts: { total: users.length, imported: imported.length, byState: userStates, duplicatesByCompany: dupUsers.length },
     listings: { total: listings.length, byState: states, withImage, duplicatesByImportId: dupListings.length, withoutImportMarker: unmarkedListings.length },
     relationships: { checked: byImportId.size, drift: relationshipDrift.length },
-    publicRead: { publishedListings: pub.length, leaks: leaks.length, photoSample: sample.length, photoSampleFailures: badPhotos.length },
+    publicRead: { publishedListings: pub.length, leaks: leaks.length, photosChecked: sample.length, photoFailures: badPhotos.length },
   };
   writeJsonAtomic(`${DIR}/verify-live.json`, { ...summary, dupUsers, dupListings, unmarkedListings, relationshipDrift: relationshipDrift.slice(0, 200), leaks: leaks.slice(0, 200), badPhotos });
   writeJsonAtomic(`${DIR}/test-to-live.json`, { generatedAt: summary.checkedAt, testToLive });
@@ -456,6 +464,17 @@ async function report() {
     return m;
   };
   const tally = (m: Map<string, string>) => [...m.values()].reduce<Record<string, number>>((a, o) => ((a[o] = (a[o] ?? 0) + 1), a), {});
+  /** Every outcome ever recorded per entity (a later idempotent rerun reports "exists" for the same row). */
+  const everTally = (file: string, key: string) => {
+    const m = new Map<string, Set<string>>();
+    if (fs.existsSync(file)) for (const line of fs.readFileSync(file, "utf8").split("\n")) if (line) {
+      const e = JSON.parse(line) as Record<string, string>;
+      if (e[key] && e.outcome) m.set(e[key], (m.get(e[key]) ?? new Set()).add(e.outcome));
+    }
+    const out: Record<string, number> = {};
+    for (const set of m.values()) for (const o of set) out[o] = (out[o] ?? 0) + 1;
+    return out;
+  };
   const acc = lastOutcome("imports/company-accounts/carnivalrental/ledger.jsonl", "externalId");
   const lst = lastOutcome("imports/listings/carnivalrental/ledger.jsonl", "externalId");
   const pho = lastOutcome("imports/photos/carnivalrental/ledger.jsonl", "externalId");
@@ -478,9 +497,9 @@ async function report() {
       explanation: "description.notice: Test still shows the retired request-desk notice; Live uses the current Event Access notice. description.body: company names Test left in 5 descriptions are removed in Live (stricter name set). Titles, public fields, geolocation: identical.",
       testListingsNotMigrated: { qaRide: reconcileFile.testListingsNotPlanned.filter((x) => x.qa).length, requestDesk: reconcileFile.testListingsNotPlanned.filter((x) => x.requestDesk).length },
     },
-    accounts: { companiesSheet: c.tierCounts, expected: c.eligible.length, heldVerifyFirst: c.held.length, excluded: c.excludedCompanies.length, qaAccountNotMigrated: 1, outcomes: tally(acc) },
-    listings: { rowsInSource: wb.listings.length, expected: l.rows.length, heldForReview: l.held.length, outcomes: tally(lst) },
-    photos: { expectedFromTest: l.rows.length - noSource.length - gapsFile.gaps.length, outcomes: tally(pho), gapsWithSourceButNoTestPhoto: gapsFile.gaps.map((g) => ({ liveListingId: g.listingId, reason: g.reason })), ridesWithoutSourcePhoto: noSource },
+    accounts: { companiesSheet: c.tierCounts, expected: c.eligible.length, heldVerifyFirst: c.held.length, excluded: c.excludedCompanies.length, qaAccountNotMigrated: 1, lastOutcome: tally(acc), everRecorded: everTally("imports/company-accounts/carnivalrental/ledger.jsonl", "externalId") },
+    listings: { rowsInSource: wb.listings.length, expected: l.rows.length, heldForReview: l.held.length, lastOutcome: tally(lst), everRecorded: everTally("imports/listings/carnivalrental/ledger.jsonl", "externalId") },
+    photos: { expectedFromTest: l.rows.length - noSource.length - gapsFile.gaps.length, lastOutcome: tally(pho), everRecorded: everTally("imports/photos/carnivalrental/ledger.jsonl", "externalId"), gapsWithSourceButNoTestPhoto: gapsFile.gaps.map((g) => ({ liveListingId: g.listingId, reason: g.reason })), ridesWithoutSourcePhoto: noSource },
     liveReadBack: Object.fromEntries(Object.entries(verifyFile).filter(([k]) => ["checkedAt", "accounts", "listings", "relationships", "publicRead"].includes(k))),
   };
   fs.mkdirSync("reports", { recursive: true });

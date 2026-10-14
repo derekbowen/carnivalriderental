@@ -1,0 +1,378 @@
+{
+  "generatedAt": "2026-10-14T08:52:01.563Z",
+  "inventoryGeneratedAt": "2026-10-14T08:49:48.868Z",
+  "status": "NOT ENABLED: candidates for a later wave, each needs its own go",
+  "criteria": [
+    "meets the supply gate (city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides)",
+    "head of its near-duplicate group (index-eligible.json)",
+    "≥ 3 distinct operators with a usable contact channel in Live (Event Access minimum)",
+    "then: rendered-page review, and Search Console evidence from the first wave (impressions, 'Duplicate without user-selected canonical', crawl stats) before widening"
+  ],
+  "excludedByReason": {
+    "city": {
+      "nearDuplicateNotHead": 1068,
+      "candidate": 320,
+      "fewerThan3ContactableOperators": 32,
+      "thin": 6
+    },
+    "ride-city": {
+      "nearDuplicateNotHead": 13893,
+      "candidate": 2001,
+      "fewerThan3ContactableOperators": 34
+    }
+  },
+  "nextCityCandidates": [
+    {
+      "path": "/michigan/portage",
+      "family": "city",
+      "rides": 765,
+      "operators": 24,
+      "contactableOperators": 24
+    },
+    {
+      "path": "/new-york/new-york",
+      "family": "city",
+      "rides": 738,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/pennsylvania/wilkes-barre",
+      "family": "city",
+      "rides": 710,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/michigan/holland",
+      "family": "city",
+      "rides": 690,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/indiana/lafayette",
+      "family": "city",
+      "rides": 630,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/indiana/fort-wayne",
+      "family": "city",
+      "rides": 715,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/indiana/muncie",
+      "family": "city",
+      "rides": 711,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/pennsylvania/allentown",
+      "family": "city",
+      "rides": 702,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/new-york/hempstead",
+      "family": "city",
+      "rides": 690,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/indiana/valparaiso",
+      "family": "city",
+      "rides": 684,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/michigan/kalamazoo",
+      "family": "city",
+      "rides": 683,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/indiana/noblesville",
+      "family": "city",
+      "rides": 610,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/illinois/danville",
+      "family": "city",
+      "rides": 609,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/indiana/terre-haute",
+      "family": "city",
+      "rides": 605,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/michigan/jackson",
+      "family": "city",
+      "rides": 686,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/new-york/glen-cove",
+      "family": "city",
+      "rides": 663,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/new-york/binghamton",
+      "family": "city",
+      "rides": 657,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/michigan/lansing",
+      "family": "city",
+      "rides": 645,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/michigan/muskegon",
+      "family": "city",
+      "rides": 625,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/pennsylvania/lancaster",
+      "family": "city",
+      "rides": 649,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/michigan/grand-rapids",
+      "family": "city",
+      "rides": 617,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/illinois/schaumburg",
+      "family": "city",
+      "rides": 450,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/pennsylvania/philadelphia",
+      "family": "city",
+      "rides": 633,
+      "operators": 19,
+      "contactableOperators": 19
+    },
+    {
+      "path": "/ohio/bowling-green",
+      "family": "city",
+      "rides": 632,
+      "operators": 19,
+      "contactableOperators": 19
+    },
+    {
+      "path": "/indiana/indianapolis",
+      "family": "city",
+      "rides": 541,
+      "operators": 19,
+      "contactableOperators": 19
+    }
+  ],
+  "nextRideCityCandidates": [
+    {
+      "path": "/new-york/middletown/giant-slide",
+      "family": "ride-city",
+      "rides": 34,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/new-jersey/plainfield/giant-slide",
+      "family": "ride-city",
+      "rides": 33,
+      "operators": 23,
+      "contactableOperators": 23
+    },
+    {
+      "path": "/indiana/south-bend/giant-slide",
+      "family": "ride-city",
+      "rides": 32,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/pennsylvania/hazleton/giant-slide",
+      "family": "ride-city",
+      "rides": 32,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/new-york/new-york/giant-slide",
+      "family": "ride-city",
+      "rides": 31,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/pennsylvania/scranton/giant-slide",
+      "family": "ride-city",
+      "rides": 31,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/pennsylvania/wilkes-barre/giant-slide",
+      "family": "ride-city",
+      "rides": 31,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/indiana/terre-haute/giant-slide",
+      "family": "ride-city",
+      "rides": 30,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/illinois/danville/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 22,
+      "contactableOperators": 22
+    },
+    {
+      "path": "/pennsylvania/allentown/giant-slide",
+      "family": "ride-city",
+      "rides": 30,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/michigan/holland/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/new-york/kiryas-joel/ferris-wheel",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/indiana/lafayette/giant-slide",
+      "family": "ride-city",
+      "rides": 28,
+      "operators": 21,
+      "contactableOperators": 21
+    },
+    {
+      "path": "/indiana/kokomo/giant-slide",
+      "family": "ride-city",
+      "rides": 31,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/indiana/muncie/giant-slide",
+      "family": "ride-city",
+      "rides": 31,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/indiana/fort-wayne/giant-slide",
+      "family": "ride-city",
+      "rides": 30,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/indiana/valparaiso/giant-slide",
+      "family": "ride-city",
+      "rides": 30,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/pennsylvania/lebanon/giant-slide",
+      "family": "ride-city",
+      "rides": 30,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/indiana/michigan-city/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/michigan/kalamazoo/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/new-jersey/new-brunswick/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/new-york/binghamton/giant-slide",
+      "family": "ride-city",
+      "rides": 29,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/new-york/new-york/ferris-wheel",
+      "family": "ride-city",
+      "rides": 28,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/pennsylvania/allentown/ferris-wheel",
+      "family": "ride-city",
+      "rides": 28,
+      "operators": 20,
+      "contactableOperators": 20
+    },
+    {
+      "path": "/pennsylvania/scranton/ferris-wheel",
+      "family": "ride-city",
+      "rides": 28,
+      "operators": 20,
+      "contactableOperators": 20
+    }
+  ]
+}

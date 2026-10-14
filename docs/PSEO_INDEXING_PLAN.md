@@ -141,6 +141,30 @@ Rollback: set `PUBLIC_INDEXING=false` (blanket disallow and sitewide noindex ret
   resolve. Results: `reports/indexing-cohort.json` (per URL) and
   `reports/release-verification-carnivalriderental.us.json`.
 
+**Cohort on the final Live snapshot** (`reports/indexing-cohort.json`, inventory exported
+2026-10-14 from Live; gates evaluated with production indexing on; supply = rides in
+the 200-mile radius, or matching rides for ride + city, or the category's inventory; operators are
+distinct Live authors; "contactable" = a usable phone, email or website in Live):
+
+| URL | Family | Supply (rides) | Distinct operators | Contactable operators | Duplicate head | Result |
+|---|---|---|---|---|---|---|
+| `/ohio/columbus` | city | 499 | 15 | 15 | yes | **indexable** |
+| `/ohio/columbus/ferris-wheel` | ride-city | 22 | 13 | 13 | yes | **indexable** |
+| `/texas/austin` | city | 158 | 6 | 6 | yes | **indexable** |
+| `/texas/austin/carousel` | ride-city | 6 | 4 | 4 | yes | **indexable** |
+| `/illinois/chicago` | city | 452 | 19 | 19 | yes | **indexable** |
+| `/illinois/chicago/ferris-wheel` | ride-city | 18 | 13 | 13 | yes | **indexable** |
+| `/florida/orlando` | city | 241 | 4 | 4 | yes | **indexable** |
+| `/georgia/atlanta` | city | 103 | 4 | 4 | yes | **indexable** |
+| `/minnesota/minneapolis` | city | 176 | 8 | 8 | yes | **indexable** |
+| `/washington/seattle` | city | 148 | 3 | 3 | yes | **indexable** |
+| `/` | core | 3714 | 119 | 119 | n/a (not a city page) | **indexable** |
+| `/rides` | core | 3714 | 119 | 119 | n/a (not a city page) | **indexable** |
+| `/categories/ferris-wheels` | category | 185 | 109 | 109 | n/a (not a city page) | **indexable** |
+
+All 13 candidates pass every gate; none was forced. Seattle sits exactly at the Event Access minimum
+of 3 contactable operators: if that drops on a later snapshot, the cohort manifest flags it.
+
 **Mechanism.** `PSEO_PILOT.enabled = true` with two exact lists: `paths` (the 10-path geographic
 pilot) and `corePaths` (`/`, `/rides`, `/categories/ferris-wheels`, resolved from `paths.*`). A path
 on either list stands in only for copy approval. It still needs: `APP_ENV=production` and
@@ -176,7 +200,10 @@ query-string or filter variant; `/guides/*`, `/operators`, legal pages; `/connec
 **Expansion (not enabled).** `npm run migrate:live -- cohort` writes `reports/indexing-expansion.json`:
 every supply-sufficient page outside the cohort, why it is excluded (thin, not its group's head, or
 fewer than 3 distinct operators with a usable contact channel in Live), and the ranked next
-candidates. A second wave needs: the same gates, ≥ 3 distinct contactable operators, a rendered-page
+candidates. On the final Live snapshot: city pages: 320 candidates,
+1068 not their group's head, 32 with fewer than 3 contactable
+operators, 6 thin; ride + city pages: 2001 candidates,
+13893 not their group's head, 34 with fewer than 3 contactable operators. A second wave needs: the same gates, ≥ 3 distinct contactable operators, a rendered-page
 review, and 4–6 weeks of Search Console evidence from this wave (impressions, crawl stats,
 "Duplicate without user-selected canonical"). Each wave is a separate go; nothing widens
 automatically.

@@ -1197,17 +1197,17 @@
       ]
     },
     {
-      "title": "Big Wheel",
-      "chosen": "giant-ferris-wheel",
-      "alsoMatches": [
-        "ferris-wheel"
-      ]
-    },
-    {
       "title": "Childrens Carousel",
       "chosen": "kiddie-carousel",
       "alsoMatches": [
         "carousel"
+      ]
+    },
+    {
+      "title": "Big Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
       ]
     },
     {
@@ -1295,17 +1295,17 @@
       ]
     },
     {
-      "title": "Giant Wheel",
-      "chosen": "giant-ferris-wheel",
-      "alsoMatches": [
-        "ferris-wheel"
-      ]
-    },
-    {
       "title": "Grand Carousel",
       "chosen": "kiddie-carousel",
       "alsoMatches": [
         "carousel"
+      ]
+    },
+    {
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
+      "alsoMatches": [
+        "ferris-wheel"
       ]
     },
     {
@@ -1541,17 +1541,17 @@
       ]
     },
     {
-      "title": "Umbrella Cars",
-      "chosen": "paratrooper",
-      "alsoMatches": [
-        "kiddie-cars"
-      ]
-    },
-    {
       "title": "Umbrella MotorCycles",
       "chosen": "paratrooper",
       "alsoMatches": [
         "kiddie-motorcycles"
+      ]
+    },
+    {
+      "title": "Umbrella Cars",
+      "chosen": "paratrooper",
+      "alsoMatches": [
+        "kiddie-cars"
       ]
     },
     {
@@ -1583,13 +1583,6 @@
       ]
     },
     {
-      "title": "Giant Wheel",
-      "chosen": "giant-ferris-wheel",
-      "alsoMatches": [
-        "ferris-wheel"
-      ]
-    },
-    {
       "title": "Grand Wheel",
       "chosen": "giant-ferris-wheel",
       "alsoMatches": [
@@ -1597,10 +1590,10 @@
       ]
     },
     {
-      "title": "Happy Swing",
-      "chosen": "kiddie-swing-ride",
+      "title": "Giant Wheel",
+      "chosen": "giant-ferris-wheel",
       "alsoMatches": [
-        "chair-swing-ride"
+        "ferris-wheel"
       ]
     },
     {
@@ -1608,6 +1601,13 @@
       "chosen": "haunted-house",
       "alsoMatches": [
         "dark-ride"
+      ]
+    },
+    {
+      "title": "Happy Swing",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
       ]
     },
     {
@@ -1751,17 +1751,17 @@
       ]
     },
     {
-      "title": "Kiddie Swings",
-      "chosen": "kiddie-swing-ride",
-      "alsoMatches": [
-        "chair-swing-ride"
-      ]
-    },
-    {
       "title": "Magic Maze",
       "chosen": "mirror-maze",
       "alsoMatches": [
         "fun-house"
+      ]
+    },
+    {
+      "title": "Kiddie Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
       ]
     },
     {
@@ -1793,17 +1793,17 @@
       ]
     },
     {
-      "title": "Ghost Pirates",
-      "chosen": "haunted-house",
-      "alsoMatches": [
-        "swinging-pirate-ship"
-      ]
-    },
-    {
       "title": "Giant Wheel",
       "chosen": "giant-ferris-wheel",
       "alsoMatches": [
         "ferris-wheel"
+      ]
+    },
+    {
+      "title": "Ghost Pirates",
+      "chosen": "haunted-house",
+      "alsoMatches": [
+        "swinging-pirate-ship"
       ]
     },
     {
@@ -1884,13 +1884,6 @@
       ]
     },
     {
-      "title": "Cub Swings",
-      "chosen": "kiddie-swing-ride",
-      "alsoMatches": [
-        "chair-swing-ride"
-      ]
-    },
-    {
       "title": "Cub Wheel",
       "chosen": "mini-ferris-wheel",
       "alsoMatches": [
@@ -1898,14 +1891,21 @@
       ]
     },
     {
-      "title": "Fantasy Carousel",
+      "title": "Cub Swings",
+      "chosen": "kiddie-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
+      ]
+    },
+    {
+      "title": "Fantasy Carousel #2",
       "chosen": "kiddie-carousel",
       "alsoMatches": [
         "carousel"
       ]
     },
     {
-      "title": "Fantasy Carousel #2",
+      "title": "Fantasy Carousel",
       "chosen": "kiddie-carousel",
       "alsoMatches": [
         "carousel"
@@ -1933,17 +1933,17 @@
       ]
     },
     {
-      "title": "Vertigo Swings",
-      "chosen": "tower-swing-ride",
-      "alsoMatches": [
-        "chair-swing-ride"
-      ]
-    },
-    {
       "title": "Wacky Worm Coaster",
       "chosen": "kiddie-coaster",
       "alsoMatches": [
         "family-coaster"
+      ]
+    },
+    {
+      "title": "Vertigo Swings",
+      "chosen": "tower-swing-ride",
+      "alsoMatches": [
+        "chair-swing-ride"
       ]
     },
     {
@@ -2417,7 +2417,7 @@
       ]
     },
     {
-      "title": "Giant Wheel",
+      "title": "Giant Wheel #2",
       "chosen": "giant-ferris-wheel",
       "alsoMatches": [
         "ferris-wheel"

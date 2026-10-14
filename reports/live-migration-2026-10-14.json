@@ -1,0 +1,952 @@
+{
+  "generatedAt": "2026-10-14T08:57:34.480Z",
+  "from": "CarnivalRental Test",
+  "to": "CarnivalRental",
+  "source": {
+    "kind": "native Google Sheet → XLSX export (Drive API) → scripts/company-import-extract.py",
+    "note": "Google Sheets XLSX export (Drive API) of native Sheet 12_MAKnyJm7acOGcmrK4gBntDHaso4us-KQo6vbnCR0s, 2026-10-14; identical cell content to copy 1-o_QFWqD8FGGkrSUYCHf4FifdQaLfLKb4Ehlp0aTBpg (all 7 tabs compared). Not the original upload: its SHA-256 differs from the 2026-10-04 xlsx.",
+    "exportSha256": "4a5fefb770d35ed46a33e9c89847683b33a2f12a3354ad2d68b80ac04649c23f"
+  },
+  "freshness": {
+    "comparedWith": "Test public catalog (anonymous Marketplace API), same day",
+    "plannedListings": 3714,
+    "missingInTest": 0,
+    "differences": {
+      "description.notice": 3714,
+      "description.body": 5
+    },
+    "explanation": "description.notice: Test still shows the retired request-desk notice; Live uses the current Event Access notice. description.body: company names Test left in 5 descriptions are removed in Live (stricter name set). Titles, public fields, geolocation: identical.",
+    "testListingsNotMigrated": {
+      "qaRide": 1,
+      "requestDesk": 1
+    }
+  },
+  "accounts": {
+    "companiesSheet": {
+      "A_ready": 119,
+      "B_account_only": 65,
+      "C_verify_first": 135,
+      "D_exclude": 11
+    },
+    "expected": 184,
+    "heldVerifyFirst": 135,
+    "excluded": 11,
+    "qaAccountNotMigrated": 1,
+    "lastOutcome": {
+      "exists": 184
+    },
+    "everRecorded": {
+      "created": 184,
+      "exists": 184,
+      "approved": 184
+    }
+  },
+  "listings": {
+    "rowsInSource": 3721,
+    "expected": 3714,
+    "heldForReview": 7,
+    "lastOutcome": {
+      "exists": 3714
+    },
+    "everRecorded": {
+      "failed": 3,
+      "created": 3714,
+      "exists": 3714
+    }
+  },
+  "photos": {
+    "expectedFromTest": 3503,
+    "lastOutcome": {
+      "already_has_images": 4,
+      "attached_approved": 3498,
+      "attached": 1,
+      "approved_without_photo": 211
+    },
+    "everRecorded": {
+      "attached_approved": 3501,
+      "already_has_images": 4,
+      "bad_image": 1,
+      "approved_without_photo": 212,
+      "failed": 1,
+      "attached": 1
+    },
+    "gapsWithSourceButNoTestPhoto": [
+      {
+        "liveListingId": "6acf2cf6-a4cc-4369-89f8-84572ca1b8be",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf7-e2f6-4c46-af61-8fbefc1871f7",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf7-847a-49fd-bbb2-0bc5d3948294",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf8-3b05-40f1-9e2c-c60a48ddbad6",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf8-ccb0-4735-846e-bca5f79f03ce",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf8-048d-49e0-a432-d2785856b128",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf9-b424-4657-b0bf-be519399f090",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cf9-315b-4597-945e-6218403a415c",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfa-179e-42e7-81c6-9c86eac10f3e",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfa-6841-4cdb-9fff-372ffa777af5",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfa-e413-482b-8933-dfdde52d8cfb",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfb-2b3e-416d-80b2-d678716b5d83",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfb-5d8c-4396-9a1a-6116d8678658",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfc-5cb0-47d6-80c0-85a04e24aa80",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfc-564f-45d5-a158-b12cdd44b484",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfc-9bb1-4be5-ad37-ebff87535ea9",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfd-5ec1-4c8b-8e0c-79a9cbe689b7",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfd-7ad8-4706-b26b-3729982abe67",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2cfe-7341-47be-a98c-00c83926a4aa",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2d4c-ea7e-4e9d-a2f5-fcbe01658c36",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f0f-570d-426e-b239-756858ccc9d3",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f6f-1028-4947-abc4-5662bec51461",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f72-240e-4782-8991-19e57b1cda4c",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f81-a712-4c6d-8761-9aeff62a9fbe",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f83-875b-4ee3-a990-d95fa5fe5a87",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf2f89-cf0e-4284-bd59-b899236d01f6",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf303a-877b-4778-9888-58d3156210be",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf304f-0313-42fe-a4f7-c5d94dd252c8",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf30a7-b8a2-4361-b988-3ad0c0fa3c9d",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf30af-5ec8-4624-b6a9-c5643fcc63c8",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3162-bd4f-42bb-bc3c-3ec064f7d415",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3162-2093-4b44-b236-705860dd6e77",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3163-29e2-42da-8560-78a3434f9a2a",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3163-6cab-46e3-8b39-522fc6af0c68",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3164-24a6-4b8a-9339-590f6a1c0aa8",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3164-80a5-403e-bca2-7d146183e3e3",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3164-20eb-4db3-a169-1efa922c7da7",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3165-892f-45c7-ae17-1659fca35925",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3165-4c7b-44be-b4ec-f0b3e0fc2844",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3166-2b63-462c-994c-ded973901ada",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3166-42bb-40a8-943f-72bd33d8e367",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3166-7a71-48fd-9eb2-5d8055dd7554",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3167-f966-48ec-8e13-07a7beda3eb9",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3167-43c1-4b04-ae2b-cad9f0403d81",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3168-0a3b-47f8-a779-f4990317a64a",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3168-61f2-4361-99e6-ce00aba59ab9",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3168-3107-4ec9-967a-1f86f8125dac",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3169-d022-42fb-8ee5-f5902c19b35b",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3169-2904-47f2-b869-661b7762c25c",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf321e-dba7-4a6a-bbcc-29fdf3d86aa9",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf3224-9d12-43a1-915d-ea0c0813bd05",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      },
+      {
+        "liveListingId": "6acf322f-a549-4367-86ac-2f5efc4e463f",
+        "reason": "the Test listing has no photo (source photo failed or was rejected in Test)"
+      }
+    ],
+    "ridesWithoutSourcePhoto": [
+      {
+        "liveListingId": "6acf2cd1-ced6-48ca-8883-e2d8da60764c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2cd4-3e0e-491a-82ad-be2517a75f42",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2cd7-b52f-4f2f-ad8b-db55c2b4382e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2cd8-4459-4fe0-9348-f7234bd744ff",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d38-a5a9-4ee3-b184-3584b431c141",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d3c-7073-466d-b9d7-1859917c905d",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d42-2e25-4cad-9bc7-a3fb711ac1b9",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d4a-3d6e-445a-8517-c92401d02252",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d53-3de0-46ac-9119-b2e906d2c47f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d55-2f23-465a-86e1-2dc13465c8dd",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d69-f107-45ac-9e48-9127a8d09b2f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d69-21be-4f02-8388-5711d9458e99",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d75-eab5-4acb-922f-e18064c0d2da",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d7e-06f6-4959-8598-76426d52655f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2d84-2387-4889-847b-0b033a9966e4",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2dac-488d-40e6-941b-ae83b41ba946",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2db7-1a34-45cd-82a6-c907a6ce53b8",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2db8-1690-41cb-b1ab-f9bcb1203b53",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e1f-43e1-4b35-b994-ea95b58e407f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e96-5b8d-41c2-819f-9bf72d89802a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e96-85da-4bc1-aab3-46b0a982e26b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e96-08c7-48be-a565-254a4cbce6be",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e97-c796-44fd-a894-7390743de5bc",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e97-e0bb-4528-9571-aef6e835d722",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e98-2d0e-4e4a-95cd-1cba81eccb12",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e98-e65f-4528-b7ac-bc5a10b787dc",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9a-caf6-47c5-a4d0-f4b10ce8422e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9a-d2c7-4ffb-a1b3-6fcb374f2592",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9b-dabf-49f8-a863-dfeec57a1e1a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9c-2ed1-4f74-bd26-7d627b2b7a8a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9c-e0f2-4dd9-8ad4-3fdadb1b1c31",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2e9d-f5e8-4516-8a79-50bcea55d397",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2ed7-ab0a-46fc-8c39-51437b12b1ec",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2ed9-148e-43f5-b36b-2f5a76163cd7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2eda-3ea9-43bb-8860-0c525c80c36a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2edb-c201-4db1-a2c0-d0e081f9e027",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2edb-df1f-4708-a1f7-e53879ea7f65",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2ef2-9ad7-4921-995d-1ff64b371d9b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2ef2-a77d-4008-8f59-7f9d320b86e9",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2f09-e285-4bf2-80e5-e5eedc81b254",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2f19-3855-4e99-ac36-446ca9bbe8a3",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2fbc-49e0-4c13-bc4c-9e40085d2d97",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2fc2-c03e-4e5d-8db5-6ae6acfe89df",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf2fd2-fffb-4757-a8c1-0a9a8f2e27e0",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3012-9ef1-4851-a8f0-8d087d688087",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf301f-fb5d-4c7c-b101-2df895020707",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3037-1ddf-4f8d-8912-3b1fd7cf8fff",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3037-59e2-44b8-a0d2-1494ffb6cdd6",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3038-36c4-49ec-986c-10d9c68131c1",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3038-f6a5-41e6-a717-4e534cfa75fe",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3038-12b5-4ec1-bfc0-f9ab1a41bd4a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3039-1ff0-4cc1-a05b-406e4024c584",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3039-ed6b-4e86-b54a-c9cd7852b1d0",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303a-04c2-4bd5-b71d-5c8a0f7016b6",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303b-6d2f-44f2-9f3a-e394577f2919",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303b-6679-4c75-9943-97368db06c5c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303c-aacf-48a1-b0d8-9489e2bb407f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303c-5ef2-438b-9fd0-9757979ee71b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303c-6732-42f1-9aff-f11a2633789b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303d-c4b5-4875-b4c3-75cf108a8a16",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303d-3ad4-4e4e-bd33-2a15d190dbec",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303e-967a-4df7-91ce-ece6cfa48015",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303e-896a-4564-a30e-069ec8a71d0e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf303f-91c3-4594-9500-f3ac5a72c9cb",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3040-9b53-42fc-9d7f-5a49d4882cc7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3040-fea9-4df0-aead-d67067d17ee9",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3041-65e2-440a-abb8-2aecf6d1e124",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3041-a1b8-4f1d-ad14-f6cbdd6fbc50",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3042-ef89-4f0e-ae62-d82d83d62257",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3042-55fa-42f9-bc2c-1645f3f469b1",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3042-243e-4fd0-8ff1-6b55b026af1d",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3043-8600-4ac2-8c1f-184dff64123c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3043-7e73-4bee-be1c-71307ed96c38",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3044-4b70-4f92-b594-e21a3e9c003b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3044-abf8-4c9a-8b54-5183a76fcd35",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3044-18de-4883-ad71-51477cc6b417",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3045-dd99-4d13-bdc1-5be954185ca6",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3045-0fff-47c6-b7d4-50a0ae862975",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3046-7964-49eb-897a-3a03ffce6b5a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3046-5d30-44a5-8755-a9ac1cf25c15",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3047-b1d3-4ee9-adf2-fdb7eda9d980",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3047-b896-4a07-bbd2-d126ce144b6f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3048-33e9-43eb-99e8-45ce9fbec112",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3048-4b36-4f59-b966-cd8c636b1407",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3048-ca12-4c58-aa8a-2ab7b6af48a7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3049-a205-4bd0-892c-6f406adba15c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3049-a3f3-44e2-a6c4-c29f80ccf3da",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304a-7016-49db-b918-8f08e28b9526",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304a-e7ce-40f8-95fb-5aa35f7231e3",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304a-8a77-4f8f-b68c-5bdde37fe52a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304b-61df-4d48-9ff6-7a778aa9bd99",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304b-0b3c-4e8d-9929-fe351c2c540e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304c-61ea-4919-8e45-620c858dbd41",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304c-6595-4399-b889-98128f7ae7e7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304c-22fb-4388-9843-c3cfdcd9b1b2",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304d-82af-4812-b967-a81dd60fcbd9",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304e-ac7a-4c48-8da1-63ebb15b37b5",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304e-4917-490e-bc91-51b9ed52c1d1",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304e-0e7e-4884-86bc-7b75309b796f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf304f-b1cd-4280-8a10-cfee78442ecc",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3050-cf6f-4506-9ed5-cbdc7520439f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3050-1531-406e-b3c8-d9f664582395",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3051-81b4-45e7-835c-5f5576d7bacd",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3051-c959-4ac5-a667-537d90ae5a77",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3052-8e8a-4e07-849e-a311eb38721e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3052-1e69-48d2-898b-836f3cd29d98",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3052-e4d5-4748-8512-57a65a3f554f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3053-7266-47e1-8ba0-7a92b3efb38e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3053-60de-468c-b7fd-1f348e46e0eb",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3054-9b65-4af9-98b6-01d9efa64076",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3054-7cfc-4978-9a77-e60ea8f5453b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3054-f9c4-4191-8e00-28b0215a5f47",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3055-293c-438c-a7d5-c08666b74193",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3055-123b-4842-ba99-b5e5e2bc9393",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3056-455c-4cb5-bd9d-d80b99b858c4",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3056-afe6-415a-9a28-9a19f058ee8e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf309b-4473-4ae8-a7d5-395dc5ae7973",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf309c-cc53-4527-be0a-c565bf873491",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf309f-defa-4ff4-b92a-1364ea1f4cf4",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30e9-d6ab-4988-a6c4-d41c34f0e73a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ea-2a62-4af4-98ad-50b0a3c8b26b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30eb-fbcd-47aa-9c1a-ede68197d68e",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ec-f958-4a5c-a513-10e59f8130a7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ed-5ab8-4ab4-abd0-58542e9d97c4",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ed-8085-4ee6-b3dd-57be998f57af",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ed-6a4f-4353-a6b8-8de30e9bdf59",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30ef-2e0b-4ae3-b480-f10e2da4c27f",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf30f1-03a6-41ba-9b62-ecd9bd844b2b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf313e-24e6-4069-aaaa-43c3ad966f0b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf31c5-6317-45ec-85b5-ca76b32748f6",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf31c7-8e4e-431f-ac6e-e5d8987d4204",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf321c-c939-4a0a-8893-fed2d316d6ca",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf321d-959c-49c0-a0a1-8c1cf41fa196",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3234-495f-4d80-ae81-426938e0b2c8",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3292-815d-4e0a-8467-1ca99474622a",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3301-3f9e-4a18-b9a5-3d81de3fc5ab",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3303-9639-4138-9277-aa27de5c0f63",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3305-863c-49b0-b170-4b6adb02c44b",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3346-44e3-4fda-a24b-5d9a910e37b0",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3349-0eaa-45d2-ad0a-e492d8db9c8d",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf334b-67f5-4fb8-a33d-4470ce9119d5",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33c1-e6b6-44bc-af50-d210808ecad0",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33c4-d0b5-4796-a2e3-9441bb8243a7",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33c6-19a6-40de-a33f-0234d015e9c5",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33c7-e0bc-477d-a563-73969ff5a9db",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33cc-3a07-42ce-b88a-dd3a01e1f337",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf33cd-05fb-4c9b-b27c-2734d849e6ef",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3401-343d-42a5-9143-0f8a8d210396",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3407-0e89-490b-9d83-94e08e815eed",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3409-f192-4d57-9ba0-d5ab83f5009c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3414-7c64-45f4-9e47-c3d9c5d49dff",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf343f-2a5d-4a39-9b1e-de9d79b953eb",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34c2-2b39-4aca-8a80-2cdd0f60de93",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34e0-970f-4b74-9c4f-8316ccc18aa4",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34ec-8d83-456e-a871-839d48a2b786",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34f5-353a-4d5a-a369-b6500700934c",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34fb-3564-4f4d-8795-e7cab95277b3",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf34fb-a4ce-4623-be18-3e68c7b26677",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      },
+      {
+        "liveListingId": "6acf3507-3e90-442d-a63a-7103a67a0daf",
+        "reason": "no source photo on the operator's website (none was ever imported)"
+      }
+    ]
+  },
+  "liveReadBack": {
+    "checkedAt": "2026-10-14T08:50:01.418Z",
+    "accounts": {
+      "total": 184,
+      "imported": 184,
+      "byState": {
+        "active": 184
+      },
+      "duplicatesByCompany": 0
+    },
+    "listings": {
+      "total": 3714,
+      "byState": {
+        "published": 3714
+      },
+      "withImage": 3503,
+      "duplicatesByImportId": 0,
+      "withoutImportMarker": 0
+    },
+    "relationships": {
+      "checked": 3714,
+      "drift": 0
+    },
+    "publicRead": {
+      "publishedListings": 3714,
+      "leaks": 0,
+      "photosChecked": 3503,
+      "photoFailures": 0
+    }
+  }
+}

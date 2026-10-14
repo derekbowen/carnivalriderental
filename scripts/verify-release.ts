@@ -88,6 +88,12 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
     const r = await get(`/s/${t}`, "manual");
     check(`/s/{test id} → 308 /s/{live id}`, r.status === 308 && (r.headers.get("location") ?? "").endsWith(`/s/${l}`), `status ${r.status} → ${r.headers.get("location")}`);
   }
+  const ridesById = new Map((JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: { id: string; rideType: string | null }[] }).rides.map((r) => [r.id, r]));
+  const ferrisOld = Object.entries(testToLive.map).find(([, l]) => ridesById.get(l)?.rideType === "ferris-wheel");
+  if (ferrisOld) {
+    const c = await get(`/connect?listing=${ferrisOld[0]}`);
+    check("/connect?listing={old Test Ferris id} → its Live listing, Ferris Wheel Event Access tier", c.text.includes('<p class="eyebrow">Ferris Wheel Event Access</p>') && c.text.includes('data-testid="connect-context"'));
+  }
   const unknown = await get("/s/00000000-0000-4000-8000-000000000000", "manual");
   check("/s/{unknown id} → 404 (never redirected elsewhere)", unknown.status === 404, `status ${unknown.status}`);
 

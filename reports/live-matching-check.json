@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-10-14T08:51:23.087Z",
+  "marketplace": "CarnivalRental",
+  "cases": [
+    {
+      "case": "Columbus, OH · any ride",
+      "tier": "standard",
+      "resolverTier": "standard",
+      "operators": 5,
+      "contactable": 5,
+      "candidateListings": 150,
+      "firstContactLookup": {
+        "hasPhone": true,
+        "hasEmail": false,
+        "hasWebsite": true,
+        "hasCompanyName": true
+      }
+    },
+    {
+      "case": "Columbus, OH · Ferris wheel",
+      "tier": "ferris",
+      "resolverTier": "ferris",
+      "operators": 13,
+      "contactable": 13,
+      "candidateListings": 22,
+      "firstContactLookup": {
+        "hasPhone": true,
+        "hasEmail": false,
+        "hasWebsite": true,
+        "hasCompanyName": true
+      }
+    },
+    {
+      "case": "Chicago, IL · Ferris wheel",
+      "tier": "ferris",
+      "resolverTier": "ferris",
+      "operators": 13,
+      "contactable": 13,
+      "candidateListings": 18,
+      "firstContactLookup": {
+        "hasPhone": true,
+        "hasEmail": true,
+        "hasWebsite": true,
+        "hasCompanyName": true
+      }
+    },
+    {
+      "case": "Austin, TX · carousel",
+      "tier": "standard",
+      "resolverTier": "standard",
+      "operators": 4,
+      "contactable": 4,
+      "candidateListings": 6,
+      "firstContactLookup": {
+        "hasPhone": true,
+        "hasEmail": true,
+        "hasWebsite": true,
+        "hasCompanyName": true
+      }
+    },
+    {
+      "case": "Columbus, OH · old Test Ferris listing id, client says carousel",
+      "tier": "ferris",
+      "resolverTier": "ferris",
+      "listingResolvedToLive": "6acf2cbb-507d-49e1-a651-db0136f1c9da",
+      "operators": 14,
+      "contactable": 14,
+      "candidateListings": 23,
+      "firstContactLookup": {
+        "hasPhone": true,
+        "hasEmail": false,
+        "hasWebsite": true,
+        "hasCompanyName": true
+      }
+    }
+  ]
+}

@@ -1,6 +1,45 @@
-# Launch status (2026-10-12; pivot 2026-10-06, two-tier pricing 2026-10-12)
+# Launch status (2026-10-14: Sharetribe Live cutover and first indexing cohort)
 
-Read `PROJECT_BRIEF.md` for the model, `PAID_ACCESS_ARCHITECTURE.md` for where the ledger lives, and `PAID_ACCESS_IMPLEMENTATION.md` for what was built and how to roll back.
+Read `PROJECT_BRIEF.md` for the model, `SHARETRIBE_LIVE_CUTOVER.md` for the migration,
+`PSEO_INDEXING_PLAN.md` §7 for indexing and `ROLLBACK_2026-10-14.md` for the rollback record.
+Sections 1–6 below are the history before the cutover.
+
+## 0. State after the 2026-10-14 cutover
+
+| Area | State | Evidence |
+|---|---|---|
+| Catalog backend | **Sharetribe Live "CarnivalRental"** (production env vars point at the Live Marketplace and Integration API apps) | `reports/live-migration-2026-10-14.json`, `reports/release-verification-carnivalriderental.us.json` |
+| Operators | 184 active anonymous company accounts (119 with listings), unclaimed; 135 held (`C_verify_first`), 11 excluded | migration report |
+| Listings | 3,714 published (7 held for privacy review, as in Test); 0 duplicates; 0 relationship drift | migration report |
+| Photos | 3,503 attached and serving; 211 without a photo (159 never had a source photo, 52 failed in Test), honest placeholder | migration report |
+| Privacy | 0 leaks in a full anonymous read of every listing and author; contacts only via the entitlement-checked reveal | `migrate:live -- verify` |
+| Old links | `/s/{test id}` → 308 `/s/{live id}` for all 3,714; `/connect?listing={test id}` resolves to the Live listing and tier | `src/lib/inventory/test-to-live.json`, release verification |
+| Pricing | $99 Event Access / $199 Ferris Wheel Event Access from `access_products`; server-side tier from the Live snapshot; verified with the app's matcher against Live | `reports/live-matching-check.json` |
+| **Commerce** | **Disabled ("Event Access is opening soon")**: production holds only a Stripe test-mode key, and a test key on `APP_ENV=production` never sells. Test-mode QA passes are never entitlements once live keys are set | `src/lib/access/stripe.ts`, `service.ts` |
+| Indexing | First cohort of 13 exact URLs (homepage, `/rides`, `/categories/ferris-wheels`, 10 geographic pilot pages); everything else `noindex` | `PSEO_INDEXING_PLAN.md` §7, `reports/indexing-cohort.json` |
+| Sitemap | `https://carnivalriderental.us/sitemap.xml`, exactly the cohort, advertised in robots.txt | release verification |
+| Search Console | No authorized connection in this project's tooling (Adspirer not connected, no OpenSEO project, no Zapier app): the sitemap is published and advertised in robots.txt, **not submitted** | — |
+
+**Blockers that remain (owner actions):**
+1. **Stripe live mode:** connect the Carnival Ride Rental live Stripe account, create the live webhook
+   (`/api/access/webhook`, the six events), set `STRIPE_SECRET_KEY` (`sk_live_…`) and
+   `STRIPE_WEBHOOK_SECRET` in Vercel production. Never Pool Rental Near Me's account.
+2. **Purchaser email:** no email provider key in Vercel production (pass and recovery emails are
+   skipped and logged). The Resend account connected to this workspace holds other businesses'
+   domains only and was not used. Add this business's own provider key (`EMAILIT_API_KEY` or a Resend
+   key whose account owns `carnivalriderental.us`), keep `EMAIL_MODE=test` until verified.
+3. **Search Console:** submit `https://carnivalriderental.us/sitemap.xml` in the property verified by the
+   `google-site-verification` TXT record on `carnivalriderental.us`.
+4. **Sharetribe Test leaks company slugs:** Test's public listing and user `metadata` still carry
+   `companyId`/`importExternalId`. Production no longer reads Test. Scrub them with the Test Integration
+   credentials, or turn on "Make marketplace private" in **Test only** (never in Live).
+5. **Rotations:** Supabase database password (shared in chat 2026-10-06), the Live Integration secret
+   and Marketplace client secret (pasted in chat 2026-10-14), the Test Integration secret.
+6. **Hosted Live web app:** `carnivalrental-9ecfo8.mysharetribe.com` still redirects to
+   `www.mysharetribe.com`; operators can't log in to a hosted Live app until it is set up (claims are a
+   team action anyway).
+
+Earlier status (2026-10-12; pivot 2026-10-06, two-tier pricing 2026-10-12): read `PAID_ACCESS_ARCHITECTURE.md` for where the ledger lives and `PAID_ACCESS_IMPLEMENTATION.md` for what was built.
 
 ## 1. What is live on carnivalriderental.us
 

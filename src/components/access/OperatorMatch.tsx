@@ -6,6 +6,14 @@ import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { paths } from "@/lib/seo/routes";
 
 /** One matched operator: anonymous until unlocked. Contact fields render only from an unlock snapshot. */
+const websiteHost = (url: string) => {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "Website";
+  }
+};
+
 export function OperatorMatch({ op, unlock, passId, usable, remaining, reported }: { op: MatchedOperator; unlock?: Unlock | null; passId?: string; usable?: boolean; remaining?: number; reported?: boolean }) {
   const c = unlock?.contact ?? null;
   return (
@@ -39,8 +47,9 @@ export function OperatorMatch({ op, unlock, passId, usable, remaining, reported 
       {c ? (
         <div className="mt-4 grid gap-2 sm:grid-cols-3" data-testid="revealed-contact">
           {c.phone && <a className="btn-dark justify-center" href={`tel:${c.phone.replace(/[^\d+]/g, "")}`}><PhoneIcon className="h-4 w-4" aria-hidden="true" /> {c.phone}</a>}
-          {c.email && <a className="btn-dark justify-center" href={`mailto:${c.email}`}><MailIcon className="h-4 w-4" aria-hidden="true" /> Email</a>}
-          {c.website && <a className="btn-dark justify-center" href={c.website} target="_blank" rel="noopener noreferrer"><GlobeIcon className="h-4 w-4" aria-hidden="true" /> Website</a>}
+          {/* The address itself is the purchased contact: show it (a bare "Email" button is useless without a mail client). */}
+          {c.email && <a className="btn-dark justify-center break-all" href={`mailto:${c.email}`}><MailIcon className="h-4 w-4 shrink-0" aria-hidden="true" /> {c.email}</a>}
+          {c.website && <a className="btn-dark justify-center break-all" href={c.website} target="_blank" rel="noopener noreferrer"><GlobeIcon className="h-4 w-4 shrink-0" aria-hidden="true" /> {websiteHost(c.website)}</a>}
           {c.contactName && <p className="text-sm text-ink-soft sm:col-span-3">Ask for {c.contactName}.</p>}
           <p className="text-xs text-muted sm:col-span-3">Agree price, date, delivery, crew, insurance and payment directly with this operator. Unlocked {unlock!.firstRevealedAt.slice(0, 10)}.</p>
           {passId && (

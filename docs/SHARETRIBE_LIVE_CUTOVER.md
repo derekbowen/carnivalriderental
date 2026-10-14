@@ -84,30 +84,35 @@ from anonymised Test accounts), so reveal after an entitlement is unchanged
 ## What ran (2026-10-14)
 
 ```
-npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only cw-1167,cw-787            # canary (2 accounts)
-npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only cw-1167,cw-787 --approve-users --founder-go
-npm run import:listings  -- --apply --target live --confirm-live "CarnivalRental" --company a-great-northern-afair   # canary (3 listings)
-npm run import:photos    -- --apply --target live --confirm-live "CarnivalRental" --from-test imports/migration/test-public.json --company a-great-northern-afair --approve --founder-go
+npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only <2 canary rows>            # canary (2 accounts)
+npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only <2 canary rows> --approve-users --founder-go
+npm run import:listings  -- --apply --target live --confirm-live "CarnivalRental" --company <canary company>   # canary (3 listings)
+npm run import:photos    -- --apply --target live --confirm-live "CarnivalRental" --from-test imports/migration/test-public.json --company <canary company> --approve --founder-go
 npm run migrate:live -- verify                                                                                      # canary read-back
 # same three commands again → exists / exists / already_has_images, 0 duplicates; then the full run:
 imports/migration/run-full.sh   # companies (--approve-users) → listings → photos → approve remaining → verify
+npm run import:photos -- --apply --target live --confirm-live "CarnivalRental" --from-test imports/migration/test-public.json --only <the GIF listing> --approve --founder-go
+npm run migrate:live -- verify && npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" && npm run import:listings -- --apply --target live --confirm-live "CarnivalRental"   # final read-back, idempotency reruns
 ```
 
-- **Accounts:** 184 expected (119 `A_ready` + 65 `B_account_only`), 184 in Live, active (Live
-  answers `409 user-pending-approval` to listings by pending authors, so imported accounts are
-  approved with `--approve-users`; approval does not claim or verify anything), unclaimed, email
-  unverified, no Stripe, anonymous public profile. 135 `C_verify_first` held, 11 `D_exclude` and the
-  QA account not migrated. Claim addresses: `<companyId>@carnivalriderental.us` (our production
-  domain, MX present); Sharetribe's verification emails go to that mailbox, never to operators. No
-  invitations, resets or claims were sent; `ops:claim` was not run.
-- **Listings:** 3,714 expected (3,721 source rows, 7 held for privacy review as in Test), 3,714 in
-  Live, 0 failed, 0 duplicates.
-- **Photos:** copied from each Test listing's hosted image (Sharetribe CDN), not fetched from operator
-  sites again; provenance (source page, original URL, basis, "copied from Test listing …") in
-  `privateData.photoSource`. Listings without a photo in Test stay without one (honest placeholder)
-  and are listed individually in the report.
-- Read-back (`migrate:live -- verify`, Integration + anonymous Marketplace API): see
-  `reports/live-migration-2026-10-14.json` → `liveReadBack`.
+Verified final state (fully paginated read-back, `npm run migrate:live -- verify`, 2026-10-14):
+
+| Entity | Expected | In Live | Notes |
+|---|---|---|---|
+| Operator accounts | 184 (119 `A_ready` + 65 `B_account_only`) | **184**, all `active`, unclaimed, email unverified, no Stripe, anonymous public profile | 135 `C_verify_first` held, 11 `D_exclude` and the QA account not migrated. Live answers `409 user-pending-approval` to listings by pending authors, so imported accounts are approved with `--approve-users` (approval lets the account hold listings; it claims or verifies nothing). Claim addresses: `<companyId>@carnivalriderental.us` (our production domain, MX present); Sharetribe's verification emails go to that mailbox, never to operators. No invitations, resets or claims were sent; `ops:claim` was not run. |
+| Listings | 3,714 (3,721 source rows − 7 held for privacy review, as in Test) | **3,714 published**, 0 pending, 0 closed | The canary's first attempt failed 3 times with `409 user-pending-approval` before the approval step; all 3 were then created. 0 duplicates (by private import id), 0 without the import marker. |
+| Photos | 3,503 listings have a hosted photo in Test | **3,503 with an image**, every image URL serves an image (all 3,503 checked) | Copied from each Test listing's hosted image (Sharetribe CDN), not fetched from operator sites again; provenance in `privateData.photoSource`. One 100 MB animated GIF needed the first-frame JPEG fix (and a 150 MB bound for the Sharetribe CDN) and is attached. |
+| Without photo | 211 | **211 published with the honest placeholder** | 159 rides never had a source photo; 52 had one that failed or was rejected in Test. Each is listed by Live listing id in `reports/live-migration-2026-10-14.json`. |
+| Relationships | 3,714 | **0 drift** | Every Live listing's author is the Live account of the same company, and the Test listing with the same import id was authored by that company's Test account. |
+| Public privacy | — | **0 leaks** | Anonymous Marketplace API read of all 3,714 listings and their authors: no company name (incl. legal names), contact or owner name, email, phone, link, company slug or import id in any public field; authors are the placeholder; public metadata keys are the allowed ones. |
+| Idempotency | — | reruns: accounts `exists 184`, listings `exists 3714`, photos `already_has_images` | 0 created on rerun. |
+
+Read-only matching against Live with the app's own `matchOperators` + `resolveCriteria`
+(`npm run migrate:live -- match`, `reports/live-matching-check.json`): Columbus any ride → standard
+($99), 5 distinct contactable operators from 150 listings; Columbus Ferris wheel → Ferris ($199), 13;
+Chicago Ferris wheel → Ferris ($199), 13; Austin carousel → standard ($99), 4; an old Test Ferris
+listing id posted with `rideType=carousel` → resolved to its Live listing, Ferris ($199), 14. The
+contact lookup for the first match returned real channels (reported as booleans only).
 
 Private working files (reverse-identity mappings, ledgers, the Test snapshot, logs) are in
 `imports/migration/` and `imports/*/carnivalrental/`, all gitignored. Sharetribe itself is the

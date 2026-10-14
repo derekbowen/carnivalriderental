@@ -7,7 +7,7 @@ import { accessPriceCopy } from "@/lib/access/copy";
 import { CATEGORY_CONTEXT, FERRIS_RIDE_TYPES, tierForRideType } from "@/lib/access/pricing";
 import { activeProductsOrNull } from "@/lib/access/runtime";
 import { BRAND } from "@/lib/config";
-import { RIDES, rideTypeFor } from "@/lib/inventory";
+import { liveListingIdFor, RIDES, rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { categoryPageById } from "@/lib/content/category-pages";
 import { paths } from "@/lib/seo/routes";
@@ -30,7 +30,9 @@ type SP = { listing?: string; type?: string; class?: string; state?: string; cit
  */
 export default async function ConnectPage({ searchParams }: { searchParams: Promise<SP> }) {
   const sp = await searchParams;
-  const listing = sp.listing && /^[0-9a-f-]{36}$/.test(sp.listing) ? RIDES.find((r) => r.id === sp.listing) ?? null : null;
+  // A pre-cutover (Test) listing id from an old link resolves to the same listing in Live (same ride, same tier).
+  const listingId = sp.listing && /^[0-9a-f-]{36}$/.test(sp.listing) ? (RIDES.some((r) => r.id === sp.listing) ? sp.listing : liveListingIdFor(sp.listing) ?? sp.listing) : null;
+  const listing = listingId ? RIDES.find((r) => r.id === listingId) ?? null : null;
   const category = sp.category ? CATEGORY_CONTEXT[sp.category] : undefined;
   const rideType = listing?.rideType ?? (sp.type && rideTypeFor(sp.type) ? sp.type : category?.rideType ?? null);
   const rideClass = listing && !listing.rideType ? listing.rideClass : sp.class ?? category?.rideClass ?? null;
@@ -44,7 +46,7 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
   const pricing = products ? { standard: products.standard ? formatPrice(products.standard.priceCents, products.standard.currency) : null, ferris: products.ferris ? formatPrice(products.ferris.priceCents, products.ferris.currency) : null, ferrisTypes: [...FERRIS_RIDE_TYPES] } : null;
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "Connect with operators", path: "/connect" }];
   const typeLabel = rideType ? rideTypeCopy(rideType, rideTypeFor(rideType)?.name ?? rideType).label : null;
-  const sourcePath = [sp.listing && paths.rideListing(sp.listing), sp.category && categoryPageById(sp.category) && paths.category(sp.category), sp.occasion && occasion && paths.occasion(occasion.id), sp.state && sp.city && paths.city(sp.state, sp.city), sp.state && !sp.city && paths.state(sp.state)].find(Boolean) as string | undefined;
+  const sourcePath = [listingId && paths.rideListing(listingId), sp.category && categoryPageById(sp.category) && paths.category(sp.category), sp.occasion && occasion && paths.occasion(occasion.id), sp.state && sp.city && paths.city(sp.state, sp.city), sp.state && !sp.city && paths.state(sp.state)].find(Boolean) as string | undefined;
   const productName = product?.name ?? (tier === "ferris" ? "Ferris Wheel Event Access" : "Event Access");
 
   return (

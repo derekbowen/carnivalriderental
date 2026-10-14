@@ -51,7 +51,10 @@ async function download(url: string): Promise<{ bytes: Uint8Array; contentType: 
   }
   if (!res || !res.ok) throw new Error(`download HTTP ${res?.status}`);
   const len = Number(res.headers.get("content-length") ?? 0);
-  if (len > 60 * 1024 * 1024) throw new Error("download over 60 MB");
+  // Operator sites: 60 MB. Sharetribe's CDN copy of an already-hosted image can be larger (one animated
+  // GIF is 100 MB as served) and is shrunk to a first-frame JPEG before upload; still bounded.
+  const cap = host === SHARETRIBE_CDN ? 150 : 60;
+  if (len > cap * 1024 * 1024) throw new Error(`download over ${cap} MB`);
   return { bytes: new Uint8Array(await res.arrayBuffer()), contentType: res.headers.get("content-type") ?? "" };
 }
 
