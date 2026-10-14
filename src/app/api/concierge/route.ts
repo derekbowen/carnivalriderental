@@ -1,3 +1,4 @@
+import { consentToFollowup } from "@/lib/concierge/followup";
 import { isBotRequest } from "@/lib/access/bot";
 import { accessDb } from "@/lib/access/db";
 import { AccessError, priceLabel } from "@/lib/access/service";
@@ -43,7 +44,10 @@ export async function POST(req: Request) {
     // Missing access-session config should not disable anonymous search/lead capture.
     const ids = parseCookie(req.headers.get("cookie"), passCookieName) ? passIdsFromCookie(parseCookie(req.headers.get("cookie"), passCookieName)) : [];
     let result: Record<string, unknown> = {};
-    if (a.action === "chat") {
+    if (a.action === "followup") {
+      await consentToFollowup(db, s.id, a.email);
+      result.message = "Your search is saved and follow-up consent recorded. Reminders are not enabled yet. You can unsubscribe at any time from a reminder.";
+    } else if (a.action === "chat") {
       // Contact questions never cause a privileged read, even if prompted to ignore the paywall.
       if (/\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
         result.message = "Operator contacts require Event Access and an eligible unlock. Use your verified pass below; I cannot bypass the paywall.";

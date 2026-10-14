@@ -149,3 +149,21 @@ CREATE TABLE IF NOT EXISTS concierge_events (
   created_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS concierge_events_name ON concierge_events(name, created_at);
+
+CREATE TABLE IF NOT EXISTS concierge_followup_consent (
+  session_id TEXT PRIMARY KEY REFERENCES concierge_sessions(id),
+  email TEXT NOT NULL,
+  consent_version TEXT NOT NULL,
+  consented_at TEXT NOT NULL,
+  unsubscribed_at TEXT,
+  resume_token TEXT NOT NULL UNIQUE
+);
+CREATE TABLE IF NOT EXISTS concierge_followup_jobs (
+  id TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES concierge_sessions(id),
+  stage INTEGER NOT NULL,
+  due_at TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  sent_at TEXT,
+  UNIQUE(session_id, stage)
+);

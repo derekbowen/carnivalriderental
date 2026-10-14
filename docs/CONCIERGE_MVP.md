@@ -84,3 +84,11 @@ Then validate anonymous search, both **Stripe test-mode** checkout tiers, return
 ## Test evidence
 
 See `reports/concierge-validation.md` for the final command outcomes and limitations. Browser screenshots use fictional buyer/operator contacts and a fake Stripe gateway; they are not evidence of Live purchases or operator availability.
+
+## Consistent customer follow-up foundations
+
+Contextual email capture appears after public search results and requires a separate unchecked consent checkbox. This never treats the Event Access email as marketing permission. Consent is session-bound and creates exactly three deduplicated jobs (+1h/+24h/+72h). The opaque conversation already records anonymous event/search intent before identity capture. Resume links restore only saved event details; they never grant operator contact access. Unsubscribe cancels pending jobs. Dispatch checks consent and paid purchases for the email before sending, uses atomic job claims and provider idempotency keys, and includes unsubscribe and sender address. Requests do not automatically trigger outreach.
+
+**Sending remains disabled** unless `CONCIERGE_FOLLOWUPS_ENABLED=true` and `EMAIL_POSTAL_ADDRESS` is configured. No cron, campaign, or production env change was applied. `scripts/concierge-followups.ts` is an explicit operator-invoked worker. Failed or interrupted sending jobs require operator reconciliation, not blind retry. There is still a small concurrent purchase/send race; a fully serialized lifecycle worker is required before enabling a live campaign.
+
+Not yet implemented: site-wide browsing/UTM profiles, lead scoring, email open/click webhooks, a protected CRM dashboard, and post-purchase zero-unlock reminders. Those are separate from the shipped opt-in reminder foundation and must not be claimed as complete.

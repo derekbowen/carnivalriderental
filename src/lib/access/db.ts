@@ -94,7 +94,7 @@ async function postgresDb(url: string): Promise<AccessDb> {
   try {
     for (const s of statements()) await client.query(s);
     // Demand records are private, just like the existing access ledger: no anonymous REST policies.
-    for (const table of ["concierge_sessions", "concierge_requests", "concierge_events"]) {
+    for (const table of ["concierge_sessions", "concierge_requests", "concierge_events", "concierge_followup_consent", "concierge_followup_jobs"]) {
       await client.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
       await client.query(`REVOKE ALL ON ${table} FROM PUBLIC`);
     }

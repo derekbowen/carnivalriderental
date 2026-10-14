@@ -312,6 +312,7 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     const id = crypto.randomUUID();
     const expires = new Date(now.getTime() + p.validityDays * 864e5).toISOString();
     await tx.query(`INSERT INTO access_passes (id, purchase_id, event_request_id, email, unlock_limit, unlocked_count, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, 0, 'active', ?, ?)`, [id, p.id, p.eventRequestId, p.email, p.unlockLimit, expires, t]);
+    await tx.query(`UPDATE concierge_followup_jobs SET status = 'cancelled' WHERE status = 'pending' AND session_id IN (SELECT session_id FROM concierge_followup_consent WHERE email = ?)`, [p.email]);
     await track(tx, "event_access_purchased", { eventId: p.eventRequestId, passId: id });
     const rows = await tx.query(`SELECT * FROM access_passes WHERE id = ?`, [id]);
     return { pass: rowToPass(rows[0]), created: true, purchase: p };
