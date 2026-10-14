@@ -10,6 +10,8 @@
  * - Outreach additionally needs its campaign listed in EMAIL_APPROVED_CAMPAIGNS (founder approval),
  *   a postal address (CAN-SPAM) and a working unsubscribe secret. Without them nothing is enqueued.
  */
+import crypto from "node:crypto";
+
 export type EmailMode = "test" | "live";
 export type EmailProvider = "emailit" | "resend";
 
@@ -46,8 +48,18 @@ export function emailConfig(env: Record<string, string | undefined> = process.en
     testRecipient: env.EMAIL_TEST_RECIPIENT || `qa@${DOMAIN}`,
     adminRecipient: env.EMAIL_ADMIN_RECIPIENT || null,
     postalAddress: env.BUSINESS_POSTAL_ADDRESS || null,
-    unsubscribeSecret: env.EMAIL_UNSUBSCRIBE_SECRET && env.EMAIL_UNSUBSCRIBE_SECRET.length >= 16 ? env.EMAIL_UNSUBSCRIBE_SECRET : null,
+    unsubscribeSecret: unsubscribeKey(env),
     approvedCampaigns: list(env.EMAIL_APPROVED_CAMPAIGNS),
     warmupDailyCaps: [25, 50, 100, 200, 400],
   };
+}
+
+/**
+ * HMAC key for unsubscribe links: EMAIL_UNSUBSCRIBE_SECRET when set, otherwise a key derived from
+ * ACCESS_SESSION_SECRET (domain-separated), so production can sign links without another secret.
+ */
+function unsubscribeKey(env: Record<string, string | undefined>): string | null {
+  if (env.EMAIL_UNSUBSCRIBE_SECRET && env.EMAIL_UNSUBSCRIBE_SECRET.length >= 16) return env.EMAIL_UNSUBSCRIBE_SECRET;
+  if (env.ACCESS_SESSION_SECRET && env.ACCESS_SESSION_SECRET.length >= 16) return crypto.createHmac("sha256", env.ACCESS_SESSION_SECRET).update("email-unsubscribe-v1").digest("hex");
+  return null;
 }

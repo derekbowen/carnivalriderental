@@ -40,10 +40,12 @@
     "pseo:report": "tsx scripts/pseo-report.ts",
     "pseo:duplicates": "tsx scripts/pseo-duplicates.ts",
     "access:migrate": "tsx --env-file-if-exists=.env.local scripts/access-migrate.ts",
-    "migrate:live": "tsx --env-file-if-exists=.env.local scripts/live-migration.ts"
+    "migrate:live": "tsx --env-file-if-exists=.env.local scripts/live-migration.ts",
+    "lifecycle:preview": "tsx scripts/lifecycle-preview.ts"
   },
   "dependencies": {
     "@vercel/speed-insights": "^2.0.0",
+    "ai": "^7.0.140",
     "botid": "^1.5.11",
     "lucide-react": "^0.522.0",
     "next": "15.5",

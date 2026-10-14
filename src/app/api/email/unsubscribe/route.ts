@@ -1,22 +1,39 @@
 import { getDb } from "@/lib/requests/db";
+import { accessDb, accessStorageMode } from "@/lib/access/db";
 import { emailConfig } from "@/lib/email/config";
 import { suppress, verifyUnsubscribe } from "@/lib/email/outbox";
+import { suppressEmail } from "@/lib/lifecycle/engine";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 /**
- * Unsubscribe from outreach email. GET = the link in the email (shows a confirmation page);
- * POST = RFC 8058 one-click from the mail client's List-Unsubscribe header. Both suppress the
- * address immediately. The token is an HMAC of the address, so links can't be forged or enumerated.
+ * Unsubscribe from outreach and lifecycle email. GET = the link in the email (shows a confirmation
+ * page); POST = RFC 8058 one-click from the mail client's List-Unsubscribe header. Both suppress the
+ * address immediately: in the access ledger (durable; lifecycle email reads it) and in the app's
+ * outbox database (claim outreach). The token is an HMAC of the address, so links can't be forged.
  */
-function handle(url: URL): { ok: boolean } {
+async function handle(url: URL): Promise<{ ok: boolean }> {
   const email = url.searchParams.get("e") ?? "";
   const token = url.searchParams.get("t") ?? "";
   const secret = emailConfig().unsubscribeSecret;
   if (!secret || !email || !verifyUnsubscribe(email, token, secret)) return { ok: false };
-  suppress(getDb(), email, "unsubscribe_link");
-  return { ok: true };
+  let stored = false;
+  if (accessStorageMode().kind !== "disabled") {
+    try {
+      await suppressEmail(await accessDb(), email, "unsubscribe_link");
+      stored = true;
+    } catch (e) {
+      console.error("[email] unsubscribe (ledger) failed:", (e as Error).message);
+    }
+  }
+  try {
+    suppress(getDb(), email, "unsubscribe_link");
+    stored = true;
+  } catch (e) {
+    console.error("[email] unsubscribe (outbox db) failed:", (e as Error).message);
+  }
+  return { ok: stored };
 }
 
 const page = (ok: boolean) =>
@@ -28,10 +45,10 @@ const page = (ok: boolean) =>
   );
 
 export async function GET(req: Request) {
-  return page(handle(new URL(req.url)).ok);
+  return page((await handle(new URL(req.url))).ok);
 }
 
 export async function POST(req: Request) {
-  const { ok } = handle(new URL(req.url));
+  const { ok } = await handle(new URL(req.url));
   return new Response(null, { status: ok ? 200 : 400, headers: { "Cache-Control": "no-store" } });
 }

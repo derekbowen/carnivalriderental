@@ -13,6 +13,7 @@ import { ensureFallbacks, fallbackView, getEventRequest, priceLabel, quoteForEve
 import { BRAND } from "@/lib/config";
 import { rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
+import { savedSearchSent } from "@/lib/lifecycle/engine";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { ProtectedForm } from "@/components/access/ProtectedForm";
@@ -26,7 +27,7 @@ export const metadata: Metadata = { title: `Matching operators | ${BRAND.name}`,
  * amount come from quoteForEvent (the stored request's resolved ride requirement → tier → product
  * row), which is exactly what checkout charges. Nothing in the URL or form can change it.
  */
-export default async function MatchesPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; cancelled?: string; manual?: string }> }) {
+export default async function MatchesPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ error?: string; cancelled?: string; manual?: string; saved?: string }> }) {
   const { id } = await params;
   const sp = await searchParams;
   if (!/^[0-9a-f-]{36}$/.test(id) || !accessAvailability().enabled) notFound();
@@ -43,6 +44,7 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
   const asked = origin ? requirementNoun(origin.requestedRideType, origin.requestedRideClass) : null;
   const radius = origin?.offer.kind === "radius" ? origin.offer.radiusMiles : MATCH_RADIUS_MILES;
   const zeroWithOffers = n === 0 && !sellable && fb.offers.length > 0;
+  const saved = sellable ? await savedSearchSent(db, id) : false;
   const typeLabel = event.rideType ? rideTypeCopy(event.rideType, rideTypeFor(event.rideType)?.name ?? event.rideType).label.toLowerCase() : event.rideClass ? `${event.rideClass} ride` : "carnival ride";
   const productName = product?.name ?? (tier === "ferris" ? "Ferris Wheel Event Access" : "Event Access");
   const path = `/connect/${id}`;
@@ -93,6 +95,7 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
           <Link className="underline" href={paths.connectMatches(origin.eventRequestId)}>Back to your original request</Link>
         </p>
       )}
+      {sp.saved === "0" && <p role="alert" className="mt-4 rounded-lg border border-pop/40 bg-pop/10 px-4 py-3 text-sm">We couldn&rsquo;t email your results just now. Your search is still saved at this page&rsquo;s address.</p>}
       {sp.manual && <p role="status" className="mt-4 rounded-lg border border-line bg-surface px-4 py-3 text-sm">Thanks. We&rsquo;ll search by hand and email you. Nothing was charged.</p>}
       {sp.cancelled && <p role="status" className="mt-4 rounded-lg border border-line bg-surface px-4 py-3 text-sm">Checkout was cancelled. Nothing was charged.</p>}
       {sp.error && <p role="alert" className="mt-4 rounded-lg border border-pop/40 bg-pop/10 px-4 py-3 text-sm">{sp.error === "not_sellable" ? "There aren't enough contactable operators for this request." : sp.error === "alternative_gone" ? "That alternative no longer has enough contactable operators. Pick another, or ask us to search by hand." : sp.error === "unavailable" ? `${productName} isn't available right now. Nothing was charged.` : "Payment couldn't be started. Nothing was charged."}</p>}
@@ -141,6 +144,22 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
               <h2 className="text-lg">We won&rsquo;t charge for this one</h2>
               <p className="mt-2 text-ink-soft">{n === 0 ? "No" : `Only ${n}`} contactable operator{n === 1 ? "" : "s"} match{n === 1 ? "es" : ""} right now, and we only sell {product.name} with at least {product.minimumMatches}. {fb.offers.length ? "Pick an alternative, or ask us to search by hand, free." : "Ask us to search by hand, free."} Questions: <a className="font-semibold underline" href={`mailto:support@${BRAND.domain}`}>support@{BRAND.domain}</a>.</p>
               <Link href="/connect" className="btn-ghost mt-4 w-full">Change the request</Link>
+            </div>
+          )}
+          {sellable && product && (
+            <div className="card p-6" data-testid="save-search">
+              {saved ? (
+                <p role="status" className="text-ink-soft" data-testid="save-search-sent">We emailed these results to the address you gave us. Your search stays saved at this page&rsquo;s address.</p>
+              ) : (
+                <>
+                  <p className="font-semibold">Not ready to decide?</p>
+                  <ProtectedForm action="/api/access/save-search" className="mt-3">
+                    <input type="hidden" name="event" value={event.id} />
+                    <button type="submit" className="btn-ghost w-full" data-testid="save-search-button">Email me these {n} {event.city} options</button>
+                  </ProtectedForm>
+                  <p className="mt-2 text-xs text-muted">One email with your saved search, sent to the address you gave us. No account, no charge.</p>
+                </>
+              )}
             </div>
           )}
         </aside>

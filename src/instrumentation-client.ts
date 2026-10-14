@@ -9,6 +9,7 @@ initBotId({
     { path: "/api/access/checkout", method: "POST" },
     { path: "/api/access/alternative", method: "POST" },
     { path: "/api/access/manual-search", method: "POST" },
+    { path: "/api/access/save-search", method: "POST" },
     { path: "/api/pass/recover", method: "POST" },
   ],
 });
