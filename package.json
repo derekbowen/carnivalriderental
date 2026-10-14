@@ -39,7 +39,8 @@
     "photos:gaps": "tsx scripts/photo-gaps.ts",
     "pseo:report": "tsx scripts/pseo-report.ts",
     "pseo:duplicates": "tsx scripts/pseo-duplicates.ts",
-    "access:migrate": "tsx --env-file-if-exists=.env.local scripts/access-migrate.ts"
+    "access:migrate": "tsx --env-file-if-exists=.env.local scripts/access-migrate.ts",
+    "migrate:live": "tsx --env-file-if-exists=.env.local scripts/live-migration.ts"
   },
   "dependencies": {
     "lucide-react": "^0.522.0",

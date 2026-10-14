@@ -38,7 +38,11 @@ import {
   redact,
   runImport,
   validateClaimDomain,
+  buildAnonymousPayload,
+  buildPayload,
+  PUBLIC_USER_METADATA_KEYS,
 } from "../src/lib/imports/company-accounts";
+import { IDENTITY_PUBLIC_KEYS, OPERATOR_PLACEHOLDER } from "../src/lib/operators/claim";
 import { HttpError, INTEG, MKT, TEST_MARKETPLACE, createClient } from "./lib/sharetribe-client";
 import { writeJsonAtomic } from "./lib/files";
 
@@ -60,7 +64,10 @@ const workbookPath = opt("workbook") ?? `${DIR}/source/workbook.json`;
 
 const { call, headers, marketplaceNames } = createClient(target);
 
-type UserDoc = { data: { id: string; attributes: { email: string; emailVerified: boolean; stripeConnected: boolean; profile: { metadata?: Record<string, unknown>; privateData?: Record<string, unknown> } } } };
+type UserDoc = { data: { id: string; attributes: { email: string; emailVerified: boolean; stripeConnected: boolean; state?: string; profile: { displayName?: string; bio?: string; publicData?: Record<string, unknown>; protectedData?: Record<string, unknown>; metadata?: Record<string, unknown>; privateData?: Record<string, unknown> } } } };
+// Live accounts are anonymous from the create call on (public profile = operator placeholder, no company
+// slug in public metadata). --anonymous applies the same form to Test.
+const anonymous = target === "live" || flag("anonymous");
 const toRemote = (d: UserDoc): RemoteUser => ({
   id: d.data.id,
   email: d.data.attributes.email,
@@ -179,6 +186,7 @@ const api: AccountApi = {
     mapping,
     saveMapping,
     newPassword: () => crypto.randomBytes(24).toString("base64url"),
+    build: anonymous ? buildAnonymousPayload : buildPayload,
     now: () => new Date().toISOString(),
     runId,
     concurrency,
@@ -189,11 +197,34 @@ const api: AccountApi = {
     },
   });
 
+  // ---------------- user approval (marketplaces with "Approve users who want to join")
+  // Imported company accounts must be active to author listings (Live answers 409 user-pending-approval).
+  // Approval only lets the account hold listings; it does not claim or verify anything. Only accounts
+  // this import created (privateData marker) and still unclaimed are approved.
+  if (flag("approve-users")) {
+    if (target === "live" && !flag("founder-go")) throw new Error("Refusing: --approve-users on Live needs --founder-go (founder go 2026-10-14 for the cutover).");
+    let approved = 0;
+    for (const r of results.filter((x) => x.userId && ["created", "resumed", "exists"].includes(x.outcome))) {
+      const doc = await call<UserDoc>("query", `${INTEG}/users/show?${new URLSearchParams({ id: r.userId! })}`, { headers: await headers("integ") }, true);
+      const u = toRemote(doc);
+      if (doc.data.attributes.state !== "pendingApproval" || u.privateData.importExternalId !== r.externalId || u.metadata.claimStatus !== "unclaimed") continue;
+      await call("command", `${INTEG}/users/approve`, { method: "POST", headers: await headers("integ", true), body: JSON.stringify({ id: r.userId }) }, true);
+      fs.appendFileSync(ledgerFile, `${JSON.stringify({ at: new Date().toISOString(), runId, externalId: r.externalId, companyId: r.companyId, outcome: "approved", userId: r.userId })}\n`);
+      approved++;
+    }
+    console.log(`Approved ${approved} pending company accounts.`);
+  }
+
   // ---------------- verification evidence (read back from the API)
   const touched = results.filter((r) => r.userId && ["created", "resumed", "exists"].includes(r.outcome));
   const evidence = [];
   for (const r of touched) {
-    const u = await api.showById(r.userId!);
+    const doc = await call<UserDoc>("query", `${INTEG}/users/show?${new URLSearchParams({ id: r.userId! })}`, { headers: await headers("integ") }, true).catch(() => null);
+    const u = doc ? toRemote(doc) : null;
+    const prof = doc?.data.attributes.profile;
+    const publicOk = !anonymous || (prof?.displayName === OPERATOR_PLACEHOLDER.displayName && prof?.bio === OPERATOR_PLACEHOLDER.bio &&
+      IDENTITY_PUBLIC_KEYS.every((k) => prof?.publicData?.[k] == null) && Object.keys(prof?.metadata ?? {}).every((k) => (PUBLIC_USER_METADATA_KEYS as readonly string[]).includes(k)) &&
+      Object.keys(prof?.protectedData ?? {}).length === 0);
     const listings = await call<{ meta: { totalItems: number } }>("query", `${INTEG}/listings/query?${new URLSearchParams({ authorId: r.userId!, perPage: "1" })}`, { headers: await headers("integ") }, true);
     evidence.push({
       externalId: r.externalId,
@@ -203,16 +234,19 @@ const api: AccountApi = {
       emailVerified: u?.emailVerified,
       stripeConnected: u?.stripeConnected,
       claimStatus: u?.metadata.claimStatus,
-      companyId: u?.metadata.companyId,
+      companyId: u?.metadata.companyId ?? u?.privateData.companyId,
       importBatch: u?.metadata.importBatch,
+      state: doc?.data.attributes.state,
+      publicProfileAnonymous: publicOk,
       listings: listings.meta.totalItems,
     });
   }
   const tally: Record<string, number> = {};
   for (const r of results) tally[r.outcome] = (tally[r.outcome] ?? 0) + 1;
   console.log(`\nResult: ${Object.entries(tally).map(([k, v]) => `${k} ${v}`).join(", ")}`);
-  const bad = evidence.filter((e) => !e.found || e.emailVerified !== false || e.stripeConnected !== false || e.claimStatus !== "unclaimed" || e.listings !== 0);
-  console.log(`Verified via Integration API: ${evidence.length - bad.length}/${evidence.length} unclaimed, unverified email, no Stripe, no listings.`);
+  // Re-runs after the listing import see listings under the account; that is expected, not a failure.
+  const bad = evidence.filter((e) => !e.found || e.emailVerified !== false || e.stripeConnected !== false || e.claimStatus !== "unclaimed" || !e.publicProfileAnonymous || (results.find((x) => x.externalId === e.externalId)?.outcome === "created" && e.listings !== 0));
+  console.log(`Verified via Integration API: ${evidence.length - bad.length}/${evidence.length} unclaimed, unverified email, no Stripe${anonymous ? ", anonymous public profile" : ""}; new accounts have no listings.`);
   for (const e of evidence.slice(0, 5)) console.log(`  ${JSON.stringify(e)}`);
   if (bad.length) console.log(`  ✗ ${bad.length} accounts did not match: ${bad.map((b) => b.externalId).join(", ")}`);
   console.log(`Mapping: ${mappingFile}\nLedger:  ${ledgerFile}`);

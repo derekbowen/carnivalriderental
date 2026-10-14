@@ -6,7 +6,8 @@
  * Modes (stripeMode()):
  *   real      STRIPE_SECRET_KEY set (test or live key; the key decides which). Webhooks must be signed.
  *   fake      no key and APP_ENV=development: local/e2e only. Never on a deployed environment.
- *   disabled  no key outside development: the funnel renders, payment is refused.
+ *   disabled  no key outside development, or a test key with APP_ENV=production: the funnel renders,
+ *             payment is refused ("opening soon").
  */
 import crypto from "node:crypto";
 
@@ -55,6 +56,9 @@ export function stripeMode(env: Record<string, string | undefined> = process.env
   const key = env.STRIPE_SECRET_KEY;
   if (key) {
     if (!/^(sk|rk)_(test|live)_/.test(key)) return { kind: "disabled", reason: "STRIPE_SECRET_KEY has an unexpected format" };
+    // The public production site never presents a test-mode checkout as if it were real: with a test key
+    // it stays "opening soon" until live keys are set. Test keys keep working on preview and development.
+    if (env.APP_ENV === "production" && key.includes("_test_")) return { kind: "disabled", reason: "test-mode Stripe key on the production site: checkout stays closed until live keys are configured" };
     return { kind: "real", secretKey: key, webhookSecret: env.STRIPE_WEBHOOK_SECRET || null, live: key.includes("_live_") };
   }
   if ((env.APP_ENV || "development") === "development") return { kind: "fake" };

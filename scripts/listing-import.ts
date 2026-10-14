@@ -22,6 +22,8 @@ import path from "node:path";
 import { redact } from "../src/lib/imports/company-accounts";
 import {
   LISTING_TYPE,
+  PUBLIC_LISTING_METADATA_KEYS,
+  buildAnonymousListingPayload,
   buildListingPayload,
   planListings,
   runListingImport,
@@ -52,15 +54,18 @@ const workbookPath = opt("workbook") ?? `${SRC}/source/workbook.json`;
 
 const { call, headers, marketplaceNames } = createClient(target);
 
-type ListingDoc = { id: string; attributes: { state: string; metadata?: Record<string, unknown> } };
+type ListingDoc = { id: string; attributes: { state: string; metadata?: Record<string, unknown>; privateData?: Record<string, unknown> } };
+// Live listings are anonymous from the create call on (ops:anonymize's end state, no company slug or import
+// id in public metadata). --anonymous applies the same form to Test.
+const anonymous = target === "live" || flag("anonymous");
 
 const api: ListingApi = {
   async listByAuthor(authorId) {
     const out: RemoteListing[] = [];
     for (let page = 1; ; page++) {
-      const q = new URLSearchParams({ authorId, perPage: "100", page: String(page), states: "draft,pendingApproval,published,closed", "fields.listing": "state,metadata" });
+      const q = new URLSearchParams({ authorId, perPage: "100", page: String(page), states: "draft,pendingApproval,published,closed", "fields.listing": "state,metadata,privateData" });
       const res = await call<{ data: ListingDoc[]; meta: { totalPages: number } }>("query", `${INTEG}/listings/query?${q}`, { headers: await headers("integ") }, true);
-      out.push(...res.data.map((l) => ({ id: l.id, state: l.attributes.state, metadata: l.attributes.metadata ?? {} })));
+      out.push(...res.data.map((l) => ({ id: l.id, state: l.attributes.state, metadata: l.attributes.metadata ?? {}, privateData: l.attributes.privateData ?? {} })));
       if (page >= (res.meta.totalPages ?? 1)) return out;
     }
   },
@@ -109,7 +114,8 @@ async function listingTypeConfigured(): Promise<boolean | null> {
   console.log(`Selected for this run: ${rows.length}`);
 
   if (!apply) {
-    writeJsonAtomic(`${SRC}/source/listings-dry-run.json`, { generatedAt: new Date().toISOString(), stats: plan.stats, held: plan.held, sample: rows.slice(0, 3).map(buildListingPayload) });
+    const build = (r: (typeof rows)[number]) => (anonymous ? buildAnonymousListingPayload(r, plan.authors.get(r.authorExternalId)!) : buildListingPayload(r));
+    writeJsonAtomic(`${SRC}/source/listings-dry-run.json`, { generatedAt: new Date().toISOString(), anonymous, stats: plan.stats, held: plan.held, sample: rows.slice(0, 3).map(build) });
     console.log(`\nDRY RUN — nothing written to Sharetribe. Sample payloads: ${SRC}/source/listings-dry-run.json`);
     if (plan.issues.length) process.exit(2);
     return;
@@ -148,6 +154,7 @@ async function listingTypeConfigured(): Promise<boolean | null> {
     saveMapping,
     now: () => new Date().toISOString(),
     runId,
+    ...(anonymous ? { build: (r: (typeof rows)[number]) => buildAnonymousListingPayload(r, plan.authors.get(r.authorExternalId)!) } : {}),
     onResult(e: ListingLedgerEntry) {
       const line = { ...e, detail: e.detail ? redact(e.detail) : undefined };
       fs.appendFileSync(ledgerFile, `${JSON.stringify(line)}\n`);
@@ -156,12 +163,12 @@ async function listingTypeConfigured(): Promise<boolean | null> {
   });
 
   // Read back a sample: state, images, public keys.
-  const allowed = new Set(["listingType", "rideClass", "homeState", "serviceStates", "location", "manufacturer", "rideModel", "minRiderHeightIn", "riderRules", "footprintLengthFt", "footprintWidthFt", "rideHeightFt"]);
+  const allowed = new Set(["listingType", "rideClass", "homeState", "serviceStates", "location", "manufacturer", "rideModel", "minRiderHeightIn", "riderRules", "footprintLengthFt", "footprintWidthFt", "rideHeightFt", ...(anonymous ? ["transactionProcessAlias", "unitType"] : [])]);
   const touched = results.filter((r) => r.listingId && (r.outcome === "created" || r.outcome === "exists"));
   const sample = touched.slice(0, 10);
   let bad = 0;
   for (const r of sample) {
-    const res = await call<{ data: { attributes: { state: string; publicData: Record<string, unknown> }; relationships?: { images?: { data: unknown[] } } } }>(
+    const res = await call<{ data: { attributes: { state: string; description: string; publicData: Record<string, unknown>; metadata?: Record<string, unknown>; privateData?: Record<string, unknown> }; relationships?: { images?: { data: unknown[] } } } }>(
       "query",
       `${INTEG}/listings/show?${new URLSearchParams({ id: r.listingId!, include: "images" })}`,
       { headers: await headers("integ") },
@@ -170,9 +177,11 @@ async function listingTypeConfigured(): Promise<boolean | null> {
     const a = res.data.attributes;
     const extra = Object.keys(a.publicData).filter((k) => !allowed.has(k));
     const images = res.data.relationships?.images?.data?.length ?? 0;
-    const ok = ["pendingApproval", "published"].includes(a.state) && images <= 1 && extra.length === 0; // photo + Test approval: import:photos
+    const metaExtra = anonymous ? Object.keys(a.metadata ?? {}).filter((k) => !(PUBLIC_LISTING_METADATA_KEYS as readonly string[]).includes(k) && k !== "photoSource") : [];
+    const anonOk = !anonymous || (metaExtra.length === 0 && a.description.startsWith("This operator has not joined") && a.privateData?.importExternalId === r.externalId);
+    const ok = ["pendingApproval", "published"].includes(a.state) && images <= 1 && extra.length === 0 && anonOk; // photo + approval: import:photos
     if (!ok) bad++;
-    console.log(`  verify ${r.externalId}: state=${a.state} images=${images} extraPublicKeys=${extra.join(",") || "none"} ${ok ? "✓" : "✗"}`);
+    console.log(`  verify ${r.externalId}: state=${a.state} images=${images} extraPublicKeys=${extra.join(",") || "none"}${anonymous ? ` publicMetadataExtra=${metaExtra.join(",") || "none"}` : ""} ${ok ? "✓" : "✗"}`);
   }
   const tally: Record<string, number> = {};
   for (const r of results) tally[r.outcome] = (tally[r.outcome] ?? 0) + 1;

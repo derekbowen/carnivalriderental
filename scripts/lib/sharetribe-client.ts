@@ -19,8 +19,12 @@ export class HttpError extends Error {
 export type Kind = "query" | "command";
 
 export function createClient(target: "test" | "live") {
-  /** Spacing between calls of one kind (Test: queries 1/s, commands 1/2s per IP). Live is not rate limited; stay polite. */
-  const spacing = target === "test" ? { query: 1050, command: 2100 } : { query: 200, command: 400 };
+  /**
+   * Spacing between calls of one kind (Test: queries 1/s, commands 1/2s per IP). Live has no general
+   * rate limit (Sharetribe docs, 2026-10): only listings/create (100/min, enforced by 429 + backoff
+   * below) and ≤ 10 concurrent requests (callers use ≤ 6 workers). Stay polite: ≤ ~7 commands/s.
+   */
+  const spacing = target === "test" ? { query: 1050, command: 2100 } : { query: 100, command: 150 };
   const nextSlot = { query: 0, command: 0 };
   async function slot(kind: Kind) {
     const now = Date.now();

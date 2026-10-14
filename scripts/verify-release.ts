@@ -1,0 +1,106 @@
+/**
+ * Release verification for the first indexing cohort, against a running site.
+ *
+ *   npx tsx scripts/verify-release.ts https://carnivalriderental.us     # production
+ *   npx tsx scripts/verify-release.ts http://localhost:3200             # local production build
+ *
+ * Checks, and writes reports/release-verification-<host>.json:
+ * - robots.txt: no blanket Disallow, private paths disallowed, the real sitemap advertised;
+ * - sitemap.xml lists exactly the eligible cohort (reports/indexing-cohort.json), as canonical
+ *   production URLs, no query strings, no lastmod stamped from the build;
+ * - every sitemap URL: 200, indexable in HTML and headers, self-canonical, no private contact data,
+ *   no Offer/price in JSON-LD;
+ * - samples of every excluded family answer noindex (or 404 / auth) and are not in the sitemap;
+ * - old Test listing URLs answer 308 to the same listing in Live;
+ * - Event Access with test-mode keys on production says "opening soon" and offers no checkout.
+ */
+import fs from "node:fs";
+
+const base = (process.argv[2] ?? "https://carnivalriderental.us").replace(/\/$/, "");
+const CANONICAL = "https://carnivalriderental.us";
+const cohort = JSON.parse(fs.readFileSync("reports/indexing-cohort.json", "utf8")) as { cohort: { path: string; eligible: boolean }[] };
+const rides = JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: { id: string }[] };
+const testToLive = JSON.parse(fs.readFileSync("src/lib/inventory/test-to-live.json", "utf8")) as { map: Record<string, string> };
+
+const results: { check: string; ok: boolean; detail?: string }[] = [];
+const check = (name: string, ok: boolean, detail?: string) => {
+  results.push({ check: name, ok, ...(detail ? { detail } : {}) });
+  console.log(`${ok ? "✓" : "✗"} ${name}${detail ? `  (${detail})` : ""}`);
+};
+const local = (u: string) => u.replace(CANONICAL, base);
+async function get(path: string, redirect: RequestRedirect = "follow") {
+  const res = await fetch(`${base}${path}`, { redirect, headers: { "User-Agent": "CarnivalRideRental-ReleaseCheck/1.0", Accept: "text/html,application/xml" }, signal: AbortSignal.timeout(60000) });
+  return { status: res.status, headers: res.headers, text: redirect === "manual" ? "" : await res.text() };
+}
+const metaRobots = (html: string) => /<meta name="robots" content="([^"]*)"/i.exec(html)?.[1] ?? null;
+const canonicalOf = (html: string) => /<link rel="canonical" href="([^"]*)"/i.exec(html)?.[1] ?? null;
+const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b/, /claimStatus|importExternalId|companyId|contactEmail|privateData|protectedData/];
+
+(async () => {
+  // robots.txt
+  const robots = (await get("/robots.txt")).text;
+  check("robots.txt has no blanket Disallow", !/^Disallow: \/\s*$/m.test(robots));
+  for (const p of ["/pass", "/connect/", "/api", "/internal"]) check(`robots.txt disallows ${p}`, robots.includes(`Disallow: ${p}`));
+  check("robots.txt advertises the production sitemap", robots.includes(`Sitemap: ${CANONICAL}/sitemap.xml`));
+
+  // sitemap
+  const sm = await get("/sitemap.xml");
+  const locs = [...sm.text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  const expected = cohort.cohort.filter((c) => c.eligible).map((c) => `${CANONICAL}${c.path === "/" ? "" : c.path}`);
+  const norm = (u: string) => u.replace(/\/$/, "");
+  const got = new Set(locs.map(norm));
+  const want = new Set(expected.map(norm));
+  check("sitemap.xml answers 200", sm.status === 200);
+  check("sitemap lists exactly the eligible cohort", got.size === want.size && [...want].every((u) => got.has(u)), `listed ${got.size}, expected ${want.size}; missing ${[...want].filter((u) => !got.has(u)).join(" ") || "none"}; extra ${[...got].filter((u) => !want.has(u)).join(" ") || "none"}`);
+  check("sitemap URLs are canonical HTTPS production URLs without query strings", locs.every((u) => u.startsWith(`${CANONICAL}`) && !u.includes("?")));
+  check("sitemap carries no build-time lastmod", !sm.text.includes("<lastmod>"));
+
+  // every cohort URL
+  for (const u of locs) {
+    const path = u.replace(CANONICAL, "") || "/";
+    const r = await get(path);
+    const robotsMeta = metaRobots(r.text) ?? "";
+    const header = r.headers.get("x-robots-tag") ?? "";
+    const canon = canonicalOf(r.text);
+    const leaks = PRIVATE.filter((re) => re.test(r.text.replace(/"(photo|thumb|src|url)":"[^"]*"/g, "").replace(/src="[^"]*"/g, "")));
+    const ld = [...r.text.matchAll(/<script type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]).join("\n");
+    check(`${path}: 200, index, self-canonical, no private data, no Offer`, r.status === 200 && /(^|,\s*)index/.test(robotsMeta) && !/noindex/.test(robotsMeta) && !/noindex/.test(header) && norm(canon ?? "") === norm(u) && leaks.length === 0 && !/"Offer"|"price"/.test(ld), `status ${r.status}, robots "${robotsMeta}", x-robots-tag "${header}", canonical ${canon}, leaks ${leaks.length}`);
+  }
+
+  // excluded families: noindex and not listed
+  const live = rides.rides[0]?.id;
+  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", "/texas/dallas", "/california/san-francisco", "/ohio/columbus/carousel", "/categories/carousels", "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
+  for (const path of excluded) {
+    const r = await get(path);
+    const robotsMeta = metaRobots(r.text) ?? "";
+    const header = r.headers.get("x-robots-tag") ?? "";
+    const noindex = /noindex/.test(robotsMeta) || /noindex/.test(header) || r.status === 404;
+    check(`${path}: excluded (noindex or 404) and not in the sitemap`, noindex && !got.has(norm(`${CANONICAL}${path}`)), `status ${r.status}, robots "${robotsMeta}", x-robots-tag "${header}"`);
+  }
+  const pass = await get("/pass/00000000-0000-4000-8000-000000000000");
+  check("/pass/{unknown}: no contact data, private", pass.status === 404 || /noindex/.test(pass.headers.get("x-robots-tag") ?? ""), `status ${pass.status}, cache ${pass.headers.get("cache-control")}`);
+  const connect = await get("/connect");
+  check("/connect: private, no-store", /no-store/.test(connect.headers.get("cache-control") ?? "") && /noindex/.test(connect.headers.get("x-robots-tag") ?? ""));
+
+  // old Test listing URLs
+  const pairs = Object.entries(testToLive.map).slice(0, 5);
+  for (const [t, l] of pairs) {
+    const r = await get(`/s/${t}`, "manual");
+    check(`/s/{test id} → 308 /s/{live id}`, r.status === 308 && (r.headers.get("location") ?? "").endsWith(`/s/${l}`), `status ${r.status} → ${r.headers.get("location")}`);
+  }
+  const unknown = await get("/s/00000000-0000-4000-8000-000000000000", "manual");
+  check("/s/{unknown id} → 404 (never redirected elsewhere)", unknown.status === 404, `status ${unknown.status}`);
+
+  // payments state on production
+  check("/connect says Event Access is opening soon (no test checkout on production)", connect.text.includes("Event Access is opening soon") && !connect.text.includes("data-testid=\"pay-button\""));
+
+  const ok = results.every((r) => r.ok);
+  const host = new URL(base).host.replace(/[^a-z0-9.-]/gi, "_");
+  fs.mkdirSync("reports", { recursive: true });
+  fs.writeFileSync(`reports/release-verification-${host}.json`, `${JSON.stringify({ checkedAt: new Date().toISOString(), base, passed: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length, results }, null, 2)}\n`);
+  console.log(`\n${results.filter((r) => r.ok).length}/${results.length} checks passed`);
+  if (!ok) process.exitCode = 1;
+})().catch((e) => {
+  console.error((e as Error).message);
+  process.exit(1);
+});

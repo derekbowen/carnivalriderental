@@ -15,6 +15,7 @@
  * - The generated password is discarded immediately. It is never stored, logged or written to the ledger.
  */
 import { z } from "zod";
+import { IDENTITY_PUBLIC_KEYS, OPERATOR_PLACEHOLDER } from "../operators/claim";
 
 export const IMPORT_BATCH = "carnival-hosts-2026-10-v1";
 export const ELIGIBLE_TIERS = ["A_ready", "B_account_only"] as const;
@@ -280,6 +281,44 @@ export function buildPayload(row: CompanyRow, domain: string): { create: CreateP
   };
 }
 
+/** User metadata is PUBLIC in Sharetribe: only these non-identifying keys go there. */
+export const PUBLIC_USER_METADATA_KEYS = ["claimStatus", "importBatch"] as const;
+
+const pick = (o: Record<string, unknown>, keys: readonly string[]) => Object.fromEntries(Object.entries(o).filter(([k]) => keys.includes(k)));
+const omit = (o: Record<string, unknown>, keys: readonly string[]) => Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
+
+/**
+ * Anonymous-at-creation payload (Live, 2026-10-14). The account is never publicly identifying, not
+ * even for a moment: the public profile is the operator placeholder, identifying publicData and the
+ * original profile go to privateData (the same shape ops:anonymize leaves in Test, so contacts.ts
+ * reads both), the phone goes to privateData (protectedData can be revealed by a transaction
+ * process; privateData cannot), and public metadata carries no company slug.
+ */
+export function buildAnonymousPayload(row: CompanyRow, domain: string): { create: CreatePayload; metadata: Record<string, unknown> } {
+  const base = buildPayload(row, domain);
+  const moved = pick(base.create.publicData, IDENTITY_PUBLIC_KEYS);
+  const phone = base.create.protectedData.phoneNumber;
+  return {
+    create: {
+      email: base.create.email,
+      firstName: OPERATOR_PLACEHOLDER.firstName,
+      lastName: OPERATOR_PLACEHOLDER.lastName,
+      displayName: OPERATOR_PLACEHOLDER.displayName,
+      bio: OPERATOR_PLACEHOLDER.bio,
+      publicData: omit(base.create.publicData, IDENTITY_PUBLIC_KEYS),
+      protectedData: {},
+      privateData: {
+        ...base.create.privateData,
+        ...moved,
+        ...(phone ? { phone } : {}),
+        ...omit(base.metadata, PUBLIC_USER_METADATA_KEYS),
+        originalProfile: { displayName: row.displayName, firstName: row.firstName, lastName: row.lastName, ...(row.bio ? { bio: row.bio } : {}), publicData: moved },
+      },
+    },
+    metadata: pick(base.metadata, PUBLIC_USER_METADATA_KEYS),
+  };
+}
+
 /** "contact Jane Doe", "contact: Jane Doe" */
 const CONTACT_RE = /\bcontact:?\s+[A-Z][a-z]+\s+[A-Z][a-z]+/;
 
@@ -382,6 +421,8 @@ export interface RowDeps {
   saveMapping(m: Mapping): Promise<void> | void;
   newPassword(): string;
   now(): string;
+  /** Payload builder; buildPayload (workbook visibility) unless the caller needs the anonymous form. */
+  build?: typeof buildPayload;
 }
 
 // The marker lives in privateData (operator-readable), not public metadata: externalIds embed private directory ids.
@@ -390,7 +431,7 @@ const metadataComplete = (u: RemoteUser, want: Record<string, unknown>) => Objec
 
 /** Import one row. Idempotent: safe to call again after any failure or interruption. */
 export async function importRow(row: CompanyRow, domain: string, d: RowDeps): Promise<Omit<LedgerEntry, "at" | "runId">> {
-  const { create, metadata } = buildPayload(row, domain);
+  const { create, metadata } = (d.build ?? buildPayload)(row, domain);
   const base = { externalId: row.externalId, companyId: row.metadata.companyId, email: create.email };
   const record = async (userId: string) => {
     if (d.mapping[row.externalId]?.userId === userId) return;

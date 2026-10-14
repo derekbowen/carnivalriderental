@@ -4,10 +4,14 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 describe("indexing pilot allowlist", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); });
 
-  it("is disabled and every listed path is a real page that meets its supply gate", async () => {
+  it("is enabled for the recorded first cohort, and every listed path is a real page that meets its supply gate", async () => {
     const { PSEO_PILOT } = await import("@/lib/inventory/pilot");
     const { inventoryRoutes } = await import("@/lib/inventory");
-    expect(PSEO_PILOT.enabled).toBe(false);
+    expect(PSEO_PILOT.enabled).toBe(true);
+    // The authorization and the content review are recorded separately (the founder did not review pages).
+    expect(PSEO_PILOT.authorization).toMatch(/Founder instruction, 2026-10-14/);
+    expect(PSEO_PILOT.contentReview).toMatch(/NOT by the founder/);
+    expect([...PSEO_PILOT.corePaths]).toEqual(["/", "/rides", "/categories/ferris-wheels"]);
     const routes = new Map(inventoryRoutes().map((r) => [r.path, r]));
     for (const p of PSEO_PILOT.paths) {
       expect(routes.has(p), p).toBe(true);

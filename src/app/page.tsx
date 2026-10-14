@@ -12,7 +12,7 @@ import { accessProductsForDisplay } from "@/lib/access/runtime";
 type ProductLimits = Pick<AccessProduct, "unlockLimit" | "validityDays">;
 import { getOperatorListing, ipLocation, rideClassShowcase, searchOperatorListings, US_CENTER } from "@/lib/catalog/operator-search";
 import { BRAND, SITE_DESCRIPTION } from "@/lib/config";
-import { operatorCount, RIDES } from "@/lib/inventory";
+import { coreHubGate, operatorCount, RIDES } from "@/lib/inventory";
 import { FOOTER_CITIES, FOOTER_EVENTS } from "@/lib/seo/footer-links";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
@@ -24,7 +24,8 @@ export const dynamic = "force-dynamic";
 const TITLE = `Carnival Ride Rentals Nationwide | ${BRAND.name}`;
 
 export function generateMetadata() {
-  return { title: TITLE, description: SITE_DESCRIPTION, alternates: { canonical: canonicalUrl("/") }, openGraph: { title: TITLE, description: SITE_DESCRIPTION, url: canonicalUrl("/") } };
+  const gate = coreHubGate("/");
+  return { title: TITLE, description: SITE_DESCRIPTION, alternates: { canonical: canonicalUrl("/") }, openGraph: { title: TITLE, description: SITE_DESCRIPTION, url: canonicalUrl("/") }, robots: gate.indexable ? { index: true, follow: true } : { index: false, follow: true } };
 }
 
 const GUIDE = paths.guide("how-to-rent-carnival-rides");

@@ -13,6 +13,7 @@
  */
 import { z } from "zod";
 import { IMPORT_BATCH, personNames, planImport, redact, stripPhones, type CompanyRow, type Workbook } from "./company-accounts";
+import { INQUIRY_ALIAS, anonymizeText, companyNameVariants, withNotice } from "../operators/claim";
 
 export const LISTING_TYPE = "operator-ride-rental";
 export const RIDE_CLASSES = ["kiddie", "family", "major", "spectacular", "coaster", "funhouse", "dark-ride", "water", "other"] as const;
@@ -148,6 +149,36 @@ export function buildListingPayload(row: ListingRow): ListingPayload {
   };
 }
 
+/** Listing metadata is PUBLIC in Sharetribe: no company slug or import id there. */
+export const PUBLIC_LISTING_METADATA_KEYS = ["claimStatus", "importBatch", "footprintSource"] as const;
+
+/** Company names as they could appear in the author's listing text (ops:anonymize uses the same set). */
+export function authorNames(author: CompanyRow): string[] {
+  return companyNameVariants([author.displayName, author.publicData.companyName, author.privateData.legalEntityName]);
+}
+
+/**
+ * Anonymous-at-creation listing (Live, 2026-10-14): the state ops:anonymize leaves in Test, written in
+ * the create call itself. Company names, links and emails are removed from the description, the
+ * unclaimed notice leads it, the inquiry process alias is set so hosted pages render, the cleaned
+ * original stays in privateData, and the import id and company slug are privateData only.
+ */
+export function buildAnonymousListingPayload(row: ListingRow, author: CompanyRow): ListingPayload {
+  const base = buildListingPayload(row);
+  const original = base.description ?? "";
+  return {
+    ...base,
+    description: withNotice(anonymizeText(original, authorNames(author))),
+    publicData: { ...base.publicData, transactionProcessAlias: INQUIRY_ALIAS, unitType: "inquiry" },
+    privateData: { ...base.privateData, originalDescription: original, importExternalId: row.externalId, companyId: row.metadata.companyId },
+    metadata: Object.fromEntries(Object.entries(base.metadata).filter(([k]) => (PUBLIC_LISTING_METADATA_KEYS as readonly string[]).includes(k))),
+  };
+}
+
+/** Import id of a remote listing: privateData (anonymous form) or public metadata (Test's original form). */
+export const importIdOf = (l: RemoteListing): string | undefined =>
+  [l.privateData?.importExternalId, l.metadata?.importExternalId].find((v): v is string => typeof v === "string");
+
 export interface ListingIssue {
   externalId: string;
   issue: string;
@@ -240,6 +271,7 @@ export interface RemoteListing {
   id: string;
   state: string;
   metadata: Record<string, unknown>;
+  privateData?: Record<string, unknown>;
 }
 
 export interface ListingApi {
@@ -281,6 +313,8 @@ export interface ListingDeps {
   now(): string;
   runId: string;
   onResult(e: ListingLedgerEntry): Promise<void> | void;
+  /** Payload builder; buildListingPayload unless the caller needs the anonymous form. */
+  build?: (row: ListingRow) => ListingPayload;
 }
 
 /**
@@ -320,7 +354,7 @@ export async function runListingImport(rows: ListingRow[], d: ListingDeps): Prom
       for (const row of group) await emit(row, { outcome: "failed", listingId: null, authorId, detail: redact((e as Error).message) });
       continue;
     }
-    const byExt = new Map(existing.filter((l) => typeof l.metadata?.importExternalId === "string").map((l) => [l.metadata.importExternalId as string, l]));
+    const byExt = new Map(existing.flatMap((l) => (importIdOf(l) ? [[importIdOf(l)!, l] as const] : [])));
 
     for (const row of group) {
       try {
@@ -338,7 +372,7 @@ export async function runListingImport(rows: ListingRow[], d: ListingDeps): Prom
           await emit(row, { outcome: "failed", listingId: mapped.listingId, authorId, detail: "mapped listing not found under its author — not recreating; resolve by hand" });
           continue;
         }
-        const listingId = await d.api.create({ ...buildListingPayload(row), authorId });
+        const listingId = await d.api.create({ ...(d.build ?? buildListingPayload)(row), authorId });
         d.mapping[row.externalId] = { listingId, authorId, companyId: row.metadata.companyId, createdAt: d.now() };
         await d.saveMapping(d.mapping);
         await emit(row, { outcome: "created", listingId, authorId });
