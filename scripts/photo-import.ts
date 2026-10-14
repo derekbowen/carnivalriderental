@@ -74,7 +74,9 @@ const api: PhotoApi = {
   },
   download,
   async shrink(bytes) {
-    const r = spawnSync("convert", ["-", "-resize", "2400x2400>", "-quality", "85", "jpg:-"], { input: Buffer.from(bytes), maxBuffer: 64 * 1024 * 1024 });
+    // "-[0]": first frame only. An animated GIF would otherwise become one JPEG per frame (a 100 MB GIF
+    // came back as 120 MB of JPEGs); a listing photo is a still.
+    const r = spawnSync("convert", ["-[0]", "-resize", "2400x2400>", "-quality", "85", "jpg:-"], { input: Buffer.from(bytes), maxBuffer: 256 * 1024 * 1024 });
     return r.status === 0 && r.stdout.length > 0 ? new Uint8Array(r.stdout) : null;
   },
   async upload(bytes, filename, contentType) {

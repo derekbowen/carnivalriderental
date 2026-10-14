@@ -16,7 +16,7 @@ Read `PROJECT_BRIEF.md` for the model, `PAID_ACCESS_ARCHITECTURE.md` for where t
 - Listing type `operator-ride-rental` stays Free messaging (`default-inquiry`). No payout details anywhere. Nothing transacts.
 - The request-desk listing (`6ac33abd-…`) is no longer used by the site; close it in Console when convenient (Integration `listings/close`). The 18 test transactions stay (cannot be deleted; nothing reads them).
 - Claims (`npm run ops:claim`) no longer restore the company name, bio or website to the public profile: the hosted marketplace cannot bypass the paywall after a claim.
-- Console actions still needed (founder): **Access control → private marketplace + approve new users** so the hosted web app isn't a public catalogue; **Monetization → commission 0** (irrelevant without transactions, but stop documents quoting 10%); leave Payments empty (do not paste the Carnival Stripe keys there).
+- (Superseded 2026-10-14) An earlier line here asked for "private marketplace". That was wrong: a private marketplace makes the anonymous Marketplace API return 403 and empties our catalog (section 4 records the test). Keep it **off**; privacy is enforced in the data (anonymous public fields, identity in `privateData`) and in our entitlement-checked reveal. Leave Payments empty (do not paste the Carnival Stripe keys there).
 
 ## 3. Email
 
@@ -100,7 +100,7 @@ Still owner-only (nothing in this session could complete them):
 
 ## 5. Known gaps (not hidden)
 
-- Operator self-service portal is not built: operators edit through the hosted Sharetribe app (which should be private) or through the team. Claims and contact updates are team actions (`ops:claim`, Console).
+- Operator self-service portal is not built: operators edit through the hosted Sharetribe app or through the team. Claims and contact updates are team actions (`ops:claim`, Console).
 - Contact coverage: of 319 companies, 87 have an email on file and 265 a phone; operators with no channel are never offered. Expect some reports of stale contacts; the pass has a "didn't work" button and the team can restore credits (`restoreUnlockCredit`).
 - The 3,716 listing descriptions still carry the old unclaimed notice text on the hosted marketplace (it mentions the request desk). Our pages never show descriptions. A bulk rewrite is optional (`listings:enable-inquiry` can be adapted).
 - Rate limiting is per server instance (in-memory), adequate for launch, not for abuse at scale.

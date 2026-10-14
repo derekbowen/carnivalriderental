@@ -488,7 +488,49 @@ async function report() {
   console.log(JSON.stringify({ accounts: out.accounts, listings: out.listings, photos: { ...out.photos, gapsWithSourceButNoTestPhoto: out.photos.gapsWithSourceButNoTestPhoto.length, ridesWithoutSourcePhoto: out.photos.ridesWithoutSourcePhoto.length }, liveReadBack: out.liveReadBack }, null, 1));
 }
 
-const phases: Record<string, () => Promise<void>> = { "snapshot-test": snapshotTest, reconcile, verify, redirects, cohort, report };
+/**
+ * The production matching path against Live, read-only: the app's own resolveCriteria + matchOperators
+ * with the Sharetribe operator source (Live Marketplace API for authors, Live Integration API for
+ * contactability), and one contact lookup per case reduced to booleans. Proves search snapshot ids,
+ * matching, pricing tier and contact lookup all point at the same Live dataset. Prints no contact data.
+ */
+async function match() {
+  process.env.APP_ENV = "production";
+  process.env.SHARETRIBE_CLIENT_ID = process.env.SHARETRIBE_LIVE_CLIENT_ID;
+  process.env.SHARETRIBE_INTEGRATION_CLIENT_ID = process.env.SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID;
+  process.env.SHARETRIBE_INTEGRATION_CLIENT_SECRET = process.env.SHARETRIBE_LIVE_INTEGRATION_CLIENT_SECRET;
+  await liveTokens(); // asserts both Live clients name "CarnivalRental"
+  const { matchOperators, memoryContactCache } = await import("../src/lib/access/matching");
+  const { operatorSource, channelsOf } = await import("../src/lib/access/contacts");
+  const { resolveCriteria } = await import("../src/lib/access/pricing");
+  const inv = await import("../src/lib/inventory");
+  const map = readJson<{ map: Record<string, string> }>("src/lib/inventory/test-to-live.json").map;
+  const source = operatorSource();
+  const cache = memoryContactCache();
+  const ferrisTest = Object.entries(map).find(([, live]) => inv.RIDES.find((r) => r.id === live)?.rideType === "ferris-wheel")?.[0] ?? null;
+  const cases = [
+    { name: "Columbus, OH · any ride", city: ["ohio", "columbus"], input: {} },
+    { name: "Columbus, OH · Ferris wheel", city: ["ohio", "columbus"], input: { rideType: "ferris-wheel" } },
+    { name: "Chicago, IL · Ferris wheel", city: ["illinois", "chicago"], input: { rideType: "ferris-wheel" } },
+    { name: "Austin, TX · carousel", city: ["texas", "austin"], input: { rideType: "carousel" } },
+    { name: "Columbus, OH · old Test Ferris listing id, client says carousel", city: ["ohio", "columbus"], input: { listingId: ferrisTest, rideType: "carousel" } },
+  ];
+  const out = [];
+  for (const c of cases) {
+    const city = inv.cityBySlugs(c.city[0], c.city[1])!;
+    const r = await matchOperators({ lat: city.lat, lng: city.lng, state: city.stateAbbr, ...c.input }, source, cache);
+    const first = r.operators.find((o) => o.contactable);
+    const contact = first ? await source.contact(first.operatorId) : null;
+    const ch = contact ? channelsOf(contact) : null;
+    const crit = resolveCriteria(c.input);
+    out.push({ case: c.name, tier: r.criteria.tier, resolverTier: crit.tier, listingResolvedToLive: c.input.listingId ? crit.listingId : undefined, operators: r.operators.length, contactable: r.contactableCount, candidateListings: r.candidateListings, firstContactLookup: ch ? { hasPhone: ch.hasPhone, hasEmail: ch.hasEmail, hasWebsite: ch.hasWebsite, hasCompanyName: !!contact?.companyName } : null });
+  }
+  fs.mkdirSync("reports", { recursive: true });
+  fs.writeFileSync("reports/live-matching-check.json", `${JSON.stringify({ checkedAt: new Date().toISOString(), marketplace: LIVE_MARKETPLACE, cases: out }, null, 2)}\n`);
+  for (const o of out) console.log(JSON.stringify(o));
+}
+
+const phases: Record<string, () => Promise<void>> = { "snapshot-test": snapshotTest, reconcile, verify, redirects, cohort, report, match };
 
 (async () => {
   const run = phases[phase];

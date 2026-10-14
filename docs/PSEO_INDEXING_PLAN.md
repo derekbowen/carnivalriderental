@@ -1,6 +1,6 @@
-# Inventory pSEO: controlled indexing plan (prepared 2026-10-05, NOT enabled)
+# Inventory pSEO: controlled indexing plan (prepared 2026-10-05; first cohort released 2026-10-14)
 
-Status: **indexing is off.** Nothing in this document has been switched on. Every step below needs an explicit founder go. Payment readiness (Stripe, commission, bookability) is a separate decision and does not gate or unlock SEO.
+Status 2026-10-14: **the first indexing cohort is released** (section 7): an exact list of URLs, on the Live inventory, each still behind its supply, near-duplicate and environment gates. Everything else stays `noindex`. Sections 1–6 are the history and the gate design; section 7 is the current state. Payment readiness is a separate decision and does not gate or unlock SEO.
 
 ## 1. Current state (verified on carnivalriderental.us)
 
@@ -124,3 +124,62 @@ Rollback: set `PUBLIC_INDEXING=false` (blanket disallow and sitewide noindex ret
 ## 6. What stays off
 
 `copyApproved`, `PSEO_PILOT.enabled`, `APP_ENV`, `PUBLIC_INDEXING`, the robots change and the sitemap submission all remain unchanged until the founder says go.
+
+## 7. First indexing cohort (released 2026-10-14)
+
+**Authorization and review are separate records.**
+- *Authorization:* the founder's instruction of 2026-10-14 authorized a controlled first cohort of
+  exactly these URLs, the production indexing flags, and sitemap publication. It did not lower any
+  threshold or authorize other families (`src/lib/inventory/pilot.ts`, `authorization`).
+- *Content review:* done on 2026-10-14 by the Claude Code session that ran the cutover, on the
+  rendered pages of a local production build against the Live snapshot and again on the deployed
+  domain. **The founder did not review these pages.** What was checked per URL: the page renders
+  from inventory (no demo records, no invented specs, prices, capacities, reviews or availability),
+  title/H1/description match the page, the listing cards show only public ride facts and photos,
+  no operator identity or contact appears in HTML, JSON-LD, metadata or image URLs, the Event Access
+  copy is accurate for the current state (checkout "opening soon" on production), and internal links
+  resolve. Results: `reports/indexing-cohort.json` (per URL) and
+  `reports/release-verification-carnivalriderental.us.json`.
+
+**Mechanism.** `PSEO_PILOT.enabled = true` with two exact lists: `paths` (the 10-path geographic
+pilot) and `corePaths` (`/`, `/rides`, `/categories/ferris-wheels`, resolved from `paths.*`). A path
+on either list stands in only for copy approval. It still needs: `APP_ENV=production` and
+`PUBLIC_INDEXING=true`; its supply gate on the current snapshot (city ≥ 10 rides within 200 mi;
+ride + city ≥ 5 matching rides; category hub ≥ 3 offerings, counted from the operator inventory it
+shows; core hubs ≥ 10 rides in the snapshot); and, for city and ride + city pages, being the head of
+its near-duplicate group in `index-eligible.json` stamped with the same snapshot. `copyApproved`
+stays `false`. Thresholds and the 200-mile radius are unchanged.
+
+**One decision for every surface.** The same gate objects produce each page's robots meta, its
+self-canonical and the sitemap entry (`src/app/sitemap.ts`), so the sitemap can't list a page that
+says `noindex`. The root layout defaults every page to `noindex, follow`; only a passing gate sets
+`index, follow`. The sitemap has no `lastmod` (a build or export timestamp on every URL says nothing
+true about any one page).
+
+**Robots.** With indexing on: `Allow: /`, `Disallow: /internal /api /requests /request /connect/
+/pass`, and `Sitemap: https://carnivalriderental.us/sitemap.xml`. `/connect` (the public form) is
+crawlable so crawlers can read its `noindex`; its private result pages, passes, APIs and the internal
+console are disallowed and are also `noindex`, `no-store`, and entitlement- or auth-checked
+(robots.txt is not access control). Preview deployments keep `APP_ENV=preview`: blanket
+`Disallow: /` and `X-Robots-Tag: noindex, nofollow`.
+
+**Internal links.** The Ferris wheel hub links first to its cohort ride + city pages (Columbus and
+Chicago Ferris wheel rentals) before the general state and city lists; the Columbus and Chicago city
+pages already link to their ride-type pages; the footer links every category hub sitewide. Nothing
+was padded or added as new copy.
+
+**Stays noindex in this release:** every other city and ride + city page; all state, event,
+event + state and directory pages; the other four category hubs; `/s`, `/s/{id}` and any
+query-string or filter variant; `/guides/*`, `/operators`, legal pages; `/connect`, `/connect/{id}`,
+`/pass/*`, `/internal/*`, `/api/*` (also disallowed or private).
+
+**Expansion (not enabled).** `npm run migrate:live -- cohort` writes `reports/indexing-expansion.json`:
+every supply-sufficient page outside the cohort, why it is excluded (thin, not its group's head, or
+fewer than 3 distinct operators with a usable contact channel in Live), and the ranked next
+candidates. A second wave needs: the same gates, ≥ 3 distinct contactable operators, a rendered-page
+review, and 4–6 weeks of Search Console evidence from this wave (impressions, crawl stats,
+"Duplicate without user-selected canonical"). Each wave is a separate go; nothing widens
+automatically.
+
+Rollback: `PUBLIC_INDEXING=false` and redeploy (blanket `Disallow: /`, sitewide `noindex`, empty
+sitemap). Or remove a path from `pilot.ts` and redeploy: it leaves the sitemap and turns `noindex`.
