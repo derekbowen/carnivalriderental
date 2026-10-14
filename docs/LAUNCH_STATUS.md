@@ -16,11 +16,11 @@ Sections 1–6 below are the history before the cutover.
 | Old links | `/s/{test id}` → 308 `/s/{live id}` for all 3,714; `/connect?listing={test id}` resolves to the Live listing and tier | `src/lib/inventory/test-to-live.json`, release verification |
 | Pricing | $99 Event Access / $199 Ferris Wheel Event Access from `access_products`; server-side tier from the Live snapshot; verified with the app's matcher against Live | `reports/live-matching-check.json` |
 | **Commerce** | **Disabled ("Event Access is opening soon")**: production holds only a Stripe test-mode key, and a test key on `APP_ENV=production` never sells. Test-mode QA passes are never entitlements once live keys are set | `src/lib/access/stripe.ts`, `service.ts` |
-| Indexing | First cohort of 13 exact URLs (homepage, `/rides`, `/categories/ferris-wheels`, 10 geographic pilot pages); everything else `noindex` | `PSEO_INDEXING_PLAN.md` §7, `reports/indexing-cohort.json` |
-| Sitemap | `https://carnivalriderental.us/sitemap.xml`, exactly the cohort, advertised in robots.txt | release verification |
+| Indexing | **1,000 exact URLs** (founder: "lets index 1000 pages"): wave 1's 13 (homepage, `/rides`, `/categories/ferris-wheels`, 10 geo pages) + wave 2's 987 (4 category hubs, 165 city, 818 ride + city pages, each passing every gate with ≥ 6 contactable operators); everything else `noindex` | `PSEO_INDEXING_PLAN.md` §7–8, `src/lib/inventory/indexing-wave-2.json`, `reports/indexing-cohort.json` |
+| Sitemap | `https://carnivalriderental.us/sitemap.xml`, exactly the 1,000 indexed URLs, advertised in robots.txt | release verification |
 | Production deployment | `dpl_Eii6u4J1xYnMFdhNKwRuNz7mXg28` (commit `dc3bb71` on `main`, PR #1), aliased to `carnivalriderental.us` and `www`; previous production `dpl_4FGMmY2a2yWRuf8dkh5DC9T74PN2` (`f22348d`) is the rollback candidate | Vercel |
 | Production verification | `scripts/verify-release.ts https://carnivalriderental.us`: **49/49** (robots, sitemap = 13 cohort URLs, every cohort URL 200 / index, follow / self-canonical / no private data / no Offer, 16 excluded samples noindex, `/pass` 404 private, `/s/{test id}` 308 → Live, old `/connect?listing=` → Ferris tier, checkout "opening soon"); `/s` states 3,714 rides (Live's published count); listing pages render Live titles and photos (`200 image/jpeg`), the photo-less ones the placeholder; unknown city/listing 404; no horizontal scroll at 390 px; no runtime errors after deploy | `reports/release-verification-carnivalriderental.us.json` |
-| Search Console | No authorized connection in this project's tooling (Adspirer not connected, no OpenSEO project, no Zapier app): the sitemap is published and advertised in robots.txt, **not submitted** | — |
+| Search Console | The founder submits `https://carnivalriderental.us/sitemap.xml` (2026-10-14); no Search Console connection in this project's tooling | — |
 
 **Blockers that remain (owner actions):**
 1. **Stripe live mode:** connect the Carnival Ride Rental live Stripe account, create the live webhook
@@ -30,8 +30,10 @@ Sections 1–6 below are the history before the cutover.
    skipped and logged). The Resend account connected to this workspace holds other businesses'
    domains only and was not used. Add this business's own provider key (`EMAILIT_API_KEY` or a Resend
    key whose account owns `carnivalriderental.us`), keep `EMAIL_MODE=test` until verified.
-3. **Search Console:** submit `https://carnivalriderental.us/sitemap.xml` in the property verified by the
-   `google-site-verification` TXT record on `carnivalriderental.us`.
+3. **Search Console:** submit `https://carnivalriderental.us/sitemap.xml` (1,000 URLs) in the property
+   verified by the `google-site-verification` TXT record on `carnivalriderental.us`, then watch coverage
+   for "Crawled – currently not indexed" and "Duplicate without user-selected canonical" on ride + city
+   pages (`PSEO_INDEXING_PLAN.md` §8).
 4. **Sharetribe Test leaks company slugs:** Test's public listing and user `metadata` still carry
    `companyId`/`importExternalId`. Production no longer reads Test. Scrub them with the Test Integration
    credentials, or turn on "Make marketplace private" in **Test only** (never in Live).
