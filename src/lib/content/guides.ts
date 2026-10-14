@@ -16,6 +16,23 @@ export interface GuideSection {
   note?: string;
 }
 
+/**
+ * A short explainer video for the guide, served from public/video (no third-party player or
+ * tracking). The transcript is the script as recorded; it follows the same copy rules as the guide.
+ */
+export interface GuideVideo {
+  title: string;
+  description: string;
+  /** Public paths of the files in public/video. */
+  src: string;
+  poster: string;
+  captions: string;
+  durationSeconds: number;
+  /** ISO date the video was published on the site. */
+  uploadDate: string;
+  transcript: string[];
+}
+
 export interface Guide {
   id: string;
   title: string;
@@ -26,6 +43,7 @@ export interface Guide {
   /** The standardised questions for comparing quotes from several operators. */
   checklist: { group: string; questions: string[] }[];
   faq: Faq[];
+  video?: GuideVideo;
 }
 
 export const GUIDES: Guide[] = [
@@ -153,6 +171,31 @@ export const GUIDES: Guide[] = [
       { q: "Does Carnival Ride Rental handle the booking?", a: "No. We show operator inventory, help you find rides near your event, and give you direct contact details through Event Access. The rental contract, deposit and payment are between you and the operator." },
       { q: "What if an operator can’t do my date?", a: "Move to the next matching operator. Event Access covers several operators for one event, so a “no” from one company is not a dead end." },
     ],
+    video: {
+      title: "How to rent carnival rides, in 90 seconds",
+      description: "What to have ready before you call an operator, what to ask about transport, power, staffing, insurance, permits, crew and weather, and how to compare quotes.",
+      src: "/video/how-to-rent-carnival-rides.mp4",
+      poster: "/video/how-to-rent-carnival-rides-poster.jpg",
+      captions: "/video/how-to-rent-carnival-rides.en.vtt",
+      durationSeconds: 86,
+      uploadDate: "2026-10-14",
+      transcript: [
+        "Renting a carnival ride? Here’s what to sort out before you sign.",
+        "It’s a logistics job, not just a booking. Equipment, crew and schedule all shape the price.",
+        "Before you call, have this ready: date, location, hours, crowd size, the rides you want, and truck access. And “I don’t know yet” is a normal answer.",
+        "Then ask every operator about seven things.",
+        "Transport: is there a travel charge, and how long is setup and teardown?",
+        "Power: does the ride need three-phase power? Is a generator, and fuel, included?",
+        "Staffing: are ride operators included? How many hours, and what does overtime cost?",
+        "Insurance: can they provide a certificate, and add your venue as additional insured?",
+        "Permits: who applies? You, the venue or the operator? Ask early.",
+        "Crew: hotel rooms or RVs? And where do the trucks park overnight?",
+        "Weather: what stops the ride, and when does your deposit become non-refundable?",
+        "Compare two or three quotes side by side. The cheapest headline price is rarely the cheapest quote.",
+        "Reach out early. Operators book a season at a time, so contact several.",
+        "Find carnival rides near your event at carnivalriderental.us.",
+      ],
+    },
   },
 ];
 

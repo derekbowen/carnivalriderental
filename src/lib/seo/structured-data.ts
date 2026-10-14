@@ -6,7 +6,7 @@ import { canonicalUrl, paths } from "./routes";
 /**
  * schema.org JSON-LD as ONE connected @graph per page. Rules:
  * - Markup describes only what is visible on the page, in the same order.
- * - Stable @id references: `{site}/#organization`, `{page}#webpage|#breadcrumb|#itemlist|#service|#faq`.
+ * - Stable @id references: `{site}/#organization`, `{page}#webpage|#breadcrumb|#itemlist|#service|#faq|#video`.
  * - No AggregateRating/Review (we have none), no Offer/price for rentals (operators price per event),
  *   no availability claims, no addresses, no Event markup for event types. The only Offer on the site
  *   is Event Access itself, on /connect/{id}, where its price is visible.
@@ -24,6 +24,7 @@ export const ids = {
   itemList: (path: string) => `${canonicalUrl(path)}#itemlist`,
   service: (path: string) => `${canonicalUrl(path)}#service`,
   faq: (path: string) => `${canonicalUrl(path)}#faq`,
+  video: (path: string) => `${canonicalUrl(path)}#video`,
 };
 const ref = (id: string) => ({ "@id": id });
 
@@ -72,7 +73,7 @@ export function breadcrumbs(items: { name: string; path: string }[]): Json {
 /** The page itself. `type` CollectionPage for hubs that list offerings. */
 export type PageType = "CollectionPage" | "WebPage" | "ItemPage";
 
-export function webPage(opts: { path: string; name: string; description: string; type?: PageType; hasItemList?: boolean; hasService?: boolean; hasBreadcrumb?: boolean }): Json {
+export function webPage(opts: { path: string; name: string; description: string; type?: PageType; hasItemList?: boolean; hasService?: boolean; hasBreadcrumb?: boolean; hasVideo?: boolean }): Json {
   return {
     "@type": opts.type ?? "CollectionPage",
     "@id": ids.page(opts.path),
@@ -85,6 +86,7 @@ export function webPage(opts: { path: string; name: string; description: string;
     ...(opts.hasBreadcrumb === false ? {} : { breadcrumb: ref(ids.breadcrumb(opts.path)) }),
     ...(opts.hasItemList ? { mainEntity: ref(ids.itemList(opts.path)) } : {}),
     ...(opts.hasService ? { about: ref(ids.service(opts.path)) } : {}),
+    ...(opts.hasVideo ? { video: ref(ids.video(opts.path)) } : {}),
     // The operator-side offer shown in the footer strip on every page.
     mentions: ref(ids.operatorProgram()),
   };
@@ -138,10 +140,41 @@ export function faqPage(faq: Faq[], path: string): Json {
   };
 }
 
+export interface VideoInfo {
+  name: string;
+  description: string;
+  /** Public paths (served from public/). */
+  src: string;
+  poster: string;
+  durationSeconds: number;
+  uploadDate: string;
+  transcript: string[];
+}
+
+/** A video shown on the page (self-hosted file). */
+export function videoObject(v: VideoInfo, path: string): Json {
+  const m = Math.floor(v.durationSeconds / 60), sec = v.durationSeconds % 60;
+  return {
+    "@type": "VideoObject",
+    "@id": ids.video(path),
+    name: v.name,
+    description: v.description,
+    thumbnailUrl: canonicalUrl(v.poster),
+    contentUrl: canonicalUrl(v.src),
+    uploadDate: v.uploadDate,
+    duration: `PT${m ? `${m}M` : ""}${sec}S`,
+    inLanguage: "en-US",
+    transcript: v.transcript.join(" "),
+    publisher: ref(ids.organization()),
+    isPartOf: ref(ids.page(path)),
+  };
+}
+
 /**
  * The ONE way a page builds its structured data. Every public template calls this, so every page
  * carries the same skeleton: WebPage (typed) → BreadcrumbList (only when breadcrumbs are visible)
- * → customer Service → ItemList (only the cards shown) → FAQPage (only visible FAQs).
+ * → customer Service → ItemList (only the cards shown) → FAQPage (only visible FAQs) → VideoObject
+ * (only when the page shows the video).
  */
 export function pageGraph(opts: {
   path: string;
@@ -153,16 +186,18 @@ export function pageGraph(opts: {
   service?: { name?: string; serviceType?: string; areaServed?: AreaServed };
   list?: { name: string; cards: ListingCardModel[] };
   faq?: Faq[];
+  video?: VideoInfo;
 }): Json[] {
   const hasList = !!opts.list && opts.list.cards.length > 0;
   return [
-    webPage({ path: opts.path, name: opts.name, description: opts.description, type: opts.type, hasItemList: hasList, hasService: !!opts.service, hasBreadcrumb: !!opts.crumbs }),
+    webPage({ path: opts.path, name: opts.name, description: opts.description, type: opts.type, hasItemList: hasList, hasService: !!opts.service, hasBreadcrumb: !!opts.crumbs, hasVideo: !!opts.video }),
     ...(opts.crumbs ? [breadcrumbs(opts.crumbs)] : []),
     ...(opts.service
       ? [rentalService({ path: opts.path, name: opts.service.name ?? opts.name, description: opts.description, serviceType: opts.service.serviceType, areaServed: opts.service.areaServed })]
       : []),
     ...(hasList ? [itemList({ path: opts.path, name: opts.list!.name, cards: opts.list!.cards })] : []),
     ...(opts.faq && opts.faq.length ? [faqPage(opts.faq, opts.path)] : []),
+    ...(opts.video ? [videoObject(opts.video, opts.path)] : []),
   ];
 }
 
