@@ -28,7 +28,7 @@ Everywhere: only the address's newest search is chased; never a zero-match reque
 
 Gates (live mode): commercial templates need `BUSINESS_POSTAL_ADDRESS` (CAN-SPAM footer) **and** `lifecycle-v1` in `EMAIL_APPROVED_CAMPAIGNS`. Until both are set they are recorded as `blocked` in `access_lifecycle_emails` (with the reason) and retried on every run while still due, so nothing is lost and nothing goes out early. Transactional templates send now. Unsubscribe links are signed with `EMAIL_UNSUBSCRIBE_SECRET`, or a key derived from `ACCESS_SESSION_SECRET` when that isn't set.
 
-Schedule: Supabase `pg_cron` job `lifecycle-run` calls `POST https://carnivalriderental.us/api/lifecycle/run` every 10 minutes through `pg_net` (Vercel Hobby cron runs only daily). The endpoint sends only what is due, once per logical email (`dedupe_key`), and a run lock skips calls less than 4 minutes apart; set `LIFECYCLE_RUN_TOKEN` to require a bearer token. AI: `LIFECYCLE_AI_MODEL` (e.g. `anthropic/claude-haiku-5.5`); unset = default copy only.
+Schedule: Vercel Cron (Pro plan) calls `GET /api/lifecycle/run` every 10 minutes (`vercel.json`), so the "1 h" emails go out 60–70 minutes after the customer goes quiet. Vercel Cron is internal; calls from outside Vercel (Supabase `pg_net`, cloud servers) get Vercel's Security Checkpoint (HTTP 429 challenge) on every path, so an external scheduler can't reach the app. The endpoint sends only what is due, once per logical email (`dedupe_key`), and a run lock skips calls less than 4 minutes apart; set `CRON_SECRET` (Vercel Cron sends it as a bearer token) or `LIFECYCLE_RUN_TOKEN` to require one.
 
 Review: `npm run lifecycle:preview -- <dir>` renders all five with sample data. What went out, and why something didn't:
 
