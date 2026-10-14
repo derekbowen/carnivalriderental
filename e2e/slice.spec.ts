@@ -100,7 +100,7 @@ test("SEO surfaces: canonicals, noindex, empty sitemap, valid internal links", a
   expect(origins.size).toBe(1);
   // /texas/austin is a real-city inventory page (Census place + operator snapshot), never indexable yet.
   await page.goto("/texas/austin");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Austin event.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Austin, TX event.");
 
   const sitemapRes = await request.get("/sitemap.xml");
   expect(sitemapRes.status()).toBe(200);

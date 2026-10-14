@@ -7,7 +7,7 @@ import type { OperatorCard } from "@/lib/catalog/operator-search";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import type { CategoryPage, CategoryTheme } from "@/lib/content/category-pages";
 import { categoryPageById } from "@/lib/content/category-pages";
-import { cityBySlugs, PSEO_INVENTORY, ridesNear, type TypeStats } from "@/lib/inventory";
+import { cityBySlugs, PSEO_INVENTORY, rideTypesInCategory, ridesNear, type TypeStats } from "@/lib/inventory";
 import { PSEO_PILOT } from "@/lib/inventory/pilot";
 import { CATEGORY_CONTEXT } from "@/lib/access/pricing";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
@@ -111,21 +111,26 @@ export function CategoryHub({
     .filter((s) => !!s)
     .sort((a, b) => a!.name.localeCompare(b!.name))
     .slice(0, 12);
-  // Ride type + city pages of this hub's ride type in the approved indexing cohort, first, so the hub
-  // passes authority to its own city pages (e.g. Ferris wheel rentals near Columbus) before the
-  // general city list. Only pages that meet their supply threshold on the current snapshot; wave 1
-  // first, then the strongest of wave 2, capped so the hub stays readable (the sitemap lists them all).
+  // Indexed ride type + city pages of this hub's ride types, first, so the hub passes authority to its
+  // own city pages (e.g. Ferris wheel rentals near Columbus) before the general city list. Every type
+  // in the category counts (class-based hubs like thrill and kiddie rides have no single type). Only
+  // pages that meet their supply threshold on the current snapshot. Capped so the hub stays readable
+  // (the sitemap lists them all): taken round-robin across ride types, each type in its indexed order
+  // (wave 1 first, then the strongest of wave 2), so no type crowds the others out.
+  const hubTypes = new Set(rideTypesInCategory(page.id).map((t) => t.id));
   const hubType = CATEGORY_CONTEXT[page.id]?.rideType;
-  const cohortRideCities = hubType
-    ? PSEO_PILOT.paths
-        .flatMap((p) => {
-          const [, st, slug, type] = p.split("/");
-          const c = type === hubType ? cityBySlugs(st, slug) : null;
-          if (!c || ridesNear(c.lat, c.lng).filter((r) => r.rideType === hubType).length < PSEO_INVENTORY.rideCityMinRides) return [];
-          return [{ href: paths.rideCity(hubType, c.stateSlug, c.slug), label: `${rideTypeCopy(hubType, page.singular).label} rentals near ${c.name}, ${c.stateAbbr}` }];
-        })
-        .slice(0, 24)
-    : [];
+  if (hubType) hubTypes.add(hubType);
+  const byType = new Map<string, { href: string; label: string }[]>();
+  for (const p of PSEO_PILOT.paths) {
+    const [, st, slug, type] = p.split("/");
+    const c = type && hubTypes.has(type) ? cityBySlugs(st, slug) : null;
+    if (!c || ridesNear(c.lat, c.lng).filter((r) => r.rideType === type).length < PSEO_INVENTORY.rideCityMinRides) continue;
+    byType.set(type, [...(byType.get(type) ?? []), { href: paths.rideCity(type, c.stateSlug, c.slug), label: `${rideTypeCopy(type, page.singular).label} rentals near ${c.name}, ${c.stateAbbr}` }]);
+  }
+  const cohortRideCities: { href: string; label: string }[] = [];
+  for (let i = 0; cohortRideCities.length < 24 && [...byType.values()].some((l) => l.length > i); i++) {
+    for (const links of byType.values()) if (links[i] && cohortRideCities.length < 24) cohortRideCities.push(links[i]);
+  }
   const cities = FOOTER_CITIES.slice(0, 8);
   const related = page.related.map((id) => categoryPageById(id)).filter((p): p is CategoryPage => !!p);
   // The visible FAQ and FAQPage JSON-LD are the same list, including the price entry.

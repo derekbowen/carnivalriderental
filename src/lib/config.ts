@@ -56,4 +56,4 @@ export const BRAND = {
 };
 
 /** Site-wide default description: the customer's intent (rent a ride) first, then what we do. */
-export const SITE_DESCRIPTION = "Browse carnival rides from independent operators across the U.S. Find Ferris wheels, thrill rides, family rides and more, then connect directly with matching carnival companies.";
+export const SITE_DESCRIPTION = "Browse carnival rides from independent operators across the U.S.: Ferris wheels, thrill rides, family rides and more. Connect directly with matching companies.";

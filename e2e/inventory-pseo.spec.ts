@@ -17,8 +17,8 @@ test("city page: real supply, breadcrumbs, cards, links, visible-content-only sc
   expect(res.status()).toBe(200);
   const html = await res.text();
   await page.goto("/ohio/columbus");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Columbus event.");
-  await expect(page).toHaveTitle("Carnival Ride Rentals Near Columbus, OH | Carnival Ride Rental");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carnival rides for your Columbus, OH event.");
+  await expect(page).toHaveTitle("Carnival Ride Rentals Near Columbus, OH");
   await expect(page.getByTestId("inventory-line")).toHaveText(/^Browse [\d,]+ ride listings from \d+ operators based within 200 miles of Columbus\./);
   await expect(page.getByText("Distance is measured from operator home bases. Event availability and delivery must be confirmed.").first()).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toContainText("Ohio");
@@ -49,8 +49,8 @@ test("city page: real supply, breadcrumbs, cards, links, visible-content-only sc
 
 test("ride type + city: high-inventory page renders matching rides only", async ({ page }) => {
   await page.goto("/ohio/columbus/ferris-wheel");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ferris wheel rentals for your Columbus event.");
-  await expect(page).toHaveTitle("Ferris Wheel Rentals Near Columbus, OH | Carnival Ride Rental");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Ferris wheel rentals for your Columbus, OH event.");
+  await expect(page).toHaveTitle("Ferris Wheel Rentals Near Columbus, OH");
   await expect(page.getByText("Give your guests a new view of the celebration. Explore Ferris wheel listings and connect with the operators that own them.")).toBeVisible();
   await expect(page.getByTestId("inventory-line")).toHaveText(/^Browse \d+ Ferris wheels? from operators based within 200 miles of Columbus\.$/);
   const titles = await page.locator('[data-testid="ride-result"] h2').allTextContents();
@@ -62,7 +62,7 @@ test("ride type + city: high-inventory page renders matching rides only", async 
 
 test("carousel intro and singular/plural counts", async ({ page }) => {
   await page.goto("/texas/austin/carousel");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carousel rentals for your Austin event.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Carousel rentals for your Austin, TX event.");
   await expect(page.getByText("Add a classic carnival favorite to your celebration. Explore carousel listings and connect with the operators that own them.")).toBeVisible();
   await expect(page.getByTestId("inventory-line")).toHaveText(/^Browse \d+ carousels? from operators based within 200 miles of Austin\.$/);
 });

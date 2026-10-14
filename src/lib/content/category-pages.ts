@@ -51,7 +51,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     name: "Ferris wheels",
     h1: "Ferris wheel rentals",
     metaTitle: "Ferris wheel rentals for events",
-    metaDescription: "Rent a Ferris wheel for a festival, civic celebration, wedding or corporate event. Browse Ferris wheels owned by independent operators and connect with them directly.",
+    metaDescription: "Rent a Ferris wheel for a festival, civic celebration, wedding or corporate event, from independent operators you contact directly.",
     intro:
       "A Ferris wheel gives a festival, civic celebration or large corporate event a landmark guests can see from across the grounds. Browse the wheels operators have listed, then use Event Access to reach the ones near your date and site.",
     heroAlt: "Illustration of a Ferris wheel lit up against an evening city skyline",
@@ -78,7 +78,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     name: "Carousels",
     h1: "Carousel and merry-go-round rentals",
     metaTitle: "Carousel and merry-go-round rentals",
-    metaDescription: "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event. Browse carousels owned by independent operators and connect with them directly.",
+    metaDescription: "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event, from independent operators you contact directly.",
     intro:
       "A carousel — many people call it a merry-go-round — is an all-ages ride that suits family days, holiday markets, weddings and community events. Browse the carousels operators have listed, then use Event Access to reach the ones near your event.",
     heroAlt: "Illustration of a classic carousel with a scalloped canopy and carved horses",
@@ -132,7 +132,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     name: "Thrill rides",
     h1: "Thrill ride rentals",
     metaTitle: "Thrill ride rentals for fairs and festivals",
-    metaDescription: "Rent spinning, swinging and drop-style thrill rides for fairs, festivals, after-prom and college events. Browse thrill rides owned by independent operators and connect with them directly.",
+    metaDescription: "Rent spinning, swinging and drop-style thrill rides for fairs, festivals, after-prom and college events, from independent operators you contact directly.",
     intro:
       "Spinning, swinging and drop-style rides draw teens and adults at fairs, festivals, after-prom nights and campus events. Browse the rides operators have listed, then use Event Access to reach the ones near your event.",
     heroAlt: "Illustration of a pendulum thrill ride swinging high against a dark sky",
@@ -159,7 +159,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     name: "Kiddie rides",
     h1: "Kiddie ride rentals",
     metaTitle: "Kiddie ride rentals for parties and school events",
-    metaDescription: "Rent kiddie rides — small trains, mini coasters, kiddie swings and more — for birthdays, school carnivals and family days. Browse kiddie rides owned by independent operators and connect with them directly.",
+    metaDescription: "Rent kiddie rides (small trains, mini coasters, kiddie swings and more) for birthdays, school carnivals and family days, from operators you contact directly.",
     intro:
       "Kiddie rides — small trains, mini coasters, kiddie swings and similar rides built for young children — suit birthdays, school carnivals, church festivals and family days. Browse the rides operators have listed, then use Event Access to reach the ones near your event.",
     heroAlt: "Illustration of a small kiddie train under bunting flags on a sunny day",

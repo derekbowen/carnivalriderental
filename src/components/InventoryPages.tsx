@@ -45,6 +45,9 @@ const PRICE_FAQ: Faq = {
   a: "By the operator, per event. Delivery distance, hours, crew, power, permits and insurance all vary, so operators quote after hearing your date, location and site details. Carnival Ride Rental doesn't set or collect rental prices.",
 };
 
+/** Meta description of whole sentences that fits the ~160 characters search results show. */
+const fitDescription = (sentences: string[]) => sentences.reduce((out, x) => (out && `${out} ${x}`.length > 160 ? out : out ? `${out} ${x}` : x), "");
+
 // ------------------------------------------------------------------------------ city
 
 export function cityCopy(c: PlaceCity) {
@@ -52,8 +55,8 @@ export function cityCopy(c: PlaceCity) {
   return {
     title: `Carnival Ride Rentals Near ${c.name}, ${c.stateAbbr}`,
     description: s.total > 0
-      ? `Carnival rides for your ${c.name} event. Browse ${fmt(s.total)} ride listings from operators based within ${R} miles and connect directly with the operators that own them.`
-      : `Carnival rides for your ${c.name} event. Tell us your date and city to see which operators can serve your event.`,
+      ? fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event: ${fmt(s.total)} ride listings from operators within ${R} miles.`, "Connect directly with the operators who own them."])
+      : fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event.`, "Tell us your date and city to see which operators can serve your event."]),
   };
 }
 
@@ -78,7 +81,7 @@ export async function InventoryCityPage({ c }: { c: PlaceCity }) {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq: s.total > 0 ? faq : undefined }), ...(near.length ? [rideItemList(path, `Ride listings near ${c.name}`, near.slice(0, 12).map((r) => r.title))] : [])]} />
       <Breadcrumbs items={crumbs} />
-      <h1 className="mt-6 text-4xl">Carnival rides for your {c.name} event.</h1>
+      <h1 className="mt-6 text-4xl">Carnival rides for your {c.name}, {c.stateAbbr} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
         Explore carnival rides serving the {c.name} area, compare nearby equipment, and connect directly with the independent operators who own it.
       </p>
@@ -140,7 +143,7 @@ export function rideCityCopy(c: PlaceCity, t: RideType) {
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id).length;
   return {
     title: `${titleCase(copy.label)} Rentals Near ${c.name}, ${c.stateAbbr}`,
-    description: `${copy.label} rentals for your ${c.name} event. Browse ${countNoun(n, copy)} from operators based within ${R} miles and connect directly with the operators that own them.`,
+    description: fitDescription([`${copy.label} rentals for your ${c.name}, ${c.stateAbbr} event: ${countNoun(n, copy)} from operators within ${R} miles.`, "Connect directly with the operators who own them."]),
   };
 }
 
@@ -167,7 +170,7 @@ export async function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideTyp
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd nodes={[...pageGraph({ path, name: title, description, type: "CollectionPage", crumbs, service: { name: `${copy.label} operators near ${c.name}`, serviceType: `${copy.label} operator discovery and contact access`, areaServed: { type: "City", name: `${c.name}, ${c.stateAbbr}` } }, faq }), rideItemList(path, `${copy.label} listings near ${c.name}`, matches.slice(0, 24).map((r) => r.title))]} />
       <Breadcrumbs items={crumbs} />
-      <h1 className="mt-6 text-4xl">{copy.label} rentals for your {c.name} event.</h1>
+      <h1 className="mt-6 text-4xl">{copy.label} rentals for your {c.name}, {c.stateAbbr} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">{intro}</p>
       <p className="mt-3 text-sm text-muted" data-testid="inventory-line">
         Browse {countNoun(matches.length, copy)} from operators based within {R} miles of {c.name}.
