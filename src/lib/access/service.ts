@@ -20,6 +20,8 @@ import type { AccessDb, Row, Sql } from "./db";
 import { nowIso } from "./db";
 import { BRAND } from "../config";
 import { magicLinkEmail, manualSearchEmail, passEmail, sendNow } from "./email";
+import { CONCIERGE_SOURCE_PATH, recordLifecycleEvent, sourceOfPath } from "../lifecycle/events";
+import { conciergeEnabled } from "../concierge/flags";
 import { computeFallbacks, matchForSpec, requirementNoun, sameOffer, specForOffer, type FallbackOffer } from "./fallback";
 import { geocode, matchOperators, type ContactStatusCache, type MatchedOperator } from "./matching";
 import { resolveCriteria, tierForRideType, type AccessTier } from "./pricing";
@@ -67,8 +69,10 @@ export interface EventRequest {
   tier: AccessTier;
   status: "matched" | "insufficient";
   createdAt: string;
+  sourcePath: string | null;
 }
 const rowToEvent = (r: Row): EventRequest => ({
+  sourcePath: r.source_path ? String(r.source_path) : null,
   id: String(r.id),
   email: String(r.email),
   eventDate: String(r.event_date),
@@ -371,9 +375,10 @@ export async function createCheckout(db: AccessDb, gateway: StripeGateway, event
     productName: product.name,
     productDescription: `${product.description} Unlock up to ${product.unlockLimit} operators within ${product.validityDays} days. ${event.city}, ${event.state}, ${event.eventDate}.`,
     successUrl: `${siteUrl}/api/access/return?p=${id}&cs={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${siteUrl}/connect/${event.id}?cancelled=1`,
+    cancelUrl: event.sourcePath === CONCIERGE_SOURCE_PATH && conciergeEnabled() ? `${siteUrl}/concierge?cancelled=1` : `${siteUrl}/connect/${event.id}?cancelled=1`,
   });
   await db.query(`UPDATE access_purchases SET stripe_checkout_session_id = ?, updated_at = ? WHERE id = ?`, [session.id, nowIso(), id]);
+  await recordLifecycleEvent(db, "checkout_started", sourceOfPath(event.sourcePath), { eventRequestId: event.id, purchaseId: id });
   return { purchase: (await getPurchase(db, id))!, url: session.url };
 }
 
@@ -427,6 +432,11 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     const rows = await tx.query(`SELECT * FROM access_passes WHERE id = ?`, [id]);
     return { pass: rowToPass(rows[0]), created: true, purchase: p };
   });
+  if (result.created) {
+    // After the commit, best effort: the lifecycle engine itself stops sales email on the paid purchase.
+    const origin = await getEventRequest(db, result.pass.eventRequestId);
+    await recordLifecycleEvent(db, "event_access_purchased", sourceOfPath(origin?.sourcePath), { eventRequestId: result.pass.eventRequestId, purchaseId: result.purchase.id, passId: result.pass.id });
+  }
   if (result.created && opts.sendEmail !== false) {
     const event = await getEventRequest(db, result.pass.eventRequestId);
     const product = (await db.query(`SELECT * FROM access_products WHERE id = ?`, [result.purchase.productId])).map(rowToProduct)[0];
@@ -632,12 +642,20 @@ export async function unlockOperator(db: AccessDb, source: OperatorSource, passI
       return { unlock: { operatorId, firstRevealedAt: t, contact: JSON.parse(snapshot), reportedDeadAt: null }, consumed: true };
     });
   };
+  let result: { unlock: Unlock; consumed: boolean };
   try {
-    return await attempt();
+    result = await attempt();
   } catch (e) {
-    if (e instanceof RaceRetry || /unique|constraint/i.test(String((e as Error).message))) return attempt();
-    throw e;
+    if (e instanceof RaceRetry || /unique|constraint/i.test(String((e as Error).message))) result = await attempt();
+    else throw e;
   }
+  if (result.consumed) {
+    // After the commit, best effort: never part of the unlock transaction.
+    const pass = await getPass(db, passId);
+    const event = pass ? await getEventRequest(db, pass.eventRequestId) : null;
+    await recordLifecycleEvent(db, "operator_unlocked", sourceOfPath(event?.sourcePath), { eventRequestId: pass?.eventRequestId ?? null, passId });
+  }
+  return result;
 }
 class RaceRetry extends Error {}
 

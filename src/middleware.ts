@@ -3,7 +3,7 @@ import { checkInternalAuth, checkSiteAccess } from "./lib/auth";
 
 const isInternal = (p: string) => p === "/internal" || p.startsWith("/internal/") || p.startsWith("/api/internal/");
 /** Event Access funnel and passes: never cached by anyone, never indexed. */
-const isPaid = (p: string) => p === "/connect" || p.startsWith("/connect/") || p === "/pass" || p.startsWith("/pass/") || p.startsWith("/api/access/") || p.startsWith("/api/pass/");
+const isPaid = (p: string) => p === "/concierge" || p.startsWith("/concierge/") || p.startsWith("/api/concierge") || p === "/connect" || p.startsWith("/connect/") || p === "/pass" || p.startsWith("/pass/") || p.startsWith("/api/access/") || p.startsWith("/api/pass/");
 
 function indexingAllowed(): boolean {
   return process.env.APP_ENV === "production" && process.env.PUBLIC_INDEXING === "true";

@@ -33,7 +33,12 @@ export function accessStorageMode(env: Record<string, string | undefined> = proc
 }
 
 const SCHEMA = fs.readFileSync(path.join(process.cwd(), "src/lib/access/schema.sql"), "utf8");
-const statements = () => SCHEMA.split(/;\s*\n/).map((s) => s.replace(/^\s*--.*$/gm, "").trim()).filter(Boolean);
+/** Concierge + lifecycle-event tables: applied automatically only on SQLite; Postgres needs applyConciergeSchema(). */
+const CONCIERGE_SCHEMA = fs.readFileSync(path.join(process.cwd(), "src/lib/access/schema-concierge.sql"), "utf8");
+const split = (sql: string) => sql.split(/;\s*\n/).map((s) => s.replace(/^\s*--.*$/gm, "").trim()).filter(Boolean);
+const statements = () => split(SCHEMA);
+/** Tables created by schema-concierge.sql (RLS on, no PUBLIC grants on Postgres). */
+export const CONCIERGE_TABLES = ["concierge_sessions", "concierge_requests", "access_lifecycle_events"] as const;
 
 // ------------------------------------------------------------------------------ sqlite
 function sqliteDb(file: string): AccessDb {
@@ -41,7 +46,7 @@ function sqliteDb(file: string): AccessDb {
   if (file !== ":memory:") fs.mkdirSync(path.dirname(file), { recursive: true });
   const db: DatabaseSync = new DatabaseSync(file);
   db.exec("PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;");
-  for (const s of statements()) db.exec(s);
+  for (const s of [...statements(), ...split(CONCIERGE_SCHEMA)]) db.exec(s);
   const run = async <T extends Row>(text: string, params: unknown[] = []): Promise<T[]> => {
     const stmt = db.prepare(text);
     const norm = params.map((p) => (typeof p === "boolean" ? (p ? 1 : 0) : p === undefined ? null : p)) as Parameters<typeof stmt.all>;
@@ -130,6 +135,21 @@ export async function accessDb(): Promise<AccessDb> {
     g.__accessDb = mode.kind === "postgres" ? postgresDb(mode.url) : Promise.resolve(sqliteDb(mode.file));
   }
   return g.__accessDb;
+}
+
+/**
+ * Explicit, opt-in migration for the concierge and lifecycle-event tables (npm run access:migrate --
+ * --concierge). Never called at runtime, so deploying code doesn't migrate the live ledger. On Postgres
+ * the tables get row-level security with no policies and no PUBLIC grants, like the rest of the ledger.
+ */
+export async function applyConciergeSchema(db: AccessDb): Promise<void> {
+  for (const s of split(CONCIERGE_SCHEMA)) await db.query(s);
+  if (db.engine === "postgres") {
+    for (const table of CONCIERGE_TABLES) {
+      await db.query(`ALTER TABLE ${table} ENABLE ROW LEVEL SECURITY`);
+      await db.query(`REVOKE ALL ON ${table} FROM PUBLIC`);
+    }
+  }
 }
 
 /** Tests: an isolated in-memory ledger. */

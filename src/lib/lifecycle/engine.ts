@@ -12,7 +12,9 @@
  *   purchased_no_unlock_2h                  → active pass with 0 unlocks, 2–72 h after purchase
  * Stops: any paid Event Access for the address stops every sales email; at most one sales email per
  * address per 20 h; never for a past event date; never to our own or reserved test domains;
- * unsubscribed addresses get nothing. Commercial templates need an approved campaign and a postal
+ * unsubscribed addresses get nothing. A search that started in the chat concierge gets sales email
+ * only if the customer ticked "remind me" when giving their email (events.ts, chatFollowupConsent);
+ * typing an email into the chat is never consent. Commercial templates need an approved campaign and a postal
  * address in live mode (CAN-SPAM); without them they are recorded as 'blocked' and retried while due.
  */
 import crypto from "node:crypto";
@@ -20,6 +22,7 @@ import { MATCH_RADIUS_MILES } from "../access/config";
 import type { AccessDb, Row } from "../access/db";
 import { nowIso } from "../access/db";
 import { eventTypeNoun } from "../access/event-types";
+import { chatFollowupConsent, CONCIERGE_SOURCE_PATH } from "./events";
 import { RELATED_RIDE_TYPES, requirementNoun, requirementPlural } from "../access/fallback";
 import { fallbackView, getEventRequest, issueMagicLink, priceLabel, purchaseValidHere, quoteForEvent, type EventRequest } from "../access/service";
 import type { EmailConfig } from "../email/config";
@@ -60,7 +63,7 @@ const iso = (t: number) => new Date(t).toISOString();
 export async function duePlans(db: AccessDb, now = new Date()): Promise<Plan[]> {
   const t = now.getTime();
   const today = iso(t).slice(0, 10);
-  const requests = await db.query(`SELECT id, email, status, event_date, created_at FROM access_event_requests WHERE created_at >= ? ORDER BY created_at DESC`, [iso(t - 50 * HOUR)]);
+  const requests = await db.query(`SELECT id, email, status, event_date, source_path, created_at FROM access_event_requests WHERE created_at >= ? ORDER BY created_at DESC`, [iso(t - 50 * HOUR)]);
   const purchases = await db.query(`SELECT id, email, event_request_id, status, created_at FROM access_purchases WHERE created_at >= ? ORDER BY created_at DESC`, [iso(t - 50 * HOUR)]);
   const paid = new Set((await db.query(`SELECT DISTINCT email FROM access_purchases WHERE status IN ('paid', 'partially_refunded') AND created_at >= ?`, [iso(t - 60 * 24 * HOUR)])).map((r) => normalizeEmail(String(r.email))));
   const recentSales = new Set(
@@ -84,6 +87,7 @@ export async function duePlans(db: AccessDb, now = new Date()): Promise<Plan[]> 
     const latest = reqs[0]; // newest first: an older search the customer replaced is never chased
     const age = t - Date.parse(String(latest.created_at));
     if (latest.status !== "matched" || String(latest.event_date) < today) continue;
+    if (latest.source_path === CONCIERGE_SOURCE_PATH && !(await chatFollowupConsent(db, await withOrigins(db, String(latest.id))))) continue;
     const options: Candidate[] = [];
     const base = { email, eventRequestId: String(latest.id), passId: null };
     const checkout = purchases.find((p) => normalizeEmail(String(p.email)) === email && p.event_request_id === latest.id && (p.status === "pending" || p.status === "expired"));
@@ -107,6 +111,12 @@ export async function duePlans(db: AccessDb, now = new Date()): Promise<Plan[]> 
     plans.push({ email, options: [{ template: "purchased_no_unlock_2h", email, eventRequestId: String(p.event_request_id), purchaseId: String(p.purchase_id), passId: String(p.id), dedupeKey: `purchased_no_unlock_2h:${p.id}` }] });
   }
   return plans;
+}
+
+/** A request plus the request(s) it is a no-match alternative to (access_funnel_events). */
+async function withOrigins(db: AccessDb, id: string): Promise<string[]> {
+  const rows = await db.query(`SELECT event_request_id FROM access_funnel_events WHERE result_event_request_id = ?`, [id]);
+  return [id, ...rows.map((r) => String(r.event_request_id))];
 }
 
 // ------------------------------------------------------------------------------ variables
