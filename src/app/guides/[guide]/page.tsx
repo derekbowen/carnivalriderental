@@ -34,13 +34,34 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
   const crumbs = [{ name: "Home", path: paths.home() }, { name: g.title, path }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={pageGraph({ path, name: g.title, description: g.metaDescription, type: "WebPage", crumbs, faq: g.faq })} />
+      <JsonLd nodes={pageGraph({ path, name: g.title, description: g.metaDescription, type: "WebPage", crumbs, faq: g.faq, video: g.video && { ...g.video, name: g.video.title } })} />
       <Breadcrumbs items={crumbs} />
       <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_320px]">
         <article>
           <p className="eyebrow">Buyer guide</p>
           <h1 className="mt-2 text-4xl sm:text-5xl">{g.title}</h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-ink-soft">{g.intro}</p>
+
+          {g.video && (
+            <section aria-labelledby="video-heading" className="mt-8 grid items-start gap-6 rounded-2xl border border-line bg-surface p-5 sm:grid-cols-[240px_1fr]">
+              {/* Self-hosted, loads nothing until played; captions match the voiceover. */}
+              <video controls playsInline preload="none" poster={g.video.poster} width={720} height={1280} aria-describedby="video-transcript" className="mx-auto aspect-[9/16] h-auto w-full max-w-[240px] rounded-xl bg-ink">
+                <source src={g.video.src} type="video/mp4" />
+                <track kind="captions" src={g.video.captions} srcLang="en" label="English" />
+              </video>
+              <div>
+                <p className="eyebrow">Watch</p>
+                <h2 id="video-heading" className="mt-1 text-2xl">{g.video.title}</h2>
+                <p className="mt-2 leading-relaxed text-ink-soft">{g.video.description}</p>
+                <details className="mt-4 text-sm">
+                  <summary className="cursor-pointer font-semibold">Read the transcript</summary>
+                  <div id="video-transcript" className="mt-3 space-y-2 leading-relaxed text-ink-soft">
+                    {g.video.transcript.map((line) => <p key={line}>{line}</p>)}
+                  </div>
+                </details>
+              </div>
+            </section>
+          )}
 
           <nav aria-label="In this guide" className="mt-8 rounded-2xl border border-line bg-surface p-5">
             <p className="text-sm font-semibold">In this guide</p>
