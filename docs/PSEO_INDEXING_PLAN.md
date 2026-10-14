@@ -1,6 +1,6 @@
-# Inventory pSEO: controlled indexing plan (prepared 2026-10-05; first cohort released 2026-10-14)
+# Inventory pSEO: controlled indexing plan (prepared 2026-10-05; first cohort and second wave released 2026-10-14)
 
-Status 2026-10-14: **the first indexing cohort is released** (section 7): an exact list of URLs, on the Live inventory, each still behind its supply, near-duplicate and environment gates. Everything else stays `noindex`. Sections 1–6 are the history and the gate design; section 7 is the current state. Payment readiness is a separate decision and does not gate or unlock SEO.
+Status 2026-10-14: **1,000 URLs are indexable** (section 8: wave 1's 13 plus wave 2's 987), an exact list on the Live inventory, each still behind its supply, near-duplicate and environment gates. Everything else stays `noindex`. Sections 1–6 are the history and the gate design; section 7 is the first cohort; section 8 is the current state. Payment readiness is a separate decision and does not gate or unlock SEO.
 
 ## 1. Current state (verified on carnivalriderental.us)
 
@@ -210,3 +210,70 @@ automatically.
 
 Rollback: `PUBLIC_INDEXING=false` and redeploy (blanket `Disallow: /`, sitewide `noindex`, empty
 sitemap). Or remove a path from `pilot.ts` and redeploy: it leaves the sitemap and turns `noindex`.
+
+## 8. Second indexing wave: 1,000 URLs (released 2026-10-14)
+
+**Authorization.** Founder instruction, 2026-10-14: "lets index 1000 pages". The founder chose to
+widen now, without the 4–6 weeks of Search Console evidence from wave 1 that section 7 asked for.
+The authorization and the content review are recorded separately in
+`src/lib/inventory/indexing-wave-2.json` and `pilot.ts`.
+
+**Selection (`npm run migrate:live -- wave --size 1000`, read-only against Live).** Only pages
+that already pass every gate unchanged. No threshold, radius or duplicate rule was touched:
+
+- supply: city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides; category ≥ 3;
+- head of its near-duplicate group (`index-eligible.json`);
+- at least 3 distinct Live operators with a usable contact channel (the Event Access minimum).
+
+Of 2,321 gated city and ride + city candidates, the strongest were taken first, ranked by distinct
+contactable operators, then rides. The lowest selected page still has **6** contactable operators.
+
+| Indexed set | URLs |
+|---|---|
+| Wave 1: `/`, `/rides`, `/categories/ferris-wheels` and 10 geo pages | 13 |
+| Wave 2: category hubs (carousels, swing rides, thrill rides, kiddie rides) | 4 |
+| Wave 2: city pages | 165 |
+| Wave 2: ride + city pages (27 ride types) | 818 |
+| **Total in the sitemap** | **1,000** |
+
+The 983 wave-2 geo pages cover 27 states, weighted toward where operators are: Indiana, New York,
+Michigan, Pennsylvania, Ohio, Illinois, Wisconsin and California lead.
+`reports/indexing-cohort.json` lists every indexed URL with its rides, distinct operators, contactable
+operators and duplicate-head status: 1,000 of 1,000 eligible under production gates.
+
+**Gates stay live.** The wave stands in only for template copy approval on these exact paths. Every
+build evaluates environment, supply and duplicate-head again. A page that falls below its threshold,
+or stops being its group's head after a new inventory snapshot, leaves the sitemap and turns
+`noindex` by itself.
+
+**Content review.** Wave 2 was not reviewed page by page by the founder. Every URL is checked on the
+production domain after deploy by `scripts/verify-release.ts`:
+
+- 200, `index`, self-canonical;
+- no private contact data, no Offer or price in JSON-LD;
+- the excluded families stay `noindex`: near-duplicate non-heads, gated pages not yet authorized,
+  `/s/*`, state, directory, `/connect`, `/pass`.
+
+**Internal links.** Each category hub links to at most 24 of its indexed ride + city pages: wave 1
+first, then the strongest of wave 2. The sitemap lists every page.
+
+**Still noindex:**
+- 1,338 gated candidates not selected: 155 city and 1,183 ride + city (`reports/indexing-expansion.json`);
+- every near-duplicate non-head;
+- state, event, event + state and directory pages;
+- `/s`, `/s/{id}` and any filter or query variant;
+- guides, operators and legal pages;
+- `/connect` and `/pass` (private).
+
+**What to watch in Search Console.**
+- Coverage: "Crawled – currently not indexed" and "Duplicate without user-selected canonical" on
+  ride + city pages.
+- Crawl stats.
+- Impressions by family.
+
+If many ride + city pages land in "not indexed", shrink the wave: rerun `wave` with a smaller `--size`
+and redeploy.
+
+**Rollback.**
+- Everything: `PUBLIC_INDEXING=false` and redeploy.
+- Wave 2 only: empty `paths` and `categoryPaths` in `indexing-wave-2.json` and redeploy. Wave 1 stays.

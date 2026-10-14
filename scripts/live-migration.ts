@@ -8,6 +8,8 @@
  *   npm run migrate:live -- reconcile       # workbook rows vs current Test public state → imports/migration/reconcile.json
  *   npm run migrate:live -- verify          # Live read-back: counts, relationships, privacy of public fields
  *   npm run migrate:live -- redirects       # Test listing id → Live listing id (public ids only) → src/lib/inventory/test-to-live.json
+ *   npm run migrate:live -- wave [--size N] # indexing wave 2: N indexable URLs from fully gated pages → src/lib/inventory/indexing-wave-2.json
+ *   npm run migrate:live -- cohort          # indexed-set manifest + expansion map → reports/indexing-cohort.json, reports/indexing-expansion.json
  *
  * Every phase asserts the marketplace it reads by name before using the data. Nothing here writes to
  * Test. Private outputs live in imports/migration/ (gitignored): they map public ids to company slugs.
@@ -347,6 +349,54 @@ async function redirects() {
   console.log(`test-to-live.json: ${Object.keys(map).length} Test listing ids → Live (of ${Object.keys(pairs).length} pairs; ${live.size} rides in the Live snapshot)`);
 }
 
+/** Live author of every published listing and contactability of every account (booleans only). */
+async function liveSupply(integ: string) {
+  const { contactFromUser, isContactable, channelsOf } = await import("../src/lib/access/contacts");
+  const authorOf = new Map<string, string>();
+  await pages<{ data: { id: string; relationships: { author: { data: { id: string } } } }[] }>(`${INTEG}/listings/query`, { states: "published", "fields.listing": "state", include: "author", "fields.user": "" }, integ, 150, (b) => {
+    for (const l of b.data) authorOf.set(l.id, l.relationships.author.data.id);
+  });
+  const contactable = new Map<string, boolean>();
+  await pages<{ data: (Parameters<typeof contactFromUser>[0] & { id: string })[] }>(`${INTEG}/users/query`, {}, integ, 150, (b) => {
+    for (const u of b.data) contactable.set(u.id, isContactable(channelsOf(contactFromUser(u))));
+  });
+  return (rides: { id: string }[]) => {
+    const authors = new Set(rides.map((r) => authorOf.get(r.id)).filter((x): x is string => !!x));
+    return { operators: authors.size, contactableOperators: [...authors].filter((a) => contactable.get(a)).length, ridesWithoutLiveAuthor: rides.filter((r) => !authorOf.has(r.id)).length };
+  };
+}
+type Distinct = Awaited<ReturnType<typeof liveSupply>>;
+
+/**
+ * Every city and ride + city page outside `exclude` that passes every gate except template copy
+ * approval (supply threshold, head of its near-duplicate group) and has at least the Event Access
+ * minimum of distinct contactable Live operators; ranked by contactable operators, then rides.
+ * Also tallies why the others are out. Same thresholds and radius as the gates; nothing is relaxed.
+ */
+async function gatedCandidates(exclude: Set<string>, distinct: Distinct) {
+  const inv = await import("../src/lib/inventory");
+  const { DEFAULT_PRODUCT } = await import("../src/lib/access/config");
+  const tallies: Record<string, Record<string, number>> = { city: {}, "ride-city": {} };
+  const candidates: { path: string; family: string; rides: number; operators: number; contactableOperators: number }[] = [];
+  for (const r of inv.inventoryRoutes()) {
+    if (exclude.has(r.path)) continue;
+    const t = tallies[r.family];
+    const thin = r.gate.reasons.find((x) => x.startsWith("only "));
+    if (thin) { t.thin = (t.thin ?? 0) + 1; continue; }
+    if (inv.duplicateGateReason(r.path)) { t.nearDuplicateNotHead = (t.nearDuplicateNotHead ?? 0) + 1; continue; }
+    const [, st, slug, type] = r.path.split("/");
+    const c = inv.cityBySlugs(st, slug)!;
+    const near = inv.ridesNear(c.lat, c.lng);
+    const pool = type ? near.filter((x) => x.rideType === type) : near;
+    const d = distinct(pool);
+    if (d.contactableOperators < DEFAULT_PRODUCT.minimumMatches) { t.fewerThan3ContactableOperators = (t.fewerThan3ContactableOperators ?? 0) + 1; continue; }
+    t.candidate = (t.candidate ?? 0) + 1;
+    candidates.push({ path: r.path, family: r.family, rides: pool.length, operators: d.operators, contactableOperators: d.contactableOperators });
+  }
+  candidates.sort((a, b) => b.contactableOperators - a.contactableOperators || b.rides - a.rides || a.path.localeCompare(b.path));
+  return { candidates, tallies };
+}
+
 /**
  * First-wave indexing manifest (reports/indexing-cohort.json, committed, counts only): for every
  * cohort path, the supply gate inputs from the Live snapshot, distinct operators, its near-duplicate
@@ -360,24 +410,10 @@ async function cohort() {
   const { integ } = await liveTokens();
   const inv = await import("../src/lib/inventory");
   const { PSEO_PILOT } = await import("../src/lib/inventory/pilot");
-  const { contactFromUser, isContactable, channelsOf } = await import("../src/lib/access/contacts");
   const { categoryHubGate } = await import("../src/lib/seo/pseo");
   const { categoryPageById } = await import("../src/lib/content/category-pages");
   const { DEFAULT_PRODUCT } = await import("../src/lib/access/config");
-
-  // Live author of every listing, and contactability of every account (booleans only).
-  const authorOf = new Map<string, string>();
-  await pages<{ data: { id: string; relationships: { author: { data: { id: string } } } }[] }>(`${INTEG}/listings/query`, { states: "published", "fields.listing": "state" , include: "author", "fields.user": "" }, integ, 150, (b) => {
-    for (const l of b.data) authorOf.set(l.id, l.relationships.author.data.id);
-  });
-  const contactable = new Map<string, boolean>();
-  await pages<{ data: (Parameters<typeof contactFromUser>[0] & { id: string })[] }>(`${INTEG}/users/query`, {}, integ, 150, (b) => {
-    for (const u of b.data) contactable.set(u.id, isContactable(channelsOf(contactFromUser(u))));
-  });
-  const distinct = (rides: { id: string }[]) => {
-    const authors = new Set(rides.map((r) => authorOf.get(r.id)).filter((x): x is string => !!x));
-    return { operators: authors.size, contactableOperators: [...authors].filter((a) => contactable.get(a)).length, ridesWithoutLiveAuthor: rides.filter((r) => !authorOf.has(r.id)).length };
-  };
+  const distinct = await liveSupply(integ);
 
   const rows: Record<string, unknown>[] = [];
   for (const p of PSEO_PILOT.paths) {
@@ -414,33 +450,76 @@ async function cohort() {
   fs.mkdirSync("reports", { recursive: true });
   fs.writeFileSync("reports/indexing-cohort.json", `${JSON.stringify(out, null, 2)}\n`);
 
-  // Expansion map (NOT enabled): every supply-sufficient page outside the cohort, with why it is not a
-  // candidate, and the ranked candidates for a second wave. Same thresholds and radius as the gates.
-  const cohortPaths = new Set([...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths]);
-  const tallies: Record<string, Record<string, number>> = { city: {}, "ride-city": {} };
-  const candidates: { path: string; family: string; rides: number; operators: number; contactableOperators: number }[] = [];
-  for (const r of inv.inventoryRoutes()) {
-    if (cohortPaths.has(r.path)) continue;
-    const t = tallies[r.family];
-    const thin = r.gate.reasons.find((x) => x.startsWith("only "));
-    if (thin) { t.thin = (t.thin ?? 0) + 1; continue; }
-    if (inv.duplicateGateReason(r.path)) { t.nearDuplicateNotHead = (t.nearDuplicateNotHead ?? 0) + 1; continue; }
-    const [, st, slug, type] = r.path.split("/");
-    const c = inv.cityBySlugs(st, slug)!;
-    const near = inv.ridesNear(c.lat, c.lng);
-    const pool = type ? near.filter((x) => x.rideType === type) : near;
-    const d = distinct(pool);
-    if (d.contactableOperators < DEFAULT_PRODUCT.minimumMatches) { t.fewerThan3ContactableOperators = (t.fewerThan3ContactableOperators ?? 0) + 1; continue; }
-    t.candidate = (t.candidate ?? 0) + 1;
-    candidates.push({ path: r.path, family: r.family, rides: pool.length, operators: d.operators, contactableOperators: d.contactableOperators });
-  }
-  candidates.sort((a, b) => b.contactableOperators - a.contactableOperators || b.rides - a.rides || a.path.localeCompare(b.path));
+  // Expansion map (NOT enabled): every gated page outside the indexed set, with why the others are out.
+  const { candidates, tallies } = await gatedCandidates(new Set([...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths]), distinct);
   fs.writeFileSync(
     "reports/indexing-expansion.json",
     `${JSON.stringify({ generatedAt: out.generatedAt, inventoryGeneratedAt: out.inventoryGeneratedAt, status: "NOT ENABLED: candidates for a later wave, each needs its own go", criteria: ["meets the supply gate (city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides)", "head of its near-duplicate group (index-eligible.json)", `≥ ${DEFAULT_PRODUCT.minimumMatches} distinct operators with a usable contact channel in Live (Event Access minimum)`, "then: rendered-page review, and Search Console evidence from the first wave (impressions, 'Duplicate without user-selected canonical', crawl stats) before widening"], excludedByReason: tallies, nextCityCandidates: candidates.filter((x) => x.family === "city").slice(0, 25), nextRideCityCandidates: candidates.filter((x) => x.family === "ride-city").slice(0, 25) }, null, 2)}\n`,
   );
   console.log(`Expansion map: ${JSON.stringify(tallies)} → reports/indexing-expansion.json`);
-  for (const r of rows) console.log(`${r.eligible ? "✓" : "✗"} ${String(r.path).padEnd(34)} rides ${r.rides} · operators ${r.operators} · contactable ${r.contactableOperators}${(r.reasons as string[]).length ? `  — ${(r.reasons as string[]).join("; ")}` : ""}`);
+  const failing = rows.filter((r) => !r.eligible);
+  console.log(`Indexed set: ${rows.length - failing.length}/${rows.length} eligible (${rows.filter((r) => r.family === "city").length} city, ${rows.filter((r) => r.family === "ride-city").length} ride + city, ${rows.filter((r) => r.family === "category").length} category, ${rows.filter((r) => r.family === "core").length} core)`);
+  for (const r of failing) console.log(`✗ ${String(r.path).padEnd(34)} rides ${r.rides} · operators ${r.operators} · contactable ${r.contactableOperators}  — ${(r.reasons as string[]).join("; ")}`);
+}
+
+/**
+ * Second indexing wave (founder instruction 2026-10-14: "lets index 1000 pages"). Selects only pages
+ * that already pass every gate unchanged: category hubs with enough supply and ≥ the Event Access
+ * minimum of contactable operators, then city and ride + city pages from gatedCandidates (supply
+ * threshold, near-duplicate group head, contactable operators), strongest first, until the indexed
+ * set (wave 1 + wave 2) reaches --size URLs (default 1000). Writes src/lib/inventory/indexing-wave-2.json
+ * (public paths only). Thresholds are untouched; the wave only stands in for template copy approval on
+ * these exact paths, and every gate is evaluated again on every build.
+ */
+async function wave() {
+  const i = process.argv.indexOf("--size");
+  const size = i > 0 ? Number(process.argv[i + 1]) : 1000;
+  if (!Number.isInteger(size) || size < 13) throw new Error("--size must be an integer ≥ 13");
+  process.env.APP_ENV = "production";
+  process.env.PUBLIC_INDEXING = "true";
+  const { integ } = await liveTokens();
+  const inv = await import("../src/lib/inventory");
+  const { FIRST_COHORT_PATHS, FIRST_COHORT_CORE_PATHS } = await import("../src/lib/inventory/pilot");
+  const { CATEGORY_PAGES } = await import("../src/lib/content/category-pages");
+  const { PSEO_THRESHOLDS } = await import("../src/lib/seo/pseo");
+  const { paths } = await import("../src/lib/seo/routes");
+  const { DEFAULT_PRODUCT } = await import("../src/lib/access/config");
+  const distinct = await liveSupply(integ);
+
+  const categoryPaths: string[] = [];
+  for (const page of CATEGORY_PAGES) {
+    const p = paths.category(page.id);
+    if (FIRST_COHORT_CORE_PATHS.includes(p)) continue;
+    const types = new Set(inv.rideTypesInCategory(page.id).map((t) => t.id));
+    const pool = inv.RIDES.filter((r) => r.rideType && types.has(r.rideType));
+    const d = distinct(pool);
+    const ok = inv.categoryInventoryCount(page.id) >= PSEO_THRESHOLDS.categoryMinOfferings && d.contactableOperators >= DEFAULT_PRODUCT.minimumMatches;
+    console.log(`${ok ? "✓" : "✗"} ${p.padEnd(34)} rides ${pool.length} · contactable operators ${d.contactableOperators}`);
+    if (ok) categoryPaths.push(p);
+  }
+  const fixed = FIRST_COHORT_CORE_PATHS.length + FIRST_COHORT_PATHS.length + categoryPaths.length;
+  const { candidates } = await gatedCandidates(new Set([...FIRST_COHORT_PATHS, ...FIRST_COHORT_CORE_PATHS]), distinct);
+  const picked = candidates.slice(0, Math.max(0, size - fixed));
+  const minOps = picked.length ? picked[picked.length - 1].contactableOperators : null;
+  const out = {
+    wave: 2,
+    generatedAt: new Date().toISOString(),
+    inventoryGeneratedAt: inv.INVENTORY_GENERATED_AT,
+    authorization: 'Founder instruction, 2026-10-14: "lets index 1000 pages" (widen indexing from the 13-URL first cohort to about 1,000 URLs).',
+    contentReview: "Automated rendered-page checks of every URL on the production domain after deploy (scripts/verify-release.ts: 200, index, self-canonical, no private contact data, no Offer or price). NOT reviewed page by page by the founder.",
+    selection: [
+      "only pages that pass every gate unchanged: supply threshold (city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides; category ≥ 3), head of its near-duplicate group, ≥ 3 distinct Live operators with a usable contact channel",
+      "ranked by distinct contactable operators, then rides, then path; the top ones fill the indexed set to the target",
+      `target ${size} indexable URLs including wave 1 (13); wave 2 adds ${categoryPaths.length} category hubs and ${picked.length} city / ride + city pages (≥ ${minOps} contactable operators each)`,
+    ],
+    targetIndexableUrls: size,
+    candidatesAvailable: candidates.length,
+    categoryPaths,
+    paths: picked.map((c) => c.path),
+  };
+  fs.writeFileSync("src/lib/inventory/indexing-wave-2.json", `${JSON.stringify(out, null, 2)}\n`);
+  const fam = (f: string) => picked.filter((c) => c.family === f).length;
+  console.log(`Wave 2: ${categoryPaths.length} category hubs + ${fam("city")} city + ${fam("ride-city")} ride + city (of ${candidates.length} gated candidates); indexed set ${fixed + picked.length}. → src/lib/inventory/indexing-wave-2.json`);
 }
 
 /**
@@ -549,7 +628,7 @@ async function match() {
   for (const o of out) console.log(JSON.stringify(o));
 }
 
-const phases: Record<string, () => Promise<void>> = { "snapshot-test": snapshotTest, reconcile, verify, redirects, cohort, report, match };
+const phases: Record<string, () => Promise<void>> = { "snapshot-test": snapshotTest, reconcile, verify, redirects, cohort, wave, report, match };
 
 (async () => {
   const run = phases[phase];

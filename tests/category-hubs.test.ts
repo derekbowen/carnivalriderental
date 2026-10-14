@@ -109,8 +109,8 @@ describe("category hub gate", () => {
     expect(categoryHubGate(bare, snap([])).indexable).toBe(false);
     expect(categoryHubGate({ ...bare, reviewStatus: "approved" }, snap([])).indexable).toBe(false);
     expect(categoryHubGate({ ...bare, theme: "thrill" }, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category" })))).reasons).toContain("category copy not approved");
-    // Draft hubs outside the cohort stay unapproved however much inventory they show.
-    expect(categoryHubGate(categoryPageById("carousels")!, snap([])).reasons).toContain("category copy not approved");
+    // Draft hubs outside the indexed set stay unapproved however much inventory they show.
+    expect(categoryHubGate({ ...categoryPageById("carousels")!, id: "not-in-the-indexed-set" }, snap([])).reasons).toContain("category copy not approved");
   });
 
   it("approved copy + enough real supply in the category → indexable; test samples and other categories don't count", () => {
@@ -125,6 +125,15 @@ describe("category hub gate", () => {
     production();
     expect(ferris.reviewStatus).toBe("draft");
     expect(categoryHubGate(ferris, snap([]))).toEqual({ indexable: true, reasons: [] });
+  });
+
+  it("the other four hubs are approved only as exact wave-2 paths, each with its own inventory supply", () => {
+    production();
+    for (const id of ["carousels", "swing-rides", "thrill-rides", "kiddie-rides"]) {
+      const page = categoryPageById(id)!;
+      expect(page.reviewStatus, id).toBe("draft");
+      expect(categoryHubGate(page, snap([])), id).toEqual({ indexable: true, reasons: [] });
+    }
   });
 
   it("never indexable outside production", () => {

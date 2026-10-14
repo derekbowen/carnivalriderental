@@ -117,7 +117,13 @@ contact lookup for the first match returned real channels (reported as booleans 
 Private working files (reverse-identity mappings, ledgers, the Test snapshot, logs) are in
 `imports/migration/` and `imports/*/carnivalrental/`, all gitignored. Sharetribe itself is the
 durable record: every migrated account and listing carries `privateData.importExternalId` and
-`companyId`, so the mappings regenerate from Live.
+`companyId`, so the mappings regenerate from Live. `import:companies --apply` does that itself before
+any create (`recoverMapping`): from a fresh checkout it rebuilds the account mapping from Live, so an
+operator who claimed their account and changed its email is found by import id, not missed by the
+claim-address lookup and given a second account. Two accounts with one import id, or a mapping that
+disagrees with Live, stop the run. Checked read-only on 2026-10-14: from an empty mapping, 184 of 184
+Live accounts recovered, 0 conflicts, every one equal to the local mapping. Listings dedupe on the
+private import id under the author, so the listing mapping needs no recovery.
 
 ## Snapshots and Test ids
 
@@ -136,4 +142,7 @@ nothing was remapped or deleted. Test-mode passes are never entitlements on a li
 
 Every command above is idempotent: reruns report `exists` / `already_has_images`, and
 `npm run migrate:live -- verify` fails on any duplicate, relationship drift or public leak.
+A future workbook row whose title or public data (rider rules, location) names the company is held for
+privacy review at planning, and `buildAnonymousListingPayload` refuses it as well: only the description
+is rewritten (2026-10-14: 0 of 3,714 rows affected; still 7 held).
 `imports/migration/run-photos.sh` resumes from the photo step.

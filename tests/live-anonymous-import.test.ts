@@ -4,7 +4,17 @@
  * identifying may be written there, not even briefly before an anonymisation pass.
  */
 import { describe, expect, it } from "vitest";
-import { IMPORT_BATCH, PUBLIC_USER_METADATA_KEYS, buildAnonymousPayload, planImport } from "@/lib/imports/company-accounts";
+import {
+  IMPORT_BATCH,
+  PUBLIC_USER_METADATA_KEYS,
+  buildAnonymousPayload,
+  importRow,
+  planImport,
+  recoverMapping,
+  type AccountApi,
+  type Mapping,
+  type RemoteUser,
+} from "@/lib/imports/company-accounts";
 import {
   PUBLIC_LISTING_METADATA_KEYS,
   buildAnonymousListingPayload,
@@ -31,15 +41,15 @@ const company = {
   privateData: JSON.stringify({ contactName: "Jane Roe", contactEmail: "jane@acme.example", hqStreet: "12 Fair Rd", legalEntityName: "Acme Amusement Co., Inc." }),
   metadata: JSON.stringify({ claimStatus: "unclaimed", importBatch: IMPORT_BATCH, companyId: "acme-shows", importSource: "cw_directory", researchStatus: "active" }),
 };
-const listing = (id: string, description = "Acme Shows brings the Berry Go Round. Run by Acme Amusement Co., Inc. since 1990.") => ({
+const listing = (id: string, description = "Acme Shows brings the Berry Go Round. Run by Acme Amusement Co., Inc. since 1990.", title = "Berry Go Round", riderRules?: string) => ({
   externalId: `acme-shows--${id}`,
   authorExternalId: "cw-1",
-  title: "Berry Go Round",
+  title,
   description,
   lat: 40.72781,
   lng: -88.52142,
   imageUrl: null,
-  publicData: JSON.stringify({ rideCategory: "family", footprintSource: "unknown", homeState: "IL", serviceStates: ["IL"], location: { address: "Fairbury, IL", building: "" } }),
+  publicData: JSON.stringify({ rideCategory: "family", footprintSource: "unknown", homeState: "IL", serviceStates: ["IL"], location: { address: "Fairbury, IL", building: "" }, ...(riderRules ? { riderRules } : {}) }),
   privateData: JSON.stringify({ sourceRidePage: "https://acme.example/rides/1" }),
   metadata: JSON.stringify({ claimStatus: "unclaimed", importBatch: IMPORT_BATCH, companyId: "acme-shows" }),
 });
@@ -109,6 +119,14 @@ describe("anonymous listing payload", () => {
     expect(p.publicData).toMatchObject({ transactionProcessAlias: INQUIRY_ALIAS, unitType: "inquiry" });
   });
 
+  it("holds a row whose title or public fields name the company; the builder refuses it too", () => {
+    const named = planListings({ ...wb, listings: [listing("a"), listing("t", undefined, "Acme Shows Berry Go Round"), listing("r", undefined, undefined, "Ask Acme Amusement Co. staff before riding.")] });
+    expect(named.rows.map((r) => r.externalId)).toEqual(["acme-shows--a"]);
+    expect(named.held.map((h) => h.externalId)).toEqual(["acme-shows--t", "acme-shows--r"]);
+    expect(named.held.every((h) => h.issue.includes("title or public data names the company"))).toBe(true);
+    expect(() => buildAnonymousListingPayload({ ...plan.rows[0], title: "Acme Shows Berry Go Round" }, plan.authors.get("cw-1")!)).toThrow(/names the company/);
+  });
+
   it("does not leave a doubled article when a name followed 'the'", () => {
     expect(anonymizeText("to join the Acme Shows line-up", ["Acme Shows"])).toBe("to join the operator line-up");
   });
@@ -151,5 +169,51 @@ describe("anonymous listing import run", () => {
     expect(api.listings.every((l) => !("importExternalId" in l.metadata) && !("companyId" in l.metadata))).toBe(true);
     expect(await run({})).toEqual(["exists", "exists"]);
     expect(api.listings).toHaveLength(2);
+  });
+});
+
+describe("account mapping recovered from the marketplace", () => {
+  const row = planImport(wb).eligible[0];
+  const claimed: RemoteUser = {
+    id: "u-1",
+    email: "owner@acme.example", // changed after the claim: the claim-address lookup no longer finds it
+    emailVerified: true,
+    stripeConnected: false,
+    metadata: { claimStatus: "claimed", importBatch: IMPORT_BATCH },
+    privateData: { importExternalId: "cw-1", companyId: "acme-shows" },
+  };
+  const api = (users: RemoteUser[]) => {
+    const created: string[] = [];
+    const a: AccountApi = {
+      showById: async (id) => users.find((u) => u.id === id) ?? null,
+      showByEmail: async (email) => users.find((u) => u.email === email) ?? null,
+      create: async (p) => (created.push(p.email), `u-${users.length + created.length}`),
+      setMetadata: async () => {},
+    };
+    return { a, created };
+  };
+  const deps = (a: AccountApi, mapping: Mapping) => ({ api: a, mapping, saveMapping: () => {}, newPassword: () => "x", now: () => "2026-10-14T00:00:00Z", build: buildAnonymousPayload });
+
+  it("a fresh checkout (no mapping file) leaves a claimed account with a changed email alone", async () => {
+    const { a, created } = api([claimed]);
+    const mapping: Mapping = {};
+    expect(recoverMapping(mapping, [claimed, { ...claimed, id: "u-x", privateData: {} }], "now")).toEqual({ added: 1, conflicts: [] });
+    expect(mapping["cw-1"]).toMatchObject({ userId: "u-1", companyId: "acme-shows" });
+    const r = await importRow(row, "claims.example.org", deps(a, mapping));
+    expect(r).toMatchObject({ outcome: "skipped_claimed", userId: "u-1" });
+    expect(created).toEqual([]);
+  });
+
+  it("without the recovery the same rerun would create a second account (the path it closes)", async () => {
+    const { a, created } = api([claimed]);
+    expect((await importRow(row, "claims.example.org", deps(a, {}))).outcome).toBe("created");
+    expect(created).toHaveLength(1);
+  });
+
+  it("reports two accounts for one row, or a mapping that disagrees, as conflicts", () => {
+    expect(recoverMapping({}, [claimed, { ...claimed, id: "u-2" }], "now").conflicts).toHaveLength(1);
+    const stale: Mapping = { "cw-1": { userId: "u-9", email: "x", companyId: "acme-shows", createdAt: "then" } };
+    expect(recoverMapping(stale, [claimed], "now").conflicts).toEqual(["cw-1: mapping says u-9, the marketplace says u-1"]);
+    expect(stale["cw-1"].userId).toBe("u-9");
   });
 });

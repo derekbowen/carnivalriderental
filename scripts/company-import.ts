@@ -19,8 +19,10 @@
  * the company. The random password is discarded; claiming happens later through a password reset to the
  * claim mailbox and an email change (operator process, not part of this script).
  *
- * State (committed, credential-free): imports/company-accounts/<marketplace>/mapping.json (externalId → user id)
- * and ledger.jsonl (one line per row per run). Reruns read both and look accounts up by email before creating.
+ * State (local, gitignored): imports/company-accounts/<marketplace>/mapping.json (externalId → user id) and
+ * ledger.jsonl (one line per row per run). Before any create, an apply run rebuilds missing mapping entries from
+ * the marketplace itself (every imported account keeps privateData.importExternalId), so a fresh checkout finds
+ * accounts whose email changed after a claim; then each row is looked up by mapping, then by email.
  */
 import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import crypto from "node:crypto";
@@ -35,6 +37,7 @@ import {
   type RemoteUser,
   claimEmail,
   planImport,
+  recoverMapping,
   redact,
   runImport,
   validateClaimDomain,
@@ -83,6 +86,16 @@ async function showUser(q: { id: string } | { email: string }): Promise<RemoteUs
   } catch (e) {
     if (e instanceof HttpError && e.status === 404) return null;
     throw e;
+  }
+}
+
+/** Every account in the marketplace (Integration API, paginated), for recoverMapping. */
+async function allUsers(): Promise<RemoteUser[]> {
+  const out: RemoteUser[] = [];
+  for (let page = 1; ; page++) {
+    const res = await call<{ data: UserDoc["data"][]; meta: { totalPages: number } }>("query", `${INTEG}/users/query?${new URLSearchParams({ perPage: "100", page: String(page) })}`, { headers: await headers("integ") }, true);
+    out.push(...res.data.map((data) => toRemote({ data })));
+    if (page >= (res.meta.totalPages ?? 1)) return out;
   }
 }
 
@@ -179,6 +192,13 @@ const api: AccountApi = {
   const saveMapping = (m: Mapping) => writeJsonAtomic(mappingFile, { marketplace: names.integ, importBatch: plan.eligible[0]?.metadata.importBatch, accounts: m });
   const runId = `${new Date().toISOString().replace(/[:.]/g, "-")}-${crypto.randomBytes(3).toString("hex")}`;
   fs.mkdirSync(path.dirname(ledgerFile), { recursive: true });
+  // The mapping file is local; the marketplace is the durable record (privateData.importExternalId).
+  const recovered = recoverMapping(mapping, await allUsers(), new Date().toISOString());
+  if (recovered.conflicts.length) throw new Error(`Refusing: the marketplace and the mapping disagree; resolve by hand:\n  ${recovered.conflicts.join("\n  ")}`);
+  if (recovered.added) {
+    await saveMapping(mapping);
+    console.log(`Recovered ${recovered.added} account mappings from "${names.integ}" (privateData.importExternalId).`);
+  }
 
   console.log(`\nAPPLY → "${names.integ}" (${target}); run ${runId}; concurrency ${concurrency}; ${Object.keys(mapping).length} already mapped.`);
   const results = await runImport(rows, domain.domain, {

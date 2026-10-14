@@ -1,7 +1,7 @@
 {
-  "checkedAt": "2026-10-14T08:56:49.643Z",
+  "checkedAt": "2026-10-14T11:39:34.847Z",
   "base": "http://localhost:3200",
-  "passed": 49,
+  "passed": 1036,
   "failed": 0,
   "results": [
     {
@@ -35,7 +35,7 @@
     {
       "check": "sitemap lists exactly the eligible cohort",
       "ok": true,
-      "detail": "listed 13, expected 13; missing none; extra none"
+      "detail": "listed 1000, expected 1000; missing none; extra none"
     },
     {
       "check": "sitemap URLs are canonical HTTPS production URLs without query strings",
@@ -47,68 +47,4003 @@
     },
     {
       "check": "/: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us, leaks 0"
+      "ok": true
     },
     {
       "check": "/rides: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/rides, leaks 0"
+      "ok": true
     },
     {
       "check": "/categories/ferris-wheels: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/categories/ferris-wheels, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/categories/carousels: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/categories/swing-rides: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/categories/thrill-rides: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/categories/kiddie-rides: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arkansas/paragould: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arkansas/paragould/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/bullhead-city: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/bullhead-city/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/bullhead-city/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/lake-havasu-city/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/prescott-valley: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/san-luis: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/san-luis/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/san-luis/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/san-luis/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/san-luis/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/yuma: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/arizona/yuma/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/anaheim: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/bakersfield: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/bakersfield/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/bakersfield/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/bakersfield/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/brawley/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/brawley/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/brawley/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/brawley/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/brawley/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/calexico: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/calexico/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/calexico/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/el-centro/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/hanford: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/huntington-beach: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/indio: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/lancaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/long-beach: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/los-angeles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/los-angeles/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/los-angeles/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/los-angeles/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/menifee: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ontario: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/rancho-cucamonga: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/ridgecrest/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/riverside: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/riverside/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/riverside/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/riverside/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/san-diego: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/santa-maria: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/tulare: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/visalia: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/visalia/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/visalia/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/california/visalia/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/bridgeport: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/bridgeport/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/bridgeport/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/bridgeport/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/danbury/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/hartford: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/hartford/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-britain/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-britain/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-haven: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-haven/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-haven/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-haven/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/new-london/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/shelton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/stamford/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/torrington/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/torrington/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/torrington/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/connecticut/waterbury/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/district-of-columbia/washington/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/delaware/dover: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/delaware/wilmington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/delaware/wilmington/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/delaware/wilmington/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/florida/orlando: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/florida/orlando, leaks 0"
+      "ok": true
     },
     {
       "check": "/georgia/atlanta: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/georgia/atlanta, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/cedar-rapids/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/davenport: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/davenport/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/davenport/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/davenport/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/dubuque/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/iowa-city: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/iowa-city/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/iowa-city/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/iowa-city/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/iowa/iowa-city/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/aurora: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/aurora/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/aurora/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/bloomington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/bloomington/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/bloomington/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/bloomington/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/champaign/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/illinois/chicago: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/illinois/chicago, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/illinois/chicago/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/illinois/chicago/ferris-wheel, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/chicago/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/danville/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/decatur: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/decatur/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/decatur/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/decatur/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/elgin/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/joliet: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/joliet/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/naperville/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/peoria/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/quincy: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/rockford: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/schaumburg: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/springfield/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/illinois/urbana/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/anderson/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/bloomington/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/carmel/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/columbus/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/evansville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/evansville/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/evansville/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/evansville/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/evansville/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/mini-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fishers/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/family-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/fort-wayne/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/franklin: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/franklin/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/franklin/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/franklin/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/franklin/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/hammond: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/hammond/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/indianapolis/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/kokomo/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/kokomo/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/kokomo/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/lafayette/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/marion/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/marion/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/michigan-city/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/muncie/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/noblesville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/plainfield/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/portage/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/richmond/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/south-bend/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/terre-haute/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/indiana/valparaiso/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/bowling-green: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/florence/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/hopkinsville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/hopkinsville/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/louisville/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/kentucky/paducah: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/barnstable-town/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/barnstable-town/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/barnstable-town/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/barnstable-town/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/boston/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/brockton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/haverhill/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/haverhill/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/pittsfield/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/springfield: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/springfield/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/springfield/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/springfield/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/massachusetts/worcester/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/annapolis: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/baltimore: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/baltimore/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/baltimore/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/baltimore/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/baltimore/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/frederick/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/frederick/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/hagerstown: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/hagerstown/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/hagerstown/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maryland/salisbury/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/maine/portland: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/ann-arbor/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/ann-arbor/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/ann-arbor/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/ann-arbor/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/ann-arbor/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/battle-creek/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/dearborn/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/detroit/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/east-lansing/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/flint/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/grand-rapids/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/holland/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/jackson/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/kalamazoo/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/lansing/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/midland: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/muskegon/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/port-huron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/port-huron/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/port-huron/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/port-huron/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/portage/family-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/saginaw/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/saginaw/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/sterling-heights/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/sterling-heights/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/sterling-heights/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/michigan/sterling-heights/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/austin: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/blaine: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/minnesota/minneapolis: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/minnesota/minneapolis, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/minnesota/minneapolis/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/minneapolis/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/owatonna: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/rochester: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/rochester/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/st-louis-park: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/st-paul: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/minnesota/winona: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/cape-girardeau: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/cape-girardeau/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/cape-girardeau/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/columbia: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/o-fallon: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/st-charles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/st-charles/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/st-louis: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/st-louis/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/missouri/st-louis/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-hampshire/manchester: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-hampshire/rochester/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/jersey-city/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/new-brunswick/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/newark/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/newark/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/newark/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/newark/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/plainfield/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/trenton/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-jersey/trenton/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/albany/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/auburn: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/auburn/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/auburn/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/binghamton/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/buffalo/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/elmira/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/glen-cove: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/glen-cove/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/hempstead: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/hempstead/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/ithaca/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/jamestown/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/kiryas-joel/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/middletown/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/new-york/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/newburgh/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/niagara-falls: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/niagara-falls/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/north-tonawanda: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/north-tonawanda/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rochester: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rochester/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rochester/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/rome/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/saratoga-springs: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/syracuse/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/troy/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/troy/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/troy/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/new-york/utica/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/avon-lake/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/avon-lake/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/avon-lake/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/avon-lake/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/avon-lake/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/bowling-green: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/bowling-green/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/bowling-green/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/brunswick/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/brunswick/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/canton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/canton/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/canton/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/canton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/canton/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cincinnati: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/cleveland/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/ohio/columbus: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/ohio/columbus, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/ohio/columbus/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/ohio/columbus/ferris-wheel, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/columbus/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/delaware: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/elyria/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/euclid/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/euclid/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/euclid/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/findlay: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/findlay/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/findlay/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/green: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/green/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/green/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/hamilton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/hamilton/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/kettering/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/mini-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lima/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/lorain/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/marion: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/massillon/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/north-ridgeville/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/kiddie-jets: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/chair-swing-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/toledo/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/troy/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/troy/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/warren: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/warren/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/warren/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/ohio/youngstown/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/allentown/kiddie-carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/altoona/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/erie/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/harrisburg/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/hazleton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lancaster/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/lebanon/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/kiddie-coaster: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/philadelphia/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/pittsburgh/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/reading/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/reading/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/reading/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/scranton/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/scranton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/scranton/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/music-express: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/kiddie-motorcycles: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/kamikaze: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/paratrooper: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/state-college/wave-swinger: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/wilkes-barre: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/wilkes-barre/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/wilkes-barre/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/williamsport: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/williamsport/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/williamsport/tornado-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/williamsport/scrambler: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/york/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/york/round-up: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/pennsylvania/york/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/rhode-island/providence: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/tennessee/spring-hill: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/texas/austin: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/texas/austin, leaks 0"
+      "ok": true
     },
     {
       "check": "/texas/austin/carousel: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/texas/austin/carousel, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/virginia/charlottesville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/charlottesville/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/charlottesville/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/fredericksburg/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/harrisonburg/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/richmond: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/richmond/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/staunton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/staunton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/staunton/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/virginia/winchester/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/vermont/burlington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/washington/seattle: 200, index, self-canonical, no private data, no Offer",
-      "ok": true,
-      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/washington/seattle, leaks 0"
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/appleton: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/appleton/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/appleton/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/appleton/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/appleton/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/de-pere/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/eau-claire: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/eau-claire/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/eau-claire/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/eau-claire/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/fond-du-lac: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/green-bay/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/janesville: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/la-crosse: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/la-crosse/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/la-crosse/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/la-crosse/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/madison: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/madison/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/manitowoc/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/manitowoc/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/spinning-teacups: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/milwaukee/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/oshkosh: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/oshkosh/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/kiddie-train: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/gravitron: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/zipper-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/sheboygan/giant-ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/tilt-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/stevens-point/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/wausau: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/wausau/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/wisconsin/wausau/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/charleston: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/charleston/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/charleston/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/charleston/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/charleston/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/huntington/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/morgantown/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/fun-house: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/kiddie-cars: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/sizzler-style-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/parkersburg/helicopter-ride: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/wheeling: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/wheeling/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/wheeling/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
+    },
+    {
+      "check": "/west-virginia/wheeling/giant-slide: 200, index, self-canonical, no private data, no Offer",
+      "ok": true
     },
     {
       "check": "/s: excluded (noindex or 404) and not in the sitemap",
@@ -126,24 +4061,24 @@
       "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
     },
     {
-      "check": "/texas/dallas: excluded (noindex or 404) and not in the sitemap",
-      "ok": true,
-      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
-    },
-    {
       "check": "/california/san-francisco: excluded (noindex or 404) and not in the sitemap",
       "ok": true,
       "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
     },
     {
-      "check": "/ohio/columbus/carousel: excluded (noindex or 404) and not in the sitemap",
+      "check": "/california/san-diego/ferris-wheel: excluded (noindex or 404) and not in the sitemap",
       "ok": true,
       "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
     },
     {
-      "check": "/categories/carousels: excluded (noindex or 404) and not in the sitemap",
+      "check": "/texas/college-station: excluded (noindex or 404) and not in the sitemap",
       "ok": true,
-      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"\""
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/california/visalia/fun-house: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
     },
     {
       "check": "/ohio: excluded (noindex or 404) and not in the sitemap",
