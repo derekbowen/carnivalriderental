@@ -11,6 +11,7 @@ import { rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
+import { ProtectedForm } from "@/components/access/ProtectedForm";
 
 export const dynamic = "force-dynamic";
 
@@ -90,10 +91,10 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
                 </p>
               )}
               <p className="mt-3 text-ink-soft">Unlocks up to <strong>{unlocks}</strong> of these {n} operators for {product.validityDays} days: company name, phone, email and website, revealed one at a time as you choose.</p>
-              <form method="post" action="/api/access/checkout" className="mt-5">
+              <ProtectedForm action="/api/access/checkout" className="mt-5">
                 <input type="hidden" name="event" value={event.id} />
                 <button type="submit" className="btn-primary w-full" data-testid="pay-button">Continue to secure payment · {priceLabel(product)}</button>
-              </form>
+              </ProtectedForm>
               <p className="mt-3 text-xs text-muted">Payment of {priceLabel(product)} to {BRAND.legalEntity} via Stripe. The rental itself is agreed and paid directly with the operator; this fee doesn&rsquo;t cover it and doesn&rsquo;t guarantee a booking or a reply. <Link className="underline" href={paths.accessPolicy()}>Refund rules</Link>.</p>
             </div>
           ) : (

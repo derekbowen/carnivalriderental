@@ -1,5 +1,6 @@
 import { sendRecoveryLinks } from "@/lib/access/service";
-import { accessRuntime, clientIp, rateLimited, redirect } from "@/lib/access/runtime";
+import { isBotRequest } from "@/lib/access/bot";
+import { accessRuntime, clientIp, rateLimited, refuse, respond } from "@/lib/access/runtime";
 import { paths } from "@/lib/seo/routes";
 
 export const runtime = "nodejs";
@@ -7,7 +8,8 @@ export const dynamic = "force-dynamic";
 
 /** Lost link: always answers the same way, so it can't be used to probe which emails bought a pass. */
 export async function POST(req: Request) {
-  if (rateLimited(`recover:${clientIp(req) ?? "anon"}`, 5, 10 * 60e3)) return new Response("Too many requests", { status: 429 });
+  if (await isBotRequest()) return refuse(req, 403, "Request blocked");
+  if (rateLimited(`recover:${clientIp(req) ?? "anon"}`, 5, 10 * 60e3)) return refuse(req, 429, "Too many requests");
   const form = await req.formData();
   const email = String(form.get("email") ?? "").trim().toLowerCase();
   if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && !rateLimited(`recover-email:${email}`, 3, 60 * 60e3)) {
@@ -18,5 +20,5 @@ export async function POST(req: Request) {
       console.error("[access] recovery failed:", (e as Error).message);
     }
   }
-  return redirect(`${paths.passRecover()}?sent=1`);
+  return respond(req, `${paths.passRecover()}?sent=1`);
 }

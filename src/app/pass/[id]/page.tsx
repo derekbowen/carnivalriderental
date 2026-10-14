@@ -11,6 +11,7 @@ import { BRAND } from "@/lib/config";
 import { rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { paths } from "@/lib/seo/routes";
+import { ProtectedForm } from "@/components/access/ProtectedForm";
 
 export const dynamic = "force-dynamic";
 
@@ -39,10 +40,10 @@ export default async function PassPage({ params, searchParams }: { params: Promi
       <div className="mx-auto max-w-xl px-4 py-16 sm:px-6" data-testid="pass-locked">
         <h1 className="text-3xl">Open your pass from your email</h1>
         <p className="mt-3 text-ink-soft">For your privacy, a pass opens only from the link we emailed you. Lost it? Enter your email and we&rsquo;ll send a fresh link.</p>
-        <form method="post" action="/api/pass/recover" className="mt-6 flex flex-col gap-3 sm:flex-row">
+        <ProtectedForm action="/api/pass/recover" className="mt-6 flex flex-col gap-3 sm:flex-row">
           <input className="input flex-1" type="email" name="email" required placeholder="you@example.com" aria-label="Email" />
           <button className="btn-primary" type="submit">Email me the link</button>
-        </form>
+        </ProtectedForm>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withBotId } from "botid/next/config";
 
 const nextConfig: NextConfig = {
   // node:sqlite is a Node built-in used only by server code (development store).
@@ -18,4 +19,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Vercel BotID: proxies its challenge scripts through our domain so blockers don't break it (src/lib/access/bot.ts).
+export default withBotId(nextConfig);
