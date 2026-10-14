@@ -14,3 +14,9 @@ research/*.xlsx
 !research/operator-research-template.xlsx
 data/preview-catalog.json
 imports/company-accounts/source/
+# Live migration (2026-10-14): private working files and reverse-identity mappings stay out of Git.
+# Sharetribe privateData (importExternalId, companyId) is the durable record; these regenerate from it.
+imports/migration/
+imports/company-accounts/carnivalrental/
+imports/listings/carnivalrental/
+imports/photos/carnivalrental/

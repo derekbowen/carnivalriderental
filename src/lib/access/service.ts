@@ -22,7 +22,7 @@ import { magicLinkEmail, passEmail, sendNow } from "./email";
 import { geocode, matchOperators, type ContactStatusCache, type MatchedOperator } from "./matching";
 import { resolveCriteria, tierForRideType, type AccessTier } from "./pricing";
 import { hashToken, newToken } from "./session";
-import type { CheckoutSession, StripeEvent, StripeGateway } from "./stripe";
+import { stripeMode, type CheckoutSession, type StripeEvent, type StripeGateway } from "./stripe";
 
 // ------------------------------------------------------------------------------ input
 const STATE_CODES = new Set(US_STATES.map((s) => s.abbr.toUpperCase()));
@@ -202,6 +202,15 @@ const rowToPurchase = (r: Row): Purchase => ({
   paidAt: r.paid_at ? String(r.paid_at) : null,
   createdAt: String(r.created_at),
 });
+
+/**
+ * A purchase paid through a Stripe TEST-mode session (QA) is never a valid entitlement on a site
+ * running live keys: test passes stay in the ledger (audit) but cannot view or unlock contacts there.
+ */
+export function purchaseValidHere(p: Pick<Purchase, "stripeCheckoutSessionId">, env: Record<string, string | undefined> = process.env): boolean {
+  const m = stripeMode(env);
+  return !(m.kind === "real" && m.live && (p.stripeCheckoutSessionId ?? "").startsWith("cs_test_"));
+}
 
 export async function getPurchase(db: Sql, id: string): Promise<Purchase | null> {
   const rows = await db.query(`SELECT * FROM access_purchases WHERE id = ?`, [id]);
@@ -469,6 +478,7 @@ export async function passView(db: AccessDb, passId: string, now = new Date()): 
   if (!event || !purchase || !product) return null;
   const unlocks = (await db.query(`SELECT * FROM access_unlocks WHERE pass_id = ? ORDER BY first_revealed_at`, [passId])).map(rowToUnlock);
   const expired = pass.expiresAt <= now.toISOString();
+  if (!purchaseValidHere(purchase)) return null; // test-mode QA pass on a live-keyed site: not an entitlement
   const blockedReason = pass.status === "revoked" ? "This pass was revoked (refund or dispute). Operators you already unlocked stay visible." : expired ? "This pass has expired. Operators you already unlocked stay visible." : null;
   return { pass, event, product, purchase, unlocks, remaining: Math.max(0, pass.unlockLimit - pass.unlockedCount), usable: pass.status === "active" && !expired, blockedReason };
 }
@@ -481,10 +491,12 @@ export async function passView(db: AccessDb, passId: string, now = new Date()): 
  */
 export async function unlockOperator(db: AccessDb, source: OperatorSource, passId: string, operatorId: string, meta: { ipHash: string | null; userAgent: string | null }, now = new Date()): Promise<{ unlock: Unlock; consumed: boolean }> {
   const attempt = async (): Promise<{ unlock: Unlock; consumed: boolean }> => {
-    const pre = await db.query(`SELECT * FROM access_unlocks WHERE pass_id = ? AND sharetribe_operator_id = ?`, [passId, operatorId]);
-    if (pre[0]) return { unlock: rowToUnlock(pre[0]), consumed: false };
     const pass = await getPass(db, passId);
     if (!pass) throw new AccessError("not_found", "Unknown pass");
+    const purchase = await getPurchase(db, pass.purchaseId);
+    if (!purchase || !purchaseValidHere(purchase)) throw new AccessError("not_found", "Unknown pass");
+    const pre = await db.query(`SELECT * FROM access_unlocks WHERE pass_id = ? AND sharetribe_operator_id = ?`, [passId, operatorId]);
+    if (pre[0]) return { unlock: rowToUnlock(pre[0]), consumed: false };
     if (pass.status === "revoked") throw new AccessError("revoked", "This pass was revoked");
     if (pass.status === "expired" || pass.expiresAt <= now.toISOString()) throw new AccessError("expired", "This pass has expired");
     const event = await getEventRequest(db, pass.eventRequestId);

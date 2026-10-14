@@ -5,7 +5,7 @@ import { CTA_BODY, RequestCta } from "@/components/RequestCta";
 import { accessPriceCopy } from "@/lib/access/copy";
 import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { categoryPageById } from "@/lib/content/category-pages";
-import { operatorCount, RIDE_TYPES, RIDES, typeStats } from "@/lib/inventory";
+import { coreHubGate, operatorCount, RIDE_TYPES, RIDES, typeStats } from "@/lib/inventory";
 import { seoMetadata } from "@/lib/seo/metadata";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
@@ -22,7 +22,7 @@ export function generateMetadata() {
     path: paths.rides(),
     title: "Carnival ride rentals",
     description: DESCRIPTION,
-    gate: { indexable: false, reasons: ["browse page indexing decided with first published offerings"] },
+    gate: coreHubGate(paths.rides()),
   });
 }
 

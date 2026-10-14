@@ -100,24 +100,36 @@ describe("shared listing card", () => {
 describe("category hub gate", () => {
   const ferris = categoryPageById("ferris-wheels")!;
   const n = PSEO_THRESHOLDS.categoryMinOfferings;
+  // A category with no ride types in the operator inventory and not in the indexing cohort: only the
+  // (retired) managed catalog can supply it, so the catalog-counting rules are tested in isolation.
+  const bare = { ...ferris, id: "no-inventory-category" } as CategoryPage;
 
   it("visual theme or copy alone never qualifies a hub", () => {
     production();
-    expect(categoryHubGate(ferris, snap([])).indexable).toBe(false);
-    expect(categoryHubGate({ ...ferris, reviewStatus: "approved" }, snap([])).indexable).toBe(false);
-    expect(categoryHubGate({ ...ferris, theme: "thrill" }, snap(Array.from({ length: n }, () => rec()))).reasons).toContain("category copy not approved");
+    expect(categoryHubGate(bare, snap([])).indexable).toBe(false);
+    expect(categoryHubGate({ ...bare, reviewStatus: "approved" }, snap([])).indexable).toBe(false);
+    expect(categoryHubGate({ ...bare, theme: "thrill" }, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category" })))).reasons).toContain("category copy not approved");
+    // Draft hubs outside the cohort stay unapproved however much inventory they show.
+    expect(categoryHubGate(categoryPageById("carousels")!, snap([])).reasons).toContain("category copy not approved");
   });
 
   it("approved copy + enough real supply in the category → indexable; test samples and other categories don't count", () => {
     production();
-    const ok = { ...ferris, reviewStatus: "approved" as const };
-    expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec()))).indexable).toBe(true);
-    expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec({ isTestSample: true })))).indexable).toBe(false);
+    const ok = { ...bare, reviewStatus: "approved" as const };
+    expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category" })))).indexable).toBe(true);
+    expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category", isTestSample: true })))).indexable).toBe(false);
     expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec({ categoryId: "carousels" })))).indexable).toBe(false);
   });
 
+  it("the Ferris hub is approved only as an exact cohort path and is supplied by the operator inventory it shows", () => {
+    production();
+    expect(ferris.reviewStatus).toBe("draft");
+    expect(categoryHubGate(ferris, snap([]))).toEqual({ indexable: true, reasons: [] });
+  });
+
   it("never indexable outside production", () => {
-    expect(categoryHubGate({ ...ferris, reviewStatus: "approved" }, snap(Array.from({ length: n }, () => rec()))).indexable).toBe(false);
+    expect(categoryHubGate({ ...bare, reviewStatus: "approved" }, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category" })))).indexable).toBe(false);
+    expect(categoryHubGate(ferris, snap([])).indexable).toBe(false);
   });
 });
 

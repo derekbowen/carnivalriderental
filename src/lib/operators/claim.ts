@@ -72,6 +72,12 @@ export function anonymizeText(text: string, names: string[]): string {
     t = t.replace(new RegExp(`\\s*(?:—|-|,)?\\s*(?:operated|owned|run|provided) by ${escapeRe(n)}`, "gi"), "");
     t = t.replace(new RegExp(escapeRe(n), "gi"), "the operator");
   }
+  t = t.replace(/\bthe the operator\b/gi, "the operator");
   t = t.replace(/\bhttps?:\/\/\S+/gi, "").replace(/\bwww\.\S+/gi, "").replace(/[\w.+-]+@[\w-]+\.[\w.]+/g, "");
   return t.replace(/[ \t]{2,}/g, " ").replace(/ +([.,;])/g, "$1").trim();
+}
+
+/** Name variants that could appear in listing text: as given, and without a trailing legal suffix. */
+export function companyNameVariants(names: unknown[]): string[] {
+  return names.flatMap((n) => (typeof n === "string" && n.trim() ? [n.trim(), n.trim().replace(/,?\s+(inc\.?|llc|l\.l\.c\.|co\.?|corp\.?|ltd\.?)$/i, "")] : []));
 }

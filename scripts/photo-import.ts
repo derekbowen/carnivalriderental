@@ -33,22 +33,28 @@ const DIR = "imports/photos";
 const TAKEDOWNS = `${DIR}/takedowns.json`;
 const { call, headers, marketplaceNames } = createClient(target);
 
-// Polite downloads: one request per host per second, identified, bounded.
+// Polite downloads: one request per operator website per 2.5 s, identified, bounded. Sharetribe's own
+// image CDN (the Live migration copies Test's hosted images) is not an operator's site and is not throttled.
 const lastHit = new Map<string, number>();
+const SHARETRIBE_CDN = "sharetribe.imgix.net";
 async function download(url: string): Promise<{ bytes: Uint8Array; contentType: string }> {
   const host = new URL(url).host;
   let res: Response | null = null;
   for (let attempt = 0; attempt < 3; attempt++) {
-    const wait = (lastHit.get(host) ?? 0) + 2500 - Date.now(); // ≤ 1 request / 2.5 s per website
+    const wait = host === SHARETRIBE_CDN ? 0 : (lastHit.get(host) ?? 0) + 2500 - Date.now(); // ≤ 1 request / 2.5 s per website
     if (wait > 0) await new Promise((r) => setTimeout(r, wait));
     lastHit.set(host, Date.now());
-    res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(20000), headers: { "User-Agent": "CarnivalRideRental-ListingPhotos/1.0 (+https://carnivalriderental.us)", Accept: "image/*" } });
+    // Only JPEG/PNG/GIF are accepted downstream; ask for them so format-negotiating CDNs don't send WebP/AVIF.
+    res = await fetch(url, { redirect: "follow", signal: AbortSignal.timeout(30000), headers: { "User-Agent": "CarnivalRideRental-ListingPhotos/1.0 (+https://carnivalriderental.us)", Accept: "image/jpeg, image/png;q=0.9, image/gif;q=0.8" } });
     if (res.status !== 429 && res.status !== 503) break;
     await new Promise((r) => setTimeout(r, 10000 * (attempt + 1))); // the site asked us to slow down
   }
   if (!res || !res.ok) throw new Error(`download HTTP ${res?.status}`);
   const len = Number(res.headers.get("content-length") ?? 0);
-  if (len > 60 * 1024 * 1024) throw new Error("download over 60 MB");
+  // Operator sites: 60 MB. Sharetribe's CDN copy of an already-hosted image can be larger (one animated
+  // GIF is 100 MB as served) and is shrunk to a first-frame JPEG before upload; still bounded.
+  const cap = host === SHARETRIBE_CDN ? 150 : 60;
+  if (len > cap * 1024 * 1024) throw new Error(`download over ${cap} MB`);
   return { bytes: new Uint8Array(await res.arrayBuffer()), contentType: res.headers.get("content-type") ?? "" };
 }
 
@@ -71,7 +77,9 @@ const api: PhotoApi = {
   },
   download,
   async shrink(bytes) {
-    const r = spawnSync("convert", ["-", "-resize", "2400x2400>", "-quality", "85", "jpg:-"], { input: Buffer.from(bytes), maxBuffer: 64 * 1024 * 1024 });
+    // "-[0]": first frame only. An animated GIF would otherwise become one JPEG per frame (a 100 MB GIF
+    // came back as 120 MB of JPEGs); a listing photo is a still.
+    const r = spawnSync("convert", ["-[0]", "-resize", "2400x2400>", "-quality", "85", "jpg:-"], { input: Buffer.from(bytes), maxBuffer: 256 * 1024 * 1024 });
     return r.status === 0 && r.stdout.length > 0 ? new Uint8Array(r.stdout) : null;
   },
   async upload(bytes, filename, contentType) {
@@ -102,6 +110,26 @@ const api: PhotoApi = {
 
   const plan = planListings(wb);
   let { items, noPhoto, notCreated } = planPhotos(plan.rows, mapping);
+  // Live: copy each photo from its Test listing's hosted image; operator sites are not fetched again.
+  const fromTest = opt("from-test");
+  if (target === "live" && apply && !fromTest && !argv.includes("--approve-remaining")) throw new Error("Refusing: Live photos are copied from Test (--from-test imports/migration/test-public.json).");
+  if (fromTest) {
+    const snap = JSON.parse(fs.readFileSync(fromTest, "utf8")) as { marketplace: string; listings: { id: string; metadata: Record<string, unknown>; images: { url: string | null }[] }[] };
+    if (snap.marketplace !== TEST_MARKETPLACE) throw new Error(`Refusing: ${fromTest} is not a ${TEST_MARKETPLACE} snapshot.`);
+    const byExt = new Map(snap.listings.filter((l) => typeof l.metadata.importExternalId === "string").map((l) => [l.metadata.importExternalId as string, l]));
+    const gaps: { externalId: string; listingId: string; reason: string }[] = [];
+    items = items.flatMap((it) => {
+      const t = byExt.get(it.externalId);
+      const url = t?.images.find((i) => i.url)?.url;
+      if (!t || !url) {
+        gaps.push({ externalId: it.externalId, listingId: it.listingId, reason: t ? "the Test listing has no photo (source photo failed or was rejected in Test)" : "not in the Test snapshot" });
+        return [];
+      }
+      return [{ ...it, copyFrom: { url, note: `Test listing ${t.id} image, copied ${new Date().toISOString().slice(0, 10)}` } }];
+    });
+    writeJsonAtomic(`${DIR}/${slug}/gaps.json`, { generatedAt: new Date().toISOString(), ridesWithoutSourcePhoto: noPhoto, gaps });
+    console.log(`From Test: ${items.length} listings have a hosted Test photo to copy; ${gaps.length} gaps (+${noPhoto} rides with no source photo) → ${DIR}/${slug}/gaps.json`);
+  }
 
   if (removeCompany) {
     const targets = items.filter((i) => i.companyId === removeCompany);
@@ -129,7 +157,8 @@ const api: PhotoApi = {
   if (apply && !argv.includes("--recheck")) items = items.filter((i) => !done.has(i.externalId));
   if (argv.includes("--approve-remaining")) {
     // Founder go 2026-10-05: every imported listing live in Test, with or without a photo.
-    if (target !== "test") throw new Error("Refusing: --approve-remaining is for the Test marketplace only.");
+    // Live: founder go 2026-10-14 (production cutover), given per run with --founder-go like ops:anonymize.
+    if (target !== "test" && !argv.includes("--founder-go")) throw new Error("Refusing: --approve-remaining on Live needs --founder-go.");
     const ids = Object.entries(mapping as Record<string, { listingId: string; companyId: string }>);
     let approved = 0;
     for (const [externalId, m] of ids) {
@@ -150,7 +179,7 @@ const api: PhotoApi = {
   if (!apply) return console.log("DRY RUN — nothing uploaded.");
 
   const runId = `${new Date().toISOString().replace(/[:.]/g, "-")}-${crypto.randomBytes(3).toString("hex")}`;
-  if (approve && target !== "test") throw new Error("Refusing: --approve is founder-approved for the Test marketplace only.");
+  if (approve && target !== "test" && !argv.includes("--founder-go")) throw new Error("Refusing: --approve on Live needs --founder-go (founder go 2026-10-14 for the cutover).");
   const results = await runPhotoImport(items, {
     api,
     approve,

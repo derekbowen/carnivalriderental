@@ -21,6 +21,11 @@ export interface PhotoItem {
   listingId: string;
   sourceUrl: string;
   ridePage: string | null;
+  /**
+   * Live migration: download this already-hosted copy (the Test listing's image) instead of fetching the
+   * operator's site again. Provenance still records sourceUrl/ridePage, plus where the copy came from.
+   */
+  copyFrom?: { url: string; note: string };
 }
 
 export interface PhotoApi {
@@ -129,7 +134,7 @@ async function runSequential(
         } else await emit(it, { outcome: "already_has_images" });
         continue;
       }
-      let { bytes } = await d.api.download(it.sourceUrl);
+      let { bytes } = await d.api.download(it.copyFrom?.url ?? it.sourceUrl);
       if (bytes.byteLength > MAX_BYTES && d.api.shrink && sniffImage(bytes)) bytes = (await d.api.shrink(bytes)) ?? bytes;
       const type = sniffImage(bytes);
       if (!type || bytes.byteLength > MAX_BYTES) {
@@ -138,7 +143,7 @@ async function runSequential(
       }
       const ext = type.split("/")[1].replace("jpeg", "jpg");
       const imageId = await d.api.upload(bytes, `${it.externalId}.${ext}`, type);
-      await d.api.attach(it.listingId, imageId, { sourceUrl: it.sourceUrl, ridePage: it.ridePage, importedAt: d.now(), basis: PHOTO_BASIS });
+      await d.api.attach(it.listingId, imageId, { sourceUrl: it.sourceUrl, ridePage: it.ridePage, importedAt: d.now(), basis: PHOTO_BASIS, ...(it.copyFrom ? { copiedFrom: it.copyFrom.note } : {}) });
       if (d.approve && state.state === "pendingApproval") {
         await d.api.approve(it.listingId);
         await emit(it, { outcome: "attached_approved", imageId });

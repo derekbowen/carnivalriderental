@@ -30,11 +30,17 @@ describe("environment safety", () => {
     expect(stripeMode({ APP_ENV: "production" }).kind).toBe("disabled");
     expect(stripeMode({ APP_ENV: "production", STRIPE_SECRET_KEY: "sk_live_abc" })).toMatchObject({ kind: "real", live: true });
     expect(stripeMode({ STRIPE_SECRET_KEY: "pk_test_abc" }).kind).toBe("disabled");
+    // The public production site never shows a test-mode checkout; preview and development still can.
+    expect(stripeMode({ APP_ENV: "production", STRIPE_SECRET_KEY: "sk_test_abc" }).kind).toBe("disabled");
+    expect(stripeMode({ APP_ENV: "preview", STRIPE_SECRET_KEY: "sk_test_abc" })).toMatchObject({ kind: "real", live: false });
     expect(accessStorageMode({ APP_ENV: "development" }).kind).toBe("sqlite");
     expect(accessStorageMode({ APP_ENV: "production" }).kind).toBe("disabled");
     expect(accessStorageMode({ APP_ENV: "production", ACCESS_DATABASE_URL: "postgres://x" }).kind).toBe("postgres");
-    const prod = accessAvailability({ APP_ENV: "production", ACCESS_DATABASE_URL: "postgres://x", STRIPE_SECRET_KEY: "sk_test_x", ACCESS_SESSION_SECRET: "0123456789abcdef0123", SHARETRIBE_INTEGRATION_CLIENT_ID: "a", SHARETRIBE_INTEGRATION_CLIENT_SECRET: "b" });
-    expect(prod.enabled).toBe(true);
+    const prodEnv = { APP_ENV: "production", ACCESS_DATABASE_URL: "postgres://x", ACCESS_SESSION_SECRET: "0123456789abcdef0123", SHARETRIBE_INTEGRATION_CLIENT_ID: "a", SHARETRIBE_INTEGRATION_CLIENT_SECRET: "b" };
+    expect(accessAvailability({ ...prodEnv, STRIPE_SECRET_KEY: "sk_live_x" }).enabled).toBe(true);
+    // A test key on production keeps the funnel at "opening soon" (no test checkout on the public site).
+    expect(accessAvailability({ ...prodEnv, STRIPE_SECRET_KEY: "sk_test_x" })).toMatchObject({ enabled: false, stripe: "disabled" });
+    expect(accessAvailability({ ...prodEnv, APP_ENV: "preview", STRIPE_SECRET_KEY: "sk_test_x" }).enabled).toBe(true);
     expect(accessAvailability({ APP_ENV: "production", ACCESS_DATABASE_URL: "postgres://x", STRIPE_SECRET_KEY: "sk_test_x", ACCESS_SESSION_SECRET: "0123456789abcdef0123", ACCESS_OPERATOR_SOURCE: "fixture" }).enabled).toBe(false);
     expect(accessAvailability({ APP_ENV: "preview" }).enabled).toBe(false);
   });
@@ -59,5 +65,15 @@ describe("rate limiter", () => {
     for (let i = 0; i < 3; i++) expect(rateLimited(k, 3, 1000)).toBe(false);
     expect(rateLimited(k, 3, 1000)).toBe(true);
     expect(rateLimited(k, 3, 1000, Date.now() + 2000)).toBe(false);
+  });
+});
+
+describe("test-mode purchases on a live-keyed site", () => {
+  it("are never an entitlement there; they stay valid where test keys run", async () => {
+    const { purchaseValidHere } = await import("@/lib/access/service");
+    const live = { APP_ENV: "production", STRIPE_SECRET_KEY: "sk_live_x" };
+    expect(purchaseValidHere({ stripeCheckoutSessionId: "cs_test_a1" }, live)).toBe(false);
+    expect(purchaseValidHere({ stripeCheckoutSessionId: "cs_live_a1" }, live)).toBe(true);
+    expect(purchaseValidHere({ stripeCheckoutSessionId: "cs_test_a1" }, { APP_ENV: "preview", STRIPE_SECRET_KEY: "sk_test_x" })).toBe(true);
   });
 });

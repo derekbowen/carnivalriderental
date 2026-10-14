@@ -1,0 +1,241 @@
+{
+  "checkedAt": "2026-10-14T08:56:49.643Z",
+  "base": "http://localhost:3200",
+  "passed": 49,
+  "failed": 0,
+  "results": [
+    {
+      "check": "robots.txt has no blanket Disallow",
+      "ok": true
+    },
+    {
+      "check": "robots.txt disallows /pass",
+      "ok": true
+    },
+    {
+      "check": "robots.txt disallows /connect/",
+      "ok": true
+    },
+    {
+      "check": "robots.txt disallows /api",
+      "ok": true
+    },
+    {
+      "check": "robots.txt disallows /internal",
+      "ok": true
+    },
+    {
+      "check": "robots.txt advertises the production sitemap",
+      "ok": true
+    },
+    {
+      "check": "sitemap.xml answers 200",
+      "ok": true
+    },
+    {
+      "check": "sitemap lists exactly the eligible cohort",
+      "ok": true,
+      "detail": "listed 13, expected 13; missing none; extra none"
+    },
+    {
+      "check": "sitemap URLs are canonical HTTPS production URLs without query strings",
+      "ok": true
+    },
+    {
+      "check": "sitemap carries no build-time lastmod",
+      "ok": true
+    },
+    {
+      "check": "/: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us, leaks 0"
+    },
+    {
+      "check": "/rides: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/rides, leaks 0"
+    },
+    {
+      "check": "/categories/ferris-wheels: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/categories/ferris-wheels, leaks 0"
+    },
+    {
+      "check": "/florida/orlando: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/florida/orlando, leaks 0"
+    },
+    {
+      "check": "/georgia/atlanta: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/georgia/atlanta, leaks 0"
+    },
+    {
+      "check": "/illinois/chicago: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/illinois/chicago, leaks 0"
+    },
+    {
+      "check": "/illinois/chicago/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/illinois/chicago/ferris-wheel, leaks 0"
+    },
+    {
+      "check": "/minnesota/minneapolis: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/minnesota/minneapolis, leaks 0"
+    },
+    {
+      "check": "/ohio/columbus: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/ohio/columbus, leaks 0"
+    },
+    {
+      "check": "/ohio/columbus/ferris-wheel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/ohio/columbus/ferris-wheel, leaks 0"
+    },
+    {
+      "check": "/texas/austin: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/texas/austin, leaks 0"
+    },
+    {
+      "check": "/texas/austin/carousel: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/texas/austin/carousel, leaks 0"
+    },
+    {
+      "check": "/washington/seattle: 200, index, self-canonical, no private data, no Offer",
+      "ok": true,
+      "detail": "status 200, robots \"index, follow\", x-robots-tag \"\", canonical https://carnivalriderental.us/washington/seattle, leaks 0"
+    },
+    {
+      "check": "/s: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/s/6acf2abc-85cf-4e1c-b361-7ab3a8d41ab0: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/s?type=ferris-wheel: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/texas/dallas: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/california/san-francisco: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/ohio/columbus/carousel: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/categories/carousels: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/ohio: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/directory: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/directory/ohio: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/guides/how-to-rent-carnival-rides: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/events: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/operators: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/connect: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"noindex, nofollow\""
+    },
+    {
+      "check": "/connect?listing=6acf2abc-85cf-4e1c-b361-7ab3a8d41ab0: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, nofollow\", x-robots-tag \"noindex, nofollow\""
+    },
+    {
+      "check": "/privacy: excluded (noindex or 404) and not in the sitemap",
+      "ok": true,
+      "detail": "status 200, robots \"noindex, follow\", x-robots-tag \"\""
+    },
+    {
+      "check": "/pass/{unknown}: no contact data, private",
+      "ok": true,
+      "detail": "status 404, cache private, no-store"
+    },
+    {
+      "check": "/connect: private, no-store",
+      "ok": true
+    },
+    {
+      "check": "/s/{test id} → 308 /s/{live id}",
+      "ok": true,
+      "detail": "status 308 → /s/6acf2cb9-c2b7-4319-91dc-ce6022610c60"
+    },
+    {
+      "check": "/s/{test id} → 308 /s/{live id}",
+      "ok": true,
+      "detail": "status 308 → /s/6acf2cba-b97c-4ab3-912a-a5a8c3611843"
+    },
+    {
+      "check": "/s/{test id} → 308 /s/{live id}",
+      "ok": true,
+      "detail": "status 308 → /s/6acf2cba-9109-4f90-b37a-55535778dee2"
+    },
+    {
+      "check": "/s/{test id} → 308 /s/{live id}",
+      "ok": true,
+      "detail": "status 308 → /s/6acf2cba-da11-4c70-97c6-6ce436cfb885"
+    },
+    {
+      "check": "/s/{test id} → 308 /s/{live id}",
+      "ok": true,
+      "detail": "status 308 → /s/6acf2cbb-507d-49e1-a651-db0136f1c9da"
+    },
+    {
+      "check": "/connect?listing={old Test Ferris id} → its Live listing, Ferris Wheel Event Access tier",
+      "ok": true
+    },
+    {
+      "check": "/s/{unknown id} → 404 (never redirected elsewhere)",
+      "ok": true,
+      "detail": "status 404"
+    },
+    {
+      "check": "/connect says Event Access is opening soon (no test checkout on production)",
+      "ok": true
+    }
+  ]
+}

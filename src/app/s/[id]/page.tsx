@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { accessPriceCopy } from "@/lib/access/copy";
 import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { getOperatorListing, type OperatorRideDetail } from "@/lib/catalog/operator-search";
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { RideResult } from "@/components/search/RideResult";
-import { linkedNearbyCities, linkedRideCities, operatorCount, PSEO_INVENTORY, RIDES, rideHome, ridesNear, similarRides, toCard } from "@/lib/inventory";
+import { linkedNearbyCities, linkedRideCities, liveListingIdFor, operatorCount, PSEO_INVENTORY, RIDES, rideHome, ridesNear, similarRides, toCard } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { BRAND } from "@/lib/config";
@@ -18,6 +18,12 @@ export const revalidate = 60;
 
 type P = { id: string };
 
+/** A pre-cutover (Test) listing id moves permanently to the same listing in Live; unknown ids 404 as before. */
+function redirectIfMoved(id: string) {
+  const live = RIDES.some((r) => r.id === id) ? null : liveListingIdFor(id);
+  if (live) permanentRedirect(paths.rideListing(live));
+}
+
 /** Live listing, or the public inventory snapshot when the marketplace API is unreachable. */
 async function loadRide(id: string): Promise<OperatorRideDetail | null> {
   const live = await getOperatorListing(id);
@@ -27,7 +33,9 @@ async function loadRide(id: string): Promise<OperatorRideDetail | null> {
 }
 
 export async function generateMetadata({ params }: { params: Promise<P> }): Promise<Metadata> {
-  const ride = await loadRide((await params).id);
+  const { id } = await params;
+  redirectIfMoved(id);
+  const ride = await loadRide(id);
   return {
     title: ride ? `${ride.title} | ${BRAND.name}` : BRAND.name,
     description: ride ? `${ride.title}${ride.rideClassLabel ? `, a ${ride.rideClassLabel.toLowerCase()}` : ""} listed by an independent carnival operator${ride.homeState ? ` based in ${ride.homeState}` : ""}. See photos and details, compare similar rides, then connect with the operator directly.` : undefined,
@@ -67,6 +75,7 @@ function placement(id: string) {
 
 export default async function RideListingPage({ params }: { params: Promise<P> }) {
   const id = (await params).id;
+  redirectIfMoved(id);
   const ride = await loadRide(id);
   if (!ride) notFound();
   const place = placement(id);

@@ -17,6 +17,7 @@ import eligibleFile from "./index-eligible.json";
 import { inPilot } from "./pilot";
 import operatorsFile from "./operators.json";
 import ridesFile from "./rides.json";
+import testToLiveFile from "./test-to-live.json";
 
 export interface InventoryRide {
   id: string;
@@ -50,6 +51,16 @@ export interface RideType {
 }
 
 export const RIDES = (ridesFile as { rides: InventoryRide[] }).rides;
+
+/**
+ * Listing ids from the Test marketplace (the catalog before the 2026-10-14 Live cutover) → the same
+ * listing recreated in Live. Public ids only, no identity. Old /s/{id} links and ?listing= parameters
+ * resolve through this map; ids that aren't in it are simply unknown (never redirected elsewhere).
+ */
+const TEST_TO_LIVE = (testToLiveFile as { map: Record<string, string> }).map;
+export function liveListingIdFor(id: string): string | null {
+  return TEST_TO_LIVE[id] ?? null;
+}
 export const INVENTORY_GENERATED_AT = (ridesFile as { generatedAt: string }).generatedAt;
 export const CITIES = (citiesFile as { cities: City[] }).cities;
 export const RIDE_TYPES: RideType[] = (rideTypesFile as { rideTypes: RideType[] }).rideTypes;
@@ -346,6 +357,27 @@ export function inventoryRideCityGate(c: City, rideType: string): GateResult {
     if (dup) reasons.push(dup);
   }
   return gate(reasons);
+}
+
+/**
+ * Core national hubs of the indexing cohort (homepage, /rides). Both are built from the inventory
+ * snapshot. Indexable only when indexing is on for the environment, the exact path is in the
+ * approved cohort (pilot.ts corePaths), and a real inventory stands behind it (at least the city
+ * threshold of rides). Never demo fixtures: those are gone from public pages and off in production.
+ */
+export function coreHubGate(path: string): GateResult {
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (!inPilot(path)) reasons.push("not in the approved indexing cohort");
+  if (RIDES.length < PSEO_INVENTORY.cityMinRides) reasons.push(`only ${RIDES.length} rides in the inventory snapshot`);
+  return gate(reasons);
+}
+export const coreRoutes = (): { path: string; family: string; gate: GateResult }[] => ["/", "/rides"].map((path) => ({ path, family: "core", gate: coreHubGate(path) }));
+
+/** Inventory rides in a category (the supply a category hub shows). */
+export function categoryInventoryCount(categoryId: string): number {
+  const types = new Set(rideTypesInCategory(categoryId).map((t) => t.id));
+  return RIDES.filter((r) => r.rideType && types.has(r.rideType)).length;
 }
 
 /** Site directory pages (/directory, /directory/{state}): same environment and approval gates. */

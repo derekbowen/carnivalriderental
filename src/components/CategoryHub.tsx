@@ -7,7 +7,9 @@ import type { OperatorCard } from "@/lib/catalog/operator-search";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import type { CategoryPage, CategoryTheme } from "@/lib/content/category-pages";
 import { categoryPageById } from "@/lib/content/category-pages";
-import type { TypeStats } from "@/lib/inventory";
+import { cityBySlugs, PSEO_INVENTORY, ridesNear, type TypeStats } from "@/lib/inventory";
+import { PSEO_PILOT } from "@/lib/inventory/pilot";
+import { CATEGORY_CONTEXT } from "@/lib/access/pricing";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { FOOTER_CITIES } from "@/lib/seo/footer-links";
 import { paths } from "@/lib/seo/routes";
@@ -109,6 +111,18 @@ export function CategoryHub({
     .filter((s) => !!s)
     .sort((a, b) => a!.name.localeCompare(b!.name))
     .slice(0, 12);
+  // Ride type + city pages of this hub's ride type in the approved indexing cohort, first, so the hub
+  // passes authority to its own city pages (e.g. Ferris wheel rentals near Columbus) before the
+  // general city list. Only pages that meet their supply threshold on the current snapshot.
+  const hubType = CATEGORY_CONTEXT[page.id]?.rideType;
+  const cohortRideCities = hubType
+    ? PSEO_PILOT.paths.flatMap((p) => {
+        const [, st, slug, type] = p.split("/");
+        const c = type === hubType ? cityBySlugs(st, slug) : null;
+        if (!c || ridesNear(c.lat, c.lng).filter((r) => r.rideType === hubType).length < PSEO_INVENTORY.rideCityMinRides) return [];
+        return [{ href: paths.rideCity(hubType, c.stateSlug, c.slug), label: `${rideTypeCopy(hubType, page.singular).label} rentals near ${c.name}, ${c.stateAbbr}` }];
+      })
+    : [];
   const cities = FOOTER_CITIES.slice(0, 8);
   const related = page.related.map((id) => categoryPageById(id)).filter((p): p is CategoryPage => !!p);
   // The visible FAQ and FAQPage JSON-LD are the same list, including the price entry.
@@ -232,6 +246,7 @@ export function CategoryHub({
         <LinkGrid
           title={`Where to find a ${page.singular}`}
           links={[
+            ...cohortRideCities,
             ...states.map((s) => ({ href: paths.state(s!.slug), label: `Carnival ride rentals in ${s!.name}` })),
             ...cities,
           ]}

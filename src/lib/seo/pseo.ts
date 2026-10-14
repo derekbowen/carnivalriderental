@@ -5,6 +5,8 @@ import { CATEGORY_PAGES, type CategoryPage } from "../content/category-pages";
 import { OCCASIONS, US_STATES, type Occasion, type UsState } from "../taxonomy";
 import type { GateResult } from "./publication";
 import { paths } from "./routes";
+import { categoryInventoryCount } from "../inventory";
+import { inPilot } from "../inventory/pilot";
 
 /**
  * Gates for the taxonomy-driven page families (state hub, occasion hub, occasion + state).
@@ -78,11 +80,17 @@ export function occasionStateGate(o: Occasion, state: UsState, snap: CatalogSnap
   return result(reasons);
 }
 
-/** Category hub (/categories/{id}): approved copy + enough real supply. Visual theme plays no part. */
+/**
+ * Category hub (/categories/{id}): approved copy (or the exact path in the approved indexing cohort,
+ * pilot.ts) + enough real supply. Supply is what the hub shows: the operator inventory snapshot of
+ * the category (the managed catalog is retired; its live offerings still count when there are any).
+ * Visual theme plays no part.
+ */
 export function categoryHubGate(page: CategoryPage, snap: CatalogSnapshot): GateResult {
-  const reasons = common(snap);
-  if (page.reviewStatus !== "approved") reasons.push("category copy not approved");
-  const n = countable(snap, { categories: [page.id] });
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (page.reviewStatus !== "approved" && !inPilot(paths.category(page.id))) reasons.push("category copy not approved");
+  const n = Math.max(countable(snap, { categories: [page.id] }), categoryInventoryCount(page.id));
   if (n < PSEO_THRESHOLDS.categoryMinOfferings) reasons.push(`${n} live offerings in ${page.id} (need ${PSEO_THRESHOLDS.categoryMinOfferings})`);
   return result(reasons);
 }

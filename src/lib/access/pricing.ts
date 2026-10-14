@@ -15,7 +15,7 @@
  *
  * Nothing here reads a price: prices live in access_products (config.ts) and are looked up by tier.
  */
-import { CLASS_LABELS, RIDES, rideTypeFor, type InventoryRide } from "../inventory";
+import { CLASS_LABELS, liveListingIdFor, RIDES, rideTypeFor, type InventoryRide } from "../inventory";
 
 export type AccessTier = "standard" | "ferris";
 
@@ -45,7 +45,9 @@ const canonicalRideType = (t: string | null | undefined): string | null => (t &&
 const canonicalRideClass = (c: string | null | undefined): string | null => (c && CLASS_LABELS.has(c) ? c : null);
 
 export function resolveCriteria(input: CriteriaInput): ResolvedCriteria {
-  const listing = input.listingId ? RIDES.find((r) => r.id === input.listingId) ?? null : null;
+  // A pre-cutover (Test) listing id resolves to its Live listing, so an old link keeps its ride and tier.
+  const id = input.listingId ? (RIDES.some((r) => r.id === input.listingId) ? input.listingId : liveListingIdFor(input.listingId)) : null;
+  const listing = id ? RIDES.find((r) => r.id === id) ?? null : null;
   if (listing) {
     const rideType = canonicalRideType(listing.rideType);
     const rideClass = rideType ? null : canonicalRideClass(listing.rideClass);

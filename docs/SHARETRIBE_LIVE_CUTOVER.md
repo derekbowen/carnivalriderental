@@ -1,110 +1,139 @@
-# Sharetribe Live cutover runbook (updated 2026-10-14; Live NOT yet created)
+# Sharetribe Live cutover (done 2026-10-14)
 
-Status on 2026-10-14: the founder has paid for the Live plan. The Live environment itself does not
-exist yet: the Live hostname `carnivalrental-9ecfo8.mysharetribe.com` still redirects to
-`www.mysharetribe.com`, and no Live API credentials exist. Paying is not the last step; the
-**"Go live"** button in Console creates the Live environment as a copy of Test's configuration.
+Status: **production runs on the Live marketplace "CarnivalRental"** (verified by API on 2026-10-14:
+the Live Integration API and the Live Marketplace API both answer `marketplace/show` with
+"CarnivalRental"; the Test marketplace is "CarnivalRental Test"). The earlier note that Live did not
+exist is obsolete: the founder pressed **Go live** and created the two Live applications on
+2026-10-14. Evidence and counts: `reports/live-migration-2026-10-14.json`; rollback:
+`docs/ROLLBACK_2026-10-14.md`.
 
-Users and listings can't be copied from Test to Live (Sharetribe docs: "Users and listings created
-in the Test and/or Dev environments cannot be moved to the Live environment"). Sharetribe's only bulk
-path is its migration service (an Intermediary-format file, a test import, then a one-time Live
-import). Our own import scripts recreate the same companies, listings and photos in Live
-deterministically, with deduplication and provenance, so they are the route used here.
+Users and listings can't be moved from Test to Live in Console. They were **recreated in Live through
+the supported APIs** with the existing importers (`import:companies`, `import:listings`,
+`import:photos`), deterministically, with deduplication and provenance.
 
-Scripts select Live with `--target live`, which reads the `SHARETRIBE_LIVE_*` variables
-(`scripts/lib/target-env.ts`); the Test values keep their usual names, so nothing is swapped by hand.
+## Credentials (never in Git)
 
-## 1. Create Live and its API credentials (owner, Console)
+`.env.local` (gitignored) keeps both environments side by side; nothing is swapped by hand:
 
-1. In the Test environment, click **Go live** (top right). The Live environment appears in the
-   environment picker (top left), configured as a copy of Test.
-2. Switch to **Live** → Build → Advanced → Applications → **Add a new application**:
-   - "carnivalriderental.us web", type **Marketplace API** → client ID;
-   - "carnivalriderental.us server", type **Integration API** → client ID and client secret (the
-     secret is shown once; store it in a password manager).
-3. Live → General → Marketplace name: note it (the scripts ask for it in `--confirm-live`).
-4. Live → General → Access control: "Approve users who want to join" on; **"Make marketplace private"
-   OFF** (private marketplaces return 403 to the anonymous Marketplace API and empty our catalog).
-5. Do not connect a Stripe account or a payout provider in Sharetribe (we never take rental
-   payments; never paste Carnival Ride Rental's Stripe keys into Sharetribe). A map provider is
-   optional; our pages don't use Sharetribe's maps.
-6. Put the three values in `.env.local` as `SHARETRIBE_LIVE_CLIENT_ID`,
-   `SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID`, `SHARETRIBE_LIVE_INTEGRATION_CLIENT_SECRET` (optionally
-   `SHARETRIBE_LIVE_MARKETPLACE_URL`), or as cloud-environment secrets for a new session.
-7. `npm run sharetribe:inspect -- --target live && npm run contract:diff`: the marketplace name must
-   be the Live one and the listing type, fields and `default-inquiry` process must be VERIFIED.
+| Variable | Environment |
+|---|---|
+| `SHARETRIBE_CLIENT_ID`, `SHARETRIBE_INTEGRATION_CLIENT_ID/_SECRET` | Test (standard names) |
+| `SHARETRIBE_LIVE_CLIENT_ID` | Live Marketplace API app (`467a9abe…`, public) |
+| `SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID/_SECRET` | Live Integration API app (`5ef8fcd2…`) |
 
-## 2. Copy configuration Test → Live
+Scripts select Live only with `--target live` (`scripts/lib/target-env.ts`), and every write asserts
+the marketplace name first (`--confirm-live "CarnivalRental"`, and the Integration and Marketplace
+clients must name the same marketplace). `scripts/live-migration.ts` reads Live through the
+`SHARETRIBE_LIVE_*` names directly and refuses any other marketplace. Vercel production holds the Live
+values under the standard names (Integration ones as sensitive).
 
-Console (Test) → Build → **Copy changes to Live** for: listing types (`operator-ride` with the
-`default-inquiry` process; the legacy managed type may be left behind), listing fields and options
-(`contract/operator-listing-contract.json`), user fields, search configuration, categories, branding,
-pages/footer, the outgoing email sender (General → Outgoing email address, CNAMEs on our domain) and
-Access control (**"Approve users who want to join" on; "Make marketplace private" OFF**: private
-marketplaces return 403 to the anonymous Marketplace API and empty our catalog). Commission stays 0;
-no payout provider is configured (we never collect rental payments). Re-run step 1.4 until VERIFIED.
+## Configuration (Live = Test, verified)
 
-## 3. Import operators, listings, photos; anonymise; re-claim
+`npm run sharetribe:inspect -- --target live && npm run contract:diff -- --target live`: operator
+contract **39/39 verified** — listing type `operator-ride-rental` on `default-inquiry/release-1`
+(Free messaging, `unitType: inquiry`), no payout details, no availability calendar, every contract
+field with its options and listing-type scope, provider commission **0%** (Test still says 10%; the
+Live value is the intended one and was left as is), anonymous Marketplace API reads verified.
+`contract:diff` now picks the snapshot by the marketplace name and capture time recorded inside it
+(filename order once picked an old Test snapshot for a Live check) and checks the operator contract by
+default; `--contract managed` runs the retired managed-rental contract.
 
-All against Live, dry run first, then `--apply`:
+**Access control:** "Approve users who want to join" is on; **"Make marketplace private" stays OFF**:
+it makes the anonymous Marketplace API answer 403 and empties our catalog. Anonymous visitors (and
+scrapers) can read user and listing `publicData` and `metadata`, so those fields are anonymous by
+construction (next section). The hosted Live web app (`carnivalrental-9ecfo8.mysharetribe.com`)
+still redirects to `www.mysharetribe.com` on 2026-10-14; the app does not use it.
+
+## Migration source
+
+The importers read `imports/company-accounts/source/workbook.json` (gitignored: private contacts).
+It was rebuilt on 2026-10-14 from the native Google Sheet `Carnival_Host_Import` (Drive file
+`12_MAKnyJm7acOGcmrK4gBntDHaso4us-KQo6vbnCR0s`; the second copy `1-o_QFWq…` has identical cells in all
+7 tabs) via a Drive XLSX export and `scripts/company-import-extract.py`. The extractor now pads rows
+to their header width (Google exports drop trailing empty cells), decodes OOXML `_xHHHH_` escapes, and
+records the provenance: the recorded SHA-256 is the export's, not the original 2026-10-04 upload's.
+
+**Freshness check** (`npm run migrate:live -- snapshot-test && npm run migrate:live -- reconcile`):
+every planned row was compared with what Test serves today. Titles, public fields, rounded
+geolocation and rider rules are identical for all 3,714 listings; none is missing in Test. The only
+differences: the unclaimed notice (Test still shows the retired request-desk notice; Live uses the
+current Event Access notice) and 5 descriptions in which Test still shows the company's name (Live
+removes it: the name set includes the legal entity name). Test's QA ride and request-desk listing are
+not migrated.
+
+## Privacy at creation (new for Live)
+
+Test was anonymised after import (`ops:anonymize`), and its public metadata still carries
+`companyId` and `importExternalId` (company slugs) on every listing and user. Live never had an
+identifying public field, not even briefly:
+
+- accounts: `buildAnonymousPayload` → operator placeholder name and bio; `hqState`/`statesServed`
+  only in `publicData`; company name, city, website, other operations, the original profile and the
+  phone in `privateData` (the phone is not in `protectedData`, which a transaction process can
+  reveal); public `metadata` = `claimStatus`, `importBatch`;
+- listings: `buildAnonymousListingPayload` → unclaimed notice first, company names, links and emails
+  removed from the description (original kept in `privateData.originalDescription`), inquiry alias set,
+  public `metadata` = `claimStatus`, `importBatch`, `footprintSource` (+ `photoSource`), import id and
+  company slug in `privateData`;
+- created `pendingApproval`, photo attached, then approved.
+
+`contacts.ts` reads the same fields as before (it already read `privateData.companyName/website/phone`
+from anonymised Test accounts), so reveal after an entitlement is unchanged
+(`tests/live-anonymous-import.test.ts`).
+
+## What ran (2026-10-14)
 
 ```
-npm run import:companies -- --target live --confirm-live "<Live name>"            # dry run (all commands below read SHARETRIBE_LIVE_*)
-npm run import:companies -- --apply --target live --confirm-live "<Live name>"
-npm run import:listings  -- --target live --confirm-live "<Live name>"            # dry run
-npm run import:listings  -- --apply --target live --confirm-live "<Live name>"
-npm run import:photos -- --target live                                             # dry run (counts)
-npm run import:photos -- --apply --target live                                     # provenance recorded
-npm run listings:enable-inquiry -- --apply --target live                           # founder go
-npm run ops:anonymize -- --apply --target live --founder-go                        # public profiles anonymised
-npm run ops:claim -- --company <id> --email <operator email> --apply               # each claimed operator
-npm run inventory:validate
+npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only <2 canary rows>            # canary (2 accounts)
+npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --only <2 canary rows> --approve-users --founder-go
+npm run import:listings  -- --apply --target live --confirm-live "CarnivalRental" --company <canary company>   # canary (3 listings)
+npm run import:photos    -- --apply --target live --confirm-live "CarnivalRental" --from-test imports/migration/test-public.json --company <canary company> --approve --founder-go
+npm run migrate:live -- verify                                                                                      # canary read-back
+# same three commands again → exists / exists / already_has_images, 0 duplicates; then the full run:
+imports/migration/run-full.sh   # companies (--approve-users) → listings → photos → approve remaining → verify
+npm run import:photos -- --apply --target live --confirm-live "CarnivalRental" --from-test imports/migration/test-public.json --only <the GIF listing> --approve --founder-go
+npm run migrate:live -- verify && npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" && npm run import:listings -- --apply --target live --confirm-live "CarnivalRental"   # final read-back, idempotency reruns
 ```
 
-Deduplication is by external id, so re-running never creates duplicates. The claim script keeps the
-company name, bio and website out of public fields (CLAUDE.md). Verify counts against Test afterwards
-(`npm run sharetribe:inspect` prints listing and user totals): 2026-10-06 Test baseline was 319
-companies, 3,716 operator listings, photos per `docs/LISTING_IMPORT.md`.
+Verified final state (fully paginated read-back, `npm run migrate:live -- verify`, 2026-10-14):
 
-## 4. Regenerate the snapshots and dependent maps
+| Entity | Expected | In Live | Notes |
+|---|---|---|---|
+| Operator accounts | 184 (119 `A_ready` + 65 `B_account_only`) | **184**, all `active`, unclaimed, email unverified, no Stripe, anonymous public profile | 135 `C_verify_first` held, 11 `D_exclude` and the QA account not migrated. Live answers `409 user-pending-approval` to listings by pending authors, so imported accounts are approved with `--approve-users` (approval lets the account hold listings; it claims or verifies nothing). Claim addresses: `<companyId>@carnivalriderental.us` (our production domain, MX present); Sharetribe's verification emails go to that mailbox, never to operators. No invitations, resets or claims were sent; `ops:claim` was not run. |
+| Listings | 3,714 (3,721 source rows − 7 held for privacy review, as in Test) | **3,714 published**, 0 pending, 0 closed | The canary's first attempt failed 3 times with `409 user-pending-approval` before the approval step; all 3 were then created. 0 duplicates (by private import id), 0 without the import marker. |
+| Photos | 3,503 listings have a hosted photo in Test | **3,503 with an image**, every image URL serves an image (all 3,503 checked) | Copied from each Test listing's hosted image (Sharetribe CDN), not fetched from operator sites again; provenance in `privateData.photoSource`. One 100 MB animated GIF needed the first-frame JPEG fix (and a 150 MB bound for the Sharetribe CDN) and is attached. |
+| Without photo | 211 | **211 published with the honest placeholder** | 159 rides never had a source photo; 52 had one that failed or was rejected in Test. Each is listed by Live listing id in `reports/live-migration-2026-10-14.json`. |
+| Relationships | 3,714 | **0 drift** | Every Live listing's author is the Live account of the same company, and the Test listing with the same import id was authored by that company's Test account. |
+| Public privacy | — | **0 leaks** | Anonymous Marketplace API read of all 3,714 listings and their authors: no company name (incl. legal names), contact or owner name, email, phone, link, company slug or import id in any public field; authors are the placeholder; public metadata keys are the allowed ones. |
+| Idempotency | — | reruns: accounts `exists 184`, listings `exists 3714`, photos `already_has_images` | 0 created on rerun. |
 
-Live listing ids differ from Test ids, so every snapshot must be rebuilt from Live:
+Read-only matching against Live with the app's own `matchOperators` + `resolveCriteria`
+(`npm run migrate:live -- match`, `reports/live-matching-check.json`): Columbus any ride → standard
+($99), 5 distinct contactable operators from 150 listings; Columbus Ferris wheel → Ferris ($199), 13;
+Chicago Ferris wheel → Ferris ($199), 13; Austin carousel → standard ($99), 4; an old Test Ferris
+listing id posted with `rideType=carousel` → resolved to its Live listing, Ferris ($199), 14. The
+contact lookup for the first match returned real channels (reported as booleans only).
 
-```
-npm run inventory:export -- --target live      # src/lib/inventory/rides.json (ids, ride types, photos, geo)
-npm run inventory:operators -- --target live   # src/lib/inventory/operators.json (anonymous owner hashes)
-npm run inventory:validate
-npm run pseo:report
-npm run pseo:duplicates       # regenerates reports/pseo-duplicates.json; index-eligible.json is by path, re-check it
-npm run typecheck && npm test && npm run build && npm run test:e2e
-```
+Private working files (reverse-identity mappings, ledgers, the Test snapshot, logs) are in
+`imports/migration/` and `imports/*/carnivalrental/`, all gitignored. Sharetribe itself is the
+durable record: every migrated account and listing carries `privateData.importExternalId` and
+`companyId`, so the mappings regenerate from Live.
 
-Then commit. Our listing pages are `/s/{listingId}`, so old Test ids 404 after the cutover (they were
-never indexed). pSEO city and ride-type×city URLs contain no ids and do not change.
+## Snapshots and Test ids
 
-Ledger note: `operator_contact_status` is keyed by Sharetribe user id and simply misses for Live ids
-(24 h cache). Existing test-mode purchases reference Test operator ids; they were never real customers.
+`inventory:export -- --target live`, `inventory:operators -- --target live`, `inventory:validate`,
+`pseo:duplicates`, `pseo:report`: `rides.json`, `operators.json`, `index-eligible.json` and
+`reports/pseo-duplicates.json` are Live. `src/lib/inventory/test-to-live.json` maps each Test listing
+id to the same listing in Live (public ids only): `/s/{test id}` answers **308** to `/s/{live id}` and
+`/connect?listing={test id}` resolves to the Live listing (same ride and tier). Unknown ids still 404.
 
-## 5. Point production at Live
+Access ledger: every purchase before the cutover was Stripe test mode (`cs_test_…`, QA addresses);
+nothing was remapped or deleted. Test-mode passes are never entitlements on a live-keyed site
+(`purchaseValidHere`), and while production runs a test key, Event Access is closed ("opening soon").
+`operator_contact_status` rows are keyed by Test operator ids, which never collide with Live ids.
 
-Vercel (project `prj_0bXznA04ruDEAaU6F2IN5gacDm70`, production): `SHARETRIBE_CLIENT_ID` (Live public
-client id, plain), `SHARETRIBE_INTEGRATION_CLIENT_ID` and `SHARETRIBE_INTEGRATION_CLIENT_SECRET` (Live,
-sensitive), `SHARETRIBE_MARKETPLACE_URL` (Live hosted URL). Remove `REQUEST_DESK_LISTING_ID` (unused).
-Deploy `main` (normal workflow: `create_deployment` from GitHub, target production).
+## Re-running
 
-## 6. Verify search, matching and unlocks use the same Live inventory
-
-- `/s` total equals the Live operator-listing count from `sharetribe:inspect`; `/s/{id}` renders a Live id.
-- `/connect` for Columbus, OH with `ferris-wheel` returns ≥ 3 matches (authors resolved through the
-  Live Marketplace API, contactability through the Live Integration API).
-- A Stripe **test-mode** purchase on the production domain reveals a contact that matches the operator's
-  Live private data; the pass email arrives at `qa@carnivalriderental.us` and its link opens the pass in
-  a fresh browser.
-- `tests/privacy-*.test.ts`, `e2e/privacy.spec.ts` and `npm run pseo:report` still pass: no operator
-  identity in public HTML, JSON-LD, metadata, sitemaps or the snapshot.
-
-## 7. After cutover
-
-Rotate the Test Integration client secret or delete the Test Integration application if it is no longer
-used by scripts; put the Test values back in `.env.local` only if Test work continues. Update
-`docs/LAUNCH_STATUS.md` with the verified Live counts.
+Every command above is idempotent: reruns report `exists` / `already_has_images`, and
+`npm run migrate:live -- verify` fails on any duplicate, relationship drift or public leak.
+`imports/migration/run-photos.sh` resumes from the photo step.
