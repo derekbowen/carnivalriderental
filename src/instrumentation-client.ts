@@ -5,6 +5,7 @@ import { initBotId } from "botid/client/core";
 // return URL are deliberately not listed: Stripe must always reach them.
 initBotId({
   protect: [
+    { path: "/api/concierge", method: "POST" },
     { path: "/api/access/start", method: "POST" },
     { path: "/api/access/checkout", method: "POST" },
     { path: "/api/pass/recover", method: "POST" },

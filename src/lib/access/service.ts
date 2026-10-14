@@ -12,6 +12,7 @@
  * - contact values live only in unlocks.contact_snapshot, written after the entitlement check.
  */
 import crypto from "node:crypto";
+import { track } from "../concierge/analytics";
 import { z } from "zod";
 import { US_STATES } from "../taxonomy";
 import { formatPrice, productForTier, type AccessProduct, rowToProduct } from "./config";
@@ -65,8 +66,10 @@ export interface EventRequest {
   tier: AccessTier;
   status: "matched" | "insufficient";
   createdAt: string;
+  sourcePath: string | null;
 }
 const rowToEvent = (r: Row): EventRequest => ({
+  sourcePath: r.source_path ? String(r.source_path) : null,
   id: String(r.id),
   email: String(r.email),
   eventDate: String(r.event_date),
@@ -255,9 +258,10 @@ export async function createCheckout(db: AccessDb, gateway: StripeGateway, event
     productName: product.name,
     productDescription: `${product.description} Unlock up to ${product.unlockLimit} operators within ${product.validityDays} days. ${event.city}, ${event.state}, ${event.eventDate}.`,
     successUrl: `${siteUrl}/api/access/return?p=${id}&cs={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${siteUrl}/connect/${event.id}?cancelled=1`,
+    cancelUrl: event.sourcePath === "/concierge" ? `${siteUrl}/concierge?cancelled=1` : `${siteUrl}/connect/${event.id}?cancelled=1`,
   });
   await db.query(`UPDATE access_purchases SET stripe_checkout_session_id = ?, updated_at = ? WHERE id = ?`, [session.id, nowIso(), id]);
+  await track(db, "checkout_started", { eventId: event.id });
   return { purchase: (await getPurchase(db, id))!, url: session.url };
 }
 
@@ -308,6 +312,7 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     const id = crypto.randomUUID();
     const expires = new Date(now.getTime() + p.validityDays * 864e5).toISOString();
     await tx.query(`INSERT INTO access_passes (id, purchase_id, event_request_id, email, unlock_limit, unlocked_count, status, expires_at, created_at) VALUES (?, ?, ?, ?, ?, 0, 'active', ?, ?)`, [id, p.id, p.eventRequestId, p.email, p.unlockLimit, expires, t]);
+    await track(tx, "event_access_purchased", { eventId: p.eventRequestId, passId: id });
     const rows = await tx.query(`SELECT * FROM access_passes WHERE id = ?`, [id]);
     return { pass: rowToPass(rows[0]), created: true, purchase: p };
   });
@@ -513,6 +518,7 @@ export async function unlockOperator(db: AccessDb, source: OperatorSource, passI
       const t = now.toISOString();
       const ins = await tx.query(`INSERT INTO access_unlocks (id, pass_id, sharetribe_operator_id, first_revealed_at, contact_snapshot, ip_hash, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (pass_id, sharetribe_operator_id) DO NOTHING RETURNING id`, [crypto.randomUUID(), passId, operatorId, t, snapshot, meta.ipHash, meta.userAgent?.slice(0, 200) ?? null]);
       if (ins.length === 0) throw new RaceRetry();
+      await track(tx, "operator_unlocked", { eventId: pass.eventRequestId, passId });
       return { unlock: { operatorId, firstRevealedAt: t, contact: JSON.parse(snapshot), reportedDeadAt: null }, consumed: true };
     });
   };

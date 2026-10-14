@@ -120,3 +120,32 @@ CREATE TABLE IF NOT EXISTS operator_contact_status (
   claimed INTEGER NOT NULL,
   checked_at TEXT NOT NULL
 );
+
+-- Concierge stores demand, not a mirror of inventory. Tokens are opaque and stored hashed.
+CREATE TABLE IF NOT EXISTS concierge_sessions (
+  id TEXT PRIMARY KEY,
+  token_hash TEXT NOT NULL UNIQUE,
+  details_json TEXT NOT NULL,
+  search_type TEXT,
+  searched INTEGER NOT NULL DEFAULT 0,
+  event_request_id TEXT REFERENCES access_event_requests(id),
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS concierge_requests (
+  id TEXT PRIMARY KEY,
+  session_id TEXT NOT NULL REFERENCES concierge_sessions(id),
+  listing_id TEXT,
+  details_json TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'received',
+  created_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS concierge_events (
+  id TEXT PRIMARY KEY,
+  session_id TEXT REFERENCES concierge_sessions(id),
+  event_request_id TEXT,
+  pass_id TEXT,
+  name TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS concierge_events_name ON concierge_events(name, created_at);

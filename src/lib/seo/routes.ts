@@ -36,6 +36,7 @@ function seg(s: string): string {
 
 export const paths = {
   home: () => "/",
+  concierge: () => "/concierge",
   rides: () => "/rides",
   ride: (ride: string) => `/rides/${seg(ride)}`,
   rideCity: (ride: string, state: string, city: string) => `/${seg(state)}/${seg(city)}/${seg(ride)}`,

@@ -1,4 +1,4 @@
-import { activateFromSession } from "@/lib/access/service";
+import { activateFromSession, getEventRequest } from "@/lib/access/service";
 import { accessRuntime, grantPassCookie, parseCookie, passCookieName, redirect } from "@/lib/access/runtime";
 import { paths } from "@/lib/seo/routes";
 
@@ -18,7 +18,10 @@ export async function GET(req: Request) {
   try {
     const rt = await accessRuntime();
     const r = await activateFromSession(rt.db, rt.gateway, purchaseId, sessionId, rt.siteUrl);
-    if (r.state === "paid") return redirect(paths.pass(r.pass.id), { "Set-Cookie": grantPassCookie(parseCookie(req.headers.get("cookie"), passCookieName), r.pass.id) });
+    if (r.state === "paid") {
+      const event = await getEventRequest(rt.db, r.pass.eventRequestId);
+      return redirect(event?.sourcePath === paths.concierge() ? paths.concierge() : paths.pass(r.pass.id), { "Set-Cookie": grantPassCookie(parseCookie(req.headers.get("cookie"), passCookieName), r.pass.id) });
+    }
     if (r.state === "mismatch") return new Response("Session does not match purchase", { status: 400 });
     if (r.state === "expired") return redirect(`/connect?error=expired`);
     return redirect(`/pass/pending?p=${purchaseId}&cs=${sessionId}&n=${n + 1}`);
