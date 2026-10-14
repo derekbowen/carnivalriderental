@@ -40,6 +40,11 @@ export default defineConfig({
       ACCESS_SESSION_SECRET: "e2e-access-secret-e2e-access-secret",
       // Many requests from one IP in a few minutes: the per-IP limiter would otherwise 429 the later specs.
       ACCESS_RATE_LIMIT: "off",
+      // The chat concierge is off by default (src/lib/concierge/flags.ts); e2e covers it switched on.
+      CONCIERGE_ENABLED: "true",
+      // No AI Gateway credentials in e2e: the concierge falls back to its form and deterministic search.
+      CONCIERGE_MODEL: "",
+      LIFECYCLE_AI_MODEL: "",
       // No email provider in e2e: pass emails are skipped (logged), never sent.
       EMAILIT_API_KEY: "",
       RESEND_API_KEY: "",

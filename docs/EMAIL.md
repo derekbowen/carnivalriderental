@@ -18,13 +18,15 @@ Five approved templates, rendered by the app from ledger facts (`src/lib/lifecyc
 
 | Template | Kind | Trigger | Stops |
 |---|---|---|---|
-| `saved_search` | transactional | the customer presses "Email me these N {city} options" on the matches page; sent at once | once per request |
+| `saved_search` | transactional | the customer presses "Email me these N {city} options" on the matches page, or "Email me these options" in the chat concierge; sent at once | once per request, whichever button |
 | `search_abandonment_1h` | commercial | matched request, no checkout, the address inactive ≥ 60 min, request 1–6 h old | any paid Event Access for the address |
 | `search_abandonment_24h` | commercial | matched request 24–48 h old, inactive | same |
 | `checkout_abandonment_1h` | commercial | checkout started, not paid, 1–24 h ago, inactive ≥ 60 min | same |
 | `purchased_no_unlock_2h` | transactional | active pass, 0 unlocks, 2–72 h after purchase; the button is a fresh pass sign-in link | first unlock |
 
 Everywhere: only the address's newest search is chased; never a zero-match request or a past event date; at most one sales email per address per 20 h; never to carnivalriderental.us or reserved test domains; unsubscribed addresses (ledger table `access_email_suppressions`, written by `/api/email/unsubscribe`) get nothing; commercial sends are capped at 200 a day. Creating an account or typing an email sends nothing by itself.
+
+Chat concierge (`docs/CONCIERGE_MVP.md`, off unless `CONCIERGE_ENABLED=true`): its email capture feeds this system; there is no second engine. A request created in the chat (source path `/concierge`) gets the three sales templates only if the customer ticked the optional, unticked "Also remind me about this search" box when giving their email, recorded as `email_capture_accepted` with consent in `access_lifecycle_events`; the latest capture in the session wins. Typing an email into the chat is never consent. The chat and web funnel record the lifecycle hooks `chat_started`, `email_capture_offered`, `email_capture_accepted`, `search_submitted`, `listing_viewed`, `event_access_offered`, `checkout_started`, `event_access_purchased` and `operator_unlocked` in the same table (identifiers only); hooks never send anything themselves. `tests/concierge-lifecycle.test.ts` covers duplicates across chat and web.
 
 Gates (live mode): commercial templates need `BUSINESS_POSTAL_ADDRESS` (CAN-SPAM footer) **and** `lifecycle-v1` in `EMAIL_APPROVED_CAMPAIGNS`. Until both are set they are recorded as `blocked` in `access_lifecycle_emails` (with the reason) and retried on every run while still due, so nothing is lost and nothing goes out early. Transactional templates send now. Unsubscribe links are signed with `EMAIL_UNSUBSCRIBE_SECRET`, or a key derived from `ACCESS_SESSION_SECRET` when that isn't set.
 

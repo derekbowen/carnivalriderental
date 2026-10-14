@@ -22,7 +22,9 @@ export const leadSchema = z.object({
 });
 export type Lead = z.infer<typeof leadSchema>;
 export const actionSchema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("followup"), email: z.string().trim().toLowerCase().email().max(200), consent: z.literal(true) }),
+  // "Email me these options": the email is saved on the lead; followupConsent is the optional, unticked "remind me" box.
+  z.object({ action: z.literal("capture"), email: z.string().trim().toLowerCase().email().max(200), followupConsent: z.boolean() }),
+  z.object({ action: z.literal("listing"), listingId: z.string().uuid() }),
   z.object({ action: z.literal("chat"), message: z.string().trim().min(1).max(3000), history: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().max(3000) })).max(12).optional() }),
   z.object({ action: z.literal("save"), details: leadSchema }),
   z.object({ action: z.literal("search"), rideType: z.string().max(60).nullable() }),

@@ -1,4 +1,3 @@
-import { consentToFollowup } from "@/lib/concierge/followup";
 import { isBotRequest } from "@/lib/access/bot";
 import { accessDb } from "@/lib/access/db";
 import { AccessError, priceLabel } from "@/lib/access/service";
@@ -6,15 +5,18 @@ import { accessRuntime, clientIp, parseCookie, passCookieName, passIdsFromCookie
 import { ipHash, sessionSecret } from "@/lib/access/session";
 import { emptyLead } from "@/lib/concierge/defaults";
 import { actionSchema } from "@/lib/concierge/schema";
-import { conversation, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator } from "@/lib/concierge/service";
+import { captureEmail, conversation, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator } from "@/lib/concierge/service";
+import { conciergeEnabled } from "@/lib/concierge/flags";
+import { lifecycleDeps } from "@/lib/lifecycle/runtime";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
-import { track } from "@/lib/concierge/analytics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const response = (data: unknown, status = 200, token?: string) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow", ...(token ? { "Set-Cookie": `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${process.env.APP_ENV !== "development" ? "; Secure" : ""}` } : {}) } });
 export async function POST(req: Request) {
+  // Off until the founder runs `npm run access:migrate -- --concierge` and sets CONCIERGE_ENABLED=true.
+  if (!conciergeEnabled()) return response({ error: "Not found" }, 404);
   if (await isBotRequest()) return response({ error: "Request blocked" }, 403);
   // All cookie-authenticated mutations require a same-origin JSON request.
   if (req.headers.get("origin") !== new URL(req.url).origin) return response({ error: "Forbidden" }, 403);
@@ -44,9 +46,15 @@ export async function POST(req: Request) {
     // Missing access-session config should not disable anonymous search/lead capture.
     const ids = parseCookie(req.headers.get("cookie"), passCookieName) ? passIdsFromCookie(parseCookie(req.headers.get("cookie"), passCookieName)) : [];
     let result: Record<string, unknown> = {};
-    if (a.action === "followup") {
-      await consentToFollowup(db, s.id, a.email);
-      result.message = "Your search is saved and follow-up consent recorded. Reminders are not enabled yet. You can unsubscribe at any time from a reminder.";
+    if (a.action === "capture") {
+      // Same limit as the web "Email me these results" button (/api/access/save-search).
+      if (rateLimited(`save-search:${clientIp(req) ?? "anon"}`, 5, 10 * 60e3)) return response({ error: "Too many requests. Please try again later." }, 429, token);
+      // One lifecycle system: the saved-search email and any later reminder come from src/lib/lifecycle.
+      const captured = await captureEmail(await accessRuntime(), s, a.email, a.followupConsent, lifecycleDeps());
+      result.message = captured.message;
+      result.captured = { emailed: captured.emailed, remind: a.followupConsent };
+    } else if (a.action === "listing") {
+      await recordListingView(db, s, a.listingId);
     } else if (a.action === "chat") {
       // Contact questions never cause a privileged read, even if prompted to ignore the paywall.
       if (/\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
@@ -57,8 +65,7 @@ export async function POST(req: Request) {
           const selected = s.details.requestedRides[0]?.rideType ?? null;
           const search = searchRides(s.details, selected);
           await db.query(`UPDATE concierge_sessions SET searched = 1, search_type = ? WHERE id = ?`, [selected, s.id]);
-          await track(db, "inventory_search", { sessionId: s.id });
-          if (search.total === 0) await track(db, "zero_result_search", { sessionId: s.id });
+          result.captureOffered = await recordSearch(db, s, search.total);
           result.search = search;
           result.selectedRideType = selected;
           result.message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability });
@@ -72,8 +79,7 @@ export async function POST(req: Request) {
     } else if (a.action === "search") {
       result.search = searchRides(s.details, a.rideType);
       await db.query(`UPDATE concierge_sessions SET searched = 1, search_type = ? WHERE id = ?`, [a.rideType, s.id]);
-      await track(db, "inventory_search", { sessionId: s.id });
-      if ((result.search as { total: number }).total === 0) await track(db, "zero_result_search", { sessionId: s.id });
+      result.captureOffered = await recordSearch(db, s, (result.search as { total: number }).total);
     } else if (a.action === "checkout") {
       const rt = await accessRuntime();
       const { event, product, sellable } = await createEventRequest(rt, s, a.rideType);
@@ -97,7 +103,6 @@ export async function POST(req: Request) {
         try {
           const status = await getPassStatus(db, ids, id);
           const unlocks = await getUnlockedOperators(db, ids, id);
-          if (unlocks.length) await track(db, "contact_viewed", { sessionId: s.id, passId: id });
           passes.push({ ...status, unlocks });
         } catch (e) { if (!(e instanceof AccessError)) throw e; }
       }

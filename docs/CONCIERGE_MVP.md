@@ -28,6 +28,8 @@ No production fixes, secret rotations, external database migration, real charges
 
 Primary entry: the floating **Chat with us** widget on public pages. It answers customer-service questions using AI Gateway, searches through the existing narrow API and offers explicit checkout, availability-request and pass actions. The structured `/concierge` page remains an optional event review interface; it is not the primary product. Chat history is retained in browser-tab session storage (bounded to 24 messages), not sent with protected contact cards to the model.
 
+**Model boundary.** The model gets the customer's message, recent chat history, the event facts (never the stored name, email or phone: `modelInput`), public inventory cards and the server-loaded product terms. It never gets operator identity or contact data, pass or unlock records, Sharetribe or Stripe credentials, or tools. It cannot authorize contact access: unlocks happen only through the `unlock` action, which checks the signed pass cookie before any contact read. `tests/concierge-model-privacy.test.ts` captures every model call in a paid flow with unlocked contacts and checks this.
+
 The exact opening prompt is: **Tell me about your event — where is it, when is it, and what rides are you looking for?**
 
 1. AI Gateway interprets event planning text into a bounded Zod-validated lead. Only the customer's message/prior lead and public taxonomy reach the model. No operator contacts, pass records, credentials or general-purpose data tools reach it.
@@ -43,15 +45,22 @@ Narrow services: `searchRides`, `getRideDetails`, `getPublicOperatorProfile`, `c
 
 ## Migration and environment
 
-Additive schema in `src/lib/access/schema.sql`:
+The concierge is **off until the founder turns it on**. Merging or deploying this code changes nothing in production: the widget, `/concierge` and `/api/concierge` return nothing (404) unless `CONCIERGE_ENABLED=true` (`src/lib/concierge/flags.ts`).
+
+Its tables live in `src/lib/access/schema-concierge.sql`, **not** in `schema.sql`, so the ledger's cold-start initialization never creates them on Postgres:
 
 - `concierge_sessions`: hashed opaque cookie token, structured lead, last selected search, Event Access request reference, 30-day session expiration.
 - `concierge_requests`: structured availability/event request, optional listing reference, review status.
-- `concierge_events`: action names and session/event/pass IDs only; no message text or contact values.
+- `access_lifecycle_events`: the lifecycle hooks (below). Action names, IDs and the reminder-consent flag only; no message text, email addresses or contact values.
 
-The existing `npm run access:migrate` initializes these alongside the ledger. The Postgres initialization enables RLS with no anonymous policies and revokes PUBLIC privileges on the new tables. Apply with the existing table-owner connection; do not use an anonymous Supabase browser client. **Production migration has not been applied here.** First ledger initialization also applies the schema, following the existing application's convention. Review the additive migration before deploying.
+To turn the concierge on, in this order:
 
-No new required production secret is introduced. Reuse `ACCESS_DATABASE_URL`, Sharetribe, Stripe and signed pass-session configuration. On Vercel the AI SDK uses AI Gateway's OIDC authentication when no `AI_GATEWAY_API_KEY` is set. `CONCIERGE_MODEL` is optional (default `openai/gpt-4.1-mini`); local development may use an AI Gateway key through protected environment configuration. The installed integration uses AI SDK 6, whose `generateObject` API was checked against installed types and validated through Gateway.
+1. `npm run access:migrate -- --concierge` against the production ledger with the table-owner connection. It applies `schema-concierge.sql` and enables RLS with no policies and no PUBLIC grants on the three tables (`applyConciergeSchema`). Verify with `scripts/concierge-preflight.ts`.
+2. Set `CONCIERGE_ENABLED=true` in Vercel production and redeploy (the widget is rendered by the root layout, so it needs a build).
+
+SQLite (development, tests, e2e) applies the concierge schema automatically. Lifecycle-event writes are best effort and happen after the checkout, activation and unlock transactions commit, so a missing table never breaks a payment or an unlock.
+
+No new required production secret is introduced. Reuse `ACCESS_DATABASE_URL`, Sharetribe, Stripe and signed pass-session configuration. **Model:** the concierge uses the same Claude model as lifecycle email through Vercel AI Gateway (`src/lib/ai/models.ts`): `CONCIERGE_MODEL` if set, else `LIFECYCLE_AI_MODEL`, else `anthropic/claude-haiku-5.5`. There is no other provider default. On Vercel the AI SDK authenticates to the gateway with the deployment's OIDC token; `AI_GATEWAY_API_KEY` works elsewhere.
 
 A **functional preview requires isolated Preview values** for the ledger, Stripe test mode, pass signing and appropriate catalog connections. The current Vercel config has the sensitive access/Stripe/Integration settings in Production only. Do not copy production credentials into public files or create test purchases in the production ledger just to make a preview work. A fail-closed preview can render the interface but cannot certify persistence/checkout.
 
@@ -85,10 +94,16 @@ Then validate anonymous search, both **Stripe test-mode** checkout tiers, return
 
 See `reports/concierge-validation.md` for the final command outcomes and limitations. Browser screenshots use fictional buyer/operator contacts and a fake Stripe gateway; they are not evidence of Live purchases or operator availability.
 
-## Consistent customer follow-up foundations
+## Email: one lifecycle system
 
-Contextual email capture appears after public search results and requires a separate unchecked consent checkbox. This never treats the Event Access email as marketing permission. Consent is session-bound and creates exactly three deduplicated jobs (+1h/+24h/+72h). The opaque conversation already records anonymous event/search intent before identity capture. Resume links restore only saved event details; they never grant operator contact access. Unsubscribe cancels pending jobs. Dispatch checks consent and paid purchases for the email before sending, uses atomic job claims and provider idempotency keys, and includes unsubscribe and sender address. Requests do not automatically trigger outreach.
+The chat has no email engine of its own. Its email capture feeds the lifecycle system in `src/lib/lifecycle` (`docs/EMAIL.md`), the same one that serves the web funnel:
 
-**Sending remains disabled** unless `CONCIERGE_FOLLOWUPS_ENABLED=true` and `EMAIL_POSTAL_ADDRESS` is configured. No cron, campaign, or production env change was applied. `scripts/concierge-followups.ts` is an explicit operator-invoked worker. Failed or interrupted sending jobs require operator reconciliation, not blind retry. There is still a small concurrent purchase/send race; a fully serialized lifecycle worker is required before enabling a live campaign.
+- After results are shown, the chat offers **Email me these options** (recorded once per session as `email_capture_offered`). Submitting it records `email_capture_accepted`, saves the email on the lead and, when the event details are complete and the request is sellable, sends the lifecycle `saved_search` email through `sendSavedSearch`. That email is deduplicated per event request, so pressing the button again, or pressing the web "Email me these results" button for the same request, never sends a second one. The chat reuses the same request for the same details within 6 hours instead of creating a new one.
+- An optional, **unticked** box, "Also remind me about this search", is the only follow-up consent. Typing an email into the chat, registering or buying is never consent. The lifecycle engine sends sales reminders (`search_abandonment_1h`, `search_abandonment_24h`, `checkout_abandonment_1h`) for a chat-originated request only if the latest `email_capture_accepted` in that chat session has consent (`chatFollowupConsent`); unticking it on a later capture withdraws it. Everything else is the engine's existing rules: newest request only, at most one sales email per address per 20 hours, stop on any paid Event Access, suppression and unsubscribe, the 200/day cap, and in live mode the `lifecycle-v1` campaign approval plus `BUSINESS_POSTAL_ADDRESS`. Until the founder sets those, commercial reminders are recorded as blocked and not sent.
+- `purchased_no_unlock_2h` is customer service for a paying customer and follows the engine's rule for every purchase.
 
-Not yet implemented: site-wide browsing/UTM profiles, lead scoring, email open/click webhooks, a protected CRM dashboard, and post-purchase zero-unlock reminders. Those are separate from the shipped opt-in reminder foundation and must not be claimed as complete.
+Lifecycle hooks (`src/lib/lifecycle/events.ts`, table `access_lifecycle_events`): `chat_started`, `email_capture_offered`, `email_capture_accepted`, `search_submitted`, `listing_viewed`, `event_access_offered`, `checkout_started`, `event_access_purchased`, `operator_unlocked`. Chat actions are recorded with source `chat`; checkout, purchase and unlock carry `chat` or `web` from the request's source path. The hooks never schedule or send anything; the engine reads only the consent flag.
+
+The PR's original follow-up jobs (`concierge_followup_jobs`, `concierge_events`, `scripts/concierge-followups.ts`, the resume and unsubscribe routes) were removed in favour of the above. Unsubscribe is the lifecycle `/api/email/unsubscribe` link in every commercial email.
+
+Not implemented: site-wide browsing/UTM profiles, lead scoring, email open/click webhooks and a protected CRM dashboard.

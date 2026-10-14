@@ -4,6 +4,7 @@ import { EnvBanner, SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { BRAND, publicIndexingEnabled, SITE_DESCRIPTION, siteUrl } from "@/lib/config";
 import "./globals.css";
 import { ChatWidget } from "@/components/concierge/ChatWidget";
+import { conciergeEnabled } from "@/lib/concierge/flags";
 
 export function generateMetadata(): Metadata {
   return {
@@ -46,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main>{children}</main>
         <SiteFooter />
         <SpeedInsights />
-        <ChatWidget />
+        {conciergeEnabled() && <ChatWidget />}
       </body>
     </html>
   );

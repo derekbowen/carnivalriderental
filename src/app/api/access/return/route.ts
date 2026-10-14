@@ -1,6 +1,7 @@
 import { activateFromSession, getEventRequest } from "@/lib/access/service";
 import { accessRuntime, grantPassCookie, parseCookie, passCookieName, redirect } from "@/lib/access/runtime";
 import { paths } from "@/lib/seo/routes";
+import { conciergeEnabled } from "@/lib/concierge/flags";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export async function GET(req: Request) {
     const r = await activateFromSession(rt.db, rt.gateway, purchaseId, sessionId, rt.siteUrl);
     if (r.state === "paid") {
       const event = await getEventRequest(rt.db, r.pass.eventRequestId);
-      return redirect(event?.sourcePath === paths.concierge() ? paths.concierge() : paths.pass(r.pass.id), { "Set-Cookie": grantPassCookie(parseCookie(req.headers.get("cookie"), passCookieName), r.pass.id) });
+      return redirect(event?.sourcePath === paths.concierge() && conciergeEnabled() ? paths.concierge() : paths.pass(r.pass.id), { "Set-Cookie": grantPassCookie(parseCookie(req.headers.get("cookie"), passCookieName), r.pass.id) });
     }
     if (r.state === "mismatch") return new Response("Session does not match purchase", { status: 400 });
     if (r.state === "expired") return redirect(`/connect?error=expired`);

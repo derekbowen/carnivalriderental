@@ -25,7 +25,7 @@ async function main() {
     const products = await pool.query(`SELECT slug, price_cents, unlock_limit, validity_days, active FROM access_products WHERE slug IN ('event-access', 'ferris-wheel-access') ORDER BY slug`);
     console.log("Documented Supabase project connection and existing access tables verified.");
     console.log(JSON.stringify({ products: products.rows }));
-    const privacy = await pool.query(`SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public' AND tablename LIKE 'concierge_%'`);
+    const privacy = await pool.query(`SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname='public' AND (tablename LIKE 'concierge_%' OR tablename = 'access_lifecycle_events')`);
     console.log(JSON.stringify({ conciergeTables: privacy.rows }));
   } finally { await pool.end(); }
 }

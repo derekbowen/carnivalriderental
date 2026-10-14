@@ -7,7 +7,6 @@ import { formatPrice } from "@/lib/access/config";
 import { accessDb } from "@/lib/access/db";
 import { accessAvailability, passCookieName, passIdsFromCookie } from "@/lib/access/runtime";
 import { passView } from "@/lib/access/service";
-import { track } from "@/lib/concierge/analytics";
 import { BRAND } from "@/lib/config";
 import { rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
@@ -51,7 +50,6 @@ export default async function PassPage({ params, searchParams }: { params: Promi
   const view = await passView(await accessDb(), id);
   if (!view) notFound();
   const { pass, event, product, purchase, unlocks, remaining, usable, blockedReason } = view;
-  if (unlocks.length) await track(await accessDb(), "contact_viewed", { eventId: event.id, passId: id });
   const byOp = new Map(unlocks.map((u) => [u.operatorId, u]));
   const typeLabel = event.rideType ? rideTypeCopy(event.rideType, rideTypeFor(event.rideType)?.name ?? event.rideType).label : event.rideClass ? `${event.rideClass} rides` : "carnival rides";
 

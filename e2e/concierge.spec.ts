@@ -19,6 +19,11 @@ test("anonymous search, refusal, unconfirmed availability and durable request", 
   await expect(page.getByRole("heading", { name: /matching listings nationwide/ })).toBeVisible();
   await expect(page.getByText("Matching inventory only. Availability for your event date has not been confirmed.", { exact: true })).toBeVisible();
   await expect(page.getByTestId("concierge-contact")).toHaveCount(0);
+  // Email capture feeds the lifecycle saved-search email; reminders need the unticked box. No provider in e2e.
+  const capture = page.getByTestId("concierge-capture");
+  await expect(capture.getByRole("checkbox")).not.toBeChecked();
+  await capture.getByRole("button", { name: "Email me these options", exact: true }).click();
+  await expect(page.getByRole("status")).toContainText("couldn't send the email");
   await page.screenshot({ path: "reports/concierge-anonymous.png", fullPage: true });
   await page.getByRole("button", { name: "Request Availability", exact: true }).first().click();
   await expect(page.getByRole("status")).toContainText("Request saved for review");
