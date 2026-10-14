@@ -11,12 +11,15 @@ export async function POST(req: Request) {
   try {
     rt = await accessRuntime();
   } catch (e) {
+    console.error("[access] webhook unavailable:", (e as Error).message);
     return new Response((e as Error).message, { status: 503 });
   }
   let event;
   try {
     event = rt.gateway.parseWebhook(raw, req.headers.get("stripe-signature"));
   } catch (e) {
+    // Logged (reason only, never the payload) so a misconfigured endpoint secret shows up in the runtime logs.
+    console.warn("[access] webhook rejected:", (e as Error).message, req.headers.get("stripe-signature") ? "(signed)" : "(no signature header)");
     return new Response(`Webhook rejected: ${(e as Error).message}`, { status: 400 });
   }
   try {

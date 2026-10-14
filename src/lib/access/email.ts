@@ -38,11 +38,16 @@ export function magicLinkEmail(p: { passUrl: string; productName: string }): { s
 
 export async function sendNow(to: string, content: { subject: string; html: string; text: string }, idempotencyKey: string): Promise<{ sent: boolean; deliveredTo: string | null; error?: string }> {
   const cfg = emailConfig();
-  if (!cfg.apiKey) return { sent: false, deliveredTo: null, error: "email provider not configured" };
+  // Every outcome is logged (recipient masked) so production shows whether pass emails actually go out.
+  if (!cfg.apiKey) {
+    console.warn("[access] email skipped: provider not configured", cfg.provider);
+    return { sent: false, deliveredTo: null, error: "email provider not configured" };
+  }
   const live = cfg.mode === "live";
   const deliveredTo = live ? to : cfg.testRecipient;
   try {
     await senderFor(cfg)({ from: cfg.fromTransactional, to: [deliveredTo], subject: live ? content.subject : `[TEST → ${to}] ${content.subject}`, html: content.html, text: content.text, reply_to: cfg.replyTo }, idempotencyUuid(idempotencyKey));
+    console.info("[access] email sent:", cfg.provider, cfg.mode, "to", deliveredTo.replace(/^(.).*(@.*)$/, "$1***$2"));
     return { sent: true, deliveredTo };
   } catch (e) {
     console.error("[access] email send failed:", (e as Error).message);
