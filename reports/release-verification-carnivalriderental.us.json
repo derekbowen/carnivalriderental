@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-14T12:35:15.962Z",
+  "checkedAt": "2026-10-14T12:58:19.168Z",
   "base": "https://carnivalriderental.us",
   "passed": 1038,
   "failed": 0,
@@ -4133,7 +4133,7 @@
     {
       "check": "/pass/{unknown}: no contact data, private",
       "ok": true,
-      "detail": "status 404, cache private, no-cache, no-store, max-age=0, must-revalidate"
+      "detail": "status 200, cache private, no-cache, no-store, max-age=0, must-revalidate"
     },
     {
       "check": "/connect: private, no-store",
@@ -4179,7 +4179,7 @@
       "detail": "status 404"
     },
     {
-      "check": "/connect says Event Access is opening soon (no test checkout on production)",
+      "check": "/connect: Event Access open (event form, no 'opening soon')",
       "ok": true
     }
   ]

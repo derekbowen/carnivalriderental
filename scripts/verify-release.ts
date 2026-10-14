@@ -13,7 +13,7 @@
  * - samples of every excluded family answer noindex (or 404 / auth) and are not in the sitemap,
  *   including near-duplicate non-heads and gated pages not yet authorized (from the committed reports);
  * - old Test listing URLs answer 308 to the same listing in Live;
- * - Event Access with test-mode keys on production says "opening soon" and offers no checkout.
+ * - Event Access is open on production (live Stripe keys): the event form renders, no "opening soon".
  */
 import fs from "node:fs";
 
@@ -127,8 +127,9 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
   const unknown = await get("/s/00000000-0000-4000-8000-000000000000", "manual");
   check("/s/{unknown id} → 404 (never redirected elsewhere)", unknown.status === 404, `status ${unknown.status}`);
 
-  // payments state on production
-  check("/connect says Event Access is opening soon (no test checkout on production)", connect.text.includes("Event Access is opening soon") && !connect.text.includes("data-testid=\"pay-button\""));
+  // payments state on production: live Stripe keys since 2026-10-14, so the event form is open (a test key
+  // on production would show "opening soon" instead and never a test checkout)
+  check("/connect: Event Access open (event form, no 'opening soon')", connect.text.includes('data-testid="connect-form"') && !connect.text.includes("Event Access is opening soon"));
 
   const ok = results.every((r) => r.ok);
   const host = new URL(base).host.replace(/[^a-z0-9.-]/gi, "_");
