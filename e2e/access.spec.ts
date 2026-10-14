@@ -156,3 +156,41 @@ test("public surfaces never carry operator contact data or payment copy from the
   // Indexing is off, so robots.txt is the blanket Disallow; when it opens, /pass and /connect stay disallowed.
   expect(robots).toMatch(/Disallow: \/(\s|$)|Disallow: \/pass/);
 });
+
+test("zero exact matches: closest alternatives first, labelled as alternatives, then a free manual search", async ({ page, request }) => {
+  // No trackless train within 200 miles of Riverside; kiddie trains are 13+ miles away.
+  await page.goto("/connect?type=trackless-train");
+  await page.fill("#eventDate", "2030-06-15");
+  await page.fill("#city", "Riverside");
+  await page.selectOption("#state", "CA");
+  await page.fill("#email", "buyer@example.com");
+  await page.getByRole("button", { name: "See matching operators" }).click();
+  await expect(page).toHaveURL(/\/connect\/[0-9a-f-]{36}$/);
+  const original = page.url();
+  await expect(page.getByTestId("match-heading")).toHaveText("We didn’t find a trackless train operator within 200 miles of Riverside");
+  await expect(page.getByTestId("alternatives-intro")).toContainText("operators with kiddie trains nearby, including options as close as 13 miles away. These are kiddie trains, not trackless trains.");
+  expect(await page.getByTestId("pay-button").count()).toBe(0);
+  const html = await (await request.get(original)).text();
+  expect(html).not.toMatch(FIXTURE_CONTACT);
+
+  // Picking the alternative opens a normal, payable request that says plainly it isn't what was asked for.
+  await page.getByTestId("alternative-related").click();
+  await page.waitForURL((u) => /^\/connect\/[0-9a-f-]{36}$/.test(u.pathname) && u.toString() !== original);
+  await expect(page.getByTestId("alternative-notice")).toContainText("Alternative to your trackless train request, not an exact match. These operators list kiddie trains, not trackless trains.");
+  await expect(page.getByTestId("match-heading")).toContainText("with kiddie trains near Riverside, CA");
+  await expect(page.getByTestId("offer-product")).toHaveText("Event Access");
+  await expect(page.getByTestId("offer-price")).toHaveText("$99");
+  expect(await (await request.get(page.url())).text()).not.toMatch(FIXTURE_CONTACT);
+
+  // "Email me these results" is wired; e2e has no email provider, so it says it couldn't send (never claims it did).
+  await expect(page.getByTestId("save-search-button")).toHaveText(/^Email me these \d+ Riverside options$/);
+  await page.getByTestId("save-search-button").click();
+  await expect(page).toHaveURL(/\?saved=0$/);
+  await expect(page.getByText("We couldn’t email your results just now.")).toBeVisible();
+
+  // Back on the original request, the manual search is one click and is acknowledged.
+  await page.goto(original);
+  await page.getByTestId("manual-search").click();
+  await expect(page).toHaveURL(/\?manual=1$/);
+  await expect(page.getByTestId("manual-requested")).toContainText("Manual search requested. We’ll look by hand for a trackless train near Riverside");
+});

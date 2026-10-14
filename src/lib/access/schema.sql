@@ -121,49 +121,62 @@ CREATE TABLE IF NOT EXISTS operator_contact_status (
   checked_at TEXT NOT NULL
 );
 
--- Concierge stores demand, not a mirror of inventory. Tokens are opaque and stored hashed.
-CREATE TABLE IF NOT EXISTS concierge_sessions (
+-- Zero-match funnel (founder decision 2026-10-14, src/lib/access/fallback.ts). One row per event:
+-- zero_exact_match        the exact search couldn't be sold (fewer contactable operators than the minimum)
+-- fallback_match_shown    alternatives were offered; detail_json holds the offers (counts and distances only)
+-- fallback_match_clicked  the customer picked one; result_event_request_id is the request it created
+-- manual_search_requested the customer asked us to search by hand
+-- No identity or contact data: offers are anonymous counts, and the customer's details stay on the request.
+CREATE TABLE IF NOT EXISTS access_funnel_events (
   id TEXT PRIMARY KEY,
-  token_hash TEXT NOT NULL UNIQUE,
-  details_json TEXT NOT NULL,
-  search_type TEXT,
-  searched INTEGER NOT NULL DEFAULT 0,
-  event_request_id TEXT REFERENCES access_event_requests(id),
-  created_at TEXT NOT NULL,
-  expires_at TEXT NOT NULL
-);
-CREATE TABLE IF NOT EXISTS concierge_requests (
-  id TEXT PRIMARY KEY,
-  session_id TEXT NOT NULL REFERENCES concierge_sessions(id),
-  listing_id TEXT,
-  details_json TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'received',
+  name TEXT NOT NULL CHECK (name IN ('zero_exact_match', 'fallback_match_shown', 'fallback_match_clicked', 'manual_search_requested')),
+  event_request_id TEXT NOT NULL REFERENCES access_event_requests(id),
+  result_event_request_id TEXT REFERENCES access_event_requests(id),
+  requested_ride_type TEXT,
+  requested_ride_class TEXT,
+  fallback_kind TEXT,
+  fallback_ride_type TEXT,
+  radius_miles INTEGER,
+  detail_json TEXT,
   created_at TEXT NOT NULL
 );
-CREATE TABLE IF NOT EXISTS concierge_events (
-  id TEXT PRIMARY KEY,
-  session_id TEXT REFERENCES concierge_sessions(id),
-  event_request_id TEXT,
-  pass_id TEXT,
-  name TEXT NOT NULL,
-  created_at TEXT NOT NULL
-);
-CREATE INDEX IF NOT EXISTS concierge_events_name ON concierge_events(name, created_at);
+CREATE INDEX IF NOT EXISTS access_funnel_events_request ON access_funnel_events (event_request_id);
+CREATE INDEX IF NOT EXISTS access_funnel_events_result ON access_funnel_events (result_event_request_id);
+CREATE INDEX IF NOT EXISTS access_funnel_events_name ON access_funnel_events (name, created_at);
 
-CREATE TABLE IF NOT EXISTS concierge_followup_consent (
-  session_id TEXT PRIMARY KEY REFERENCES concierge_sessions(id),
-  email TEXT NOT NULL,
-  consent_version TEXT NOT NULL,
-  consented_at TEXT NOT NULL,
-  unsubscribed_at TEXT,
-  resume_token TEXT NOT NULL UNIQUE
-);
-CREATE TABLE IF NOT EXISTS concierge_followup_jobs (
+-- Lifecycle email (founder decision 2026-10-14, src/lib/lifecycle). One row per logical email:
+-- dedupe_key makes each one at most once (a 'blocked' or 'failed' row is retried while still due).
+-- Holds the customer's own address and which template went out; never operator data.
+CREATE TABLE IF NOT EXISTS access_lifecycle_emails (
   id TEXT PRIMARY KEY,
-  session_id TEXT NOT NULL REFERENCES concierge_sessions(id),
-  stage INTEGER NOT NULL,
-  due_at TEXT NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending',
-  sent_at TEXT,
-  UNIQUE(session_id, stage)
+  template TEXT NOT NULL CHECK (template IN ('saved_search', 'search_abandonment_1h', 'search_abandonment_24h', 'checkout_abandonment_1h', 'purchased_no_unlock_2h')),
+  dedupe_key TEXT NOT NULL UNIQUE,
+  email TEXT NOT NULL,
+  event_request_id TEXT REFERENCES access_event_requests(id),
+  purchase_id TEXT REFERENCES access_purchases(id),
+  pass_id TEXT REFERENCES access_passes(id),
+  status TEXT NOT NULL CHECK (status IN ('sending', 'sent', 'blocked', 'suppressed', 'failed')),
+  reason TEXT,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  subject TEXT,
+  personalized INTEGER NOT NULL DEFAULT 0,
+  delivered_to TEXT,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS access_lifecycle_emails_email ON access_lifecycle_emails (email, updated_at);
+
+-- Unsubscribed addresses (durable; the app's SQLite suppression list is not durable on Vercel).
+CREATE TABLE IF NOT EXISTS access_email_suppressions (
+  email TEXT PRIMARY KEY,
+  reason TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+-- Scheduled jobs: last start per job, so overlapping or too-frequent runs are skipped.
+CREATE TABLE IF NOT EXISTS access_job_runs (
+  name TEXT PRIMARY KEY,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  result TEXT
 );

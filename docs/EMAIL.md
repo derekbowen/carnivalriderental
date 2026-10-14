@@ -10,6 +10,32 @@ Provider (2026-10-05): **Emailit** for transactional and marketing mail. The key
 
 Status (2026-10-04): built and proven in **test mode**. A demo request's "request received" email was sent through Resend from `notifications@carnivalriderental.us`, delivered, and received back at `qa@carnivalriderental.us` with the subject `[TEST → pipeline-test@example.com] We received your request BAC-SCW6CH`. No email has gone to a customer or operator.
 
+Update (2026-10-14, later): `EMAIL_MODE=live` is set on production (founder), so pass emails, recovery links and requested saved searches go to customers. Outreach and commercial lifecycle email stay blocked until `BUSINESS_POSTAL_ADDRESS` and the campaign approval are set (below).
+
+## Lifecycle email (founder decision 2026-10-14)
+
+Five approved templates, rendered by the app from ledger facts (`src/lib/lifecycle/templates.ts`). Rules decide who is due what (`engine.ts`); Vercel AI Gateway, when enabled, only picks among the templates already due and may add one validated intro line (`ai.ts`); the email API (Emailit, `src/lib/email`) sends. AI never writes an email, never sees the customer's address, and any line with a number that isn't a fact, a price, availability, booking, guarantee or urgency claim, a link or contact details is discarded for the default copy.
+
+| Template | Kind | Trigger | Stops |
+|---|---|---|---|
+| `saved_search` | transactional | the customer presses "Email me these N {city} options" on the matches page; sent at once | once per request |
+| `search_abandonment_1h` | commercial | matched request, no checkout, the address inactive ≥ 60 min, request 1–6 h old | any paid Event Access for the address |
+| `search_abandonment_24h` | commercial | matched request 24–48 h old, inactive | same |
+| `checkout_abandonment_1h` | commercial | checkout started, not paid, 1–24 h ago, inactive ≥ 60 min | same |
+| `purchased_no_unlock_2h` | transactional | active pass, 0 unlocks, 2–72 h after purchase; the button is a fresh pass sign-in link | first unlock |
+
+Everywhere: only the address's newest search is chased; never a zero-match request or a past event date; at most one sales email per address per 20 h; never to carnivalriderental.us or reserved test domains; unsubscribed addresses (ledger table `access_email_suppressions`, written by `/api/email/unsubscribe`) get nothing; commercial sends are capped at 200 a day. Creating an account or typing an email sends nothing by itself.
+
+Gates (live mode): commercial templates need `BUSINESS_POSTAL_ADDRESS` (CAN-SPAM footer) **and** `lifecycle-v1` in `EMAIL_APPROVED_CAMPAIGNS`. Until both are set they are recorded as `blocked` in `access_lifecycle_emails` (with the reason) and retried on every run while still due, so nothing is lost and nothing goes out early. Transactional templates send now. Unsubscribe links are signed with `EMAIL_UNSUBSCRIBE_SECRET`, or a key derived from `ACCESS_SESSION_SECRET` when that isn't set.
+
+Schedule: Vercel Cron (Pro plan) calls `GET /api/lifecycle/run` every 10 minutes (`vercel.json`), so the "1 h" emails go out 60–70 minutes after the customer goes quiet. Vercel Cron is internal; calls from outside Vercel (Supabase `pg_net`, cloud servers) get Vercel's Security Checkpoint (HTTP 429 challenge) on every path, so an external scheduler can't reach the app. The endpoint sends only what is due, once per logical email (`dedupe_key`), and a run lock skips calls less than 4 minutes apart; set `CRON_SECRET` (Vercel Cron sends it as a bearer token) or `LIFECYCLE_RUN_TOKEN` to require one.
+
+Review: `npm run lifecycle:preview -- <dir>` renders all five with sample data. What went out, and why something didn't:
+
+```sql
+SELECT template, status, reason, personalized, count(*) FROM access_lifecycle_emails GROUP BY 1, 2, 3, 4 ORDER BY 1, 2;
+```
+
 ## Who sends what
 
 | Sender | Emails |

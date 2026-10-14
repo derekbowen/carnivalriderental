@@ -72,10 +72,16 @@ export function geocode(city: string, state: string): { lat: number; lng: number
 
 const toMatched = (r: NearRide): MatchedListing => ({ id: r.id, title: r.title, rideType: r.rideType, rideClass: r.rideClass, photo: r.photo, thumb: r.thumb, miles: r.miles });
 
-export async function matchOperators(input: MatchInput, source: OperatorSource, cache: ContactStatusCache, opts: { radiusMiles?: number; maxCandidates?: number; now?: () => Date } = {}): Promise<MatchResult> {
+/**
+ * `opts.filter` replaces the ride filter the resolved requirement implies; only the fallback chain
+ * (fallback.ts) uses it, to search aliases, related types or a category. Pricing still comes from the
+ * resolved requirement, never from the filter.
+ */
+export async function matchOperators(input: MatchInput, source: OperatorSource, cache: ContactStatusCache, opts: { radiusMiles?: number; maxCandidates?: number; now?: () => Date; filter?: (r: NearRide) => boolean } = {}): Promise<MatchResult> {
   const radius = opts.radiusMiles ?? Math.max(MATCH_RADIUS_MILES, PSEO_INVENTORY.radiusMiles);
   const { rideType, rideClass, listing, tier } = resolveCriteria(input);
-  let candidates = ridesNear(input.lat, input.lng, radius).filter((r) => (rideType ? r.rideType === rideType : rideClass ? r.rideClass === rideClass : true));
+  const keep = opts.filter ?? ((r: NearRide) => (rideType ? r.rideType === rideType : rideClass ? r.rideClass === rideClass : true));
+  let candidates = ridesNear(input.lat, input.lng, radius).filter(keep);
   if (listing && !candidates.some((c) => c.id === listing.id)) {
     const miles = Math.round(Math.hypot(listing.lat - input.lat, listing.lng - input.lng) * 69);
     candidates = [{ ...listing, miles }, ...candidates];
