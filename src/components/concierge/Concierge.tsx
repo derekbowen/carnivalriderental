@@ -11,7 +11,7 @@ import { contactRows } from "@/lib/concierge/contact-display";
 
 type PassStatus = { id: string; expiresAt: string; remaining: number; usable: boolean; productName: string; event: { city: string; state: string; eventDate: string; rideType: string | null }; operators: { operatorId: string; label: string; claimed: boolean; homeState: string | null; miles: number }[]; unlocks: Unlock[] };
 type Offer = { eventId: string; operators: number; productName: string; price: string; unlockLimit: number; validityDays: number; sellable: boolean; alternativesUrl: string | null };
-type Reply = { captured?: { emailed: boolean; remind: boolean; alternativesUrl: string | null }; selectedRideType?: string | null; error?: string; message?: string; details: Lead; search?: { cards: OperatorCard[]; total: number; availability: string; locationPrecision: string }; offer?: Offer; passes?: PassStatus[]; requests?: { id: string; status: string }[]; request?: { id: string; status: string; message: string } };
+type Reply = { captured?: { emailed: boolean; remind: boolean; alternativesUrl: string | null }; selectedRideType?: string | null; error?: string; message?: string; details: Lead; search?: { cards: OperatorCard[]; total: number; availability: string; locationPrecision: string } | null; offer?: Offer; passes?: PassStatus[]; requests?: { id: string; status: string }[]; request?: { id: string; status: string; message: string } };
 export function Concierge({ rideTypes, states }: { rideTypes: { id: string; name: string }[]; states: { code: string; name: string }[] }) {
   const [details, setDetails] = useState<Lead>(emptyLead), [message, setMessage] = useState(""), [reply, setReply] = useState(""), [error, setError] = useState(""), [busy, setBusy] = useState(true);
   const [remind, setRemind] = useState(false), [emailed, setEmailed] = useState(false), [alternativesUrl, setAlternativesUrl] = useState<string | null>(null);
@@ -23,7 +23,7 @@ export function Concierge({ rideTypes, states }: { rideTypes: { id: string; name
     if (!res.ok) throw new Error(data.error || "Please try again.");
     setDetails(data.details);
     if (data.message) { setReply(data.message); setAlternativesUrl(data.captured?.alternativesUrl ?? null); }
-    if (data.search) setSearch(data.search);
+    if ("search" in data) setSearch(data.search ?? undefined);
     if ("selectedRideType" in data) setRideType(data.selectedRideType ?? "");
     if (data.offer) setOffer(data.offer);
     if (data.passes) setPasses(data.passes);

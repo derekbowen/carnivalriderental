@@ -26,7 +26,7 @@ const SITE = "http://localhost:3000";
 const chat = async (message: string) => {
   const r = await POST(new Request(`${SITE}/api/concierge`, { method: "POST", headers: { origin: SITE, "Content-Type": "application/json" }, body: JSON.stringify({ action: "chat", message }) }));
   expect(r.status).toBe(200);
-  return (await r.json()) as { message: string; search?: { total: number } };
+  return (await r.json()) as { message: string; search?: { total: number } | null };
 };
 
 describe("policy answers without AI", () => {
@@ -79,7 +79,20 @@ describe("the chat route when AI is unavailable", () => {
     expect((await chat("they didnt answer the phone")).message).toContain("This contact didn't work");
     const other = await chat("Do you have a Ferris wheel near Columbus, Ohio for June 15?");
     expect(other.message).toBe(NO_AI_REPLY);
-    expect(other.search).toBeUndefined(); // no random cards when the details couldn't be read
+    expect(other.search).toBeNull(); // clears earlier cards; nothing random when the details couldn't be read
+  });
+
+  it("a customer reporting that an operator didn't answer gets help, not the paywall refusal", async () => {
+    const report = await chat("The operator didn't answer the phone");
+    expect(report.message).toContain("This contact didn't work");
+    expect(report.message).not.toContain("cannot bypass the paywall");
+    expect((await chat("What is the operator's phone number?")).message).toContain("cannot bypass the paywall");
+  });
+
+  it("without a ledger (a preview) policy questions are still answered when the AI is down", async () => {
+    vi.stubEnv("APP_ENV", "preview");
+    expect((await chat("do my credits expire")).message).toContain(`${DEFAULT_PRODUCT.validityDays} days`);
+    expect((await chat("Ferris wheel in Columbus on June 15")).message).toBe(NO_AI_REPLY);
   });
 
   it("a failed extraction still gets the AI reply, and a failed reply still keeps the search", async () => {

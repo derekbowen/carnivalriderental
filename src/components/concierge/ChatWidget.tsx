@@ -35,7 +35,7 @@ export function ChatWidget() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error || "Please try again later.");
     if (data.message) add(data.message);
-    if (data.search) setCards(data.search.cards);
+    if ("search" in data) setCards(data.search?.cards ?? []);
     if ("selectedRideType" in data) setRideType(data.selectedRideType);
     if (data.offer) setOffer(data.offer);
     if (data.passes) setPasses(data.passes);
