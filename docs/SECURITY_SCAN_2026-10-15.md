@@ -39,7 +39,7 @@ Run after both deploys. Every application finding from the first scan is gone: t
 |---|---|
 | SPF, DMARC `p=none`, CAA, DNSSEC | DNS, for the founder (above). |
 | CSP "can be strengthened": `base-uri`, `object-src`, `default-src` | `base-uri 'self'` and `object-src 'none'` added the same day (safe: nothing on the site uses them). `default-src` is the script/style policy and stays a separate, report-only-first change. |
-| `/s` missing title, description, canonical, Open Graph, JSON-LD | Same false positive as the first scan: the scanner's coverage notes say the site blocked its requests ("0 of 56 planned paths assessed; 1 blocked"). `/s` serves all of these to a browser (checked the same day). |
+| `/s` missing title, description, canonical, Open Graph, JSON-LD | Title, description and Open Graph are served (checked in a browser the same day); the scanner read a challenge page, its coverage notes say the site blocked its requests ("0 of 56 planned paths assessed; 1 blocked"). Canonical and JSON-LD are absent on purpose: `/s` is a `noindex` search-results page (`src/app/s/page.tsx`), and a page that is not indexed gets neither. |
 | `/events` noindex | Intentional (above). |
 | `Cross-Origin-Resource-Policy`, HSTS `includeSubDomains`/`preload` | Not changed, reasons above. |
 
