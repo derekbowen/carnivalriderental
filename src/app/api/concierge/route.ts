@@ -11,7 +11,7 @@ import { lifecycleDeps } from "@/lib/lifecycle/runtime";
 import { paths } from "@/lib/seo/routes";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
-import { faqAnswer, NO_AI_REPLY } from "@/lib/concierge/faq";
+import { faqAnswer, isContactProblem, NO_AI_REPLY } from "@/lib/concierge/faq";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -41,10 +41,15 @@ export async function POST(req: Request) {
     try { db = await accessDb(); } catch {
       // Informational support may run without a ledger. Never pretend a lead/request was saved.
       if (a.action !== "chat") return response({ error: "Event saving and pass services are not configured in this preview. You can still ask customer-service questions." }, 503);
-      const publicDetails = await extractLead(a.message, emptyLead);
-      const search = searchRides(publicDetails, publicDetails.requestedRides[0]?.rideType ?? null);
-      const message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, region: c.homeState, miles: c.miles })), availability: search.availability });
-      return response({ message: `${message}\n\nPreview note: event details have not been saved; checkout and pass services are unavailable here.`, details: publicDetails, search, selectedRideType: publicDetails.requestedRides[0]?.rideType ?? null });
+      try {
+        const publicDetails = await extractLead(a.message, emptyLead);
+        const search = searchRides(publicDetails, publicDetails.requestedRides[0]?.rideType ?? null);
+        const message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, region: c.homeState, miles: c.miles })), availability: search.availability });
+        return response({ message: `${message}\n\nPreview note: event details have not been saved; checkout and pass services are unavailable here.`, details: publicDetails, search, selectedRideType: publicDetails.requestedRides[0]?.rideType ?? null });
+      } catch (e) {
+        console.error("[concierge] AI step failed (no ledger):", String((e as Error).message).slice(0, 200));
+        return response({ message: faqAnswer(a.message, await accessProductsForDisplay()) ?? NO_AI_REPLY });
+      }
     }
     const c = await conversation(db, parseCookie(req.headers.get("cookie"), SESSION_COOKIE));
     token = c.token;
@@ -63,7 +68,8 @@ export async function POST(req: Request) {
       await recordListingView(db, s, a.listingId);
     } else if (a.action === "chat") {
       // Contact questions never cause a privileged read, even if prompted to ignore the paywall.
-      if (/\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
+      // A report that a contact didn't answer or didn't work is support, not a request to reveal one.
+      if (!isContactProblem(a.message) && /\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
         result.message = "Operator phone numbers, emails and addresses are only shown after you buy Event Access and unlock an operator, so I can't share them here and I cannot bypass the paywall. If you already have a pass, open it with \"My pass\". To reach our team, email support@carnivalriderental.us.";
       } else {
         // Two independent AI steps: reading the event details, then the reply. Either can fail without
@@ -80,6 +86,7 @@ export async function POST(req: Request) {
           inventory = { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability };
         } catch (e) {
           console.error("[concierge] AI extraction failed:", String((e as Error).message).slice(0, 200));
+          result.search = null; // clears earlier cards, which may not match what the customer just said
         }
         try {
           result.message = await customerHelp(a.message, a.history ?? [], inventory);

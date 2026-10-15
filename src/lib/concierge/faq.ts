@@ -14,17 +14,24 @@ const site = (path: string) => `${BRAND.domain}${path}`;
 /** Shown when no answer applies and the AI step is unavailable. */
 export const NO_AI_REPLY = `I can't answer that automatically right now. To find rides for your event, use the event form at ${site(paths.concierge())}. For anything else, email ${SUPPORT}.`;
 
+const DEAD_CONTACT = /\b(disconnected|wrong number|not in service|out of service|bounced?|bouncing|undeliverable|(number|email|phone|contact|website|site|link) (is )?(dead|down|gone|(does ?n'?t|doesnt|did ?n'?t|didnt|is ?n'?t|is not) work(ing)?))\b/;
+const NO_REPLY = /\b((did ?n'?t|didnt|did not|does ?n'?t|doesnt|won'?t|wont|not|never|nobody|no one)\b[^.?!]{0,30}\b(answer(ing)?|respond(ing)?|repl(y|ying|ied)|pick(ing|ed)? up|call(ed)? (me )?back|get back to me)|no (answer|reply|response)|voice ?mail|unanswered)\b/;
+const normalise = (message: string) => message.toLowerCase().replace(/[’‘]/g, "'");
+
+/** A report that an unlocked operator didn't reply or a contact didn't work: support, not a request to reveal contacts. */
+export const isContactProblem = (message: string) => DEAD_CONTACT.test(normalise(message)) || NO_REPLY.test(normalise(message));
+
 const DIDNT_WORK = `open your full pass and press "This contact didn't work" next to that operator. We check it and give the unlock back when we confirm the contact was dead, and where most of your unlocks were dead we refund.`;
 
 /** Questions in the order they are checked: the first match answers. */
 const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
   {
     // A contact that doesn't work at all (before "no answer": "doesn't work" is not a missed call).
-    test: /\b(disconnected|wrong number|not in service|out of service|bounced?|bouncing|undeliverable|(number|email|phone|contact|website|site|link) (is )?(dead|down|gone|(does ?n'?t|doesnt|did ?n'?t|didnt|is ?n'?t|is not) work(ing)?))\b/,
+    test: DEAD_CONTACT,
     answer: () => `Sorry about that. If a contact doesn't work (number disconnected, email bounces, website gone), ${DIDNT_WORK}`,
   },
   {
-    test: /\b((did ?n'?t|didnt|did not|does ?n'?t|doesnt|won'?t|wont|not|never|nobody|no one)\b[^.?!]{0,30}\b(answer(ing)?|respond(ing)?|repl(y|ying|ied)|pick(ing|ed)? up|call(ed)? (me )?back|get back to me)|no (answer|reply|response)|voice ?mail|unanswered)\b/,
+    test: NO_REPLY,
     answer: () =>
       `Operators are independent businesses and don't always pick up right away. Leave a voicemail with your event date and location, then try their email or website from your pass. If the contact itself doesn't work (number disconnected, email bounces, website gone), ${DIDNT_WORK} We can't refund because an operator is busy or doesn't reply, since that's their decision.`,
   },
@@ -65,6 +72,6 @@ const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
 
 /** A policy answer for a customer-service question, or null when none applies. */
 export function faqAnswer(message: string, products: AccessProducts): string | null {
-  const text = message.toLowerCase().replace(/[’‘]/g, "'");
+  const text = normalise(message);
   return FAQ.find((f) => f.test.test(text))?.answer(products) ?? null;
 }
