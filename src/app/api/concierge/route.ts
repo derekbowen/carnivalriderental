@@ -5,17 +5,35 @@ import { accessProductsForDisplay, accessRuntime, clientIp, parseCookie, passCoo
 import { ipHash, sessionSecret } from "@/lib/access/session";
 import { emptyLead } from "@/lib/concierge/defaults";
 import { actionSchema } from "@/lib/concierge/schema";
-import { captureEmail, conversation, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator } from "@/lib/concierge/service";
+import { captureEmail, conversation, conversationState, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator, type Conversation } from "@/lib/concierge/service";
 import { conciergeEnabled } from "@/lib/concierge/flags";
 import { lifecycleDeps } from "@/lib/lifecycle/runtime";
 import { paths } from "@/lib/seo/routes";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
 import { faqAnswer, isContactProblem, NO_AI_REPLY } from "@/lib/concierge/faq";
+import { leadState, needDetails } from "@/lib/concierge/state";
+import type { Lead } from "@/lib/concierge/schema";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const response = (data: unknown, status = 200, token?: string) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store", "X-Robots-Tag": "noindex, nofollow", ...(token ? { "Set-Cookie": `${SESSION_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000${process.env.APP_ENV !== "development" ? "; Secure" : ""}` } : {}) } });
+const NO_SEARCH_YET = { total: 0, cards: [], availability: "No search yet: the customer has not given a city and state or a ride type." };
+
+/** What an action still needs, in the customer's terms; validation wording from the ledger stays internal. */
+function invalidMessage(internal: string, action: string, details: Lead | undefined): string {
+  if (details) {
+    const st = leadState(details);
+    const missing = action === "capture" ? st.missingForEmail : action === "availability" || action === "checkout" ? st.missingForAvailability : [];
+    if (missing.length) return needDetails(missing);
+  }
+  if (/eventDate|from today|future/i.test(internal)) return "Choose an event date from today onwards.";
+  if (/\bstate\b/i.test(internal)) return "Choose a US state.";
+  if (/email/i.test(internal)) return "Check the email address and try again.";
+  if (/ride/i.test(internal)) return internal;
+  return "Check the event details and try again.";
+}
+
 export async function POST(req: Request) {
   // Off until the founder runs `npm run access:migrate -- --concierge` and sets CONCIERGE_ENABLED=true.
   if (!conciergeEnabled()) return response({ error: "Not found" }, 404);
@@ -26,6 +44,7 @@ export async function POST(req: Request) {
   if (rateLimited(`concierge:${clientIp(req) ?? "anon"}`, 40, 10 * 60e3)) return response({ error: "Too many requests. Please try again later." }, 429);
   let token: string | undefined;
   let action = "unknown";
+  let s: Conversation | undefined;
   try {
     const text = await req.text();
     if (text.length > 16000) return response({ error: "Request too large" }, 413);
@@ -43,9 +62,10 @@ export async function POST(req: Request) {
       if (a.action !== "chat") return response({ error: "Event saving and pass services are not configured in this preview. You can still ask customer-service questions." }, 503);
       try {
         const publicDetails = await extractLead(a.message, emptyLead);
-        const search = searchRides(publicDetails, publicDetails.requestedRides[0]?.rideType ?? null);
-        const message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, region: c.homeState, miles: c.miles })), availability: search.availability });
-        return response({ message: `${message}\n\nPreview note: event details have not been saved; checkout and pass services are unavailable here.`, details: publicDetails, search, selectedRideType: publicDetails.requestedRides[0]?.rideType ?? null });
+        const selected = publicDetails.requestedRides[0]?.rideType ?? null;
+        const search = leadState(publicDetails).searchable ? searchRides(publicDetails, selected) : null;
+        const message = await customerHelp(a.message, a.history ?? [], search ? { total: search.total, cards: search.cards.map(c => ({ title: c.title, region: c.homeState, miles: c.miles })), availability: search.availability } : NO_SEARCH_YET);
+        return response({ message: `${message}\n\nPreview note: event details have not been saved; checkout and pass services are unavailable here.`, details: publicDetails, search, selectedRideType: selected });
       } catch (e) {
         console.error("[concierge] AI step failed (no ledger):", String((e as Error).message).slice(0, 200));
         return response({ message: faqAnswer(a.message, await accessProductsForDisplay()) ?? NO_AI_REPLY });
@@ -53,7 +73,7 @@ export async function POST(req: Request) {
     }
     const c = await conversation(db, parseCookie(req.headers.get("cookie"), SESSION_COOKIE));
     token = c.token;
-    const s = c.session;
+    s = c.session;
     // Missing access-session config should not disable anonymous search/lead capture.
     const ids = parseCookie(req.headers.get("cookie"), passCookieName) ? passIdsFromCookie(parseCookie(req.headers.get("cookie"), passCookieName)) : [];
     let result: Record<string, unknown> = {};
@@ -75,24 +95,31 @@ export async function POST(req: Request) {
         // Two independent AI steps: reading the event details, then the reply. Either can fail without
         // losing the other; with no AI at all, policy questions still get answered (faq.ts).
         let inventory: unknown = { total: 0, cards: [], availability: "Event details could not be read for this message; no search was run." };
+        result.search = null; // no cards unless this turn produced a search; earlier cards may not match what was just said
         try {
           await saveLead(db, s, await extractLead(a.message, s.details));
           const selected = s.details.requestedRides[0]?.rideType ?? null;
-          const search = searchRides(s.details, selected);
-          await db.query(`UPDATE concierge_sessions SET searched = 1, search_type = ? WHERE id = ?`, [selected, s.id]);
-          result.captureOffered = await recordSearch(db, s, search.total);
-          result.search = search;
           result.selectedRideType = selected;
-          inventory = { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability };
+          // Without a city/state or a ride type the "nearest" rides are measured from the middle of the
+          // country: noise, not results. Ask instead.
+          if (leadState(s.details).searchable) {
+            const search = searchRides(s.details, selected);
+            await db.query(`UPDATE concierge_sessions SET searched = 1, search_type = ? WHERE id = ?`, [selected, s.id]);
+            result.captureOffered = await recordSearch(db, s, search.total);
+            result.search = search;
+            inventory = { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability };
+          } else {
+            inventory = NO_SEARCH_YET;
+          }
         } catch (e) {
           console.error("[concierge] AI extraction failed:", String((e as Error).message).slice(0, 200));
-          result.search = null; // clears earlier cards, which may not match what the customer just said
         }
+        const state = await conversationState(db, s, ids);
         try {
-          result.message = await customerHelp(a.message, a.history ?? [], inventory);
+          result.message = await customerHelp(a.message, a.history ?? [], inventory, state);
         } catch (e) {
           console.error("[concierge] AI reply failed:", String((e as Error).message).slice(0, 200));
-          result.message = faqAnswer(a.message, await accessProductsForDisplay()) ?? NO_AI_REPLY;
+          result.message = faqAnswer(a.message, await accessProductsForDisplay(), state) ?? NO_AI_REPLY;
         }
       }
     } else if (a.action === "save") {
@@ -133,7 +160,7 @@ export async function POST(req: Request) {
     }
     return response({ ...result, details: s.details }, 200, token);
   } catch (e) {
-    if (e instanceof AccessError) return response({ error: e.code === "invalid" ? "Add a valid future event date, city, state and email, then try again." : e.message }, e.code === "forbidden" ? 403 : 400, token);
+    if (e instanceof AccessError) return response({ error: e.code === "invalid" ? invalidMessage(e.message, action, s?.details) : e.message }, e.code === "forbidden" ? 403 : 400, token);
     // Never serialize SDK, SQL or network errors (may carry credentials or protected fields); log the message only.
     console.error("[concierge] request failed:", action, String((e as Error).message).slice(0, 200));
     return response({ error: "Concierge is temporarily unavailable. Please use Find a ride or try again later." }, 503, token);

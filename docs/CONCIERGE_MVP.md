@@ -122,6 +122,15 @@ Not implemented: site-wide browsing/UTM profiles, lead scoring, email open/click
 
 ## Model and running without AI (2026-10-15)
 
-- On launch, AI Gateway refused `anthropic/claude-haiku-5.5` ("Free tier users do not have access to this model"), so every chat message got the no-AI fallback. The founder chose OpenAI GPT-3.5: `CONCIERGE_MODEL=openai/gpt-3.5-turbo` in Vercel production (the code default stays Claude; delete the variable to go back). Topping up AI Gateway credits also lifts the block.
+- On launch, AI Gateway refused `anthropic/claude-haiku-5.5` ("Free tier users do not have access to this model"), so every chat message got the no-AI fallback. The founder chose OpenAI GPT-3.5 (`openai/gpt-3.5-turbo`), then switched the same day to GPT-4o mini, which follows the policy prompt more closely and costs less: `CONCIERGE_MODEL=openai/gpt-4o-mini` in Vercel production (the code default stays Claude; delete the variable to go back). Topping up AI Gateway credits also lifts the block.
 - Extraction asks for a plain JSON object and parses the first one in the reply (`parseExtraction`), so models without JSON-schema output (GPT-3.5) work; `mergeLead` validates every field either way.
 - Reading the event details and writing the reply are separate steps that fail independently. With no AI at all, `src/lib/concierge/faq.ts` answers pass and policy questions (expiry, no reply, dead contacts, refunds, lost link, price, booking, support) from the product rows and `/access-policy`; anything else points to the event form and support@. No random ride cards are shown when the details couldn't be read.
+
+## The chat knows where the conversation stands (2026-10-15)
+
+Founder test: "hello" produced four Missouri rides "290 miles" from nowhere (distance from the middle of the country), an "Email me these options" form for them, and "I can't confirm" to "did you send me the email".
+
+- No search without a city/state or a ride type (`leadState().searchable`, `src/lib/concierge/state.ts`); the reply carries `search: null` and the model is told there is no search yet, so it asks. Distances show only once the origin is a city or state.
+- Every chat turn gives the model `conversationState()` (service.ts): the public event facts, what is still missing, `emailOnFile`, `savedSearchEmailSent`, `eventRequestSaved`, availability requests and passes in this browser. Never the address, phone or name. The no-AI path answers "did you send the email" from the same record (`emailStatusAnswer`).
+- Messages name what is missing (`needDetails`): capture, Request Availability and See access offer say "I need your event date, city and state, and email" instead of a generic sentence; the capture confirmation echoes the address so a typo is visible.
+- Widget: the capture form appears only when it can send; otherwise a one-line hint. Request Availability is disabled until it can work. "Start over" clears the tab's chat and the saved event.

@@ -10,10 +10,12 @@ import { paths } from "../seo/routes";
 import { leadSchema, type Lead } from "./schema";
 import { emptyLead } from "./defaults";
 import { CONCIERGE_SOURCE_PATH, recordLifecycleEvent, sessionHasEvent } from "../lifecycle/events";
-import { sendSavedSearch, type LifecycleDeps } from "../lifecycle/engine";
+import { savedSearchSent, sendSavedSearch, type LifecycleDeps } from "../lifecycle/engine";
 import { sendNow } from "../access/email";
 import { BRAND } from "../config";
 import { availabilityRequestEmail } from "./notify";
+import { publicEventFacts } from "./extract";
+import { leadState, listOf } from "./state";
 
 export const SESSION_COOKIE = "cr_concierge";
 export interface Conversation { id: string; details: Lead; eventId: string | null; searched: boolean; searchType: string | null }
@@ -115,8 +117,9 @@ export async function captureEmail(rt: AccessRuntime, session: Conversation, ema
   if (session.details.email?.trim().toLowerCase() !== address) await saveLead(rt.db, session, { ...session.details, email: address });
   await recordLifecycleEvent(rt.db, "email_capture_accepted", "chat", { sessionId: session.id, eventRequestId: session.eventId, consent: followupConsent });
   const d = session.details;
-  if (!d.eventDate || !d.city || !d.state) {
-    return { message: "Got it. Add your event date, city and state and I'll match operators and email you the options.", emailed: false, eventId: null };
+  const missing = leadState(d).missingForEmail;
+  if (missing.length) {
+    return { message: `Got it, I'll use ${address}. I still need your ${listOf(missing)}; tell me in the chat and I'll email your options.`, emailed: false, eventId: null };
   }
   const rideType = session.searchType ?? d.requestedRides[0]?.rideType ?? null;
   const { event, sellable } = await createEventRequest(rt, session, rideType);
@@ -127,7 +130,7 @@ export async function captureEmail(rt: AccessRuntime, session: Conversation, ema
   const r = await sendSavedSearch(rt.db, event.id, deps);
   const emailed = r.outcome === "sent" || (r.outcome === "skipped" && r.reason?.startsWith("already") === true);
   return {
-    message: emailed ? `Sent. Your ${event.city} options are in your inbox, and your search stays saved.` : "Saved. We couldn't send the email just now; your search stays saved here.",
+    message: emailed ? `Sent to ${address}. Your ${event.city} options are in your inbox, and your search stays saved.` : `Saved for ${address}. We couldn't send the email just now; your search stays saved here.`,
     emailed,
     eventId: event.id,
   };
@@ -167,8 +170,9 @@ export const REQUEST_WITH_TEAM = "with_team";
 export async function requestAvailability(db: AccessDb, session: Conversation, listingId: string | null, opts: { send?: typeof sendNow } = {}) {
   const listing = listingId ? RIDES.find(r => r.id === listingId) : null;
   if (listingId && !listing) throw new AccessError("invalid", "Unknown ride");
-  if (!session.details.eventDate || !session.details.city || !session.details.state || !session.details.email) throw new AccessError("invalid", "Add event date, city, state and email before requesting availability");
-  if (session.details.eventDate < nowIso().slice(0, 10)) throw new AccessError("invalid", "Choose a future event date");
+  const missing = leadState(session.details).missingForAvailability;
+  if (missing.length) throw new AccessError("invalid", `Add your ${listOf(missing)} before requesting availability`);
+  if ((session.details.eventDate ?? "") < nowIso().slice(0, 10)) throw new AccessError("invalid", "Choose a future event date");
   const recent = await db.query(`SELECT id, listing_id, details_json, status, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);
   const same = recent.find(r => (r.listing_id ? String(r.listing_id) : null) === listingId && String(r.details_json) === JSON.stringify(session.details) && Date.now() - Date.parse(String(r.created_at)) < 864e5);
   let id: string;
@@ -187,4 +191,37 @@ export async function requestAvailability(db: AccessDb, session: Conversation, l
 }
 export async function getRequestStatus(db: AccessDb, session: Conversation) {
   return db.query(`SELECT id, listing_id, status, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);
+}
+
+/**
+ * What the application knows about this conversation, for the model and the no-AI answers: the
+ * public event facts, what is still missing, and whether an email, request or pass exists. Never
+ * the customer's email address, phone or name, and never operator data.
+ */
+export interface ConversationState {
+  event: ReturnType<typeof publicEventFacts>;
+  searchable: boolean;
+  missingForEmail: string[];
+  missingForAvailability: string[];
+  emailOnFile: boolean;
+  /** The "your options" email for the current event request was accepted by the provider. */
+  savedSearchEmailSent: boolean;
+  eventRequestSaved: boolean;
+  availabilityRequests: { total: number; withTeam: number };
+  passesInThisBrowser: number;
+}
+export async function conversationState(db: AccessDb, session: Conversation, passIds: string[]): Promise<ConversationState> {
+  const st = leadState(session.details);
+  const requests = await getRequestStatus(db, session);
+  return {
+    event: publicEventFacts(session.details),
+    searchable: st.searchable,
+    missingForEmail: st.missingForEmail,
+    missingForAvailability: st.missingForAvailability,
+    emailOnFile: st.hasEmail,
+    savedSearchEmailSent: session.eventId ? await savedSearchSent(db, session.eventId) : false,
+    eventRequestSaved: !!session.eventId,
+    availabilityRequests: { total: requests.length, withTeam: requests.filter((r) => String(r.status) === REQUEST_WITH_TEAM).length },
+    passesInThisBrowser: passIds.length,
+  };
 }
