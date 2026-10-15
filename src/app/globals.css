@@ -18,6 +18,7 @@
   --color-accent-wash: #fff2cc;
   --color-accent-strong: #7a5200; /* readable accent text */
   --color-pop: #e5352b;
+  --color-pop-strong: #c2281f; /* readable pop text (WCAG AA on canvas) */
   --color-pop-wash: #fde4e2;
   --color-placeholder: #d4d9e3;
   --color-ok: #1f7a4d;
@@ -120,6 +121,6 @@ body {
   @apply rounded-2xl border border-line bg-surface;
 }
 .eyebrow {
-  @apply text-xs font-semibold uppercase tracking-[0.14em] text-pop;
+  @apply text-xs font-semibold uppercase tracking-[0.14em] text-pop-strong;
 }
 }

@@ -25,7 +25,7 @@ const TITLE = `Carnival Ride Rentals Nationwide | ${BRAND.name}`;
 
 export function generateMetadata() {
   const gate = coreHubGate("/");
-  return { title: TITLE, description: SITE_DESCRIPTION, alternates: { canonical: canonicalUrl("/") }, openGraph: { title: TITLE, description: SITE_DESCRIPTION, url: canonicalUrl("/") }, robots: gate.indexable ? { index: true, follow: true } : { index: false, follow: true } };
+  return { title: TITLE, description: SITE_DESCRIPTION, alternates: { canonical: canonicalUrl("/") }, openGraph: { title: TITLE, description: SITE_DESCRIPTION, url: canonicalUrl("/"), images: [{ url: "/brand/carnival-ride-rental-logo.png", alt: BRAND.name }] }, robots: gate.indexable ? { index: true, follow: true } : { index: false, follow: true } };
 }
 
 const GUIDE = paths.guide("how-to-rent-carnival-rides");
@@ -193,7 +193,7 @@ export default async function HomePage() {
             <Link key={c.id} href={paths.search({ rideClass: c.id })} className={`group relative flex flex-col ${i === 0 ? "sm:col-span-2 lg:row-span-2" : ""}`}>
               {c.photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={c.photo.src} alt={c.photo.alt} loading="lazy" className={`w-full rounded-xl object-cover ${i === 0 ? "aspect-[4/3] lg:aspect-auto lg:min-h-[360px] lg:flex-1" : "aspect-[16/10]"}`} />
+                <img src={c.photo.src} alt={c.photo.alt} loading="lazy" width={800} height={500} className={`w-full rounded-xl object-cover ${i === 0 ? "aspect-[4/3] lg:aspect-auto lg:min-h-[360px] lg:flex-1" : "aspect-[16/10]"}`} />
               ) : (
                 <PlaceholderImage className="aspect-[16/10] w-full rounded-xl" compact label={c.label} />
               )}
