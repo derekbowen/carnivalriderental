@@ -146,26 +146,37 @@ export async function unlockOperator(rt: AccessRuntime, authorizedIds: string[],
   // Existing service enforces purchase validity, category-bound match snapshot, eligibility, status and atomic balance.
   return accessUnlock(rt.db, rt.source, passId, operatorId, meta);
 }
-const AVAILABILITY_MESSAGE = "Request saved for review and sent to our team. No operator has confirmed availability, and no message has been sent to operators yet.";
+const AVAILABILITY_SENT = "Request saved for review and sent to our team. No operator has confirmed availability, and no message has been sent to operators yet.";
+const AVAILABILITY_SAVED = `Request saved for review, but we couldn't notify our team just now. Press it again in a minute, or email support@${BRAND.domain}. No operator has confirmed availability, and no message has been sent to operators yet.`;
+/** concierge_requests.status: 'received' until the team email is accepted by the provider, then 'with_team'. */
+export const REQUEST_WITH_TEAM = "with_team";
 
 /**
  * "Request Availability" / "Request My Event": saved, then emailed to the team (support@) so someone
- * actually reviews it. Pressing it again for the same ride within a day returns the same request
- * and sends nothing new.
+ * actually reviews it. The row is marked with_team only once the email provider accepts the
+ * notice; until then, pressing it again retries the email (same request, same idempotency key)
+ * instead of saving a duplicate, and the customer is never told the team has it when it doesn't.
  */
 export async function requestAvailability(db: AccessDb, session: Conversation, listingId: string | null, opts: { send?: typeof sendNow } = {}) {
   const listing = listingId ? RIDES.find(r => r.id === listingId) : null;
   if (listingId && !listing) throw new AccessError("invalid", "Unknown ride");
   if (!session.details.eventDate || !session.details.city || !session.details.state || !session.details.email) throw new AccessError("invalid", "Add event date, city, state and email before requesting availability");
   if (session.details.eventDate < nowIso().slice(0, 10)) throw new AccessError("invalid", "Choose a future event date");
-  const recent = await db.query(`SELECT id, listing_id, details_json, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);
+  const recent = await db.query(`SELECT id, listing_id, details_json, status, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);
   const same = recent.find(r => (r.listing_id ? String(r.listing_id) : null) === listingId && String(r.details_json) === JSON.stringify(session.details) && Date.now() - Date.parse(String(r.created_at)) < 864e5);
-  if (same) return { id: String(same.id), status: "received", message: AVAILABILITY_MESSAGE };
-  const id = crypto.randomUUID();
-  await db.query(`INSERT INTO concierge_requests (id, session_id, listing_id, details_json, status, created_at) VALUES (?, ?, ?, ?, 'received', ?)`, [id, session.id, listingId, JSON.stringify(session.details), nowIso()]);
-  // Best effort, like the manual-search notice: a failed email never loses the saved request.
-  await (opts.send ?? sendNow)(`support@${BRAND.domain}`, availabilityRequestEmail({ requestId: id, details: session.details, listing: listing ? { id: listing.id, title: listing.title } : null }), `availability:${id}`);
-  return { id, status: "received", message: AVAILABILITY_MESSAGE };
+  let id: string;
+  if (same) {
+    id = String(same.id);
+    if (String(same.status) === REQUEST_WITH_TEAM) return { id, status: REQUEST_WITH_TEAM, message: AVAILABILITY_SENT };
+  } else {
+    id = crypto.randomUUID();
+    await db.query(`INSERT INTO concierge_requests (id, session_id, listing_id, details_json, status, created_at) VALUES (?, ?, ?, ?, 'received', ?)`, [id, session.id, listingId, JSON.stringify(session.details), nowIso()]);
+  }
+  // A failed email never loses the saved request; it is retried the next time the customer presses.
+  const r = await (opts.send ?? sendNow)(`support@${BRAND.domain}`, availabilityRequestEmail({ requestId: id, details: session.details, listing: listing ? { id: listing.id, title: listing.title } : null }), `availability:${id}`);
+  if (!r.sent) return { id, status: "received", message: AVAILABILITY_SAVED };
+  await db.query(`UPDATE concierge_requests SET status = ? WHERE id = ?`, [REQUEST_WITH_TEAM, id]);
+  return { id, status: REQUEST_WITH_TEAM, message: AVAILABILITY_SENT };
 }
 export async function getRequestStatus(db: AccessDb, session: Conversation) {
   return db.query(`SELECT id, listing_id, status, created_at FROM concierge_requests WHERE session_id = ? ORDER BY created_at DESC LIMIT 20`, [session.id]);

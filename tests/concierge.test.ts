@@ -88,16 +88,27 @@ describe("Carnival Ride Concierge", () => {
     const send = async (to: string, content: { subject: string; html: string; text: string }, key: string) => (sent.push({ to, subject: content.subject, text: content.text, key }), { sent: true, deliveredTo: to });
     const request = await requestAvailability(db, c.session, RIDES[0].id, { send });
     expect(request.message).toContain("no message has been sent");
-    expect((await getRequestStatus(db, c.session))[0].status).toBe("received");
+    expect((await getRequestStatus(db, c.session))[0].status).toBe("with_team");
     // The team is told (support@, not an operator), once: pressing it again returns the same request.
     expect(sent).toHaveLength(1);
     expect(sent[0].to).toBe("support@carnivalriderental.us");
     expect(sent[0].text).toContain(request.id);
     expect(sent[0].text).toContain(RIDES[0].title);
     expect(sent[0].text).not.toMatch(CONTACT);
+    expect(request.status).toBe("with_team");
     expect((await requestAvailability(db, c.session, RIDES[0].id, { send })).id).toBe(request.id);
     expect(sent).toHaveLength(1);
     expect(await getRequestStatus(db, c.session)).toHaveLength(1);
+    // If the team email fails, the customer is told so, and pressing again retries it (no duplicate row).
+    let fail = true;
+    const flaky = async (to: string, content: { subject: string; html: string; text: string }, key: string) => (fail ? { sent: false, deliveredTo: to, error: "provider down" } : send(to, content, key));
+    const second = await requestAvailability(db, c.session, RIDES[1].id, { send: flaky });
+    expect(second).toMatchObject({ status: "received", message: expect.stringContaining("couldn't notify our team") });
+    fail = false;
+    const retried = await requestAvailability(db, c.session, RIDES[1].id, { send: flaky });
+    expect(retried).toMatchObject({ id: second.id, status: "with_team", message: expect.stringContaining("sent to our team") });
+    expect(sent.map((m) => m.key)).toEqual([`availability:${request.id}`, `availability:${second.id}`]);
+    expect(await getRequestStatus(db, c.session)).toHaveLength(2);
     const other = await conversation(db);
     expect(await getRequestStatus(db, other.session)).toEqual([]);
     const row = (await db.query(`SELECT details_json FROM concierge_requests WHERE id = ?`, [request.id]))[0];
