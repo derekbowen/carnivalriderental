@@ -99,6 +99,24 @@ describe("chat → event requests", () => {
     expect((await createEventRequest(rt(), session, "kiddie-train")).event.id).not.toBe(first.eventId);
   });
 
+  it("editing the ZIP, event type, attendance or budget makes a new request; details never given stay null", async () => {
+    const { session } = await conversation(db);
+    await saveLead(db, session, { ...emptyLead, eventDate: "2030-06-01", city: "Riverside", state: "CA", email: EMAIL, requestedRides: [{ rideType: "kiddie-train", quantity: 1 }] });
+    const first = (await createEventRequest(rt(), session, "kiddie-train")).event;
+    expect(first).toMatchObject({ zip: null, eventType: null, attendance: null, budgetCents: null });
+    let previous = first.id;
+    for (const edit of [{ zip: "92501" }, { eventType: "School carnival" }, { attendance: 3000 }, { budgetUsd: 5000 }]) {
+      await saveLead(db, session, { ...session.details, ...edit });
+      const edited = (await createEventRequest(rt(), session, "kiddie-train")).event;
+      expect(edited.id).not.toBe(previous);
+      expect((await createEventRequest(rt(), session, "kiddie-train")).event.id).toBe(edited.id); // unchanged again: reused
+      previous = edited.id;
+    }
+    const last = (await createEventRequest(rt(), session, "kiddie-train")).event;
+    expect(last).toMatchObject({ zip: "92501", eventType: "School carnival", attendance: 3000, budgetCents: 500_000 });
+    expect(await db.query(`SELECT id FROM access_event_requests`)).toHaveLength(5);
+  });
+
   it("no exact match: the chat points to the alternatives page instead of a dead end", async () => {
     const { session } = await conversation(db);
     await saveLead(db, session, { ...emptyLead, eventDate: "2030-06-01", city: "Riverside", state: "CA", requestedRides: [{ rideType: "trackless-train", quantity: 1 }] });

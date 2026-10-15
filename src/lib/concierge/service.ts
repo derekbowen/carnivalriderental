@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { type AccessDb, nowIso } from "../access/db";
 import { hashToken, newToken } from "../access/session";
-import { AccessError, getEventRequest, passView, startEventRequest, unlockOperator as accessUnlock, type EventRequest } from "../access/service";
+import { AccessError, eventRequestInput, getEventRequest, passView, startEventRequest, unlockOperator as accessUnlock, type EventRequest } from "../access/service";
 import type { AccessRuntime } from "../access/runtime";
 import { geocode } from "../access/matching";
 import { getOperatorListing, milesBetween, US_CENTER } from "../catalog/operator-search";
@@ -27,8 +27,8 @@ export async function conversation(db: AccessDb, token?: string): Promise<{ sess
 }
 /**
  * Saves the lead. The link to the session's last event request stays: reusableRequest only reuses it
- * when the email, date, place and ride still match, so a chat turn that repeats the same details
- * never creates a second request (or a second saved-search email).
+ * when every stored detail still matches, so a chat turn that repeats the same details never creates
+ * a second request (or a second saved-search email), and an edited one always does.
  */
 export async function saveLead(db: AccessDb, session: Conversation, raw: unknown) {
   const details = leadSchema.parse(raw);
@@ -63,17 +63,25 @@ export const getRideDetails = (id: string) => getOperatorListing(id);
 export function getPublicOperatorProfile(op: { label: string; homeState: string | null; miles: number; claimed: boolean }) {
   return { label: op.label, homeState: op.homeState, miles: op.miles, claimed: op.claimed };
 }
+/** The event request input for the lead as it stands (blank fields as the form sends them). */
+const requestInput = (d: Lead, rideType: string | null) => ({ ...d, eventDate: d.eventDate ?? "", city: d.city ?? "", state: d.state ?? "", email: d.email ?? "", zip: d.zip ?? "", eventType: d.eventType ?? "", attendance: d.attendance ?? "", budgetUsd: d.budgetUsd ?? "", rideType: rideType ?? "", sourcePath: paths.concierge() });
+
 /**
- * A recent chat request for exactly the same event and email (same session, same details), reused so
- * pressing "See access offer" or "Email me these options" again never creates a second request, a
- * second quote or a second email.
+ * A chat request from the last 6 hours made from exactly these details (every stored field, compared
+ * as the ledger parses them), reused so pressing "See access offer" or "Email me these options" again
+ * never creates a second request, a second quote or a second email.
  */
 async function reusableRequest(db: AccessDb, session: Conversation, rideType: string | null): Promise<EventRequest | null> {
   if (!session.eventId) return null;
   const e = await getEventRequest(db, session.eventId);
-  const d = session.details;
-  const fresh = e && Date.now() - Date.parse(e.createdAt) < 6 * 3600e3;
-  return fresh && e.email === (d.email ?? "").trim().toLowerCase() && e.eventDate === d.eventDate && e.city === (d.city ?? "").trim() && e.state === d.state && e.rideType === rideType ? e : null;
+  if (!e || Date.now() - Date.parse(e.createdAt) >= 6 * 3600e3) return null;
+  const parsed = eventRequestInput.safeParse(requestInput(session.details, rideType));
+  if (!parsed.success) return null;
+  const n = parsed.data;
+  const same =
+    e.email === n.email && e.eventDate === n.eventDate && e.city === n.city && e.state === n.state && e.zip === n.zip && e.eventType === n.eventType &&
+    e.attendance === n.attendance && e.budgetCents === (n.budgetUsd === null ? null : n.budgetUsd * 100) && e.rideType === n.rideType;
+  return same ? e : null;
 }
 
 export async function createEventRequest(rt: AccessRuntime, session: Conversation, rideType: string | null) {
@@ -85,8 +93,7 @@ export async function createEventRequest(rt: AccessRuntime, session: Conversatio
     const quote = await quoteForEvent(rt.db, reused);
     if (quote.product) return { event: reused, product: quote.product, sellable: quote.sellable };
   }
-  const d = session.details;
-  const result = await startEventRequest(rt.db, rt.source, { ...d, eventDate: d.eventDate ?? "", city: d.city ?? "", state: d.state ?? "", email: d.email ?? "", zip: d.zip ?? "", eventType: d.eventType ?? "", attendance: d.attendance ?? "", budgetUsd: d.budgetUsd ?? "", rideType: rideType ?? "", sourcePath: paths.concierge() });
+  const result = await startEventRequest(rt.db, rt.source, requestInput(session.details, rideType));
   await rt.db.query(`UPDATE concierge_sessions SET event_request_id = ? WHERE id = ?`, [result.event.id, session.id]);
   session.eventId = result.event.id;
   // These rows also link the request to this chat session (consent for follow-up is per session).
