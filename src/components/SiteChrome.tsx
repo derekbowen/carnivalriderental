@@ -56,6 +56,14 @@ export function SiteHeader() {
 
 const SUPPORT_EMAIL = `support@${BRAND.domain}`;
 
+/**
+ * Independent security scan of the public site (docs/SECURITY_SCAN_2026-10-15.md). The badge image and
+ * the verification page are served by the scanner, so each page view makes one request to that host.
+ */
+const VAS_SCAN = "0ea8a509a017260c07e6eb10dba2ffc24e3951eaf8508d930bef2ca3b2b8e13e";
+const VAS_VERIFY_URL = `https://vibeappscanner.com/verify/${VAS_SCAN}`;
+const VAS_BADGE_URL = `https://api.vibeappscanner.com/badge/${VAS_SCAN}.svg`;
+
 function FooterColumn({ title, links }: { title: string; links: FooterLink[] }) {
   return (
     <div>
@@ -125,9 +133,15 @@ export function SiteFooter() {
         </div>
       </nav>
       <div className="border-t border-white/10">
-        <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/60 sm:px-6 lg:px-10">
-          {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access is a one-time fee for direct operator contact details; the rental itself, including price, availability, contract and payment, is agreed directly with the operator.
-        </p>
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
+          <p className="text-xs text-white/60">
+            {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access is a one-time fee for direct operator contact details; the rental itself, including price, availability, contract and payment, is agreed directly with the operator.
+          </p>
+          <a href={VAS_VERIFY_URL} target="_blank" rel="noopener noreferrer" className="shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={VAS_BADGE_URL} alt="Audited by VAS" width={150} height={36} loading="lazy" />
+          </a>
+        </div>
       </div>
     </footer>
   );

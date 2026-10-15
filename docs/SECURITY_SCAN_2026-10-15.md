@@ -33,4 +33,4 @@ The scanner found DMARC `v=DMARC1; p=none;` with no report address, and no SPF o
 
 ## Badge
 
-The scanner offers an "Audited by VAS" badge (an image and link hosted on vibeappscanner.com). Adding third-party content to the footer is a founder decision; it is not in the repo until approved.
+The scanner's "Audited by VAS" badge is in the footer bottom bar (`src/components/SiteChrome.tsx`), added 2026-10-15 at the founder's request. It links to the scan's verification page. The image and that page are served by vibeappscanner.com, so every page view makes one request to that host; self-hosting the SVG would stop that but would freeze the badge at this scan.
