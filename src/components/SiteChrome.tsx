@@ -108,6 +108,7 @@ export function SiteFooter() {
               { href: paths.accessPolicy(), label: "Event Access policy" },
               { href: paths.terms(), label: "Terms of Use" },
               { href: paths.privacy(), label: "Privacy" },
+              { href: paths.accessibility(), label: "Accessibility" },
             ]}
           />
         </nav>

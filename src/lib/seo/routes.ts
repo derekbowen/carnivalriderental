@@ -18,7 +18,7 @@ import { siteUrl } from "../config";
  *   /connect, /connect/{eventRequest}       Event Access funnel (noindex, no-store)
  *   /pass/{pass}                            a customer's access pass (private, no-store, noindex)
  *   /guides/{guide}                        buyer education (how to rent carnival rides)
- *   /terms, /privacy, /access-policy, /contact
+ *   /terms, /privacy, /accessibility, /access-policy, /contact
  *
  * City slugs and occasion ids share the /{state}/… namespace; checkSlugNamespaces()
  * fails the build on a collision. Old /locations, /rides/{ride}/{state}/{city} and
@@ -87,6 +87,7 @@ export const paths = {
   guide: (guide: string) => `/guides/${seg(guide)}`,
   terms: () => "/terms",
   privacy: () => "/privacy",
+  accessibility: () => "/accessibility",
   accessPolicy: () => "/access-policy",
   contact: () => "/contact",
   directory: () => "/directory",
