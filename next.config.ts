@@ -9,7 +9,9 @@ import { withBotId } from "botid/next/config";
 const SECURITY_HEADERS = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
-  { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+  // frame-ancestors: clickjacking. base-uri: an injected <base> cannot redirect relative URLs (it does not
+  // inherit from default-src). object-src: no plugins. None of these touch scripts, styles or images.
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
