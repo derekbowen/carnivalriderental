@@ -30,6 +30,12 @@ import { stripeMode, type CheckoutSession, type StripeEvent, type StripeGateway 
 
 // ------------------------------------------------------------------------------ input
 const STATE_CODES = new Set(US_STATES.map((s) => s.abbr.toUpperCase()));
+/** An optional whole number from the form or the chat. Blank means not given: null, never 0. */
+const optionalCount = (max: number) =>
+  z
+    .preprocess((v) => (v === null || (typeof v === "string" && v.trim() === "") ? undefined : v), z.coerce.number().int().min(0).max(max).optional())
+    .transform((v) => v ?? null);
+
 export const eventRequestInput = z.object({
   email: z.string().trim().toLowerCase().email().max(200),
   eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -40,8 +46,8 @@ export const eventRequestInput = z.object({
   rideType: z.string().trim().regex(/^[a-z0-9-]+$/).max(60).optional().or(z.literal("")).transform((v) => v || null),
   rideClass: z.string().trim().regex(/^[a-z0-9-]+$/).max(40).optional().or(z.literal("")).transform((v) => v || null),
   listingId: z.string().trim().regex(/^[0-9a-f-]{36}$/).optional().or(z.literal("")).transform((v) => v || null),
-  attendance: z.coerce.number().int().min(0).max(1_000_000).optional().or(z.literal("")).transform((v) => (v === "" || v === undefined ? null : v)),
-  budgetUsd: z.coerce.number().int().min(0).max(10_000_000).optional().or(z.literal("")).transform((v) => (v === "" || v === undefined ? null : v)),
+  attendance: optionalCount(1_000_000),
+  budgetUsd: optionalCount(10_000_000),
   sourcePath: z.string().max(300).optional().or(z.literal("")).transform((v) => v || null),
 });
 export type EventRequestInput = z.infer<typeof eventRequestInput>;

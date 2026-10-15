@@ -1,7 +1,7 @@
 import { isBotRequest } from "@/lib/access/bot";
 import { accessDb } from "@/lib/access/db";
 import { AccessError, priceLabel } from "@/lib/access/service";
-import { accessRuntime, clientIp, parseCookie, passCookieName, passIdsFromCookie, rateLimited } from "@/lib/access/runtime";
+import { accessProductsForDisplay, accessRuntime, clientIp, parseCookie, passCookieName, passIdsFromCookie, rateLimited } from "@/lib/access/runtime";
 import { ipHash, sessionSecret } from "@/lib/access/session";
 import { emptyLead } from "@/lib/concierge/defaults";
 import { actionSchema } from "@/lib/concierge/schema";
@@ -11,6 +11,7 @@ import { lifecycleDeps } from "@/lib/lifecycle/runtime";
 import { paths } from "@/lib/seo/routes";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
+import { faqAnswer, NO_AI_REPLY } from "@/lib/concierge/faq";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -65,6 +66,9 @@ export async function POST(req: Request) {
       if (/\b(phone|email|address|contact|number)\b/i.test(a.message) && /\b(operator|supplier|company)\b/i.test(a.message)) {
         result.message = "Operator phone numbers, emails and addresses are only shown after you buy Event Access and unlock an operator, so I can't share them here and I cannot bypass the paywall. If you already have a pass, open it with \"My pass\". To reach our team, email support@carnivalriderental.us.";
       } else {
+        // Two independent AI steps: reading the event details, then the reply. Either can fail without
+        // losing the other; with no AI at all, policy questions still get answered (faq.ts).
+        let inventory: unknown = { total: 0, cards: [], availability: "Event details could not be read for this message; no search was run." };
         try {
           await saveLead(db, s, await extractLead(a.message, s.details));
           const selected = s.details.requestedRides[0]?.rideType ?? null;
@@ -73,10 +77,15 @@ export async function POST(req: Request) {
           result.captureOffered = await recordSearch(db, s, search.total);
           result.search = search;
           result.selectedRideType = selected;
-          result.message = await customerHelp(a.message, a.history ?? [], { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability });
+          inventory = { total: search.total, cards: search.cards.map(c => ({ title: c.title, category: c.rideClassLabel, region: c.homeState, miles: c.miles })), availability: search.availability };
         } catch (e) {
-          console.error("[concierge] AI step failed:", String((e as Error).message).slice(0, 200));
-          result.message = "Automatic interpretation is unavailable right now. You can still enter your event details below and search without AI.";
+          console.error("[concierge] AI extraction failed:", String((e as Error).message).slice(0, 200));
+        }
+        try {
+          result.message = await customerHelp(a.message, a.history ?? [], inventory);
+        } catch (e) {
+          console.error("[concierge] AI reply failed:", String((e as Error).message).slice(0, 200));
+          result.message = faqAnswer(a.message, await accessProductsForDisplay()) ?? NO_AI_REPLY;
         }
       }
     } else if (a.action === "save") {

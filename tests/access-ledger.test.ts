@@ -60,6 +60,14 @@ describe("Event Access ledger", () => {
     await expect(startEventRequest(db, source, { ...columbus, email: "nope" })).rejects.toThrow(/email/);
   });
 
+  it("optional numbers left blank on the form are stored as unknown (null), never 0", async () => {
+    const blank = await startEventRequest(db, source, { ...columbus, attendance: "", budgetUsd: " " }, { cache: memoryContactCache() });
+    expect(blank.event).toMatchObject({ attendance: null, budgetCents: null });
+    const given = await startEventRequest(db, source, { ...columbus, attendance: "0", budgetUsd: "2500" }, { cache: memoryContactCache() });
+    expect(given.event).toMatchObject({ attendance: 0, budgetCents: 250_000 });
+    await expect(startEventRequest(db, source, { ...columbus, attendance: "lots" })).rejects.toThrow(/attendance/);
+  });
+
   it("checkout uses the server-side amount and never trusts the browser", async () => {
     const stripe = fakeStripe(SITE);
     const { event } = await startEventRequest(db, source, columbus, { cache: memoryContactCache() });

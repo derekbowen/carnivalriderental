@@ -119,3 +119,9 @@ Lifecycle hooks (`src/lib/lifecycle/events.ts`, table `access_lifecycle_events`)
 The PR's original follow-up jobs (`concierge_followup_jobs`, `concierge_events`, `scripts/concierge-followups.ts`, the resume and unsubscribe routes) were removed in favour of the above. Unsubscribe is the lifecycle `/api/email/unsubscribe` link in every commercial email.
 
 Not implemented: site-wide browsing/UTM profiles, lead scoring, email open/click webhooks and a protected CRM dashboard.
+
+## Model and running without AI (2026-10-15)
+
+- On launch, AI Gateway refused `anthropic/claude-haiku-5.5` ("Free tier users do not have access to this model"), so every chat message got the no-AI fallback. The founder chose OpenAI GPT-3.5: `CONCIERGE_MODEL=openai/gpt-3.5-turbo` in Vercel production (the code default stays Claude; delete the variable to go back). Topping up AI Gateway credits also lifts the block.
+- Extraction asks for a plain JSON object and parses the first one in the reply (`parseExtraction`), so models without JSON-schema output (GPT-3.5) work; `mergeLead` validates every field either way.
+- Reading the event details and writing the reply are separate steps that fail independently. With no AI at all, `src/lib/concierge/faq.ts` answers pass and policy questions (expiry, no reply, dead contacts, refunds, lost link, price, booking, support) from the product rows and `/access-policy`; anything else points to the event form and support@. No random ride cards are shown when the details couldn't be read.
