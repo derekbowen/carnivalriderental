@@ -8,9 +8,12 @@ import { leadSchema, type Lead } from "./schema";
  * The customer's stored name, email and phone are not sent back to the model either: it sees the
  * event facts and the new message, and keeps whatever contact details we already have.
  */
+export function publicEventFacts(lead: Lead) {
+  const { email: _email, phone: _phone, contactName: _name, ...eventFacts } = lead;
+  return eventFacts;
+}
 export function modelInput(message: string, previous: Lead) {
-  const { email: _email, phone: _phone, contactName: _name, ...eventFacts } = previous;
-  return { today: new Date().toISOString().slice(0, 10), previous: eventFacts, message };
+  return { today: new Date().toISOString().slice(0, 10), previous: publicEventFacts(previous), message };
 }
 
 /** The keys the model is asked to return; nothing it returns is trusted (mergeLead validates every field). */

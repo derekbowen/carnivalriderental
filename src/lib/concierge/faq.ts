@@ -7,6 +7,7 @@ import { formatPrice, type AccessProducts } from "../access/config";
 import { bothTiersSentence } from "../access/copy";
 import { BRAND } from "../config";
 import { paths } from "../seo/routes";
+import { listOf } from "./state";
 
 const SUPPORT = `support@${BRAND.domain}`;
 const site = (path: string) => `${BRAND.domain}${path}`;
@@ -70,8 +71,24 @@ const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
   },
 ];
 
+/** "Did you send me the email?", "I never got the email", "where's my email". */
+const EMAIL_STATUS = /\b(did|have|has|was|were|is)\b[^.?!]{0,40}\b(send|sent|email(ed)?|mail(ed)?)\b|\b(where'?s|where is|wheres)\b[^.?!]{0,20}\bemail\b|\b(didn'?t|did not|haven'?t|have not|never) (get|got|receive[d]?|see|saw)\b[^.?!]{0,20}\bemail\b|\bno email\b/;
+
+export interface EmailStatus { emailOnFile: boolean; savedSearchEmailSent: boolean; missingForEmail: string[] }
+
+/** Whether the options email went out, from the application's own record (never a guess). */
+export function emailStatusAnswer(message: string, state: EmailStatus): string | null {
+  if (!EMAIL_STATUS.test(normalise(message))) return null;
+  if (state.savedSearchEmailSent) return "Yes. Your ride options were emailed to the address you gave; check your spam folder if you don't see them. Tell me if you'd like them sent again or to a different address.";
+  if (state.missingForEmail.length) return `Not yet. I still need your ${listOf(state.missingForEmail)} before I can match operators and email the options. Tell me in the chat and I'll send them.`;
+  if (!state.emailOnFile) return `Not yet. Press "Email me these options" under the ride results and enter your email, and I'll send them right away.`;
+  return `Not yet. Press "Email me these options" under the ride results and I'll send them to the address you gave.`;
+}
+
 /** A policy answer for a customer-service question, or null when none applies. */
-export function faqAnswer(message: string, products: AccessProducts): string | null {
+export function faqAnswer(message: string, products: AccessProducts, state?: EmailStatus): string | null {
+  const fromState = state ? emailStatusAnswer(message, state) : null;
+  if (fromState) return fromState;
   const text = normalise(message);
   return FAQ.find((f) => f.test.test(text))?.answer(products) ?? null;
 }
