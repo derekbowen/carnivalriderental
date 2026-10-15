@@ -8,6 +8,8 @@ test("security headers on every response, share image and accessibility statemen
     expect(h["x-content-type-options"], path).toBe("nosniff");
     expect(h["x-frame-options"], path).toBe("SAMEORIGIN");
     expect(h["content-security-policy"], path).toContain("frame-ancestors 'self'");
+    expect(h["content-security-policy"], path).toContain("base-uri 'self'");
+    expect(h["content-security-policy"], path).toContain("object-src 'none'");
     expect(h["referrer-policy"], path).toBe("strict-origin-when-cross-origin");
     expect(h["permissions-policy"], path).toContain("camera=()");
   }
