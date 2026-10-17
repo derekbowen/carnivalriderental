@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { ATTRIBUTION_COOKIE, ATTRIBUTION_MAX_AGE, attributionFromUrl, encodeAttribution } from "./lib/attribution";
 import { checkInternalAuth, checkSiteAccess } from "./lib/auth";
 
 const isInternal = (p: string) => p === "/internal" || p.startsWith("/internal/") || p.startsWith("/api/internal/");
@@ -38,6 +39,11 @@ export function middleware(req: NextRequest) {
   if (isPaid(path)) {
     res.headers.set("Cache-Control", "private, no-store");
     res.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+  // A visitor arriving from a tagged ad or link: remember the campaign tags (never personal data).
+  const campaign = path.startsWith("/api/") || isInternal(path) ? null : attributionFromUrl(req.nextUrl.searchParams);
+  if (campaign) {
+    res.cookies.set(ATTRIBUTION_COOKIE, encodeAttribution(campaign), { path: "/", maxAge: ATTRIBUTION_MAX_AGE, sameSite: "lax", httpOnly: true, secure: process.env.APP_ENV !== "development" });
   }
   return res;
 }

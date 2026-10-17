@@ -1,6 +1,7 @@
 import { AccessError, startEventRequest } from "@/lib/access/service";
 import { isBotRequest } from "@/lib/access/bot";
-import { accessRuntime, clientIp, rateLimited, refuse, respond } from "@/lib/access/runtime";
+import { accessRuntime, clientIp, parseCookie, rateLimited, refuse, respond } from "@/lib/access/runtime";
+import { ATTRIBUTION_COOKIE, decodeAttribution, recordAttribution } from "@/lib/attribution";
 import { paths } from "@/lib/seo/routes";
 
 export const runtime = "nodejs";
@@ -15,6 +16,7 @@ export async function POST(req: Request) {
   try {
     const rt = await accessRuntime();
     const { event } = await startEventRequest(rt.db, rt.source, raw);
+    await recordAttribution(rt.db, event.id, decodeAttribution(parseCookie(req.headers.get("cookie"), ATTRIBUTION_COOKIE)));
     return respond(req, paths.connectMatches(event.id));
   } catch (e) {
     if (e instanceof AccessError) {

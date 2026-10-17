@@ -14,6 +14,7 @@ import { extractLead } from "@/lib/concierge/extract";
 import { faqAnswer, isContactProblem, NO_AI_REPLY } from "@/lib/concierge/faq";
 import { emailOfferLine, leadState, needDetails } from "@/lib/concierge/state";
 import type { Lead } from "@/lib/concierge/schema";
+import { ATTRIBUTION_COOKIE, decodeAttribution, recordAttribution } from "@/lib/attribution";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -172,6 +173,8 @@ export async function POST(req: Request) {
       result.passes = passes;
       result.requests = await getRequestStatus(db, s);
     }
+    // The campaign that brought this visitor, recorded once against the event request this turn made or reused.
+    if (s.eventId) await recordAttribution(db, s.eventId, decodeAttribution(parseCookie(req.headers.get("cookie"), ATTRIBUTION_COOKIE)));
     return response({ ...result, details: s.details }, 200, token);
   } catch (e) {
     if (e instanceof AccessError) return response({ error: e.code === "invalid" ? invalidMessage(e.message, action, s?.details) : e.message }, e.code === "forbidden" ? 403 : 400, token);

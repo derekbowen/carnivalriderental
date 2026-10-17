@@ -116,6 +116,15 @@ describe("the application offers to email the options, once", () => {
     expect((await chat("actually Fresno")).captured).toBeUndefined();
   });
 
+  it("a search made in the chat records the campaign that brought the visitor", async () => {
+    extraction = '{"city":"Riverside","state":"CA","eventDate":"2030-06-01","requestedRides":[{"rideType":"kiddie-train","quantity":1}]}';
+    await chat("kiddie train in Riverside CA on June 1 2030");
+    cookie = `${cookie}; cr_src=google|cpc|crr-search`;
+    await capture("planner@fastmail.com");
+    const { accessDb } = await import("@/lib/access/db");
+    expect(await (await accessDb()).query(`SELECT source, medium, campaign FROM access_attribution`)).toContainEqual({ source: "google", medium: "cpc", campaign: "crr-search" });
+  });
+
   it("an email typed into the chat, without asking for the options, sends nothing", async () => {
     extraction = '{"city":"Riverside","state":"CA","email":"planner@fastmail.com","requestedRides":[{"rideType":"kiddie-train","quantity":1}]}';
     await chat("kiddie train in Riverside CA, I'm planner@fastmail.com");

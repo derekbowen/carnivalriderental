@@ -38,7 +38,7 @@ const CONCIERGE_SCHEMA = fs.readFileSync(path.join(process.cwd(), "src/lib/acces
 const split = (sql: string) => sql.split(/;\s*\n/).map((s) => s.replace(/^\s*--.*$/gm, "").trim()).filter(Boolean);
 const statements = () => split(SCHEMA);
 /** Tables created by schema-concierge.sql (RLS on, no PUBLIC grants on Postgres). */
-export const CONCIERGE_TABLES = ["concierge_sessions", "concierge_requests", "access_lifecycle_events"] as const;
+export const CONCIERGE_TABLES = ["concierge_sessions", "concierge_requests", "access_lifecycle_events", "access_attribution"] as const;
 
 // ------------------------------------------------------------------------------ sqlite
 function sqliteDb(file: string): AccessDb {

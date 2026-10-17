@@ -18,6 +18,8 @@ export interface FunnelReport {
   /** Live revenue only from live-mode Stripe sessions (cs_live_); everything else is test or fake. */
   purchases: { productId: string; status: string; count: number; liveCents: number; testCents: number }[];
   emails: { template: string; status: string; count: number }[];
+  /** Event requests and paid sales by the campaign tags they were started with (src/lib/attribution.ts). */
+  bySource: { source: string; medium: string | null; campaign: string | null; searches: number; sales: number; liveCents: number }[];
   unavailable: string[];
 }
 
@@ -47,6 +49,17 @@ export async function funnelReport(db: Sql, days: number, now = new Date()): Pro
     ),
     read("access_lifecycle_emails", `SELECT template, status, COUNT(*) AS count FROM access_lifecycle_emails WHERE created_at >= ? GROUP BY template, status`),
   ]);
+  const bySource = await read(
+    "access_attribution",
+    `SELECT a.source, a.medium, a.campaign, COUNT(DISTINCT e.id) AS searches,
+      COUNT(DISTINCT CASE WHEN p.status IN ('paid', 'partially_refunded') THEN p.id END) AS sales,
+      SUM(CASE WHEN p.status IN ('paid', 'partially_refunded') AND p.stripe_checkout_session_id LIKE 'cs_live_%' THEN p.amount_cents - p.refund_cents ELSE 0 END) AS live_cents
+     FROM access_event_requests e
+     LEFT JOIN access_attribution a ON a.event_request_id = e.id
+     LEFT JOIN access_purchases p ON p.event_request_id = e.id
+     WHERE e.created_at >= ?
+     GROUP BY a.source, a.medium, a.campaign`,
+  );
   const order = (name: string) => (LIFECYCLE_EVENTS as readonly string[]).indexOf(name);
   const byDay = new Map<string, Record<string, number>>();
   for (const r of daily) {
@@ -65,6 +78,9 @@ export async function funnelReport(db: Sql, days: number, now = new Date()): Pro
       .map((r) => ({ productId: String(r.product_id), status: String(r.status), count: n(r.count), liveCents: r.status === "paid" || r.status === "partially_refunded" ? n(r.live_cents) : 0, testCents: r.status === "paid" || r.status === "partially_refunded" ? n(r.test_cents) : 0 }))
       .sort((a, b) => a.productId.localeCompare(b.productId) || a.status.localeCompare(b.status)),
     emails: emails.map((r) => ({ template: String(r.template), status: String(r.status), count: n(r.count) })).sort((a, b) => a.template.localeCompare(b.template) || a.status.localeCompare(b.status)),
+    bySource: bySource
+      .map((r) => ({ source: r.source ? String(r.source) : "(untagged)", medium: r.medium ? String(r.medium) : null, campaign: r.campaign ? String(r.campaign) : null, searches: n(r.searches), sales: n(r.sales), liveCents: n(r.live_cents) }))
+      .sort((a, b) => b.searches - a.searches || a.source.localeCompare(b.source)),
     unavailable: [...new Set(unavailable)],
   };
 }

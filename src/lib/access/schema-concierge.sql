@@ -42,3 +42,14 @@ CREATE TABLE IF NOT EXISTS access_lifecycle_events (
 CREATE INDEX IF NOT EXISTS access_lifecycle_events_name ON access_lifecycle_events (name, created_at);
 CREATE INDEX IF NOT EXISTS access_lifecycle_events_session ON access_lifecycle_events (session_id);
 CREATE INDEX IF NOT EXISTS access_lifecycle_events_request ON access_lifecycle_events (event_request_id);
+
+-- Campaign attribution (src/lib/attribution.ts): the utm tags a search was started with, one row per
+-- event request. Campaign tags only (source / medium / campaign): no personal data, no click ids.
+CREATE TABLE IF NOT EXISTS access_attribution (
+  event_request_id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  medium TEXT,
+  campaign TEXT,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS access_attribution_source ON access_attribution (source, created_at);

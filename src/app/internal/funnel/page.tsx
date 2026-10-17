@@ -72,6 +72,13 @@ export default async function FunnelPage({ searchParams }: { searchParams: Promi
             rows={report.daily.map((d) => [d.day, ...LIFECYCLE_EVENTS.map((n) => d.counts[n] ?? 0)])}
             empty="No events in this range."
           />
+          <h2 className="mt-6 text-xl">By source</h2>
+          <Table
+            head={["Source", "Medium", "Campaign", "Searches", "Sales", "Live revenue", "Revenue per search"]}
+            rows={report.bySource.map((r) => [r.source, r.medium ?? "—", r.campaign ?? "—", r.searches, r.sales, usd(r.liveCents), r.searches ? usd(Math.round(r.liveCents / r.searches)) : "—"])}
+            empty="No searches in this range."
+          />
+          <p className="mt-2 text-xs text-muted">Searches started after arriving from a tagged link (utm_source…; Google Ads: google / cpc / crr-search). Divide the campaign&apos;s spend in Google Ads by its sales here for cost per sale. Untagged means direct, organic or older visits.</p>
           <h2 className="mt-6 text-xl">Purchases</h2>
           <Table
             head={["Product", "Status", "Count", "Live revenue (net of refunds)", "Test-mode amount"]}
