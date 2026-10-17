@@ -12,6 +12,8 @@ Status (2026-10-04): built and proven in **test mode**. A demo request's "reques
 
 Update (2026-10-14, later): `EMAIL_MODE=live` is set on production (founder), so pass emails, recovery links and requested saved searches go to customers. Outreach and commercial lifecycle email stay blocked until `BUSINESS_POSTAL_ADDRESS` and the campaign approval are set (below).
 
+Update (2026-10-17): the founder set `BUSINESS_POSTAL_ADDRESS` and approved `lifecycle-v1` only (`EMAIL_APPROVED_CAMPAIGNS=lifecycle-v1`, production), and production was redeployed, so the follow-up templates (search and checkout abandonment) now send under the rules below. Operator outreach (`claim-invite-v1`) is **not** approved.
+
 ## Lifecycle email (founder decision 2026-10-14)
 
 Five approved templates, rendered by the app from ledger facts (`src/lib/lifecycle/templates.ts`). Rules decide who is due what (`engine.ts`); Vercel AI Gateway, when enabled, only picks among the templates already due and may add one validated intro line (`ai.ts`); the email API (Emailit, `src/lib/email`) sends. AI never writes an email, never sees the customer's address, and any line with a number that isn't a fact, a price, availability, booking, guarantee or urgency claim, a link or contact details is discarded for the default copy.
@@ -84,8 +86,8 @@ Outreach gates, all enforced in code:
 | `EMAIL_ADMIN_RECIPIENT` | founder alert on paid requests (optional) |
 | `EMAIL_FROM_TRANSACTIONAL` / `EMAIL_FROM_OUTREACH` / `EMAIL_REPLY_TO` | defaults on `carnivalriderental.us` |
 | `EMAIL_UNSUBSCRIBE_SECRET` | HMAC for unsubscribe links (set) |
-| `BUSINESS_POSTAL_ADDRESS` | **required for outreach — not set** |
-| `EMAIL_APPROVED_CAMPAIGNS` | e.g. `claim-invite-v1`, founder approval |
+| `BUSINESS_POSTAL_ADDRESS` | required for commercial email (CAN-SPAM footer); set on production 2026-10-17 |
+| `EMAIL_APPROVED_CAMPAIGNS` | founder approval per campaign; production: `lifecycle-v1` (2026-10-17) |
 
 ## Before real sends
 
