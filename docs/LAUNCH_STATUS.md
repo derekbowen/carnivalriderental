@@ -23,7 +23,11 @@ Sections 1–6 below are the history before the cutover.
 | Search Console | The founder submits `https://carnivalriderental.us/sitemap.xml` (2026-10-14); no Search Console connection in this project's tooling | — |
 
 **Blockers that remain (owner actions):**
-1. ~~Stripe live mode~~ done 2026-10-14 (see Commerce). The first real purchase confirms webhook delivery
+1. ~~Stripe live mode~~ done 2026-10-14 (see Commerce). **Webhook fixed 2026-10-17:** from the 14th every live
+   delivery was rejected (`STRIPE_WEBHOOK_SECRET` did not match endpoint `we_1UQRbMEWfwV4oIOU4ZUBxRxr`); the founder
+   set the endpoint's signing secret in Vercel production, it was redeployed, and the 5 missed events were resent:
+   the 3 unpaid QA checkouts are now `expired`, and the one live $99 sale (refunded in Stripe on the 16th) is
+   `refunded` with its pass revoked. No live event is pending delivery. The first real purchase confirms webhook delivery
    end to end (`checkout.session.completed` → pass); the two QA sessions expire unpaid within 24 h and
    their `checkout.session.expired` events should mark the QA purchases expired.
 2. **Purchaser email:** `EMAILIT_API_KEY` set in Vercel production by the founder on 2026-10-14 (13:04
