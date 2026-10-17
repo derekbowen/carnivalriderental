@@ -39,3 +39,31 @@ test("mobile menu opens with a finger-sized button and reaches the main pages", 
   await page.getByRole("banner").getByRole("link", { name: "Find a ride" }).tap();
   await expect(page).toHaveURL(/\/s$/);
 });
+
+test("mobile menu closes after picking a page, on a tap outside, and on Escape", async ({ page }) => {
+  const menu = page.getByTestId("mobile-menu");
+  const panelLink = (name: string) => page.getByRole("banner").getByRole("link", { name, exact: true });
+  await page.goto("/");
+  // Picking a page: the header stays mounted across client navigation, but the menu closes.
+  await page.getByLabel("Menu").tap();
+  await expect(panelLink("Ride types")).toBeVisible();
+  await panelLink("Ride types").tap();
+  await expect(page).toHaveURL(/\/rides$/);
+  await expect(menu).not.toHaveAttribute("open", /.*/);
+  await expect(panelLink("Events")).toBeHidden();
+  // Again from the new page, then a tap outside the menu.
+  await page.getByLabel("Menu").tap();
+  await expect(panelLink("Events")).toBeVisible();
+  await page.touchscreen.tap(20, 600);
+  await expect(menu).not.toHaveAttribute("open", /.*/);
+  // Escape closes it and returns focus to the button.
+  await page.getByLabel("Menu").tap();
+  await expect(panelLink("Events")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(menu).not.toHaveAttribute("open", /.*/);
+  await expect(page.getByLabel("Menu")).toBeFocused();
+  // A link to the page you're already on closes it too.
+  await page.getByLabel("Menu").tap();
+  await panelLink("Ride types").tap();
+  await expect(menu).not.toHaveAttribute("open", /.*/);
+});

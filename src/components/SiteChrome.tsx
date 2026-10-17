@@ -1,5 +1,5 @@
-import { MenuIcon } from "lucide-react";
 import Link from "next/link";
+import { MobileMenu } from "./MobileMenu";
 import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
 import { FOOTER_CITIES, FOOTER_EVENTS, FOOTER_RIDE_TYPES, FOOTER_STATES, type FooterLink } from "@/lib/seo/footer-links";
 import { paths } from "@/lib/seo/routes";
@@ -39,16 +39,7 @@ export function SiteHeader() {
           {NAV.map((n) => <Link key={n.href} href={n.href} className="whitespace-nowrap text-sm text-ink-soft transition-colors hover:text-ink">{n.label}</Link>)}
           <Link href={paths.connect()} className="btn-primary !px-4 !py-2 text-sm">Connect with operators</Link>
         </nav>
-        {/* No-JS mobile menu */}
-        <details className="relative md:hidden">
-          <summary className="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-md text-ink [&::-webkit-details-marker]:hidden" aria-label="Menu"><MenuIcon className="h-5 w-5" /></summary>
-          <div className="absolute right-0 mt-2 w-60 rounded-xl border border-line bg-surface p-4 shadow-lg">
-            <ul className="flex flex-col gap-3">
-              {NAV.map((n) => <li key={n.href}><Link href={n.href} className="block py-1 text-[15px]">{n.label}</Link></li>)}
-              <li><Link href={paths.connect()} className="btn-primary mt-1 w-full text-sm">Connect with operators</Link></li>
-            </ul>
-          </div>
-        </details>
+        <MobileMenu links={NAV} cta={{ href: paths.connect(), label: "Connect with operators" }} />
       </div>
     </header>
   );
