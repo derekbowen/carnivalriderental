@@ -50,9 +50,10 @@ Sections 1–6 below are the history before the cutover.
    `www.mysharetribe.com`; operators can't log in to a hosted Live app until it is set up (claims are a
    team action anyway).
 7. **Tracking (2026-10-17):** ~~enable Web Analytics on the Vercel project~~ done by the founder
-   2026-10-17 and redeployed, so page views, sources and utm_* campaigns are counted. Still to do: set `INTERNAL_USER` / `INTERNAL_PASSWORD`
-   in Vercel production (Sensitive) and redeploy to open `/internal/funnel` (until then `/internal`
-   answers 503). See `CONCIERGE_MVP.md` (2026-10-17).
+   2026-10-17 and redeployed, so page views, sources and utm_* campaigns are counted.
+   ~~Set `INTERNAL_USER` / `INTERNAL_PASSWORD`~~ done by the founder 2026-10-17 (Vercel production,
+   Sensitive) and redeployed, so `/internal` (requests, operator applications, funnel) asks for that
+   login instead of answering 503. See `CONCIERGE_MVP.md` (2026-10-17).
 
 Earlier status (2026-10-12; pivot 2026-10-06, two-tier pricing 2026-10-12): read `PAID_ACCESS_ARCHITECTURE.md` for where the ledger lives and `PAID_ACCESS_IMPLEMENTATION.md` for what was built.
 
