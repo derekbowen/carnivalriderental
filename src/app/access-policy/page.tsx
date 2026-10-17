@@ -33,7 +33,7 @@ export default async function AccessPolicyPage() {
 
       <h2 className="mt-8 text-2xl">What you get</h2>
       <ul className="mt-2 list-disc space-y-1 pl-5 text-ink-soft">
-        <li>Before paying: the number of independent operators near your event with the requested equipment and at least one working contact channel (phone, email or website). Each company counts once, however many rides it lists. We only sell access when at least {p.minimumMatches} match.</li>
+        <li>Before paying: the number of independent operators near your event with the requested equipment and at least one working contact channel (phone, email or website). Each company counts once, however many rides it lists. We only sell access when at least {p.minimumMatches} match. When fewer than {p.unlockLimit} match, the offer says how many and your pass covers all of them.</li>
         <li>After paying: a pass that reveals, for the operators you choose, the company name, phone, email, website and, where we have it, a contact name.</li>
         <li>Re-opening an operator you already unlocked never uses another unlock. Your pass link reopens your pass on any device.</li>
       </ul>

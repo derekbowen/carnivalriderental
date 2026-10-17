@@ -23,7 +23,7 @@ export default function TermsPage() {
         <p>{BRAND.name} is a discovery and operator-access platform. We index carnival ride inventory from independent operators and sell access to their contact details (&ldquo;Event Access&rdquo;). We do not own, rent, deliver or operate rides, and we are not a party to any rental between you and an operator.</p>
       </S>
       <S n={2} title="Operators are independent">
-        <p>Every ride belongs to an independent business. Price, availability, delivery, setup, crew, insurance, permits, contract and payment for a rental are agreed directly between you and that operator. We make no promise about an operator&rsquo;s availability, pricing, response, safety record, licences or insurance. Check what matters to you with the operator before you agree anything.</p>
+        <p>Every ride is listed by an independent business. Price, availability, delivery, setup, crew, insurance, permits, contract and payment for a rental are agreed directly between you and that operator. We make no promise about an operator&rsquo;s availability, pricing, response, safety record, licences or insurance. Check what matters to you with the operator before you agree anything.</p>
       </S>
       <S n={3} title="Information on the site">
         <p>Ride details, photos and service areas come from operators&rsquo; published information or from operators themselves. We show specifications only when verified, and we mark unknowns as unknown, but we cannot guarantee that every detail is current or complete. Approximate locations are the operator&rsquo;s home base, not the ride&rsquo;s current position or your event location.</p>

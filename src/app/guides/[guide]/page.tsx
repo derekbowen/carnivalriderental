@@ -32,6 +32,11 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
   if (!g) notFound();
   const path = paths.guide(g.id);
   const crumbs = [{ name: "Home", path: paths.home() }, { name: g.title, path }];
+  const checklistTitle = g.checklistTitle ?? "Quote comparison checklist";
+  const related = (g.related ?? []).flatMap((r) => {
+    const other = guideById(r.id);
+    return other ? [{ ...r, title: other.title, href: paths.guide(other.id) }] : [];
+  });
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <JsonLd nodes={pageGraph({ path, name: g.title, description: g.metaDescription, type: "WebPage", crumbs, faq: g.faq, video: g.video && { ...g.video, name: g.video.title } })} />
@@ -67,7 +72,7 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
             <p className="text-sm font-semibold">In this guide</p>
             <ol className="mt-3 grid gap-1.5 text-sm sm:grid-cols-2">
               {g.sections.map((s, i) => <li key={s.id}><a href={`#${s.id}`} className="text-ink-soft hover:text-ink hover:underline">{i + 1}. {s.heading}</a></li>)}
-              <li><a href="#checklist" className="text-ink-soft hover:text-ink hover:underline">{g.sections.length + 1}. Quote comparison checklist</a></li>
+              <li><a href="#checklist" className="text-ink-soft hover:text-ink hover:underline">{g.sections.length + 1}. {checklistTitle}</a></li>
             </ol>
           </nav>
 
@@ -85,8 +90,8 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
           ))}
 
           <section id="checklist" className="mt-12 scroll-mt-24" aria-labelledby="checklist-heading">
-            <h2 id="checklist-heading" className="text-3xl">Quote comparison checklist</h2>
-            <p className="mt-3 max-w-3xl leading-relaxed text-ink-soft">Ask every operator the same questions and write the answers side by side. The cheapest headline price is rarely the cheapest quote once transport, crew, power and hours are included.</p>
+            <h2 id="checklist-heading" className="text-3xl">{checklistTitle}</h2>
+            <p className="mt-3 max-w-3xl leading-relaxed text-ink-soft">{g.checklistIntro ?? "Ask every operator the same questions and write the answers side by side. The cheapest headline price is rarely the cheapest quote once transport, crew, power and hours are included."}</p>
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {g.checklist.map((c) => (
                 <div key={c.group} className="rounded-2xl border border-line bg-surface p-5">
@@ -100,12 +105,21 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
           </section>
 
           <FaqSection faq={g.faq} />
+
+          {related.length > 0 && (
+            <section className="mt-12 rounded-2xl border border-line bg-surface p-5" aria-labelledby="related-guides-heading" data-testid="related-guides">
+              <h2 id="related-guides-heading" className="text-2xl">Related guide</h2>
+              {related.map((r) => (
+                <p key={r.id} className="mt-2 leading-relaxed text-ink-soft">{r.text} <Link href={r.href} className="font-semibold text-accent-strong hover:underline">{r.title} →</Link></p>
+              ))}
+            </section>
+          )}
         </article>
 
         <aside className="space-y-4 lg:pt-14" aria-label="Next steps">
           <div className="card p-5">
             <h2 className="text-lg">Ready to find rides?</h2>
-            <p className="mt-2 text-sm text-ink-soft">Browse carnival rides from operators near your event, then use Event Access to reach the companies that own them.</p>
+            <p className="mt-2 text-sm text-ink-soft">Browse carnival rides from operators near your event, then use Event Access to contact the operators who list them.</p>
             <Link href={paths.search()} className="btn-primary mt-4 w-full">Find carnival rides <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
             <Link href={paths.connect()} className="btn-ghost mt-2 w-full">Connect with operators</Link>
           </div>

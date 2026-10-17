@@ -75,7 +75,7 @@ export function Alternatives({ eventId, city, rideType, rideClass, offers, produ
         </>
       ) : (
         <>
-          <p className="text-ink-soft">We list {requested} equipment nationwide, but none of it belongs to an operator we can put you in direct contact with near {city} yet, and no close alternative has enough operators either.</p>
+          <p className="text-ink-soft">We list {requested} equipment nationwide, but none of it is listed by an operator we can put you in direct contact with near {city} yet, and no close alternative has enough operators either.</p>
           <div className="mt-4">{manual(eventId, requested, city, manualRequested)}</div>
         </>
       )}

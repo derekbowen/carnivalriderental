@@ -105,7 +105,7 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     name: "Swing rides",
     h1: "Swing ride rentals",
     metaTitle: "Swing ride rentals for festivals and events",
-    metaDescription: "Rent a swing ride for a festival, fair or college event. Browse swing rides owned by independent operators and connect with them directly.",
+    metaDescription: "Rent a swing ride for a festival, fair or college event. Browse swing rides listed by independent operators and connect with them directly.",
     intro:
       "On a swing ride, chairs fly out as the ride turns — a bright, high-visibility attraction for festivals, fairs and campus events. Browse the swing rides operators have listed, then use Event Access to reach the ones near your event.",
     heroAlt: "Illustration of a swing ride with chairs flying outward under an open sky",

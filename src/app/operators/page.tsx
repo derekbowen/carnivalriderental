@@ -54,7 +54,7 @@ export default function OperatorsPage() {
       <p className="eyebrow mt-8">For carnival ride operators</p>
       <h1 className="mt-2 max-w-4xl text-4xl sm:text-5xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        {BRAND.name} indexes carnival ride inventory nationwide so event planners can find the right ride and the company that owns it. Your listing is free. Customers who buy Event Access get your direct contact details and deal with you on your terms.
+        {BRAND.name} indexes carnival ride inventory nationwide so event planners can find the right ride and the operator who lists it. Your listing is free. Customers who buy Event Access get your direct contact details and deal with you on your terms.
       </p>
       <a href="#apply" className="btn-primary mt-6 inline-flex">Apply for early access</a>
 

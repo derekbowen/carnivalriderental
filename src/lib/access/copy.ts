@@ -7,6 +7,8 @@
 import { formatPrice, type AccessProduct, type AccessProducts } from "./config";
 import { isFerrisRideType, type AccessTier } from "./pricing";
 
+export { contactsIncluded, contactsPhrase } from "./count-copy";
+
 export interface AccessPriceCopy {
   tier: AccessTier;
   product: AccessProduct | null;

@@ -20,7 +20,7 @@ export const RATE_CARD: Record<RateKey, { fromUsd: number | null; confirmed: boo
 export const RATE_UNIT = "per day (4-hour rental)";
 
 export const ESTIMATE_DISCLAIMER =
-  "Not the final booking price. Additional fees may apply for generator, transportation, special permits and fuel surcharge. Send your event details and the owner returns the total price.";
+  "Not the final booking price. Additional fees may apply for generator, transportation, special permits and fuel surcharge. Send your event details and the operator returns the total price.";
 
 const GIANT = /\b(giant|grand|big|skyline|century|1[0-9]{2}\s*(ft|'|foot)|9[0-9]\s*(ft|'|foot))\b/i;
 const WHEEL = /\b(ferris|wheel|gondola wheel|big eli)\b/i;

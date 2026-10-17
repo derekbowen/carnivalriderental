@@ -15,6 +15,7 @@ import crypto from "node:crypto";
 import { z } from "zod";
 import { US_STATES } from "../taxonomy";
 import { formatPrice, productForTier, type AccessProduct, rowToProduct } from "./config";
+import { contactsIncluded, contactsPhrase } from "./copy";
 import { isContactable, revealFields, type OperatorSource, type ContactChannels } from "./contacts";
 import type { AccessDb, Row, Sql } from "./db";
 import { nowIso } from "./db";
@@ -379,7 +380,7 @@ export async function createCheckout(db: AccessDb, gateway: StripeGateway, event
     amountCents: product.priceCents,
     currency: product.currency,
     productName: product.name,
-    productDescription: `${product.description} Unlock up to ${product.unlockLimit} operators within ${product.validityDays} days. ${event.city}, ${event.state}, ${event.eventDate}.`,
+    productDescription: `${product.description} Contact details for ${contactsPhrase(product.unlockLimit, event.matchedOperators)}, within ${product.validityDays} days. ${event.city}, ${event.state}, ${event.eventDate}.`,
     successUrl: `${siteUrl}/api/access/return?p=${id}&cs={CHECKOUT_SESSION_ID}`,
     cancelUrl: event.sourcePath === CONCIERGE_SOURCE_PATH && conciergeEnabled() ? `${siteUrl}/concierge?cancelled=1` : `${siteUrl}/connect/${event.id}?cancelled=1`,
   });
@@ -596,6 +597,8 @@ export interface PassView {
   /** The terms this pass was bought at (amount, limit, validity), snapshotted at purchase time. */
   purchase: Purchase;
   unlocks: Unlock[];
+  /** Contacts this pass can deliver: the unlock limit, or fewer when fewer operators matched. */
+  available: number;
   remaining: number;
   usable: boolean;
   blockedReason: string | null;
@@ -612,7 +615,9 @@ export async function passView(db: AccessDb, passId: string, now = new Date()): 
   const expired = pass.expiresAt <= now.toISOString();
   if (!purchaseValidHere(purchase)) return null; // test-mode QA pass on a live-keyed site: not an entitlement
   const blockedReason = pass.status === "revoked" ? "This pass was revoked (refund or dispute). Operators you already unlocked stay visible." : expired ? "This pass has expired. Operators you already unlocked stay visible." : null;
-  return { pass, event, product, purchase, unlocks, remaining: Math.max(0, pass.unlockLimit - pass.unlockedCount), usable: pass.status === "active" && !expired, blockedReason };
+  // The pass can't unlock more operators than the search matched (we sell from the minimum up).
+  const available = contactsIncluded(pass.unlockLimit, event.matchedOperators);
+  return { pass, event, product, purchase, unlocks, available, remaining: Math.max(0, available - pass.unlockedCount), usable: pass.status === "active" && !expired, blockedReason };
 }
 
 /**

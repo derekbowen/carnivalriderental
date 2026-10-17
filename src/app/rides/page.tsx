@@ -74,7 +74,7 @@ export default async function BrowsePage({ searchParams }: { searchParams: Promi
             </ul>
           </div>
           <div className="rounded-xl bg-accent-wash p-4 text-xs text-warn">
-            <strong>About availability:</strong> a listing shows what an operator owns and where they serve. It is not a confirmation that a unit is free on your date; the operator confirms that.
+            <strong>About availability:</strong> a listing shows the equipment an operator lists and where they serve. It is not a confirmation that a unit is free on your date; the operator confirms that.
           </div>
         </aside>
         <div className="space-y-12">

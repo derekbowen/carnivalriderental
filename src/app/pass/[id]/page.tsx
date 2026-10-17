@@ -49,7 +49,7 @@ export default async function PassPage({ params, searchParams }: { params: Promi
   }
   const view = await passView(await accessDb(), id);
   if (!view) notFound();
-  const { pass, event, product, purchase, unlocks, remaining, usable, blockedReason } = view;
+  const { pass, event, product, purchase, unlocks, available, remaining, usable, blockedReason } = view;
   const byOp = new Map(unlocks.map((u) => [u.operatorId, u]));
   const typeLabel = event.rideType ? rideTypeCopy(event.rideType, rideTypeFor(event.rideType)?.name ?? event.rideType).label : event.rideClass ? `${event.rideClass} rides` : "carnival rides";
 
@@ -59,7 +59,7 @@ export default async function PassPage({ params, searchParams }: { params: Promi
       <h1 className="mt-2 text-4xl">Your operator contacts for {event.city}, {event.state}</h1>
       <p className="mt-2 text-ink-soft">{typeLabel} · {event.eventDate} · pass valid until {pass.expiresAt.slice(0, 10)}</p>
       <div className="mt-5 flex flex-wrap gap-3 text-sm" data-testid="pass-status">
-        <span className="rounded-full bg-surface px-3 py-1.5 font-semibold ring-1 ring-line">{pass.unlockedCount} of {pass.unlockLimit} unlocked</span>
+        <span className="rounded-full bg-surface px-3 py-1.5 font-semibold ring-1 ring-line">{pass.unlockedCount} of {available} unlocked</span>
         <span className="rounded-full bg-surface px-3 py-1.5 ring-1 ring-line">{remaining} remaining</span>
         <span className={`rounded-full px-3 py-1.5 ring-1 ring-line ${usable ? "bg-ok-wash text-ok" : "bg-canvas text-muted"}`}>{usable ? "Active" : pass.status === "revoked" ? "Revoked" : "Expired"}</span>
       </div>

@@ -23,7 +23,7 @@ export function RequestCta({ href, title, body, price }: { href: string; title: 
 }
 
 /** The standard CTA body on inventory pages: what Event Access does, in one sentence. */
-export const CTA_BODY = "Tell us your date and city. We show how many independent operators with matching equipment serve your area, then Event Access gives you their direct contact details so you can compare and book with them.";
+export const CTA_BODY = "Tell us your date and city. We show how many independent operators with matching equipment serve your area, free. Event Access then gives you their direct contact details, so you can compare quotes and book with them. We take no commission or markup on the rental.";
 
 /** The four steps, in consumer language. Shown on the homepage and every category hub. */
 export const HOW_IT_WORKS = [

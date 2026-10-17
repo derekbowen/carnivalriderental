@@ -87,7 +87,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
   const crumbs = [...(place?.crumbs ?? [{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]), { name: ride.title, path: paths.rideListing(id) }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <JsonLd nodes={pageGraph({ path: paths.rideListing(id), name: ride.title, description: `${ride.title}: connect with the operator that owns it.`, type: "WebPage", crumbs })} />
+      <JsonLd nodes={pageGraph({ path: paths.rideListing(id), name: ride.title, description: `${ride.title}: connect with the operator who lists it.`, type: "WebPage", crumbs })} />
       <Breadcrumbs items={crumbs} />
     <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
       <div>
@@ -125,7 +125,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
           {!ride.price && <p className="mt-1 text-xs text-muted">The operator prices your event once they know your date, location, hours and site.</p>}
           <Link href={paths.connectListing(ride.id)} className="btn-primary mt-4 w-full">Connect with operators</Link>
           <p className="mt-3 text-sm font-semibold" data-testid="access-price">{pricing.ctaLine}</p>
-          <p className="mt-2 text-xs text-muted">{pricing.tier === "ferris" ? "Ferris wheel requests use Ferris Wheel Event Access. " : ""}Event Access shows how many matching operators serve your event before you pay, then gives you their direct contact details. The fee is for operator contact access only; the rental is agreed with the operator and nothing here is a booking.</p>
+          <p className="mt-2 text-xs text-muted" data-testid="access-terms">{pricing.tier === "ferris" ? "Ferris wheel requests use Ferris Wheel Event Access. " : ""}Event Access gives you direct contact details for {pricing.product ? `up to ${pricing.product.unlockLimit} ` : ""}matching operators, and you see exactly how many match before you pay. You contact them directly, compare quotes and arrange the rental. The fee is for contact access only: no commission or markup on the rental price, and nothing here is a booking.</p>
         </div>
         {otherOperators > 0 && typeLabel && (
           <div className="card p-5" data-testid="similar-operators">
@@ -136,6 +136,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
         <div className="card p-5 text-sm">
           <p className="font-semibold">Before you call</p>
           <p className="mt-1 text-ink-soft">Have your date, site, attendance and power details ready. <Link href={paths.guide("how-to-rent-carnival-rides")} className="font-semibold text-accent-strong hover:underline">What to ask a carnival operator →</Link></p>
+          <p className="mt-2 text-ink-soft">Not sure whether a company owns the ride it quotes? <Link href={paths.guide("ride-owner-vs-rental-broker")} className="font-semibold text-accent-strong hover:underline">Ride owner vs. rental broker →</Link></p>
         </div>
       </aside>
     </div>

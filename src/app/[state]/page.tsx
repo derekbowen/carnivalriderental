@@ -25,7 +25,7 @@ export function generateStaticParams(): P[] {
 
 const copy = (name: string) => ({
   title: `Carnival ride rentals in ${name}`,
-  description: `Find carnival rides for events in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides, nearest operators first. Connect directly with the operators who own them.`,
+  description: `Find carnival rides for events in ${name}: Ferris wheels, carousels, swing rides, kiddie and family rides, nearest operators first. Connect directly with the ride operators who list them.`,
 });
 
 export async function generateMetadata({ params }: { params: Promise<P> }) {

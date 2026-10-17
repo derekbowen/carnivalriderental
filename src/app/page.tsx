@@ -48,21 +48,20 @@ const BEFORE_YOU_RENT = [
 /** Limits come from the active product (access_products), never from copy. */
 const eventAccessIncludes = (p: ProductLimits) => [
   "Direct contact details for matching carnival operators",
-  `Up to ${p.unlockLimit} unique operators per event, chosen by you`,
+  `Up to ${p.unlockLimit} matching operators per event; you see the exact number before paying`,
   "Several comparable equipment options when the area has them",
   "Matching based on your date, location and ride type",
   `${p.validityDays} days of access to your pass`,
   "Buyer guidance and a quote-comparison checklist",
-  "You negotiate and book directly with the operator",
-  "Straight to the ride's owner, no broker in between",
-  "No markup or percentage commission added to the rental",
+  "You contact operators directly, compare their quotes and book with them",
+  "Only an access fee: no commission or markup on the rental price",
 ];
 
 const faqFor = (products: AccessProducts): Faq[] => {
   const p: ProductLimits = products.standard ?? DEFAULT_PRODUCT;
   return [
-  { q: "Does Carnival Ride Rental rent the rides?", a: "No. Every ride here belongs to an independent carnival operator. We show their inventory, help you find the rides that fit your event and area, and give you direct contact details for matching operators through Event Access. The rental is arranged and paid directly with the operator." },
-  { q: "Is a ride available on my date?", a: "Only the operator knows. A listing means the operator owns the ride and serves the area; it is not a confirmation that the ride is free on your date. Confirm availability with each operator you contact." },
+  { q: "Does Carnival Ride Rental rent the rides?", a: "No. Every ride here is listed by an independent carnival ride operator. We show their inventory, help you find the rides that fit your event and area, and give you direct contact details for matching operators through Event Access. The rental is arranged and paid directly with the operator." },
+  { q: "Is a ride available on my date?", a: "Only the operator knows. A listing means an operator lists the ride and serves the area; it is not a confirmation that the ride is free on your date. Confirm availability with each operator you contact." },
   { q: "How much does it cost to rent a carnival ride?", a: "Operators price per event. Travel distance, hours, crew, power, permits and insurance all change the figure, so operators quote after hearing your date, location and site details. We don't set or collect rental prices." },
   { q: "What does Event Access include?", a: `A one-time fee for one event. It includes direct contact details for up to ${p.unlockLimit} distinct matching operators, ${p.validityDays} days of access, and our buyer guidance. You see how many operators match before you pay, and there is no commission on the rental.` },
   { q: "How much does Event Access cost?", a: `${bothTiersSentence(products)} Ferris Wheel Event Access applies when your request is for a Ferris wheel (standard, giant or mini); every other request is Event Access. Both are one-time fees for operator contact access only, shown before you pay. The rental price is set by the operator.` },
@@ -128,7 +127,7 @@ export default async function HomePage() {
             <p className="font-display text-lg font-semibold text-accent sm:text-xl">Adding a touch of magic to every event.</p>
             <h1 className="mt-3 text-[42px] leading-[1.02] text-white sm:text-[58px] lg:text-[66px]">Carnival Ride Rentals Nationwide</h1>
             <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-white/80">
-              Browse real carnival ride inventory from operators across the country. Find the rides that fit your event, compare nearby options, and connect directly with the companies that own them.
+              Browse real carnival ride inventory from operators across the country. Find the rides that fit your event, compare nearby options, and connect directly with the ride operators who list them.
             </p>
             <form action={paths.search()} method="get" className="mt-8 rounded-2xl bg-surface p-5 text-ink shadow-[0_24px_48px_-24px_rgba(0,0,0,0.5)]" aria-label="Find carnival rides near your event">
               <p className="mb-3 font-semibold">What are you looking for?</p>
@@ -324,6 +323,7 @@ export default async function HomePage() {
               <h2 id="guide-heading" className="mt-2 text-4xl text-white lg:text-[48px] lg:leading-[1.04]">What to know before you call a carnival company</h2>
               <p className="mt-4 text-[17px] leading-relaxed text-white/75">Renting a ride is a logistics job: trucks, power, crew, insurance and weather. Our free guide walks through the questions operators will ask you, the questions you should ask them, and how to compare quotes.</p>
               <Link href={GUIDE} className="btn-primary mt-6">Read the buyer guide <ArrowRightIcon className="h-4 w-4" aria-hidden="true" /></Link>
+              <p className="mt-4 text-sm text-white/75">Comparing quotes from other rental companies? <Link href={paths.guide("ride-owner-vs-rental-broker")} className="font-semibold text-accent hover:underline">Ride owner vs. rental broker: what&rsquo;s the difference</Link></p>
             </div>
             <ul className="grid gap-4 sm:grid-cols-2 lg:col-span-7">
               {BEFORE_YOU_RENT.map((b) => (

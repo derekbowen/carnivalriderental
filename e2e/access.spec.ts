@@ -34,7 +34,9 @@ test("find → evaluate → connect: honest match count, server-side price, no c
   // The entry listing on /ohio/columbus/ferris-wheel is a Ferris wheel: the server prices it at the Ferris tier.
   await expect(page.getByTestId("offer-product")).toHaveText("Ferris Wheel Event Access");
   await expect(page.getByTestId("offer-price")).toHaveText("$199");
-  await expect(page.getByTestId("offer")).toContainText(`Unlocks up to 5 of these ${n} operators`);
+  // We sell from 3 matches up: the offer states the real number of contacts, never a flat five.
+  await expect(page.getByTestId("offer")).toContainText(`Includes contact details for ${n > 5 ? `5 of the ${n} matching operators, chosen by you` : `all ${n} matching operators`}`);
+  await expect(page.getByTestId("offer-contacts")).toHaveText(`for ${Math.min(5, n)} matching Ferris wheel operator contacts`);
   // Nothing identifying before payment: not in the HTML, not in JSON-LD.
   const html = await (await request.get(page.url())).text();
   expect(html).not.toMatch(FIXTURE_CONTACT);

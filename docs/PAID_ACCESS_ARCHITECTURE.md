@@ -78,3 +78,12 @@ The Integration API secret stays server-side (route handlers only); the browser 
 
 1. Supabase: a project named `carnivalriderental` in the `derekbowen's Org` organisation (created by this session if the API call succeeded; see `PAID_ACCESS_IMPLEMENTATION.md`), and its connection string in Vercel as `ACCESS_DATABASE_URL`. The migration is in `src/lib/access/schema.sql` and `npm run access:migrate` applies it.
 2. Stripe: a standard (non-Connect) Stripe account for 10000 Solutions LLC; `STRIPE_SECRET_KEY` (test first) and `STRIPE_WEBHOOK_SECRET` in Vercel. Never Pool Rental's keys.
+
+## Contact counts: up to five, the real number per search (2026-10-17)
+
+The product sells from `minimum_matches` (3) while the unlock limit is 5, and about half of sellable city × ride searches have 3–4 contactable operators (upper bound from the snapshot, top 300 cities). Founder decision: keep selling from 3, never promise five where fewer match.
+
+- General copy (Connect, ride pages, home, policy, chat) says "up to" the unlock limit and that the offer states the exact number.
+- Per-search surfaces use `contactsPhrase(unlockLimit, matched)` (`lib/access/count-copy.ts`): the `/connect/[id]` offer ("for N matching operator contacts"), the Stripe line item description, the event-form offer, the pass email and the lifecycle emails. The pass page counts against `available = min(unlock limit, matched)`; the purchase still snapshots the product's unlock limit.
+- Tests: `tests/contact-count.test.ts`, `e2e/offer-copy.spec.ts`, `e2e/access.spec.ts`.
+

@@ -20,7 +20,7 @@ export function passEmail(p: { passUrl: string; productName: string; amountLabel
   const lines = [
     `Thanks for buying ${p.productName}${p.amountLabel ? ` (${p.amountLabel}, one-time)` : ""} from ${BRAND.name}. This fee is for operator contact access only; the rental itself is arranged and paid with the operator.`,
     `Your event: ${p.eventSummary}.`,
-    `We matched ${p.matched} independent operator${p.matched === 1 ? "" : "s"} with relevant equipment near your event. You can unlock up to ${p.unlockLimit} of them until ${p.expiresOn}.`,
+    `We matched ${p.matched} independent operator${p.matched === 1 ? "" : "s"} with relevant equipment near your event. ${p.matched > p.unlockLimit ? `You can unlock ${p.unlockLimit} of them, your choice,` : `Your pass covers ${p.matched === 1 ? "that operator" : `all ${p.matched} of them`}`} until ${p.expiresOn}.`,
     `Open your pass: ${p.passUrl}`,
     "Keep this email. The link opens your pass on any device and shows the operators you've already unlocked.",
     "Pricing, availability, contracts and payment for the rental are between you and each operator. We don't take part in the rental and can't guarantee that an operator is free on your date.",

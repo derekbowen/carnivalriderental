@@ -10,6 +10,7 @@
  * the rental is arranged directly with the operator.
  */
 import { BRAND } from "../config";
+import { contactsPhrase } from "../access/copy";
 
 export type LifecycleTemplate = "saved_search" | "search_abandonment_1h" | "search_abandonment_24h" | "checkout_abandonment_1h" | "purchased_no_unlock_2h";
 
@@ -121,7 +122,7 @@ function render(subject: string, blocks: Block[], v: LifecycleVars, why: string,
 const eventPhrase = (v: LifecycleVars) => (v.eventType ? `your ${v.eventType}` : "your event");
 const altNote = (v: LifecycleVars) => (v.alternativeTo ? ` (an alternative to the ${v.alternativeTo} you first asked for)` : "");
 const accessLine = (v: LifecycleVars) =>
-  v.product ? `${v.product.name} is ${v.product.price}, one time. It unlocks direct contact details for up to ${Math.min(v.product.unlockLimit, v.operators)} of these operators for ${v.product.validityDays} days. The rental itself is arranged and paid directly with the operator.` : null;
+  v.product ? `${v.product.name} is ${v.product.price}, one time. It includes direct contact details for ${contactsPhrase(v.product.unlockLimit, v.operators)} for ${v.product.validityDays} days. The rental itself is arranged and paid directly with the operator.` : null;
 
 /** Default intro lines; ai.ts may replace one with a validated personal line. */
 export function defaultIntro(t: LifecycleTemplate, v: LifecycleVars): string {
@@ -204,7 +205,7 @@ export function renderLifecycle(t: LifecycleTemplate, v: LifecycleVars): Rendere
         "Your operator contacts are ready",
         [
           { kind: "p", text: intro },
-          { kind: "p", text: `You can unlock up to ${v.pass?.unlockLimit ?? v.product?.unlockLimit ?? 0} of the ${ops(v.operators)} matched to your event in ${v.city}${v.pass ? `, until ${v.pass.expiresOn}` : ""}. Each unlock shows the company name, phone, email and website.` },
+          { kind: "p", text: `Your pass covers ${contactsPhrase(v.pass?.unlockLimit ?? v.product?.unlockLimit ?? 0, v.operators)} for your event in ${v.city}${v.pass ? `, until ${v.pass.expiresOn}` : ""}. Each unlock shows the company name and the phone, email or website the operator lists.` },
           { kind: "cta", label: "View my matches", href: v.ctaUrl },
           { kind: "small", text: "The button signs you in to your pass on this device. Keep this email: it works for 14 days." },
         ],

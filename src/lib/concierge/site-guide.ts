@@ -12,6 +12,7 @@ export const SITE_GUIDE: readonly { path: string; label: string; use: string }[]
   { path: paths.occasions(), label: "Events", use: "rides grouped by the kind of event" },
   { path: paths.directory(), label: "Locations", use: "every state and city page" },
   { path: paths.guide("how-to-rent-carnival-rides"), label: "How to rent", use: "buyer's guide: what to ask operators and how to compare quotes" },
+  { path: paths.guide("ride-owner-vs-rental-broker"), label: "Ride owner vs. rental broker", use: "how direct and brokered rentals differ, and questions about ownership, crews, insurance and inspections" },
   { path: paths.connect(), label: "Connect with operators", use: "enter the event, see how many operators match for free, then buy Event Access" },
   { path: paths.concierge(), label: "Event form", use: "describe the event in a guided form" },
   { path: paths.passRecover(), label: "Find my pass", use: "a fresh link to a pass already bought" },

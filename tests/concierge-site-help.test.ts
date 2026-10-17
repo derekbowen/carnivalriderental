@@ -13,7 +13,7 @@ vi.mock("ai", () => ({
 
 import { DEFAULT_PRODUCT, FERRIS_PRODUCT } from "@/lib/access/config";
 import { faqAnswer } from "@/lib/concierge/faq";
-import { PRICE_NOTE, withPriceContext } from "@/lib/concierge/help";
+import { OWNERSHIP_NOTE, PRICE_NOTE, withOwnershipGuard, withPriceContext } from "@/lib/concierge/help";
 import { chatSegments, SITE_GUIDE } from "@/lib/concierge/site-guide";
 import { emailOfferLine } from "@/lib/concierge/state";
 import { paths } from "@/lib/seo/routes";
@@ -133,19 +133,61 @@ describe("the application offers to email the options, once", () => {
   });
 });
 
-describe("owner, not broker (founder 2026-10-17: listed operators are the owners, direct lines)", () => {
-  it("answers broker and why-pay questions with direct-to-owner and no markup, without a savings claim", () => {
-    for (const q of ["Are you a broker?", "are you guys a middleman", "Do you own the rides?", "Why should I pay you $99?", "What's the catch", "is there a markup"]) {
+describe("why Event Access costs money, how direct contact works, broker questions (founder brief 2026-10-17)", () => {
+  const noClaims = (a: string, q: string) => {
+    expect(a, q).not.toMatch(/\bsav(e|es|ing|ings)\b/i);
+    expect(a, q).not.toMatch(/\b(they|operators?) (own|owns)\b/i);
+    expect(a, q).not.toMatch(/\b(guarantee|insured|certified)\b/i);
+  };
+
+  it("explains the access fee: what it buys, that browsing is free, up to the limit with the real number, no commission", () => {
+    for (const q of ["Why does Event Access cost money?", "Why should I pay you?", "what am I paying for", "Why isn't it free?", "is it worth $99?", "What's the catch"]) {
+      const a = faqAnswer(q, products)!;
+      expect(a, q).toContain("seeing how many operators match your event is free");
+      expect(a, q).toContain("$99");
+      expect(a, q).toContain("$199");
+      expect(a, q).toContain("up to 5 matching independent operators");
+      expect(a, q).toContain("all of them when fewer match");
+      expect(a, q).toContain("no commission or markup on the rental");
+      noClaims(a, q);
+    }
+  });
+
+  it("explains how direct contact works after paying", () => {
+    for (const q of ["How does contacting operators work?", "what happens after I pay?", "How do I contact the operators"]) {
+      const a = faqAnswer(q, products)!;
+      expect(a, q).toContain("unlock them one at a time");
+      expect(a, q).toContain("contact them yourself");
+      expect(a, q).toContain("all of them when fewer match");
+      expect(a, q).toContain(paths.passRecover());
+      noClaims(a, q);
+    }
+  });
+
+  it("answers broker questions without claiming ownership, and links the owner vs broker guide", () => {
+    for (const q of ["Are you a broker?", "are you guys a middleman", "Do you own the rides?", "is there a markup", "who owns the ferris wheel"]) {
       const a = faqAnswer(q, products)!;
       expect(a, q).toContain("not a broker");
-      expect(a, q).toContain("own phone and email");
-      expect(a, q).toContain("no markup");
-      expect(a, q).not.toMatch(/\bsav(e|ing)\b|\$\d/);
+      expect(a, q).toContain("no commission or markup");
+      expect(a, q).toContain("don't verify who owns each ride");
+      noClaims(a, q);
+      const link = chatSegments(a).find((x) => x.href);
+      expect(link?.href, q).toBe(paths.guide("ride-owner-vs-rental-broker"));
     }
   });
 
   it("leaves ordinary ride and price questions to their own answers", () => {
-    expect(faqAnswer("How much is it", products)).toContain("$99");
+    const price = faqAnswer("How much is it", products)!;
+    expect(price).toContain("$99");
+    expect(price).toContain("exact number of contacts");
     expect(faqAnswer("Do you have ferris wheels in Ohio?", products)).toBeNull();
+  });
+
+  it("an AI reply that asserts ownership gets the caveat; a hedged one is left alone", () => {
+    const claim = "These operators own their rides, so you deal with them directly.";
+    expect(withOwnershipGuard(claim)).toBe(`${claim} ${OWNERSHIP_NOTE}`);
+    const hedged = "Ask each operator whether they own the ride before you sign.";
+    expect(withOwnershipGuard(hedged)).toBe(hedged);
+    expect(withOwnershipGuard("Tell me where your event is.")).toBe("Tell me where your event is.");
   });
 });

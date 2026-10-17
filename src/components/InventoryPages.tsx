@@ -55,7 +55,7 @@ export function cityCopy(c: PlaceCity) {
   return {
     title: `Carnival Ride Rentals Near ${c.name}, ${c.stateAbbr}`,
     description: s.total > 0
-      ? fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event: ${fmt(s.total)} ride listings from operators within ${R} miles.`, "Connect directly with the operators who own them."])
+      ? fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event: ${fmt(s.total)} ride listings from operators within ${R} miles.`, "Connect directly with the ride operators who list them."])
       : fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event.`, "Tell us your date and city to see which operators can serve your event."]),
   };
 }
@@ -83,7 +83,7 @@ export async function InventoryCityPage({ c }: { c: PlaceCity }) {
       <Breadcrumbs items={crumbs} />
       <h1 className="mt-6 text-4xl">Carnival rides for your {c.name}, {c.stateAbbr} event.</h1>
       <p className="mt-4 max-w-3xl text-lg text-ink-soft">
-        Explore carnival rides serving the {c.name} area, compare nearby equipment, and connect directly with the independent operators who own it.
+        Explore carnival rides serving the {c.name} area, compare nearby equipment, and connect directly with the independent ride operators who list it.
       </p>
       {s.total > 0 ? (
         <p className="mt-3 text-sm text-muted" data-testid="inventory-line">Browse {fmt(s.total)} ride listings from {fmt(s.operators)} operator{s.operators === 1 ? "" : "s"} based within {R} miles of {c.name}. A listing doesn’t guarantee availability on your date; delivery, service and price are confirmed by the operator.</p>
@@ -143,7 +143,7 @@ export function rideCityCopy(c: PlaceCity, t: RideType) {
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id).length;
   return {
     title: `${titleCase(copy.label)} Rentals Near ${c.name}, ${c.stateAbbr}`,
-    description: fitDescription([`${copy.label} rentals for your ${c.name}, ${c.stateAbbr} event: ${countNoun(n, copy)} from operators within ${R} miles.`, "Connect directly with the operators who own them."]),
+    description: fitDescription([`${copy.label} rentals for your ${c.name}, ${c.stateAbbr} event: ${countNoun(n, copy)} from operators within ${R} miles.`, "Connect directly with the ride operators who list them."]),
   };
 }
 
@@ -159,7 +159,7 @@ export async function InventoryRideCityPage({ c, t }: { c: PlaceCity; t: RideTyp
   const sameRideElsewhere = linkedRideCities(c, t.id);
   const lowerLabel = copy.label.charAt(0).toLowerCase() + copy.label.slice(1);
   const operators = operatorCount(matches);
-  const intro = `${copy.hook} Explore ${/^[A-Z]/.test(copy.label) && !/^(Ferris|Scrambler|Zipper)/.test(copy.label) ? lowerLabel : copy.label} listings and connect with the operators that own them.`;
+  const intro = `${copy.hook} Explore ${/^[A-Z]/.test(copy.label) && !/^(Ferris|Scrambler|Zipper)/.test(copy.label) ? lowerLabel : copy.label} listings and connect with the ride operators who list them.`;
   const faq: Faq[] = [
     { q: `How many ${copy.many} can I browse near ${c.name}?`, a: `${countNoun(matches.length, copy)} from operators based within ${R} miles of ${c.name}, ${c.stateAbbr}. Availability on your date and delivery are confirmed with the operator directly.` },
     PRICE_FAQ,

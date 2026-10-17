@@ -160,9 +160,11 @@ export function RideDetail({
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
               <li className="flex justify-between gap-3"><span>Event Access</span><span className="text-right font-medium text-ink" data-testid="access-price">{pricing?.ctaLine ?? "Direct contact details for matching operators"}</span></li>
-              <li className="flex justify-between gap-3"><span>Who you deal with</span><span className="text-right font-medium text-ink">The ride&rsquo;s owner, not a broker</span></li>
-              <li className="flex justify-between gap-3"><span>The rental</span><span className="text-right font-medium text-ink">Agreed and paid directly with the operator</span></li>
+              {pricing?.product && <li className="flex justify-between gap-3"><span>What you get</span><span className="text-right font-medium text-ink" data-testid="access-contacts">Up to {pricing.product.unlockLimit} matching operator contacts</span></li>}
+              <li className="flex justify-between gap-3"><span>The rental</span><span className="text-right font-medium text-ink">You contact operators, compare quotes and book directly</span></li>
+              <li className="flex justify-between gap-3"><span>Our cut of the rental</span><span className="text-right font-medium text-ink">None: no commission or markup</span></li>
             </ul>
+            <p className="mt-4 text-xs text-muted">You see exactly how many operators match before you pay. <Link href={paths.guide("ride-owner-vs-rental-broker")} className="underline">Ride owner or rental broker? What to ask</Link></p>
           </div>
         </aside>
       </div>

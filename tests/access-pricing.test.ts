@@ -141,7 +141,7 @@ describe("two-tier Event Access ledger", () => {
     expect(s.amountTotal).toBe(19900);
     expect(s.productName).toBe("Ferris Wheel Event Access");
     expect(s.productDescription).toContain("Ferris wheel operators");
-    expect(s.productDescription).toContain("Unlock up to 5 operators within 30 days");
+    expect(s.productDescription).toMatch(/Contact details for (all \d+ matching operators|5 of the \d+ matching operators, chosen by you), within 30 days/);
   });
 
   it("giant and mini Ferris variants are the Ferris tier too", async () => {

@@ -5,6 +5,7 @@ import { Alternatives } from "@/components/access/Alternatives";
 import { OperatorMatch } from "@/components/access/OperatorMatch";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { activeProducts, MATCH_RADIUS_MILES } from "@/lib/access/config";
+import { contactsPhrase } from "@/lib/access/copy";
 import { accessDb } from "@/lib/access/db";
 import { categoryNoun, requirementNoun, requirementPlural } from "@/lib/access/fallback";
 import { accessAvailability } from "@/lib/access/runtime";
@@ -101,7 +102,8 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
       {sp.error && <p role="alert" className="mt-4 rounded-lg border border-pop/40 bg-pop/10 px-4 py-3 text-sm">{sp.error === "not_sellable" ? "There aren't enough contactable operators for this request." : sp.error === "alternative_gone" ? "That alternative no longer has enough contactable operators. Pick another, or ask us to search by hand." : sp.error === "unavailable" ? `${productName} isn't available right now. Nothing was charged.` : "Payment couldn't be started. Nothing was charged."}</p>}
 
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_360px]">
-        <div className="space-y-6">
+        {/* min-w-0: the grid column must not grow to fit each card's scrolling thumbnail row (phones). */}
+        <div className="min-w-0 space-y-6">
           {!sellable && product && (
             <Alternatives eventId={event.id} city={event.city} rideType={event.rideType} rideClass={event.rideClass} offers={fb.offers} products={products ?? { standard: null, ferris: null }} manualRequested={fb.manualRequested} />
           )}
@@ -111,7 +113,7 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
             </ul>
           ) : !product && (
             <div className="card p-6">
-              <p className="text-ink-soft">We list {typeLabel} equipment nationwide, but none of it belongs to an operator we can put you in direct contact with near {event.city} yet. Try a wider ride type, or <Link className="underline" href={paths.search()}>browse rides near you</Link>.</p>
+              <p className="text-ink-soft">We list {typeLabel} equipment nationwide, but none of it is listed by an operator we can put you in direct contact with near {event.city} yet. Try a wider ride type, or <Link className="underline" href={paths.search()}>browse rides near you</Link>.</p>
             </div>
           )}
         </div>
@@ -126,13 +128,14 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
             <div className="card p-6" data-testid="offer" data-tier={tier}>
               <p className="text-xs font-semibold uppercase tracking-wide text-muted" data-testid="offer-product">{product.name}</p>
               <p className="mt-1 font-display text-[34px] leading-tight" data-testid="offer-price">{priceLabel(product)}</p>
-              <p className="mt-1 text-xs text-muted">One-time fee for operator contact access{tier === "ferris" ? "; applies to every Ferris wheel request (standard, giant or mini)" : ""}.</p>
+              <p className="mt-1 font-semibold" data-testid="offer-contacts">for {unlocks} matching {tier === "ferris" ? "Ferris wheel " : ""}operator contact{unlocks === 1 ? "" : "s"}</p>
+              <p className="mt-1 text-xs text-muted">One-time access fee{tier === "ferris" ? "; applies to every Ferris wheel request (standard, giant or mini)" : ""}. No commission or markup on the rental price.</p>
               {requoted && (
                 <p role="status" className="mt-3 rounded-lg bg-accent-wash px-3 py-2 text-xs text-ink-soft" data-testid="requoted">
                   This request is now priced as {product.name} at {priceLabel(product)}. Any earlier checkout for it at a different amount is no longer valid, and nothing was charged for it.
                 </p>
               )}
-              <p className="mt-3 text-ink-soft">Unlocks up to <strong>{unlocks}</strong> of these {n} operators for {product.validityDays} days: company name, phone, email and website, revealed one at a time as you choose.</p>
+              <p className="mt-3 text-ink-soft">Includes contact details for <strong>{contactsPhrase(product.unlockLimit, n)}</strong> for {product.validityDays} days: each operator&rsquo;s company name and the phone, email or website they list, revealed one at a time. You contact each operator directly, compare their quotes and arrange the rental with them.</p>
               <ProtectedForm action="/api/access/checkout" className="mt-5">
                 <input type="hidden" name="event" value={event.id} />
                 <button type="submit" className="btn-primary w-full" data-testid="pay-button">Continue to secure payment · {priceLabel(product)}</button>

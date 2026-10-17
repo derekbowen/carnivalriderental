@@ -63,16 +63,32 @@ const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
       `${HOW_IT_WORKS} ${bothTiersSentence(p)} ${FEE_NOTE} To browse first, see ${site(paths.search())} or the buyer's guide at ${site(paths.guide("how-to-rent-carnival-rides"))}.`,
   },
   {
-    // "Are you a broker?", "do you own the rides?", "why pay you?": who the customer deals with (before price: "why pay $99").
-    test: /\b(brokers?|middle ?m[ae]n|mark ?-?ups?|re-?sell(er|ers|ing)?|do you (guys )?own|are you the owners?|who owns|why (should|would|do) i (pay|use) you|what'?s the catch)\b/,
+    // "Why does it cost money?", "why pay you?", "what am I paying for?" (before price: "why is it $99").
+    test: /\b(why (does|do|is|would|should|must) (it|this|event access|you|i)\b[^.?!]{0,25}\b(cost|charge|pay|fee|money)|why (is|isn'?t) (it|this|event access) free|why (should|would|do) i (pay|use) you|why pay|what am i paying for|is it worth|what'?s the catch)\b/,
+    answer: (p) => {
+      const std = p.standard ?? p.ferris;
+      return `Browsing rides and seeing how many operators match your event is free. Event Access is what we charge for: ${bothTiersSentence(p)}${std ? ` It gives you direct contact details for up to ${std.unlockLimit} matching independent operators for ${std.validityDays} days, and the offer shows the exact number before you pay (all of them when fewer match).` : ""} That access fee is how we're paid instead of taking a cut: we take no commission or markup on the rental, and you agree price, dates and the contract directly with each operator.`;
+    },
+  },
+  {
+    // "How does contacting operators work?", "what happens after I pay?"
+    test: /\b(how (does|do|will) (the )?(direct )?contact(ing)?( operators?)? work|how do i (contact|reach|call|get in touch with) (the )?operators?|what happens (after|once|when) i (pay|buy|purchase)|after (i pay|paying|purchase|i buy))\b/,
+    answer: (p) => {
+      const std = p.standard ?? p.ferris;
+      return `After you pay, your pass opens with your matching operators and the link is emailed to you. You unlock them one at a time to see each operator's company name and the phone, email or website they list${std ? `, up to ${std.unlockLimit} operators (all of them when fewer match)` : ""}. Then you contact them yourself: share your date, location and ride, ask for a quote, and agree price, delivery, crew and the contract with them. We aren't part of the call or the rental. Lost the link? Get a fresh one at ${site(paths.passRecover())}.`;
+    },
+  },
+  {
+    // "Are you a broker?", "do you own the rides?": who the customer deals with. We don't verify ownership.
+    test: /\b(brokers?|middle ?m[ae]n|mark ?-?ups?|re-?sell(er|ers|ing)?|do you (guys )?own|are you the owners?|who owns)\b/,
     answer: () =>
-      `No, we're not a broker, and we don't rent rides ourselves. Every listed ride belongs to the independent operator who runs it, and Event Access gives you that operator's own phone and email, so you get their quote and book with them directly. We add no markup and take no commission on the rental. If you're comparing other quotes, ask whether that company owns the ride; the buyer's guide at ${site(paths.guide("how-to-rent-carnival-rides"))} lists the questions.`,
+      `No, we're not a broker, and we don't rent rides ourselves. We list rides from independent ride operators, and Event Access gives you the contact details of operators that match your event, so you contact them yourself, compare quotes and book directly. We take no commission or markup on the rental. We don't verify who owns each ride, so ask each operator; ${site(paths.guide("ride-owner-vs-rental-broker"))} lists the questions to ask about ownership, crews, insurance and inspections.`,
   },
   {
     test: /\b(how much|price|pricing|cost|costs|fee|what is event access|what do i get)\b/,
     answer: (p) => {
       const std = p.standard ?? p.ferris;
-      return `${bothTiersSentence(p)} ${FEE_NOTE}${std ? ` Each purchase covers one event and one ride requirement, with contact details for up to ${std.unlockLimit} matching operators over ${std.validityDays} days.` : ""} You see how many operators match before you pay.`;
+      return `${bothTiersSentence(p)} ${FEE_NOTE}${std ? ` Each purchase covers one event and one ride requirement, with contact details for up to ${std.unlockLimit} matching operators over ${std.validityDays} days.` : ""} You see how many operators match before you pay, and the offer states the exact number of contacts. We take no commission or markup on the rental.`;
     },
   },
   {

@@ -149,3 +149,12 @@ Founder test: "How much is it" got "$99 for up to 5 operators for 30 days" with 
 ## Sales by source (2026-10-17)
 
 Before raising the Google Ads budget (now $25/day; $100/day once cost per sale is under $80, against about $95.83 kept per $99 sale after Stripe fees) the founder needs cost per sale. `src/lib/attribution.ts`: the middleware keeps the latest `utm_source` / `utm_medium` / `utm_campaign` of a landing URL in the first-party `cr_src` cookie (30 days, HttpOnly; tags only, never click ids or personal data). A search started with it, on `/api/access/start` or in the chat, records one row in `access_attribution` (schema-concierge.sql; first tags win; best effort). `/internal/funnel` shows searches, sales and live revenue by source; divide the campaign's Google Ads spend by its sales there. The Google Ads campaign carries `utm_source=google&utm_medium=cpc&utm_campaign=crr-search` as its final URL suffix. Disclosed on `/privacy`. Tests: `tests/attribution.test.ts`.
+
+## Why it costs, direct contact, broker questions (2026-10-17)
+
+Founder brief: explain the fee, how direct contact works and what customers receive, without ownership, savings, availability or insurance claims.
+
+- No-AI answers (`faq.ts`), checked before the price answer: **why it costs** (browsing and match counts are free; the access fee is how we are paid instead of commission; up to the unlock limit, all of them when fewer match; no commission or markup), **how direct contact works** (unlock one at a time, contact operators yourself, `/pass/recover`), and **broker questions** (directory, not a broker; we don't verify ownership; link to `/guides/ride-owner-vs-rental-broker`).
+- The assistant prompt carries the same rules and the real-count rule; `withOwnershipGuard` appends "We don't verify who owns each ride…" to any AI reply that mentions owning without that caveat.
+- Tests: `tests/concierge-site-help.test.ts`.
+

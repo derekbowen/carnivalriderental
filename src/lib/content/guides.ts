@@ -42,8 +42,13 @@ export interface Guide {
   sections: GuideSection[];
   /** The standardised questions for comparing quotes from several operators. */
   checklist: { group: string; questions: string[] }[];
+  /** Checklist heading and intro; the quote-comparison wording when omitted. */
+  checklistTitle?: string;
+  checklistIntro?: string;
   faq: Faq[];
   video?: GuideVideo;
+  /** Contextual links to other guides (ids in GUIDES), with the sentence that introduces each. */
+  related?: { id: string; text: string }[];
 }
 
 export const GUIDES: Guide[] = [
@@ -71,18 +76,6 @@ export const GUIDES: Guide[] = [
           "Truck and trailer access: gate widths, turns, slopes and where a trailer can park and unload",
         ],
         note: "Not sure about something? Say so. “I don’t know yet” is a normal answer; the operator can tell you what to measure.",
-      },
-      {
-        id: "owner-or-broker",
-        heading: "Owner or broker? Check who you’re talking to",
-        intro: "Not every company that advertises carnival ride rentals owns the rides. Some take your booking and hire the ride from its owner, and the price you pay then includes their margin on top of the owner’s. That can suit you if you want one company to coordinate everything; if you want the owner’s own quote, ask before you compare prices.",
-        items: [
-          "Do you own this ride, or are you booking it from another company?",
-          "Will your own crew deliver, set up and run it?",
-          "Whose name is on the certificate of insurance for this ride?",
-          "If another company supplies the ride, who is my contract with, and who do I call on the day?",
-        ],
-        note: "Operators listed on Carnival Ride Rental own and run their rides, and Event Access gives you their own phone and email. We add no markup and take no commission on the rental: the price is whatever you agree with the operator.",
       },
       {
         id: "transportation",
@@ -172,16 +165,16 @@ export const GUIDES: Guide[] = [
       },
     ],
     checklist: [
-      { group: "Equipment", questions: ["Does the company quoting own and run this ride?", "Which exact ride (make and model) is quoted?", "Rider requirements (height, age) for this ride?", "Footprint and clear area required?", "Are photos of the actual unit available?"] },
+      { group: "Equipment", questions: ["Does the company quoting own the ride, or book it from another company?", "Which exact ride (make and model) is quoted?", "Rider requirements (height, age) for this ride?", "Footprint and clear area required?", "Are photos of the actual unit available?"] },
       { group: "Price", questions: ["Total price for the quoted hours and dates?", "What is included: transport, crew, generator, fuel, setup and teardown?", "What costs extra: overtime, extra days, accommodations, permits?", "Deposit, balance due date and payment methods?"] },
       { group: "Logistics", questions: ["Arrival and departure times?", "Power needed or provided?", "Access and parking needs for vehicles?", "Who provides fencing, lighting or ticketing if needed?"] },
       { group: "Risk", questions: ["Certificate of insurance and limits?", "Current inspections or certifications where required?", "Weather and cancellation policy?", "Who signs the contract, and when?"] },
     ],
+    related: [{ id: "ride-owner-vs-rental-broker", text: "Not sure whether a company owns the ride it is quoting? Read ride owner vs. rental broker: what’s the difference, with questions about ownership, crews, insurance and inspections." }],
     faq: [
       { q: "How far in advance should I contact operators?", a: "As early as you can for weekend dates in spring, summer and fall, and for holidays. Operators book a season at a time, and the first company you reach may already be committed on your date, which is a good reason to contact several." },
       { q: "Should I contact more than one operator?", a: "Yes. Equipment, service areas, crews and prices differ, and availability on a specific date is only known to the operator. Comparing two or three quotes with the same checklist is the most reliable way to judge value." },
       { q: "Does Carnival Ride Rental handle the booking?", a: "No. We show operator inventory, help you find rides near your event, and give you direct contact details through Event Access. The rental contract, deposit and payment are between you and the operator." },
-      { q: "Is Carnival Ride Rental a broker?", a: "No. We don’t take bookings or resell rides. Every listed ride belongs to the independent operator who runs it, and Event Access gives you that operator’s own phone and email, so you get their quote and book with them directly. We add no markup and take no commission on the rental." },
       { q: "What if an operator can’t do my date?", a: "Move to the next matching operator. Event Access covers several operators for one event, so a “no” from one company is not a dead end." },
     ],
     video: {
@@ -209,6 +202,110 @@ export const GUIDES: Guide[] = [
         "Find carnival rides near your event at carnivalriderental.us.",
       ],
     },
+  },
+  {
+    id: "ride-owner-vs-rental-broker",
+    title: "Ride owner vs. rental broker: what’s the difference?",
+    metaTitle: "Ride Owner vs. Rental Broker: What’s the Difference?",
+    metaDescription: "How direct carnival ride rentals and brokered rentals work, who you contract with in each, and the questions to ask any rental company about ride ownership, operating crews, insurance and inspections.",
+    intro:
+      "When you rent a carnival ride, you deal either with the business that owns and runs the ride, or with a company that arranges the rental for you and books the ride from someone else. Both are legitimate ways to rent. They differ in who you sign with, who shows up on the day and who answers for the equipment, so it helps to know which one you are talking to. This guide explains both and gives you the questions to ask any company before you sign. Answers vary by company, ride, venue and state, so treat every item as something to confirm, not a rule.",
+    sections: [
+      {
+        id: "direct-rental",
+        heading: "How a direct rental works",
+        intro: "In a direct rental you deal with the ride’s owner-operator: the business that owns the equipment, brings it to your site and staffs it.",
+        items: [
+          "You agree the price, dates, hours and site requirements with the business that brings the ride",
+          "Your contract, deposit and payment are with that business",
+          "Questions about setup, power, crew and weather go to the people who run the ride",
+          "Any certificate of insurance or inspection paperwork you ask for comes from the company operating the ride",
+        ],
+      },
+      {
+        id: "brokered-rental",
+        heading: "How a brokered rental works",
+        intro: "A broker, booking agent or event company takes your booking and arranges the ride through an owner-operator. Some coordinate several vendors at once, such as rides, games, tents and staff, so you don't have to organise each one yourself.",
+        items: [
+          "Your contract may be with the broker, while the ride, crew and insurance belong to another company",
+          "The broker is paid for arranging the rental, through their own quote or a commission from the ride operator; ask which",
+          "Who you call on the day, and who handles a breakdown or a weather stop, depends on the agreement",
+          "A broker can be useful when you want one point of contact for several rides or services",
+        ],
+        note: "Neither model is automatically cheaper or better. What matters is knowing who you are contracting with and who is responsible for the ride.",
+      },
+      {
+        id: "ownership",
+        heading: "Questions about ride ownership",
+        intro: "Ask these early, before you compare prices. A clear answer is a good sign either way.",
+        items: [
+          "Do you own this ride, or are you booking it from another company?",
+          "If another company supplies it, what is that company called, and can I speak with them?",
+          "Who is my contract with, and who takes the deposit?",
+          "Are the photos you sent of the actual unit that would come to my event?",
+        ],
+      },
+      {
+        id: "crew",
+        heading: "Questions about the operating crew",
+        intro: "The people who set up and run the ride matter as much as the ride itself.",
+        items: [
+          "Whose crew delivers, sets up, operates and tears down the ride?",
+          "How many attendants run the ride, and are they included in the price?",
+          "Who is in charge on site, and how do I reach them during the event?",
+          "What happens if the ride breaks down or has to stop for weather?",
+        ],
+      },
+      {
+        id: "insurance",
+        heading: "Questions about insurance",
+        intro: "Venues often set their own insurance requirements. Find out what yours needs, then confirm whose policy covers the ride.",
+        items: [
+          "Whose insurance covers this ride: yours, the ride owner’s, or both?",
+          "Can you provide a certificate of insurance before the event, naming the company that operates the ride?",
+          "Can my organisation or venue be named as additional insured?",
+          "Do the coverage limits meet my venue’s requirements?",
+        ],
+        note: "We don’t verify any company’s insurance. Ask for the certificate and check it against your venue’s requirements.",
+      },
+      {
+        id: "inspections",
+        heading: "Questions about inspections",
+        intro: "Amusement ride inspection and permit rules are set at state and local level and differ widely. Ask early; approvals can take weeks.",
+        items: [
+          "Does my state or city require an inspection or permit for this ride, and who arranges it?",
+          "Can you show the ride’s most recent inspection record or certificate, where one is required?",
+          "Who carries out the checks before the ride opens on the day?",
+          "Does the venue or fire marshal need any paperwork from the ride operator?",
+        ],
+      },
+      {
+        id: "how-we-fit",
+        heading: "Where Carnival Ride Rental fits",
+        intro: "Carnival Ride Rental is a directory, not a broker. We list rides from independent ride operators, and Event Access gives you the contact details of operators that match your event, so you talk to them directly.",
+        items: [
+          "We don’t take bookings, resell rides or sign rental contracts",
+          "You contact each operator directly, compare their quotes and arrange the rental with them",
+          "We charge a one-time access fee and take no commission or markup on the rental price",
+          "We don’t verify who owns each ride, so ask every operator the ownership questions above",
+        ],
+      },
+    ],
+    checklistTitle: "Questions to ask any rental company",
+    checklistIntro: "Ask every company the same questions and write the answers side by side, so you can see who you would actually be dealing with.",
+    checklist: [
+      { group: "Ownership", questions: ["Do you own the ride you are quoting?", "If not, who does, and can I speak with them?", "Who is my contract with?"] },
+      { group: "Crew", questions: ["Whose crew sets up and runs the ride?", "How many attendants, and are they included?", "Who is in charge on site?"] },
+      { group: "Insurance", questions: ["Whose policy covers the ride?", "Certificate of insurance before the event?", "Venue named as additional insured?"] },
+      { group: "Inspections", questions: ["Inspection or permit required here, and who arranges it?", "Most recent inspection record, where required?", "Who does the checks before opening?"] },
+    ],
+    faq: [
+      { q: "Is a broker more expensive than renting from the ride owner?", a: "Not necessarily. A broker is paid for arranging the rental, but quotes depend on the ride, distance, dates, hours and what is included. Compare like-for-like quotes using the same questions." },
+      { q: "Can a broker be the better choice?", a: "Sometimes. If you want one company to coordinate several rides, games or other services, a broker or event company can take that work off your hands. Confirm who owns and runs each ride and who your contract is with." },
+      { q: "Is Carnival Ride Rental a broker?", a: "No. We don’t take bookings or resell rides. Event Access gives you direct contact details for independent ride operators that match your event, and you arrange the rental with them. We charge a one-time access fee and take no commission or markup on the rental price." },
+      { q: "Do you verify that operators own their rides?", a: "No. Listings come from independent ride operators, and we don’t verify the ownership of each ride. Ask each operator the ownership questions in this guide before you sign." },
+    ],
+    related: [{ id: "how-to-rent-carnival-rides", text: "Ready to call operators? How to rent carnival rides covers what to have ready and what to ask about transport, power, staffing, permits and weather, with a quote checklist." }],
   },
 ];
 

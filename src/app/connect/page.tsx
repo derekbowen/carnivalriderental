@@ -99,17 +99,15 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
           <div className="card p-5" data-testid="connect-offer" data-tier={tier}>
             <h2 className="text-lg">{productName}: know who to call and what to ask</h2>
             {copy && <p className="mt-2 text-xl font-semibold" data-testid="connect-price">{copy.headline}</p>}
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft">
-              <li>
-                {product ? `${formatPrice(product.priceCents, product.currency)} once, for one event.` : "One fee, for one event."}
-                {tier === "standard" && products?.ferris ? ` Ferris wheel requests (standard, giant or mini) are ${formatPrice(products.ferris.priceCents, products.ferris.currency)}.` : ""}
-                {tier === "ferris" ? " Applies to every Ferris wheel type: standard, giant and mini." : ""}
-              </li>
-              <li>Direct contact details (company, phone, email, website) for up to {product?.unlockLimit ?? 5} distinct matching independent operators, for {product?.validityDays ?? 30} days. Several rides from one company count once.</li>
-              <li>You see how many operators match before paying. We don&rsquo;t sell access when there are fewer than {product?.minimumMatches ?? 3}.</li>
-              <li>Buyer guidance included: <Link className="underline" href={paths.guide("how-to-rent-carnival-rides")}>what to ask each operator</Link> and a checklist for comparing quotes.</li>
-              <li>Straight to the ride&rsquo;s owner: listed operators own and run their rides, so there&rsquo;s no broker in between.</li>
-              <li>The fee is for operator contact access only. No markup or commission on the rental: price, availability, contract, insurance and payment are agreed directly with the operator. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-ink-soft" data-testid="connect-terms">
+              {products?.standard && <li>{formatPrice(products.standard.priceCents, products.standard.currency)} for up to {products.standard.unlockLimit} matching carnival ride operator contacts, for one event.</li>}
+              {products?.ferris && <li>{formatPrice(products.ferris.priceCents, products.ferris.currency)} for up to {products.ferris.unlockLimit} matching Ferris wheel operator contacts (standard, giant or mini), for one event.</li>}
+              {!products?.standard && !products?.ferris && <li>One fee, for one event.</li>}
+              <li>Each contact is one matching independent operator: their company name and the phone, email or website they list, yours for {product?.validityDays ?? 30} days. Several rides from one company count once.</li>
+              <li>You see how many operators match, free, before paying, and the offer states exactly how many contacts you get. We don&rsquo;t sell access when fewer than {product?.minimumMatches ?? 3} match.</li>
+              <li>You contact each operator directly, compare their quotes and arrange the rental with them: price, dates, delivery, contract, insurance and payment.</li>
+              <li>We charge only this access fee. No commission or markup on the rental price. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
+              <li>Buyer guidance included: <Link className="underline" href={paths.guide("how-to-rent-carnival-rides")}>what to ask each operator</Link>, a quote checklist, and <Link className="underline" href={paths.guide("ride-owner-vs-rental-broker")}>how to tell a ride owner from a rental broker</Link>.</li>
             </ul>
             <p className="mt-3 text-xs text-muted"><Link className="underline" href={paths.accessPolicy()}>Access and refund policy</Link> · <Link className="underline" href={paths.terms()}>Terms</Link></p>
           </div>

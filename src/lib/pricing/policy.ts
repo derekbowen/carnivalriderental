@@ -25,7 +25,7 @@ export const PRICE_COPY = {
   notFinal: "The operator sets the rental price; any figure shown is theirs and not the final price.",
   noEstimate: "Priced by the operator — ask them directly for a quote.",
   steps: [
-    { title: "Priced by the operator", body: "Rides are priced per event by the independent operator who owns them. A ride shows a figure only when its operator has approved one, and that is not the final price." },
+    { title: "Priced by the operator", body: "Rides are priced per event by the independent operator who lists them. A ride shows a figure only when its operator has approved one, and that is not the final price." },
     {
       title: "Every event is different",
       body: "Location, travel distance, hours, crew, power, permits and insurance change the price. Operators quote after hearing your details.",

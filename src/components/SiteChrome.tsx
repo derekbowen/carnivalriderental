@@ -93,7 +93,7 @@ export function SiteFooter() {
         <div className="lg:col-span-4">
           <Logo dark />
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
-            Carnival ride rentals from independent operators across the U.S. Find the ride, compare nearby options, then connect with the company that owns it.
+            Carnival ride rentals from independent operators across the U.S. Find the ride, compare nearby options, then connect directly with the operator who lists it.
           </p>
           <p className="mt-5 text-sm text-white/70">
             Questions? <a className="font-semibold text-white hover:underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
@@ -109,6 +109,7 @@ export function SiteFooter() {
             links={[
               { href: paths.search(), label: "Find a ride" },
               { href: paths.guide("how-to-rent-carnival-rides"), label: "How to rent carnival rides" },
+              { href: paths.guide("ride-owner-vs-rental-broker"), label: "Ride owner vs. rental broker" },
               { href: "/#how-it-works", label: "How it works" },
               { href: paths.operators(), label: "For ride operators" },
               { href: paths.directory(), label: "Site directory" },
@@ -135,7 +136,7 @@ export function SiteFooter() {
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-10">
           <p className="text-xs text-white/60">
-            {BRAND.name} is owned and operated by {BRAND.legalEntity}. Operators are independent businesses who own and run the rides listed here. Event Access is a one-time fee for direct operator contact details; the rental itself, including price, availability, contract and payment, is agreed directly with the operator.
+            {BRAND.name} is owned and operated by {BRAND.legalEntity}. Ride operators listed here are independent businesses. Event Access is a one-time fee for direct operator contact details; the rental itself, including price, availability, contract and payment, is agreed directly with the operator.
           </p>
           <a href={VAS_VERIFY_URL} target="_blank" rel="noopener noreferrer" className="shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
