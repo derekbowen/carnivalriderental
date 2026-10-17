@@ -12,7 +12,7 @@ import { fakeStripe } from "@/lib/access/stripe";
 import { emailConfig } from "@/lib/email/config";
 import { conciergeEnabled } from "@/lib/concierge/flags";
 import { emptyLead } from "@/lib/concierge/defaults";
-import { captureEmail, conversation, recordListingView, recordSearch, saveLead, searchRides, unlockOperator, type Conversation } from "@/lib/concierge/service";
+import { captureEmail, conversation, recordListingView, recordSearch, saveLead, searchRides, sendPendingOptions, unlockOperator, type Conversation } from "@/lib/concierge/service";
 import { runLifecycle, sendSavedSearch, type LifecycleDeps } from "@/lib/lifecycle/engine";
 import { LIFECYCLE_EVENTS } from "@/lib/lifecycle/events";
 import { RIDES } from "@/lib/inventory";
@@ -102,6 +102,29 @@ describe("chat concierge → lifecycle email (one system)", () => {
     const r = await captureEmail(rt(), session, EMAIL, true, deps());
     expect(r).toMatchObject({ emailed: false, eventId: null });
     await runAt(61 * MIN, 25 * HOUR);
+    expect(sent).toEqual([]);
+  });
+
+  it("an email given before the details is sent the options once the chat completes them, once per session", async () => {
+    const { session } = await conversation(db);
+    await saveLead(db, session, { ...emptyLead, requestedRides: EVENT.requestedRides });
+    expect((await captureEmail(rt(), session, EMAIL, false, deps())).emailed).toBe(false);
+    expect(sent).toEqual([]);
+    await saveLead(db, session, { ...session.details, eventDate: EVENT.eventDate, city: EVENT.city, state: EVENT.state });
+    expect((await sendPendingOptions(rt(), session, deps()))?.emailed).toBe(true);
+    expect(templates()).toEqual(["saved_search"]);
+    await saveLead(db, session, { ...session.details, city: "Fresno" });
+    expect(await sendPendingOptions(rt(), session, deps())).toBeNull();
+    expect(templates()).toEqual(["saved_search"]);
+    // No "remind me" box: the deferred send is still only the email they asked for.
+    await runAt(61 * MIN, 25 * HOUR);
+    expect(templates()).toEqual(["saved_search"]);
+  });
+
+  it("an email the customer only typed never gets the options", async () => {
+    const { session } = await conversation(db);
+    await saveLead(db, session, { ...EVENT, email: EMAIL });
+    expect(await sendPendingOptions(rt(), session, deps())).toBeNull();
     expect(sent).toEqual([]);
   });
 

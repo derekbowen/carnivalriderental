@@ -7,10 +7,13 @@ import { formatPrice, type AccessProducts } from "../access/config";
 import { bothTiersSentence } from "../access/copy";
 import { BRAND } from "../config";
 import { paths } from "../seo/routes";
+import { HOW_IT_WORKS } from "./site-guide";
 import { listOf } from "./state";
 
 const SUPPORT = `support@${BRAND.domain}`;
 const site = (path: string) => `${BRAND.domain}${path}`;
+/** Said with every price: the fee buys operator contacts, never the rental. */
+const FEE_NOTE = "That's a one-time fee for direct contact details of matching independent operators, not the ride rental: each operator quotes and charges for the rental itself.";
 
 /** Shown when no answer applies and the AI step is unavailable. */
 export const NO_AI_REPLY = `I can't answer that automatically right now. To find rides for your event, use the event form at ${site(paths.concierge())}. For anything else, email ${SUPPORT}.`;
@@ -54,10 +57,16 @@ const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
     answer: () => `Go to ${site(paths.passRecover())} and enter the email you paid with. We'll send you a fresh link to your pass.`,
   },
   {
+    // "How does this work?", "I'm confused", "where do I start": the three steps and where to go.
+    test: /\b(how (does|do|will) ((this|the|your) (web)?site|this|it|event access|you( guys)?) work|how (do|can|should) i (use|start|begin)|where (do|should|can) i (start|begin)|how to use|confus(ed|ing)|navigate|new here|what do i do)\b/,
+    answer: (p) =>
+      `${HOW_IT_WORKS} ${bothTiersSentence(p)} ${FEE_NOTE} To browse first, see ${site(paths.search())} or the buyer's guide at ${site(paths.guide("how-to-rent-carnival-rides"))}.`,
+  },
+  {
     test: /\b(how much|price|pricing|cost|costs|fee|what is event access|what do i get)\b/,
     answer: (p) => {
       const std = p.standard ?? p.ferris;
-      return `${bothTiersSentence(p)}${std ? ` Each purchase covers one event and one ride requirement, with direct contact details for up to ${std.unlockLimit} matching independent operators over ${std.validityDays} days.` : ""} You see how many operators match before you pay. The rental itself (price, dates, delivery and payment) is arranged directly with the operator.`;
+      return `${bothTiersSentence(p)} ${FEE_NOTE}${std ? ` Each purchase covers one event and one ride requirement, with contact details for up to ${std.unlockLimit} matching operators over ${std.validityDays} days.` : ""} You see how many operators match before you pay.`;
     },
   },
   {

@@ -19,6 +19,7 @@ import { DEFAULT_PRODUCT, FERRIS_PRODUCT } from "@/lib/access/config";
 import { emptyLead } from "@/lib/concierge/defaults";
 import { mergeLead, parseExtraction } from "@/lib/concierge/extract";
 import { faqAnswer, NO_AI_REPLY } from "@/lib/concierge/faq";
+import { emailOfferLine } from "@/lib/concierge/state";
 import { POST } from "@/app/api/concierge/route";
 
 const products = { standard: { ...DEFAULT_PRODUCT, active: true }, ferris: { ...FERRIS_PRODUCT, active: true } };
@@ -102,6 +103,7 @@ describe("the chat route when AI is unavailable", () => {
     failReply = true;
     const r = await chat("Ferris wheel in Columbus OH on June 15 2030");
     expect(r.search?.total).toBeGreaterThan(0);
-    expect(r.message).toBe(NO_AI_REPLY);
+    // The policy fallback, then the application's one-time email offer (first results in this session).
+    expect(r.message).toBe(`${NO_AI_REPLY}\n\n${emailOfferLine([])}`);
   });
 });

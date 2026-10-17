@@ -45,6 +45,10 @@ Sections 1–6 below are the history before the cutover.
 6. **Hosted Live web app:** `carnivalrental-9ecfo8.mysharetribe.com` still redirects to
    `www.mysharetribe.com`; operators can't log in to a hosted Live app until it is set up (claims are a
    team action anyway).
+7. **Tracking (2026-10-17):** enable Web Analytics on the Vercel project (Analytics tab → Enable) so
+   page views, sources and utm_* campaigns are counted; and set `INTERNAL_USER` / `INTERNAL_PASSWORD`
+   in Vercel production (Sensitive) and redeploy to open `/internal/funnel` (until then `/internal`
+   answers 503). See `CONCIERGE_MVP.md` (2026-10-17).
 
 Earlier status (2026-10-12; pivot 2026-10-06, two-tier pricing 2026-10-12): read `PAID_ACCESS_ARCHITECTURE.md` for where the ledger lives and `PAID_ACCESS_IMPLEMENTATION.md` for what was built.
 

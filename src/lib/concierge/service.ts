@@ -112,15 +112,22 @@ export async function createEventRequest(rt: AccessRuntime, session: Conversatio
  * again. Nothing else is scheduled here; any later reminder comes from the lifecycle engine's own
  * rules, and for chat searches only with that consent.
  */
-export async function captureEmail(rt: AccessRuntime, session: Conversation, email: string, followupConsent: boolean, deps: LifecycleDeps): Promise<{ message: string; emailed: boolean; eventId: string | null; alternativesUrl?: string }> {
+export async function captureEmail(rt: AccessRuntime, session: Conversation, email: string, followupConsent: boolean, deps: LifecycleDeps): Promise<Emailed> {
   const address = email.trim().toLowerCase();
   if (session.details.email?.trim().toLowerCase() !== address) await saveLead(rt.db, session, { ...session.details, email: address });
   await recordLifecycleEvent(rt.db, "email_capture_accepted", "chat", { sessionId: session.id, eventRequestId: session.eventId, consent: followupConsent });
-  const d = session.details;
-  const missing = leadState(d).missingForEmail;
+  const missing = leadState(session.details).missingForEmail;
   if (missing.length) {
     return { message: `Got it, I'll use ${address}. I still need your ${listOf(missing)}; tell me in the chat and I'll email your options.`, emailed: false, eventId: null };
   }
+  return emailOptions(rt, session, address, deps);
+}
+
+type Emailed = { message: string; emailed: boolean; eventId: string | null; alternativesUrl?: string };
+
+/** The saved-search email for the lead as it stands (complete details and an email on the lead). */
+async function emailOptions(rt: AccessRuntime, session: Conversation, address: string, deps: LifecycleDeps): Promise<Emailed> {
+  const d = session.details;
   const rideType = session.searchType ?? d.requestedRides[0]?.rideType ?? null;
   const { event, sellable } = await createEventRequest(rt, session, rideType);
   if (!sellable) {
@@ -134,6 +141,33 @@ export async function captureEmail(rt: AccessRuntime, session: Conversation, ema
     emailed,
     eventId: event.id,
   };
+}
+
+/** Whether an options email already went out for any request this chat session made. Fails closed. */
+async function sessionOptionsSent(db: AccessDb, sessionId: string): Promise<boolean> {
+  try {
+    const rows = await db.query(
+      `SELECT m.id FROM access_lifecycle_emails m JOIN access_lifecycle_events e ON e.event_request_id = m.event_request_id WHERE e.session_id = ? AND m.template = 'saved_search' AND m.status = 'sent' LIMIT 1`,
+      [sessionId],
+    );
+    return rows.length > 0;
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * The promise in captureEmail ("tell me in the chat and I'll email your options"), kept: the customer
+ * pressed "Email me these options" before the date or city was known, and a later chat turn has just
+ * completed them. The options are sent once per session, never after one already went out, and only
+ * when the customer asked for them here (email_capture_accepted); nothing is sent to an email the
+ * customer merely typed. The caller runs this only on the turn that completes the details.
+ */
+export async function sendPendingOptions(rt: AccessRuntime, session: Conversation, deps: LifecycleDeps): Promise<Emailed | null> {
+  const address = session.details.email?.trim().toLowerCase();
+  if (!address || leadState(session.details).missingForEmail.length) return null;
+  if (!(await sessionHasEvent(rt.db, session.id, "email_capture_accepted")) || (await sessionOptionsSent(rt.db, session.id))) return null;
+  return emailOptions(rt, session, address, deps);
 }
 /** Signed pass session is checked BEFORE reading the view (which contains private contact snapshots). */
 export async function checkEventAccess(db: AccessDb, authorizedIds: string[], passId: string) {

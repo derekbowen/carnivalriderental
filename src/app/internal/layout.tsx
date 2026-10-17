@@ -18,6 +18,7 @@ export default async function InternalLayout({ children }: { children: React.Rea
             <nav aria-label="Console" className="flex gap-3 text-sm">
               <Link href="/internal" className="underline">Requests</Link>
               <Link href="/internal/operators" className="underline">Operator applications</Link>
+              <Link href="/internal/funnel" className="underline">Funnel</Link>
             </nav>
           </div>
           <ul className="flex flex-wrap gap-2 text-xs">

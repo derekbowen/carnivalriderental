@@ -33,3 +33,9 @@ export function listOf(items: string[]): string {
 
 /** One sentence the chat shows (and the model repeats) when an action needs details we don't have. */
 export const needDetails = (missing: string[]) => `To do that I need your ${listOf(missing)}. Tell me in the chat, for example "June 15 2030 in Columbus, OH".`;
+
+/** Added once, the first time results are shown before any email (the application's offer, not the model's). */
+export const emailOfferLine = (missing: string[]) =>
+  missing.length
+    ? `Want these options by email? Add your email under the results and I'll send them as soon as I have your ${listOf(missing)}.`
+    : "Want these options by email? Add your email under the results and I'll send them once.";

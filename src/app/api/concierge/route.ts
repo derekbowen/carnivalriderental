@@ -5,14 +5,14 @@ import { accessProductsForDisplay, accessRuntime, clientIp, parseCookie, passCoo
 import { ipHash, sessionSecret } from "@/lib/access/session";
 import { emptyLead } from "@/lib/concierge/defaults";
 import { actionSchema } from "@/lib/concierge/schema";
-import { captureEmail, conversation, conversationState, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, SESSION_COOKIE, unlockOperator, type Conversation } from "@/lib/concierge/service";
+import { captureEmail, conversation, conversationState, createEventRequest, getPassStatus, getRequestStatus, getUnlockedOperators, recordListingView, recordSearch, requestAvailability, saveLead, searchRides, sendPendingOptions, SESSION_COOKIE, unlockOperator, type Conversation } from "@/lib/concierge/service";
 import { conciergeEnabled } from "@/lib/concierge/flags";
 import { lifecycleDeps } from "@/lib/lifecycle/runtime";
 import { paths } from "@/lib/seo/routes";
 import { customerHelp } from "@/lib/concierge/help";
 import { extractLead } from "@/lib/concierge/extract";
 import { faqAnswer, isContactProblem, NO_AI_REPLY } from "@/lib/concierge/faq";
-import { leadState, needDetails } from "@/lib/concierge/state";
+import { emailOfferLine, leadState, needDetails } from "@/lib/concierge/state";
 import type { Lead } from "@/lib/concierge/schema";
 
 export const runtime = "nodejs";
@@ -96,8 +96,15 @@ export async function POST(req: Request) {
         // losing the other; with no AI at all, policy questions still get answered (faq.ts).
         let inventory: unknown = { total: 0, cards: [], availability: "Event details could not be read for this message; no search was run." };
         result.search = null; // no cards unless this turn produced a search; earlier cards may not match what was just said
+        let pending: Awaited<ReturnType<typeof sendPendingOptions>> = null;
         try {
+          const wasMissing = leadState(s.details).missingForEmail.length > 0;
           await saveLead(db, s, await extractLead(a.message, s.details));
+          // "Tell me in the chat and I'll email your options": this turn completed the details.
+          if (wasMissing && leadState(s.details).missingForEmail.length === 0) {
+            try { pending = await sendPendingOptions(await accessRuntime(), s, lifecycleDeps()); }
+            catch (e) { console.error("[concierge] pending options email failed:", String((e as Error).message).slice(0, 200)); }
+          }
           const selected = s.details.requestedRides[0]?.rideType ?? null;
           result.selectedRideType = selected;
           // Without a city/state or a ride type the "nearest" rides are measured from the middle of the
@@ -120,6 +127,13 @@ export async function POST(req: Request) {
         } catch (e) {
           console.error("[concierge] AI reply failed:", String((e as Error).message).slice(0, 200));
           result.message = faqAnswer(a.message, await accessProductsForDisplay(), state) ?? NO_AI_REPLY;
+        }
+        // Application lines after the reply, so the model can neither drop nor reword them.
+        if (pending) {
+          result.message = `${result.message}\n\n${pending.message}`;
+          result.captured = { emailed: pending.emailed, remind: null, alternativesUrl: pending.alternativesUrl ?? null };
+        } else if (result.captureOffered) {
+          result.message = `${result.message}\n\n${emailOfferLine(leadState(s.details).missingForEmail)}`;
         }
       }
     } else if (a.action === "save") {

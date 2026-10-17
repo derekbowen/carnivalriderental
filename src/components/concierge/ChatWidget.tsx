@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ProtectedForm } from "@/components/access/ProtectedForm";
@@ -7,6 +7,7 @@ import { paths } from "@/lib/seo/routes";
 import type { OperatorCard } from "@/lib/catalog/operator-search";
 import { contactRows } from "@/lib/concierge/contact-display";
 import { emptyLead } from "@/lib/concierge/defaults";
+import { chatSegments } from "@/lib/concierge/site-guide";
 import { leadState, listOf, type LeadState } from "@/lib/concierge/state";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -23,7 +24,8 @@ export function ChatWidget() {
   const [offer, setOffer] = useState<{ eventId: string; productName: string; price: string; operators: number; sellable: boolean; alternativesUrl: string | null } | null>(null);
   const [alternativesUrl, setAlternativesUrl] = useState<string | null>(null);
   const [captureEmail, setCaptureEmail] = useState("");
-  const [remind, setRemind] = useState(false), [emailed, setEmailed] = useState(false);
+  // captured: an email was given here; while details are missing the options go out once the chat completes them.
+  const [remind, setRemind] = useState(false), [emailed, setEmailed] = useState(false), [captured, setCaptured] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     try {
@@ -48,7 +50,7 @@ export function ChatWidget() {
     if (data.passes) setPasses(data.passes);
     if (data.request) add(data.request.message);
     if (data.captured?.emailed) setEmailed(true);
-    if (data.captured) setAlternativesUrl(data.captured.alternativesUrl ?? null);
+    if (data.captured) { setCaptured(true); setAlternativesUrl(data.captured.alternativesUrl ?? null); }
     return data;
   }
   // Lifecycle hook only (listing_viewed); keepalive so it survives the navigation, never blocks it.
@@ -57,7 +59,7 @@ export function ChatWidget() {
   async function chat(text: string) { const history = messages.slice(-10); setMessages(m => [...m, { role: "user", content: text }]); setInput(""); setOffer(null); await run({ action: "chat", message: text, history }); }
   // A fresh conversation: clears this tab's chat and the saved event details (the pass, if any, stays).
   async function startOver() {
-    setMessages([GREETING]); setCards([]); setRideType(null); setOffer(null); setAlternativesUrl(null); setEmailed(false); setCaptureEmail(""); setRemind(false); setLead(leadState(emptyLead)); setLocated(false);
+    setMessages([GREETING]); setCards([]); setRideType(null); setOffer(null); setAlternativesUrl(null); setEmailed(false); setCaptured(false); setCaptureEmail(""); setRemind(false); setLead(leadState(emptyLead)); setLocated(false);
     try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* nothing saved */ }
     setBusy(true);
     try { await fetch("/api/concierge", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "save", details: emptyLead }) }); } catch { /* the next message starts fresh anyway */ } finally { setBusy(false); }
@@ -68,11 +70,11 @@ export function ChatWidget() {
     {open && <section role="dialog" aria-label="Carnival Ride Rental chat" className="mb-3 flex h-[min(650px,80dvh)] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl">
       <header className="flex items-center justify-between bg-ink p-4 text-white"><div><strong>Carnival Ride Rental</strong><p className="text-xs">AI customer assistant</p></div><div className="flex items-center gap-3"><button className="text-xs underline" disabled={busy} onClick={() => void startOver()}>Start over</button><button aria-label="Close chat" onClick={() => setOpen(false)}>✕</button></div></header>
       <div className="flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">
-        {messages.map((m, i) => <p key={i} className={`whitespace-pre-wrap rounded-xl p-3 text-sm ${m.role === "user" ? "ml-8 bg-ink text-white" : "mr-4 bg-canvas"}`}>{m.content}</p>)}
+        {messages.map((m, i) => <p key={i} className={`whitespace-pre-wrap rounded-xl p-3 text-sm ${m.role === "user" ? "ml-8 bg-ink text-white" : "mr-4 bg-canvas"}`}>{m.role === "user" ? m.content : chatSegments(m.content).map((seg, j) => <Fragment key={j}>{seg.href ? <Link className="underline" href={seg.href}>{seg.text}</Link> : seg.text}</Fragment>)}</p>)}
         {cards.slice(0, 4).map(c => <div key={c.id} className="rounded-xl border border-line p-3 text-sm">{c.photo && <img src={c.photo.src} alt={c.title} className="h-24 w-full rounded object-cover" />}<strong>{c.title}</strong><p>{c.rideClassLabel} · {c.homeState}{located && c.miles !== null ? ` · approximately ${c.miles} miles` : ""}</p><p>{c.claimed ? "Claimed" : "Unclaimed"} · date availability unconfirmed</p><Link className="underline" href={paths.rideListing(c.id)} onClick={() => listingViewed(c.id)}>View ride details</Link><button disabled={busy || lead.missingForAvailability.length > 0} title={lead.missingForAvailability.length ? `Add your ${listOf(lead.missingForAvailability)} first` : undefined} className="ml-2 underline disabled:opacity-50" onClick={() => void run({ action: "availability", listingId: c.id })}>Request Availability</button></div>)}
         {cards.length > 0 && !located && <p className="text-xs text-muted">Distances appear once I know your city and state.</p>}
-        {cards.length > 0 && !emailed && lead.missingForEmail.length > 0 && <p className="rounded-xl border border-line p-3 text-xs text-muted">To email you these options or request availability, I still need your {listOf(lead.missingForEmail)}. Just type it in the chat.</p>}
-        {cards.length > 0 && !emailed && lead.missingForEmail.length === 0 && <form className="rounded-xl border border-line p-3 text-sm" onSubmit={e => { e.preventDefault(); void run({ action: "capture", email: captureEmail, followupConsent: remind }); }}><strong>Email me these options</strong><p className="text-xs text-muted">We send your matches once. Nothing else unless you tick the box.</p><input aria-label="Email for these options" type="email" required maxLength={200} className="input mt-2 w-full" value={captureEmail} onChange={e => setCaptureEmail(e.target.value)} /><label className="mt-2 block text-xs"><input type="checkbox" checked={remind} onChange={e => setRemind(e.target.checked)} /> Also remind me about this search if I don&apos;t finish (at most two emails over two days; unsubscribe anytime).</label><button className="btn-ghost mt-2" disabled={busy || !captureEmail.trim()}>Email me these options</button></form>}
+        {cards.length > 0 && !emailed && captured && lead.missingForEmail.length > 0 && <p className="rounded-xl border border-line p-3 text-xs text-muted">I&apos;ll email these options as soon as I have your {listOf(lead.missingForEmail)}. Just type it in the chat.</p>}
+        {cards.length > 0 && !emailed && !(captured && lead.missingForEmail.length > 0) && <form className="rounded-xl border border-line p-3 text-sm" onSubmit={e => { e.preventDefault(); void run({ action: "capture", email: captureEmail, followupConsent: remind }); }}><strong>Email me these options</strong><p className="text-xs text-muted">We send your matches once{lead.missingForEmail.length > 0 ? `, as soon as I have your ${listOf(lead.missingForEmail)}` : ""}. Nothing else unless you tick the box.</p><input aria-label="Email for these options" type="email" required maxLength={200} className="input mt-2 w-full" value={captureEmail} onChange={e => setCaptureEmail(e.target.value)} /><label className="mt-2 block text-xs"><input type="checkbox" checked={remind} onChange={e => setRemind(e.target.checked)} /> Also remind me about this search if I don&apos;t finish (at most two emails over two days; unsubscribe anytime).</label><button className="btn-ghost mt-2" disabled={busy || !captureEmail.trim()}>Email me these options</button></form>}
         {offer && <div className="rounded-xl border border-line p-3 text-sm"><strong>{offer.productName} — {offer.price}</strong><p>{offer.operators} qualifying operators. This offer covers the selected ride requirement, not a booking.</p>{offer.sellable ? <ProtectedForm action="/api/access/checkout"><input type="hidden" name="event" value={offer.eventId} /><button className="btn-primary mt-2">Buy Event Access</button></ProtectedForm> : <p>Not enough qualifying operators for this exact search. {offer.alternativesUrl && <Link className="underline" href={offer.alternativesUrl}>See the closest alternatives</Link>}</p>}</div>}
         {alternativesUrl && !offer && <p className="rounded-xl border border-line p-3 text-sm"><Link className="underline" href={alternativesUrl}>See the closest alternatives and a free manual search</Link></p>}
         {passes.map(p => <div key={p.id} className="rounded-xl border border-line p-3 text-sm"><strong>{p.productName}</strong><p>{p.usable ? "Active" : "Inactive"} · {p.remaining} unlocks remaining</p><Link href={paths.pass(p.id)} className="underline">Full pass</Link>{p.operators.map(op => { const u = p.unlocks.find(x => x.operatorId === op.operatorId); return <div key={op.operatorId} className="mt-2"><p>{op.label} · {op.homeState}</p>{u ? <dl>{contactRows(u.contact).map(r => <div key={r.label}><dt className="inline font-semibold">{r.label}: </dt><dd className="inline">{r.href ? <a className="underline" href={r.href}>{r.value}</a> : r.value}</dd></div>)}</dl> : <button className="underline" disabled={busy || !p.usable || p.remaining < 1} onClick={() => void run({ action: "unlock", passId: p.id, operatorId: op.operatorId })}>Unlock operator contact</button>}</div>; })}</div>)}

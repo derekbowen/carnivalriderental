@@ -14,3 +14,20 @@ test("customer chat is available on public pages and refuses anonymous contact r
   await chat.getByRole("button", { name: "Close chat", exact: true }).click();
   await expect(chat).not.toBeVisible();
 });
+
+test("price answers say what the fee buys, and site help links only the site's own pages", async ({ page }) => {
+  await page.goto("/rides");
+  await page.getByRole("button", { name: "Chat with us", exact: true }).click();
+  const chat = page.getByRole("dialog", { name: "Carnival Ride Rental chat" });
+  await chat.getByLabel("Message customer assistant").fill("How much is it");
+  await chat.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(chat.getByText(/one-time fee for direct contact details/).first()).toBeVisible();
+  await expect(chat.getByText(/not the ride rental/).first()).toBeVisible();
+  await chat.getByLabel("Message customer assistant").fill("I'm confused, where do I start?");
+  await chat.getByRole("button", { name: "Send", exact: true }).click();
+  await expect(chat.getByText(/three steps/).first()).toBeVisible();
+  const guide = chat.getByRole("link", { name: "carnivalriderental.us/guides/how-to-rent-carnival-rides", exact: true });
+  await expect(guide).toHaveAttribute("href", "/guides/how-to-rent-carnival-rides");
+  await guide.click();
+  await expect(page).toHaveURL(/\/guides\/how-to-rent-carnival-rides$/);
+});
