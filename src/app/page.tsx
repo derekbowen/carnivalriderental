@@ -54,7 +54,8 @@ const eventAccessIncludes = (p: ProductLimits) => [
   `${p.validityDays} days of access to your pass`,
   "Buyer guidance and a quote-comparison checklist",
   "You negotiate and book directly with the operator",
-  "No percentage commission added to the rental",
+  "Straight to the ride's owner, no broker in between",
+  "No markup or percentage commission added to the rental",
 ];
 
 const faqFor = (products: AccessProducts): Faq[] => {

@@ -63,6 +63,12 @@ const FAQ: { test: RegExp; answer: (p: AccessProducts) => string }[] = [
       `${HOW_IT_WORKS} ${bothTiersSentence(p)} ${FEE_NOTE} To browse first, see ${site(paths.search())} or the buyer's guide at ${site(paths.guide("how-to-rent-carnival-rides"))}.`,
   },
   {
+    // "Are you a broker?", "do you own the rides?", "why pay you?": who the customer deals with (before price: "why pay $99").
+    test: /\b(brokers?|middle ?m[ae]n|mark ?-?ups?|re-?sell(er|ers|ing)?|do you (guys )?own|are you the owners?|who owns|why (should|would|do) i (pay|use) you|what'?s the catch)\b/,
+    answer: () =>
+      `No, we're not a broker, and we don't rent rides ourselves. Every listed ride belongs to the independent operator who runs it, and Event Access gives you that operator's own phone and email, so you get their quote and book with them directly. We add no markup and take no commission on the rental. If you're comparing other quotes, ask whether that company owns the ride; the buyer's guide at ${site(paths.guide("how-to-rent-carnival-rides"))} lists the questions.`,
+  },
+  {
     test: /\b(how much|price|pricing|cost|costs|fee|what is event access|what do i get)\b/,
     answer: (p) => {
       const std = p.standard ?? p.ferris;

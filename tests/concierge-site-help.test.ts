@@ -132,3 +132,20 @@ describe("the application offers to email the options, once", () => {
     expect((await chat("June 1 2030")).captured).toBeUndefined();
   });
 });
+
+describe("owner, not broker (founder 2026-10-17: listed operators are the owners, direct lines)", () => {
+  it("answers broker and why-pay questions with direct-to-owner and no markup, without a savings claim", () => {
+    for (const q of ["Are you a broker?", "are you guys a middleman", "Do you own the rides?", "Why should I pay you $99?", "What's the catch", "is there a markup"]) {
+      const a = faqAnswer(q, products)!;
+      expect(a, q).toContain("not a broker");
+      expect(a, q).toContain("own phone and email");
+      expect(a, q).toContain("no markup");
+      expect(a, q).not.toMatch(/\bsav(e|ing)\b|\$\d/);
+    }
+  });
+
+  it("leaves ordinary ride and price questions to their own answers", () => {
+    expect(faqAnswer("How much is it", products)).toContain("$99");
+    expect(faqAnswer("Do you have ferris wheels in Ohio?", products)).toBeNull();
+  });
+});

@@ -73,6 +73,18 @@ export const GUIDES: Guide[] = [
         note: "Not sure about something? Say so. “I don’t know yet” is a normal answer; the operator can tell you what to measure.",
       },
       {
+        id: "owner-or-broker",
+        heading: "Owner or broker? Check who you’re talking to",
+        intro: "Not every company that advertises carnival ride rentals owns the rides. Some take your booking and hire the ride from its owner, and the price you pay then includes their margin on top of the owner’s. That can suit you if you want one company to coordinate everything; if you want the owner’s own quote, ask before you compare prices.",
+        items: [
+          "Do you own this ride, or are you booking it from another company?",
+          "Will your own crew deliver, set up and run it?",
+          "Whose name is on the certificate of insurance for this ride?",
+          "If another company supplies the ride, who is my contract with, and who do I call on the day?",
+        ],
+        note: "Operators listed on Carnival Ride Rental own and run their rides, and Event Access gives you their own phone and email. We add no markup and take no commission on the rental: the price is whatever you agree with the operator.",
+      },
+      {
         id: "transportation",
         heading: "Ask about transportation",
         intro: "Large rides travel on semis or trailers, and moving them is often a meaningful part of the cost. Ask each operator how your event fits their route.",
@@ -160,7 +172,7 @@ export const GUIDES: Guide[] = [
       },
     ],
     checklist: [
-      { group: "Equipment", questions: ["Which exact ride (make and model) is quoted?", "Rider requirements (height, age) for this ride?", "Footprint and clear area required?", "Are photos of the actual unit available?"] },
+      { group: "Equipment", questions: ["Does the company quoting own and run this ride?", "Which exact ride (make and model) is quoted?", "Rider requirements (height, age) for this ride?", "Footprint and clear area required?", "Are photos of the actual unit available?"] },
       { group: "Price", questions: ["Total price for the quoted hours and dates?", "What is included: transport, crew, generator, fuel, setup and teardown?", "What costs extra: overtime, extra days, accommodations, permits?", "Deposit, balance due date and payment methods?"] },
       { group: "Logistics", questions: ["Arrival and departure times?", "Power needed or provided?", "Access and parking needs for vehicles?", "Who provides fencing, lighting or ticketing if needed?"] },
       { group: "Risk", questions: ["Certificate of insurance and limits?", "Current inspections or certifications where required?", "Weather and cancellation policy?", "Who signs the contract, and when?"] },
@@ -169,6 +181,7 @@ export const GUIDES: Guide[] = [
       { q: "How far in advance should I contact operators?", a: "As early as you can for weekend dates in spring, summer and fall, and for holidays. Operators book a season at a time, and the first company you reach may already be committed on your date, which is a good reason to contact several." },
       { q: "Should I contact more than one operator?", a: "Yes. Equipment, service areas, crews and prices differ, and availability on a specific date is only known to the operator. Comparing two or three quotes with the same checklist is the most reliable way to judge value." },
       { q: "Does Carnival Ride Rental handle the booking?", a: "No. We show operator inventory, help you find rides near your event, and give you direct contact details through Event Access. The rental contract, deposit and payment are between you and the operator." },
+      { q: "Is Carnival Ride Rental a broker?", a: "No. We don’t take bookings or resell rides. Every listed ride belongs to the independent operator who runs it, and Event Access gives you that operator’s own phone and email, so you get their quote and book with them directly. We add no markup and take no commission on the rental." },
       { q: "What if an operator can’t do my date?", a: "Move to the next matching operator. Event Access covers several operators for one event, so a “no” from one company is not a dead end." },
     ],
     video: {

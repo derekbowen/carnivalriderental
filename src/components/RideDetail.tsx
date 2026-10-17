@@ -160,6 +160,7 @@ export function RideDetail({
             </div>
             <ul className="mt-5 space-y-2 border-t border-line pt-5 text-sm text-ink-soft">
               <li className="flex justify-between gap-3"><span>Event Access</span><span className="text-right font-medium text-ink" data-testid="access-price">{pricing?.ctaLine ?? "Direct contact details for matching operators"}</span></li>
+              <li className="flex justify-between gap-3"><span>Who you deal with</span><span className="text-right font-medium text-ink">The ride&rsquo;s owner, not a broker</span></li>
               <li className="flex justify-between gap-3"><span>The rental</span><span className="text-right font-medium text-ink">Agreed and paid directly with the operator</span></li>
             </ul>
           </div>

@@ -108,7 +108,8 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
               <li>Direct contact details (company, phone, email, website) for up to {product?.unlockLimit ?? 5} distinct matching independent operators, for {product?.validityDays ?? 30} days. Several rides from one company count once.</li>
               <li>You see how many operators match before paying. We don&rsquo;t sell access when there are fewer than {product?.minimumMatches ?? 3}.</li>
               <li>Buyer guidance included: <Link className="underline" href={paths.guide("how-to-rent-carnival-rides")}>what to ask each operator</Link> and a checklist for comparing quotes.</li>
-              <li>The fee is for operator contact access only. No commission on the rental: price, availability, contract, insurance and payment are agreed directly with the operator. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
+              <li>Straight to the ride&rsquo;s owner: listed operators own and run their rides, so there&rsquo;s no broker in between.</li>
+              <li>The fee is for operator contact access only. No markup or commission on the rental: price, availability, contract, insurance and payment are agreed directly with the operator. We can&rsquo;t guarantee an operator is free on your date or replies.</li>
             </ul>
             <p className="mt-3 text-xs text-muted"><Link className="underline" href={paths.accessPolicy()}>Access and refund policy</Link> · <Link className="underline" href={paths.terms()}>Terms</Link></p>
           </div>

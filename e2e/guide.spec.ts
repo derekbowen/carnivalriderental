@@ -25,3 +25,10 @@ test("how-to-rent guide: self-hosted explainer video with captions, transcript a
   expect(nodes.find((n) => n["@type"] === "WebPage")!.video).toEqual({ "@id": videoNode["@id"] });
   await page.locator("section[aria-labelledby='video-heading']").screenshot({ path: "test-results/guide-video.png" });
 });
+
+test("how-to-rent guide: owner-or-broker section and FAQ", async ({ page }) => {
+  await page.goto("/guides/how-to-rent-carnival-rides");
+  await expect(page.getByRole("heading", { name: /Owner or broker\?/ })).toBeVisible();
+  await expect(page.getByText("Do you own this ride, or are you booking it from another company?")).toBeVisible();
+  await expect(page.getByText("Is Carnival Ride Rental a broker?")).toBeVisible();
+});
