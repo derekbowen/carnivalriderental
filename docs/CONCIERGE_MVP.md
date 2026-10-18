@@ -158,3 +158,7 @@ Founder brief: explain the fee, how direct contact works and what customers rece
 - The assistant prompt carries the same rules and the real-count rule; `withOwnershipGuard` appends "We don't verify who owns each ride…" to any AI reply that mentions owning without that caveat.
 - Tests: `tests/concierge-site-help.test.ts`.
 
+## Leads tab (2026-10-18)
+
+`/internal/leads` (console login, never cached or indexed, dropped from analytics) lists every Event Access search newest first: when, the customer's email (a `mailto:` reply link with their own request in the subject), event type and date, city, attendance and budget, the ride, how many operators matched, the outcome (bought, refunded, in or left checkout, didn't buy, too few operators), alternatives shown or picked, a hand search requested, the campaign tags and landing page, and the lifecycle emails sent. Team test addresses are hidden unless asked for. Built from the ledger (`lib/lifecycle/leads.ts`); it never reads operator identity or contacts. Replying by hand to someone who searched with us is customer service, not outreach. Follow-up emails go out automatically only for searches we could sell, so "too few operators" leads are the ones to answer by hand. Tests: `tests/leads.test.ts`, `e2e/leads.spec.ts`.
+

@@ -15,9 +15,10 @@ export default async function InternalLayout({ children }: { children: React.Rea
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap items-baseline gap-4">
             <Link href="/internal" className="font-display text-2xl">Fulfilment console</Link>
-            <nav aria-label="Console" className="flex gap-3 text-sm">
+            <nav aria-label="Console" className="flex flex-wrap gap-3 text-sm">
               <Link href="/internal" className="underline">Requests</Link>
               <Link href="/internal/operators" className="underline">Operator applications</Link>
+              <Link href="/internal/leads" className="underline">Leads</Link>
               <Link href="/internal/funnel" className="underline">Funnel</Link>
             </nav>
           </div>
