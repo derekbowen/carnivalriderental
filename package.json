@@ -26,6 +26,7 @@
     "email:dispatch": "tsx --env-file-if-exists=.env.local scripts/email-dispatch.ts",
     "email:claim-invites": "tsx --env-file-if-exists=.env.local scripts/claim-invites.ts",
     "import:photos": "tsx --env-file-if-exists=.env.local scripts/photo-import.ts",
+    "import:gap-audit": "tsx --env-file-if-exists=.env.local scripts/gap-audit-merge.ts",
     "listings:enable-inquiry": "tsx --env-file-if-exists=.env.local scripts/listing-enable-inquiry.ts",
     "ops:claim": "tsx --env-file-if-exists=.env.local scripts/operator-claim.ts",
     "qa:operator": "tsx --env-file-if-exists=.env.local scripts/qa-operator.ts",

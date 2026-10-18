@@ -299,7 +299,9 @@ describe("import run", () => {
 });
 
 // The real workbook (gitignored extract) when present: the counts the import contract promises.
-const EXTRACT = "imports/company-accounts/source/workbook.json";
+// The original host-workbook extract: once the gap audit is merged (npm run import:gap-audit), workbook.json
+// holds the merged rows and the original is kept as workbook-base.json.
+const EXTRACT = ["imports/company-accounts/source/workbook-base.json", "imports/company-accounts/source/workbook.json"].find((f) => fs.existsSync(f)) ?? "imports/company-accounts/source/workbook.json";
 describe.skipIf(!fs.existsSync(EXTRACT))("Carnival_Host_Import.xlsx extract", () => {
   it("184 eligible (119 A + 65 B), 135 held, 11 excluded, no validation issues", () => {
     const p = planImport(JSON.parse(fs.readFileSync(EXTRACT, "utf8")));

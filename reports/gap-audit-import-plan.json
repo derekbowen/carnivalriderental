@@ -1,0 +1,54 @@
+{
+  "generatedAt": "2026-10-18T09:29:38.366Z",
+  "audit": {
+    "file": "carnival-gap-audit (2026-10-06)",
+    "companiesNew": 539,
+    "ridesNew": 3112
+  },
+  "selection": {
+    "newCompanies": 26,
+    "promotedCompanies": 10,
+    "listings": 799,
+    "listingsWithPhoto": 628,
+    "listingsAtNewCompanies": 346,
+    "skipped": {
+      "ride at an existing company without a placeable HQ": 21,
+      "ride at a company the audit flags inactive, renamed or historical": 42,
+      "ride REVIEW: not verified current equipment": 1415,
+      "ride at a new company that is not READY": 484,
+      "ride HOLD: not verified current equipment": 338,
+      "ride REJECT: not verified current equipment": 13,
+      "new company with no importable rides": 4
+    }
+  },
+  "accounts": {
+    "eligibleBefore": 184,
+    "eligibleAfter": 220,
+    "gapNewAccounts": 26,
+    "promotedFromVerifyFirst": 10,
+    "blockingIssues": 0,
+    "issues": {}
+  },
+  "listings": {
+    "plannedBefore": 3714,
+    "plannedAfter": 4512,
+    "gapPlanned": 798,
+    "gapHeldForPrivacy": 1,
+    "gapHeldReasons": {
+      "title or public data names the company (only the description is anonymised)": 1
+    },
+    "blockingIssues": 0,
+    "issues": {},
+    "gapWithSourcePhoto": 627,
+    "gapByClass": {
+      "family": 201,
+      "kiddie": 236,
+      "major": 223,
+      "coaster": 17,
+      "funhouse": 34,
+      "spectacular": 39,
+      "other": 47,
+      "dark-ride": 1
+    }
+  }
+}

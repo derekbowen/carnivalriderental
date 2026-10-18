@@ -187,7 +187,9 @@ describe("listing import run", () => {
   });
 });
 
-const EXTRACT = "imports/company-accounts/source/workbook.json";
+// The original host-workbook extract: once the gap audit is merged (npm run import:gap-audit), workbook.json
+// holds the merged rows and the original is kept as workbook-base.json.
+const EXTRACT = ["imports/company-accounts/source/workbook-base.json", "imports/company-accounts/source/workbook.json"].find((f) => fs.existsSync(f)) ?? "imports/company-accounts/source/workbook.json";
 const hasListings = fs.existsSync(EXTRACT) && Array.isArray(JSON.parse(fs.readFileSync(EXTRACT, "utf8")).listings);
 describe.skipIf(!hasListings)("Carnival_Host_Import.xlsx listings extract", () => {
   it("3,714 importable, 7 held, no issues, nothing private or unverified in public data", () => {
