@@ -52,6 +52,11 @@ export interface AuditFiles {
   ridesNew: CsvRow[];
   companiesUpdates: CsvRow[];
   inactive: CsvRow[];
+  /**
+   * The operator's own description of each ride, copied from its source page (imports/gap-audit/ride-text.json,
+   * keyed by listing externalId). Preferred over the audit's one-line summary; the same filters apply.
+   */
+  rideText?: Record<string, string>;
 }
 
 interface WbUser { externalId: string; importTier: string; metadata: string; publicData: string; privateData: string; protectedData: string; [k: string]: unknown }
@@ -105,7 +110,7 @@ export function companyWords(names: (string | null | undefined)[]): string[] {
   return [...new Set(names.flatMap((n) => (n ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9']+/)).map((w) => w.replace(/'s$/, "")).filter((w) => w.length >= 4 && !GENERIC.has(w)))];
 }
 
-export function cleanSummary(text: string, avoid: string[] = []): string {
+export function cleanSummary(text: string, avoid: string[] = [], opts: { keepHeight?: boolean; maxChars?: number } = {}): string {
   // Split into clauses at sentence ends and semicolons, but not after an abbreviation ("Dept.", "Co.").
   const clauses = text
     .replace(/\s+/g, " ")
@@ -114,22 +119,24 @@ export function cleanSummary(text: string, avoid: string[] = []): string {
     .map((c) => c.replace(/\u0000/g, "."))
     .map((c) => c.replace(SOURCE_TALK, "").replace(/\s*[;,]\s*$/, "").trim())
     .filter((c) => c.split(" ").length >= 2 && !CLAIM.test(c) && !NOTE.test(c) && !/https?:\/\/|www\./i.test(c))
-    // A minimum height is stated once, from the parsed value.
-    .filter((c) => !/\d+\s*("|in\b|inches)\s*(to ride|minimum|or taller)/i.test(c))
+    // A minimum height is stated once, from the parsed value (kept in the text when there is none).
+    .filter((c) => opts.keepHeight || !/\d+\s*("|in\b|inches)\s*(to ride|minimum|or taller)/i.test(c))
     .filter((c) => !avoid.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(c)));
-  return clauses
-    .map((c) => c.charAt(0).toUpperCase() + c.slice(1))
-    .map((c) => (/[.!?]$/.test(c) ? c : `${c}.`))
-    .join(" ")
-    .trim();
+  const out: string[] = [];
+  for (const c of clauses.map((x) => x.charAt(0).toUpperCase() + x.slice(1)).map((x) => (/[.!?]$/.test(x) ? x : `${x}.`))) {
+    if (opts.maxChars && [...out, c].join(" ").length > opts.maxChars) break;
+    out.push(c);
+  }
+  return out.join(" ").trim();
 }
 
 const CLASS_NOUN: Record<string, string> = { kiddie: "Kiddie ride", family: "Family ride", major: "Major ride", spectacular: "Spectacular ride", coaster: "Roller coaster", funhouse: "Fun house or walk-through", "dark-ride": "Dark ride", water: "Water ride", other: "Carnival attraction" };
 
 /** The listing description: the cleaned summary, then the verified facts the audit recorded. */
-export function describeRide(r: CsvRow, cls: string, avoid: string[] = []): string {
+export function describeRide(r: CsvRow, cls: string, avoid: string[] = [], operatorText = ""): string {
   const parts: string[] = [];
-  const summary = cleanSummary(r.description ?? "", avoid);
+  const keepHeight = !inches(r.minimum_height ?? "");
+  const summary = cleanSummary(operatorText, avoid, { keepHeight, maxChars: 1200 }) || cleanSummary(r.description ?? "", avoid, { keepHeight });
   parts.push(summary || `${CLASS_NOUN[cls] ?? "Carnival ride"} listed by an independent operator.`);
   const minIn = inches(r.minimum_height ?? "");
   if (minIn) parts.push(`Rider rules: minimum height ${minIn} in.`);
@@ -277,7 +284,7 @@ export function planGapAudit(audit: AuditFiles, wb: GapWorkbook, geocode: Geocod
       externalId,
       authorExternalId: author.externalId,
       title,
-      description: describeRide(r, cls, author.avoid),
+      description: describeRide(r, cls, author.avoid, audit.rideText?.[externalId] ?? ""),
       lat: author.lat,
       lng: author.lng,
       imageUrl: photo,
@@ -390,7 +397,7 @@ export function mergeWorkbook(wb: GapWorkbook, plan: GapPlan, updates: CsvRow[])
   });
   return {
     ...wb,
-    source: { ...wb.source, gapAudit: { importSource: IMPORT_SOURCE, newCompanies: plan.users.length, promoted: plan.promoted.length, listings: plan.listings.length } },
+    source: { ...wb.source, gapAudit: { importSource: IMPORT_SOURCE, newCompanies: plan.users.length, promoted: plan.promoted.length, listings: plan.listings.length, listingIds: plan.listings.map((l) => l.externalId) } },
     users: [...users, ...plan.users],
     companies: [...wb.companies.map((c) => (promoted.has(c.companyId) ? { ...c, importTier: "A_ready" } : c)), ...plan.users.map((u) => ({ companyId: String(J(u.metadata).companyId), importTier: "A_ready" }))],
     listings: [...wb.listings, ...plan.listings],

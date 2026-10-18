@@ -6,6 +6,8 @@
  *   npm run import:photos -- --apply                        # every created listing with a source photo
  *   npm run import:photos -- --remove acme-shows            # takedown: strip that company's imported photos
  *                                                           # and add it to imports/photos/takedowns.json
+ *   npm run import:photos -- --apply --approve --from-source --founder-go --target live --confirm-live "CarnivalRental"
+ *                                                           # gap-audit rides (no Test copy): fetch from the operator's page
  * Options: --company id1,id2  --only externalId1,…  --limit N
  */
 import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
@@ -112,7 +114,18 @@ const api: PhotoApi = {
   let { items, noPhoto, notCreated } = planPhotos(plan.rows, mapping);
   // Live: copy each photo from its Test listing's hosted image; operator sites are not fetched again.
   const fromTest = opt("from-test");
-  if (target === "live" && apply && !fromTest && !argv.includes("--approve-remaining")) throw new Error("Refusing: Live photos are copied from Test (--from-test imports/migration/test-public.json).");
+  // Gap-audit rides (founder go 2026-10-18: "with photos") never existed in Test: --from-source fetches
+  // their photo from the operator's own page, and only for those rows (workbook source.gapAudit.listingIds).
+  const fromSource = argv.includes("--from-source");
+  if (fromSource && fromTest) throw new Error("Refusing: pass --from-test or --from-source, not both.");
+  if (target === "live" && apply && !fromTest && !fromSource && !argv.includes("--approve-remaining")) throw new Error("Refusing: Live photos are copied from Test (--from-test imports/migration/test-public.json), or fetched from the operator's page for gap-audit rides (--from-source).");
+  if (fromSource) {
+    if (target !== "test" && apply && !argv.includes("--founder-go")) throw new Error("Refusing: --from-source on Live needs --founder-go (founder go 2026-10-18 for the gap-audit photos).");
+    const ids = new Set<string>((wb.source?.gapAudit?.listingIds as string[] | undefined) ?? []);
+    if (!ids.size) throw new Error("Refusing: the workbook has no gap-audit rows (run npm run import:gap-audit first).");
+    items = items.filter((it) => ids.has(it.externalId));
+    console.log(`From source: ${items.length} gap-audit listings have a source photo on the operator's page.`);
+  }
   if (fromTest) {
     const snap = JSON.parse(fs.readFileSync(fromTest, "utf8")) as { marketplace: string; listings: { id: string; metadata: Record<string, unknown>; images: { url: string | null }[] }[] };
     if (snap.marketplace !== TEST_MARKETPLACE) throw new Error(`Refusing: ${fromTest} is not a ${TEST_MARKETPLACE} snapshot.`);

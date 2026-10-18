@@ -61,7 +61,13 @@ Dry run (2026-10-18), all with 0 blocking issues:
    npm run import:listings -- --target live
    npm run import:listings -- --apply --target live --confirm-live "CarnivalRental"
    ```
-5. Photos and approval. The photo importer copies Live photos from Test by default. New rides have no Test copy, so they need a direct-from-source option. That option has not been added yet.
+5. Add photos and publish. The new rides never existed in Test, so their photos come from the operator's page. `--from-source` is limited to the gap-audit rows (the workbook's `source.gapAudit.listingIds`) and needs `--founder-go` on Live:
+   ```sh
+   npm run import:photos -- --from-source --target live                             # dry run
+   npm run import:photos -- --apply --approve --from-source --founder-go --target live --confirm-live "CarnivalRental"
+   npm run import:photos -- --approve-remaining --founder-go --target live --confirm-live "CarnivalRental"   # rides without a photo
+   ```
+   Every photo records its source URL, ride page, date and basis. `--remove <company>` takes a company's imported photos down.
 6. Refresh the inventory and release:
    ```sh
    npm run inventory:export -- --target live
@@ -71,8 +77,14 @@ Dry run (2026-10-18), all with 0 blocking issues:
    ```
    Then run the full checks and deploy.
 
-## Not done yet
+## Operator ride text
 
-- The photo importer option to download new rides' photos from the operator's page on Live, under `--founder-go`.
-- Full operator ride text for the 389 rides whose audit summary is empty or was all notes: about 165 operator pages, 151 of them about a single ride.
+`imports/gap-audit/ride-text.json` (committed) holds each ride's own description, keyed by listing externalId:
+- copied verbatim from the ride's source page (the operator's own site), one fetch per page (2026-10-18);
+- no link following, and blocked pages left blank;
+- emails, phone numbers and links removed before saving.
+
+The merge prefers this text over the audit's one-line summary. The same filters apply (claims, research notes, the operator's name), and descriptions are capped at about 1,200 characters.
+
+## Not done yet
 - Contact updates from the audit for existing live accounts: the importers never rewrite accounts, so this needs a separate, reviewed tool.

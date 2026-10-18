@@ -30,7 +30,10 @@ if (!fs.existsSync(base)) {
   console.log(`Saved the original workbook as ${base}`);
 }
 const csv = (f: string) => parseCsv(fs.readFileSync(path.join(dir, f), "utf8"));
-const audit = { companiesNew: csv("companies-new.csv"), ridesNew: csv("rides-new.csv"), companiesUpdates: csv("companies-updates.csv"), inactive: csv("inactive-or-historical.csv") };
+// The operators' own ride text, fetched from each ride's source page (committed; see docs/GAP_AUDIT_IMPORT.md).
+const RIDE_TEXT = "imports/gap-audit/ride-text.json";
+const rideText = fs.existsSync(RIDE_TEXT) ? (JSON.parse(fs.readFileSync(RIDE_TEXT, "utf8")) as { texts: Record<string, string> }).texts : {};
+const audit = { companiesNew: csv("companies-new.csv"), ridesNew: csv("rides-new.csv"), companiesUpdates: csv("companies-updates.csv"), inactive: csv("inactive-or-historical.csv"), rideText };
 const wb = JSON.parse(fs.readFileSync(base, "utf8")) as GapWorkbook;
 
 const plan = planGapAudit(audit, wb, geocode);
@@ -50,7 +53,7 @@ const tally = (xs: { issue: string }[]) => xs.reduce<Record<string, number>>((a,
 const report = {
   generatedAt: new Date().toISOString(),
   audit: { file: "carnival-gap-audit (2026-10-06)", companiesNew: audit.companiesNew.length, ridesNew: audit.ridesNew.length },
-  selection: { ...plan.stats, skipped: plan.skipped },
+  selection: { ...plan.stats, operatorTextAvailable: plan.listings.filter((l) => rideText[l.externalId]).length, skipped: plan.skipped },
   accounts: {
     eligibleBefore: planImport(wb as never).eligible.length,
     eligibleAfter: accounts.eligible.length,

@@ -78,6 +78,12 @@ describe("gap audit helpers", () => {
     expect(d).toBe("Classic spinning flat ride.\n\nRider rules: minimum height 42 in.\n\nCapacity: 21 riders.\n\nSize: 50 ft × 45 ft footprint. Confirm the space needed with the operator.");
     expect(describeRide(ride({ description: "", minimum_height: "", capacity: "", footprint_length: "", footprint_width: "" }), "kiddie")).toBe("Kiddie ride listed by an independent operator.");
   });
+  it("prefers the operator's own text, with the same filters, and keeps its height rule when the audit has none", () => {
+    const text = "Our Tilt-A-Whirl spins riders in seven tubs. Fully insured and state inspected! Call us today. Riders must be 42 inches to ride.";
+    expect(describeRide(ride({ minimum_height: "", capacity: "", footprint_length: "", footprint_width: "" }), "major", [], text)).toBe("Our Tilt-A-Whirl spins riders in seven tubs. Riders must be 42 inches to ride.");
+    expect(describeRide(ride({}), "major", [], text).split("\n\n")[0]).toBe("Our Tilt-A-Whirl spins riders in seven tubs.");
+    expect(describeRide(ride({ capacity: "", footprint_length: "", footprint_width: "" }), "major", [], "Fully insured.")).toBe("Classic spinning flat ride.\n\nRider rules: minimum height 42 in.");
+  });
 });
 
 describe("planGapAudit + mergeWorkbook", () => {
