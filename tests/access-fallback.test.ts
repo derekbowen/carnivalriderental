@@ -9,8 +9,8 @@ import { fakeStripe } from "@/lib/access/stripe";
 import { RIDE_TYPES } from "@/lib/inventory";
 
 const SITE = "http://test.local";
-// No trackless train within 200 miles of Riverside in the snapshot; kiddie trains 13+ miles away.
-const riverside = { email: "buyer@example.com", eventDate: "2030-06-01", city: "Riverside", state: "CA", rideType: "trackless-train" };
+// No trackless train within 200 miles of Fresno in the snapshot; kiddie trains 24+ miles away.
+const fresno = { email: "buyer@example.com", eventDate: "2030-06-01", city: "Fresno", state: "CA", rideType: "trackless-train" };
 const canonical = new Set(RIDE_TYPES.map((t) => t.id));
 const funnel = (db: AccessDb) => db.query(`SELECT name, event_request_id, result_event_request_id, fallback_kind, fallback_ride_type FROM access_funnel_events ORDER BY created_at, name`);
 const noSend = async () => ({ sent: true, deliveredTo: "test" });
@@ -61,28 +61,28 @@ describe("zero-match fallback in the ledger", () => {
   });
 
   it("a zero-match request records zero_exact_match and offers the closest viable alternative", async () => {
-    const { event, sellable } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event, sellable } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     expect(sellable).toBe(false);
     expect(event.matchedOperators).toBe(0);
     const { offers } = await fallbackView(db, event.id);
     expect(offers[0]).toMatchObject({ kind: "related", rideType: "kiddie-train", requestedRideType: "trackless-train", radiusMiles: 200, tier: "standard" });
     expect(offers[0].operators).toBeGreaterThanOrEqual(DEFAULT_PRODUCT.minimumMatches);
-    expect(offers[0].nearestMiles).toBe(13);
+    expect(offers[0].nearestMiles).toBe(24);
     expect((await funnel(db)).map((r) => r.name).sort()).toEqual(["fallback_match_shown", "zero_exact_match"]);
   });
 
   it("offers are anonymous: counts and distances only, no operator or listing identity", async () => {
-    const { event } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     const raw = String((await db.query(`SELECT detail_json FROM access_funnel_events WHERE name = 'fallback_match_shown' AND event_request_id = ?`, [event.id]))[0].detail_json);
     expect(raw).not.toMatch(/op-fixture|operatorId|title|photo|Fixture Amusements|@|phone|website/i);
     for (const o of (JSON.parse(raw) as { offers: Record<string, unknown>[] }).offers) expect(Object.keys(o).sort()).toEqual(["categoryId", "kind", "nearestMiles", "operators", "radiusMiles", "requestedRideType", "rideClass", "rideType", "tier"]);
   });
 
   it("picking an alternative creates a new request priced by its own ride requirement, once", async () => {
-    const { event } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     const first = await createAlternativeRequest(db, source, event.id, 0, { cache: memoryContactCache() });
     expect(first.reused).toBe(false);
-    expect(first.event).toMatchObject({ rideType: "kiddie-train", status: "matched", city: "Riverside", state: "CA", email: "buyer@example.com", eventDate: "2030-06-01", listingId: null, tier: "standard" });
+    expect(first.event).toMatchObject({ rideType: "kiddie-train", status: "matched", city: "Fresno", state: "CA", email: "buyer@example.com", eventDate: "2030-06-01", listingId: null, tier: "standard" });
     expect(first.event.operators.every((o) => o.listings.every((l) => l.rideType === "kiddie-train"))).toBe(true);
     const quote = await quoteForEvent(db, first.event);
     expect(quote).toMatchObject({ tier: "standard", sellable: true });
@@ -99,15 +99,15 @@ describe("zero-match fallback in the ledger", () => {
   });
 
   it("only offers that were shown can be picked", async () => {
-    const { event } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     await expect(createAlternativeRequest(db, source, event.id, 9, { cache: memoryContactCache() })).rejects.toThrow(/isn't available/);
-    const ok = await startEventRequest(db, source, { ...riverside, rideType: "kiddie-train" }, { cache: memoryContactCache() });
+    const ok = await startEventRequest(db, source, { ...fresno, rideType: "kiddie-train" }, { cache: memoryContactCache() });
     expect(ok.sellable).toBe(true);
     await expect(createAlternativeRequest(db, source, ok.event.id, 0, { cache: memoryContactCache() })).rejects.toThrow(/isn't available/);
   });
 
   it("a Ferris wheel request widened to a bigger radius stays at the Ferris tier", async () => {
-    const { event, sellable } = await startEventRequest(db, source, { ...riverside, city: "Billings", state: "MT", rideType: "ferris-wheel" }, { cache: memoryContactCache() });
+    const { event, sellable } = await startEventRequest(db, source, { ...fresno, city: "Billings", state: "MT", rideType: "ferris-wheel" }, { cache: memoryContactCache() });
     expect(sellable).toBe(false);
     const { offers } = await fallbackView(db, event.id);
     const wide = offers.findIndex((o) => o.kind === "radius");
@@ -120,7 +120,7 @@ describe("zero-match fallback in the ledger", () => {
   });
 
   it("a zero-match request saved before the chain existed gets its alternatives once, on first view", async () => {
-    const { event } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     await db.query(`DELETE FROM access_funnel_events`);
     expect((await fallbackView(db, event.id)).offers).toEqual([]);
     await ensureFallbacks(db, source, event, memoryContactCache());
@@ -130,13 +130,13 @@ describe("zero-match fallback in the ledger", () => {
   });
 
   it("a sellable request records nothing in the funnel", async () => {
-    const { sellable } = await startEventRequest(db, source, { ...riverside, rideType: "kiddie-train" }, { cache: memoryContactCache() });
+    const { sellable } = await startEventRequest(db, source, { ...fresno, rideType: "kiddie-train" }, { cache: memoryContactCache() });
     expect(sellable).toBe(true);
     expect(await funnel(db)).toEqual([]);
   });
 
   it("manual search is recorded once and the team is emailed the customer's own request", async () => {
-    const { event } = await startEventRequest(db, source, riverside, { cache: memoryContactCache() });
+    const { event } = await startEventRequest(db, source, fresno, { cache: memoryContactCache() });
     const sent: { to: string; subject: string; text: string; key: string }[] = [];
     const send = async (to: string, c: { subject: string; text: string }, key: string) => {
       sent.push({ to, subject: c.subject, text: c.text, key });
@@ -145,7 +145,7 @@ describe("zero-match fallback in the ledger", () => {
     expect(await requestManualSearch(db, event.id, { send })).toEqual({ created: true });
     expect(await requestManualSearch(db, event.id, { send })).toEqual({ created: false });
     expect(sent).toHaveLength(1);
-    expect(sent[0]).toMatchObject({ to: "support@carnivalriderental.us", subject: "Manual search: trackless train near Riverside, CA (2030-06-01)", key: `manual-search:${event.id}` });
+    expect(sent[0]).toMatchObject({ to: "support@carnivalriderental.us", subject: "Manual search: trackless train near Fresno, CA (2030-06-01)", key: `manual-search:${event.id}` });
     expect(sent[0].text).toContain("Customer email: buyer@example.com");
     expect(sent[0].text).not.toMatch(/op-fixture|Fixture Amusements/);
     expect((await fallbackView(db, event.id)).manualRequested).toBe(true);
