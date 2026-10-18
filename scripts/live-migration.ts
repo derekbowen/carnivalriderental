@@ -8,7 +8,7 @@
  *   npm run migrate:live -- reconcile       # workbook rows vs current Test public state → imports/migration/reconcile.json
  *   npm run migrate:live -- verify          # Live read-back: counts, relationships, privacy of public fields
  *   npm run migrate:live -- redirects       # Test listing id → Live listing id (public ids only) → src/lib/inventory/test-to-live.json
- *   npm run migrate:live -- wave [--size N] # indexing wave 2: N indexable URLs from fully gated pages → src/lib/inventory/indexing-wave-2.json
+ *   npm run migrate:live -- wave [--size N] [--keep] # indexing wave 2: N indexable URLs from fully gated pages → src/lib/inventory/indexing-wave-2.json
  *   npm run migrate:live -- cohort          # indexed-set manifest + expansion map → reports/indexing-cohort.json, reports/indexing-expansion.json
  *
  * Every phase asserts the marketplace it reads by name before using the data. Nothing here writes to
@@ -477,6 +477,8 @@ async function cohort() {
  * set (wave 1 + wave 2) reaches --size URLs (default 1000). Writes src/lib/inventory/indexing-wave-2.json
  * (public paths only). Thresholds are untouched; the wave only stands in for template copy approval on
  * these exact paths, and every gate is evaluated again on every build.
+ * --keep (after a new inventory snapshot): pages already in wave 2 that still pass every gate stay;
+ * only the slots freed by pages that no longer do are filled, strongest candidates first.
  */
 async function wave() {
   const i = process.argv.indexOf("--size");
@@ -507,7 +509,13 @@ async function wave() {
   const fixed = FIRST_COHORT_CORE_PATHS.length + FIRST_COHORT_PATHS.length + categoryPaths.length;
   if (size < fixed) throw new Error(`--size ${size} is below the fixed set (${fixed}: wave 1 + ${categoryPaths.length} eligible category hubs); refusing to enable more URLs than asked`);
   const { candidates } = await gatedCandidates(new Set([...FIRST_COHORT_PATHS, ...FIRST_COHORT_CORE_PATHS]), distinct);
-  const picked = candidates.slice(0, Math.max(0, size - fixed));
+  const slots = Math.max(0, size - fixed);
+  const current = new Set(process.argv.includes("--keep") ? readJson<{ paths: string[] }>("src/lib/inventory/indexing-wave-2.json").paths : []);
+  const kept = candidates.filter((c) => current.has(c.path)).slice(0, slots);
+  const added = candidates.filter((c) => !current.has(c.path)).slice(0, slots - kept.length);
+  const chosen = new Set([...kept, ...added]);
+  const picked = candidates.filter((c) => chosen.has(c));
+  if (current.size) console.log(`--keep: ${kept.length} of ${current.size} wave-2 pages still pass every gate; ${added.length} added.`);
   const minOps = picked.length ? picked[picked.length - 1].contactableOperators : null;
   const out = {
     wave: 2,
@@ -519,6 +527,7 @@ async function wave() {
       "only pages that pass every gate unchanged: supply threshold (city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides; category ≥ 3), head of its near-duplicate group, ≥ 3 distinct Live operators with a usable contact channel",
       "ranked by distinct contactable operators, then rides, then path; the top ones fill the indexed set to the target",
       `target ${size} indexable URLs including wave 1 (13); wave 2 adds ${categoryPaths.length} category hubs and ${picked.length} city / ride + city pages (≥ ${minOps} contactable operators each)`,
+      ...(current.size ? [`refreshed on the ${inv.INVENTORY_GENERATED_AT.slice(0, 10)} snapshot with --keep: ${kept.length} pages kept, ${added.length} added in place of pages that no longer pass every gate`] : []),
     ],
     targetIndexableUrls: size,
     candidatesAvailable: candidates.length,
