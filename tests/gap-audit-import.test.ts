@@ -72,6 +72,7 @@ describe("gap audit helpers", () => {
     expect(cleanSummary("Spinning teacups; site says it is inspected by the PA Dept. of Agriculture. $200 a day. Insured.")).toBe("Spinning teacups.");
     expect(cleanSummary("Details on operator page. Category inferred from name.")).toBe("");
     expect(cleanSummary("A ride on Sooner's midway. Riders spin.", ["sooner"])).toBe("Riders spin.");
+    expect(cleanSummary("We own and operate every ride we rent. Family-owned since 1980. Guaranteed to be safe. Two-seat cars spin freely.")).toBe("Two-seat cars spin freely.");
   });
   it("describes a ride from the cleaned summary plus the recorded facts", () => {
     const d = describeRide(ride({}), "major");

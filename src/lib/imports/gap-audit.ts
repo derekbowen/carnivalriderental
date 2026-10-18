@@ -95,8 +95,11 @@ export function inches(v: string): number | null {
   return inch >= 24 && inch <= 84 ? Math.round(inch) : null;
 }
 
-/** Clauses that would assert something we never claim (CLAUDE.md: no insurance, certification, price or availability claims). */
-const CLAIM = /\$\s?\d|\b(inspect|regist|insur|certif|licen[cs]|permit|sticker|state[- ]approved|safety record|price|priced|rates?\b|rated\b|per (day|hour|event)\b|availab|book(ed|ing)? now|call (us|today))/i;
+/**
+ * Clauses that would assert something we never claim (CLAUDE.md): insurance, certification, safety
+ * guarantees, prices, availability, and ownership ("we own our rides": no listing field verifies it).
+ */
+const CLAIM = /\$\s?\d|\b(inspect|regist|insur|certif|licen[cs]|permit|sticker|state[- ]approved|safety record|guarantee|price|priced|rates?\b|rated\b|per (day|hour|event)\b|availab|book(ed|ing)? now|call (us|today)|we own|owns? (all |each |every )?(of )?(our|its|their) (own )?(rides|equipment)|own(ed)?[- ]and[- ]operated|owner[- ]operated|family[- ]owned|our own (rides|equipment|fleet))/i;
 /** Research phrasing that is about our sources, not the ride. */
 const SOURCE_TALK = /\b(?:the |operator(?:'s)? )?(?:site|page|website|listing|catalog) (?:says|states|notes|lists|shows|describes)(?: (?:it|that|the ride|them) (?:is|are|as))?\s*/gi;
 
