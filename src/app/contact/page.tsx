@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
-import { BRAND } from "@/lib/config";
+import { BRAND, SOCIAL_LINKS } from "@/lib/config";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
@@ -28,6 +28,10 @@ export default function ContactPage() {
           </div>
         ))}
       </dl>
+      <h2 className="mt-10 text-2xl">Follow us</h2>
+      <ul className="mt-3 flex flex-wrap gap-3 text-sm" data-testid="contact-social">
+        {SOCIAL_LINKS.map((s) => <li key={s.name}><a className="inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-4 font-medium hover:border-ink" href={s.href} target="_blank" rel="me noopener noreferrer">{s.name}</a></li>)}
+      </ul>
       <p className="mt-6 text-sm text-muted">{BRAND.name} is owned and operated by {BRAND.legalEntity}. Lost your pass link? <Link className="underline" href={paths.passRecover()}>Request a new one</Link>.</p>
     </div>
   );

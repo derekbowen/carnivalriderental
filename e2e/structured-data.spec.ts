@@ -33,6 +33,7 @@ test("every public page: one connected graph, both audiences, no prices or ratin
     const g = doc["@graph"];
     const types = g.map((n) => n["@type"]);
     for (const t of ["Organization", "WebSite"]) expect(types, `${path} ${t}`).toContain(t);
+    expect(g.find((n) => n["@type"] === "Organization")!.sameAs, path).toEqual(["https://www.facebook.com/carnivalriderental", "https://www.instagram.com/carnivalriderental/", "https://www.youtube.com/@carnivalriderental"]);
 
     // Operator side: one small node, and it is visible in the footer strip.
     const op = g.find((n) => String(n["@id"]).endsWith("/operators#service"))!;

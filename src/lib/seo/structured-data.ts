@@ -1,5 +1,5 @@
 import type { ListingCardModel } from "../catalog/card";
-import { BRAND, siteUrl } from "../config";
+import { BRAND, siteUrl, SOCIAL_LINKS } from "../config";
 import type { Faq } from "../taxonomy";
 import { canonicalUrl, paths } from "./routes";
 
@@ -35,6 +35,7 @@ export function organizationNode(): Json {
     name: BRAND.name,
     legalName: BRAND.legalEntity,
     url: siteUrl(),
+    sameAs: SOCIAL_LINKS.map((s) => s.href),
     areaServed: { "@type": "Country", name: "United States" },
   };
 }

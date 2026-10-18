@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MobileMenu } from "./MobileMenu";
-import { appEnv, BRAND, publicIndexingEnabled } from "@/lib/config";
+import { FacebookIcon, InstagramIcon, YoutubeIcon } from "lucide-react";
+import { appEnv, BRAND, publicIndexingEnabled, SOCIAL_LINKS } from "@/lib/config";
 import { FOOTER_CITIES, FOOTER_EVENTS, FOOTER_RIDE_TYPES, FOOTER_STATES, type FooterLink } from "@/lib/seo/footer-links";
 import { paths } from "@/lib/seo/routes";
 
@@ -46,6 +47,7 @@ export function SiteHeader() {
 }
 
 const SUPPORT_EMAIL = `support@${BRAND.domain}`;
+const SOCIAL_ICONS: Record<(typeof SOCIAL_LINKS)[number]["name"], typeof FacebookIcon> = { Facebook: FacebookIcon, Instagram: InstagramIcon, YouTube: YoutubeIcon };
 
 /**
  * Independent security scan of the public site (docs/SECURITY_SCAN_2026-10-15.md). The badge image and
@@ -89,6 +91,18 @@ export function SiteFooter() {
           <p className="mt-5 text-sm text-white/70">
             Questions? <a className="font-semibold text-white hover:underline" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
           </p>
+          <ul className="mt-5 flex gap-2" aria-label="Follow us" data-testid="social-links">
+            {SOCIAL_LINKS.map((s) => {
+              const Icon = SOCIAL_ICONS[s.name];
+              return (
+                <li key={s.name}>
+                  <a href={s.href} target="_blank" rel="me noopener noreferrer" aria-label={`${BRAND.name} on ${s.name}`} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-colors hover:border-white hover:text-white">
+                    <Icon className="h-5 w-5" aria-hidden="true" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
           <Link href={paths.connect()} className="btn-primary mt-5 inline-flex">Connect with operators</Link>
         </div>
         <nav aria-label="Footer" className="grid grid-cols-2 gap-8 text-sm sm:grid-cols-4 lg:col-span-8">

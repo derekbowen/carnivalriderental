@@ -55,5 +55,12 @@ export const BRAND = {
   legalEntity: "10000 Solutions LLC",
 };
 
+/** The brand's own social profiles (founder, 2026-10-18). Footer, contact page and Organization sameAs read this list. */
+export const SOCIAL_LINKS = [
+  { name: "Facebook", href: "https://www.facebook.com/carnivalriderental" },
+  { name: "Instagram", href: "https://www.instagram.com/carnivalriderental/" },
+  { name: "YouTube", href: "https://www.youtube.com/@carnivalriderental" },
+] as const;
+
 /** Site-wide default description: the customer's intent (rent a ride) first, then what we do. */
 export const SITE_DESCRIPTION = "Browse carnival rides from independent operators across the U.S.: Ferris wheels, thrill rides, family rides and more. Connect directly with matching companies.";
