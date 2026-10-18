@@ -213,8 +213,11 @@ async function verify() {
   const { PUBLIC_USER_METADATA_KEYS, personNames } = await import("../src/lib/imports/company-accounts");
   const { OPERATOR_PLACEHOLDER, IDENTITY_PUBLIC_KEYS, UNCLAIMED_NOTICE } = await import("../src/lib/operators/claim");
   const { integ, anon } = await liveTokens();
-  const plan = planListings(readJson("imports/company-accounts/source/workbook.json"));
+  const wb = readJson<{ source?: { gapAudit?: { listingIds?: string[] } } }>("imports/company-accounts/source/workbook.json");
+  const plan = planListings(wb as never);
   const companyRows = new Map([...plan.authors.values()].map((r) => [r.metadata.companyId, r]));
+  // Gap-audit rides (docs/GAP_AUDIT_IMPORT.md) never existed in Test, so they have no Test counterpart.
+  const gapIds = new Set(wb.source?.gapAudit?.listingIds ?? []);
 
   // Integration API: accounts and listings with private markers.
   type IUser = { id: string; attributes: { state: string; email: string; profile: { displayName: string; publicData?: Record<string, unknown>; protectedData?: Record<string, unknown>; privateData?: Record<string, unknown>; metadata?: Record<string, unknown> } } };
@@ -243,8 +246,11 @@ async function verify() {
   // listing with the same import id was authored by that company's Test account.
   const testMapAcc = readJson<{ accounts: Record<string, { userId: string; companyId: string }> }>("imports/company-accounts/carnivalrental-test/mapping.json").accounts;
   const testUserByCompany = new Map(Object.values(testMapAcc).map((a) => [a.companyId, a.userId]));
-  const test = readJson<{ listings: TestPublicListing[] }>(`${DIR}/test-public.json`).listings;
-  const testByImport = new Map(test.map((l) => [l.metadata.importExternalId as string, l]));
+  // The Test snapshot is a local, gitignored file (snapshot-test); without it only the Live side is checked.
+  const testFile = `${DIR}/test-public.json`;
+  const test = fs.existsSync(testFile) ? readJson<{ listings: TestPublicListing[] }>(testFile).listings : null;
+  if (!test) console.log(`No ${testFile}: Test relationships not checked (run snapshot-test to include them).`);
+  const testByImport = new Map((test ?? []).map((l) => [l.metadata.importExternalId as string, l]));
   const relationshipDrift: string[] = [];
   const testToLive: Record<string, string> = {};
   for (const [k, ls] of byImportId) {
@@ -252,6 +258,7 @@ async function verify() {
     const company = String(l.attributes.privateData?.companyId);
     const liveAuthor = userByCompany.get(company)?.[0]?.id;
     if (l.relationships.author.data.id !== liveAuthor) relationshipDrift.push(`${k}: Live author is not the company's Live account`);
+    if (!test || gapIds.has(k)) continue;
     const t = testByImport.get(k);
     if (!t) relationshipDrift.push(`${k}: no Test listing`);
     else {
@@ -324,11 +331,11 @@ async function verify() {
     marketplace: LIVE_MARKETPLACE,
     accounts: { total: users.length, imported: imported.length, byState: userStates, duplicatesByCompany: dupUsers.length },
     listings: { total: listings.length, byState: states, withImage, duplicatesByImportId: dupListings.length, withoutImportMarker: unmarkedListings.length },
-    relationships: { checked: byImportId.size, drift: relationshipDrift.length },
+    relationships: { checked: byImportId.size, drift: relationshipDrift.length, testSide: test ? "checked (gap-audit rides excluded)" : "not checked (no Test snapshot)" },
     publicRead: { publishedListings: pub.length, leaks: leaks.length, photosChecked: sample.length, photoFailures: badPhotos.length },
   };
   writeJsonAtomic(`${DIR}/verify-live.json`, { ...summary, dupUsers, dupListings, unmarkedListings, relationshipDrift: relationshipDrift.slice(0, 200), leaks: leaks.slice(0, 200), badPhotos });
-  writeJsonAtomic(`${DIR}/test-to-live.json`, { generatedAt: summary.checkedAt, testToLive });
+  if (test) writeJsonAtomic(`${DIR}/test-to-live.json`, { generatedAt: summary.checkedAt, testToLive });
   console.log(JSON.stringify(summary, null, 1));
   if (dupUsers.length || dupListings.length || relationshipDrift.length || leaks.length || badPhotos.length) process.exitCode = 1;
 }
