@@ -86,7 +86,7 @@ export async function sharetribeConnection(force = false): Promise<SharetribeCon
       state: "connected-readonly",
       marketplaceName: body.data.attributes.name,
       marketplaceApi,
-      detail: "Integration API credentials verified with a read-only call. Requests and transactions still use the local development store.",
+      detail: "Integration API credentials verified with a read-only call. Catalog and operator records only; Sharetribe payments are not used.",
       checkedAt: new Date().toISOString(),
     };
   } catch (e) {

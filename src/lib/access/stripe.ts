@@ -106,6 +106,21 @@ export function verifyStripeSignature(rawBody: string, header: string | null, se
   return v1s.some((v) => v.length === expected.length && crypto.timingSafeEqual(Buffer.from(v), Buffer.from(expected)));
 }
 
+/**
+ * Read-only proof that the key works (internal console status): lists one Checkout Session, which
+ * needs only the read permission checkout already uses. Never creates anything; never logs the key.
+ */
+export async function stripeCheck(secretKey: string): Promise<{ ok: true } | { ok: false; detail: string }> {
+  try {
+    const res = await fetch(`${API}/checkout/sessions?limit=1`, { headers: { Authorization: `Bearer ${secretKey}` }, signal: AbortSignal.timeout(8000), cache: "no-store" });
+    if (res.ok) return { ok: true };
+    const err = ((await res.json().catch(() => null)) as { error?: { type?: string } } | null)?.error;
+    return { ok: false, detail: `Stripe answered HTTP ${res.status}${err?.type ? ` (${err.type})` : ""}` };
+  } catch (e) {
+    return { ok: false, detail: `Stripe unreachable: ${(e as Error).name}` };
+  }
+}
+
 export function realStripe(secretKey: string, webhookSecret: string | null): StripeGateway {
   const call = async (method: "GET" | "POST", path: string, body?: Record<string, unknown>, idempotencyKey?: string) => {
     const res = await fetch(`${API}${path}`, {

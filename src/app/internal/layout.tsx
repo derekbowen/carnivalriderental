@@ -24,8 +24,12 @@ export default async function InternalLayout({ children }: { children: React.Rea
           </div>
           <ul className="flex flex-wrap gap-2 text-xs">
             {(await integrationStatuses()).map((s) => (
-              <li key={s.name} title={s.detail} className={`rounded-full border px-3 py-1 ${s.tone === "ok" ? "border-ok/30 bg-ok-wash text-ok" : s.tone === "bad" ? "border-danger/30 bg-danger-wash text-danger" : "border-line bg-paper"}`}>
-                {s.name}: <strong>{s.label}</strong>
+              <li key={s.name} title={s.detail} data-testid="integration-status" className={`rounded-2xl border px-3 py-1 ${s.tone === "ok" ? "border-ok/30 bg-ok-wash text-ok" : s.tone === "bad" ? "border-danger/30 bg-danger-wash text-danger" : "border-line bg-paper"}`}>
+                {/* Tap to read the detail on a phone, where there is no hover title. */}
+                <details>
+                  <summary className="cursor-pointer list-none">{s.name}: <strong>{s.label}</strong></summary>
+                  <p className="max-w-xs pb-1 pt-1 text-ink-soft">{s.detail}</p>
+                </details>
               </li>
             ))}
           </ul>

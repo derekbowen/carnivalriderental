@@ -34,6 +34,13 @@ test("leads: login required; a search shows with its event, outcome and reply li
   await expect(row).toContainText("Didn't buy");
   await expect(row.getByRole("link", { name: "e2e-lead@fastmail.com" })).toHaveAttribute("href", /^mailto:e2e-lead@fastmail\.com\?subject=/);
   expect(await team.content()).not.toMatch(FIXTURE_CONTACT);
+  // The console's status pills describe the real Event Access setup (here the local fake), and tap open.
+  const pills = team.getByTestId("integration-status");
+  await expect(pills.filter({ hasText: "Payments:" })).toContainText("fake checkout (local only)");
+  await expect(pills.filter({ hasText: "Email:" })).toBeVisible();
+  await expect(team.locator("body")).not.toContainText("demo adapter (not connected)");
+  await pills.filter({ hasText: "Payments:" }).locator("summary").click();
+  await expect(pills.filter({ hasText: "Payments:" })).toContainText("No money moves");
   // The console nav reaches it.
   await team.goto("/internal/funnel");
   await team.getByRole("navigation", { name: "Console" }).getByRole("link", { name: "Leads" }).click();
