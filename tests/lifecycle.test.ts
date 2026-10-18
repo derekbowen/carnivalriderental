@@ -116,7 +116,7 @@ describe("lifecycle rules", () => {
     const plans = await duePlans(db, later(61 * MIN));
     expect(plans.map((p) => p.options[0].eventRequestId)).toEqual(second.sellable ? [second.event.id] : []);
     await db.query(`DELETE FROM access_event_requests`);
-    await startEventRequest(db, source, { ...request, rideType: "trackless-train" }, { cache: memoryContactCache() }).catch(() => undefined);
+    await startEventRequest(db, source, { ...request, city: "Fresno", rideType: "trackless-train" }, { cache: memoryContactCache() }).catch(() => undefined);
     expect(templatesOf(await duePlans(db, later(61 * MIN)))).toEqual([]);
     for (const e of ["qa@carnivalriderental.us", "x@example.com", "y@shop.test"]) expect(excludedAddress(e)).toBe(true);
     expect(excludedAddress(EMAIL)).toBe(false);
@@ -229,7 +229,7 @@ describe("lifecycle sending", () => {
     expect(String(sent[0].text)).toContain("Here are the rides you were looking at for your school carnival or fundraiser in Riverside.");
     expect(String(sent[0].html)).not.toMatch(FIXTURE_IDENTITY);
     expect(await savedSearchSent(db, event.id)).toBe(true);
-    const zero = await startEventRequest(db, source, { ...request, rideType: "trackless-train" }, { cache: memoryContactCache() });
+    const zero = await startEventRequest(db, source, { ...request, city: "Fresno", rideType: "trackless-train" }, { cache: memoryContactCache() });
     expect(await sendSavedSearch(db, zero.event.id, d)).toMatchObject({ outcome: "skipped" });
   });
 });

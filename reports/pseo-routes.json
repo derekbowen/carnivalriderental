@@ -7,22 +7,22 @@
   },
   "renderable": {
     "cityPages": 1580,
-    "cityPagesWithSupply": 1433,
-    "cityPagesWithoutSupply": 147,
-    "rideCityPages": 15931,
-    "total": 17511
+    "cityPagesWithSupply": 1512,
+    "cityPagesWithoutSupply": 68,
+    "rideCityPages": 20463,
+    "total": 22043
   },
   "meetSupplyThreshold": {
-    "city": 1427,
-    "rideCity": 15931
+    "city": 1467,
+    "rideCity": 20463
   },
   "eligibleAfterNearDuplicateGate": {
-    "city": 359,
-    "rideCity": 2038
+    "city": 401,
+    "rideCity": 2668
   },
   "indexableNow": 0,
   "sitemapUrls": 0,
-  "noindexNow": 17511,
+  "noindexNow": 22043,
   "blockingReasons": [
     "public indexing disabled in this environment",
     "city template copy not founder-approved",
