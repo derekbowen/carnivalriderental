@@ -37,6 +37,23 @@ Dry run (2026-10-18), all with 0 blocking issues:
 - 798 new listings, 627 with a source photo;
 - 1 listing held for privacy (its title names the company).
 
+## Live run (2026-10-18, done)
+
+Founder go to apply on Live given in session on 2026-10-18, after the dry run matched. Every step ran a single canary first.
+- **Merge:** rebuilt from the Drive export of `Carnival_Host_Import` and the uploaded audit zip; same counts as the dry run above.
+- **Accounts:** 36 created and approved (26 new, 10 promoted); the 184 existing accounts were left untouched (`exists`). All 220 read back unclaimed, with an unverified email, no Stripe and an anonymous public profile.
+- **Listings:** 798 created; 3,714 existing reported `exists`; 0 failures.
+- **Photos:** 566 attached from the operator's page and published.
+  - 61 could not be used: 35 were not JPEG/PNG/GIF and 26 failed to download (mostly 404).
+  - Those 61 and the 171 rides with no source photo (232 in all) were published without a photo (`--approve-remaining`).
+- **Verify** (`migrate:live -- verify`, Live side only):
+  - 220 accounts and 4,512 listings, all published;
+  - 0 duplicates, 0 author drift;
+  - 0 leaks in the anonymous public read;
+  - all 4,069 photos serve.
+- **Inventory:** 4,512 rides from 164 operators.
+- **Indexing:** the new snapshot moved 132 wave-2 pages out of their near-duplicate head position. `migrate:live -- wave --size 1000 --keep` swapped exactly those 132 for the next strongest gated candidates (`docs/PSEO_INDEXING_PLAN.md` §8).
+
 ## Running it (needs the Live credentials)
 
 1. Set the Live credentials as environment variables or in `.env.local`:
