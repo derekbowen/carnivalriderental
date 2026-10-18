@@ -25,7 +25,7 @@ export function PriceHint({ standard, ferris, ferrisTypes }: { standard: string 
         ? ferris
           ? `Ferris Wheel Event Access — ${ferris} applies to this request (any Ferris wheel type).`
           : "Ferris Wheel Event Access isn't available right now."
-        : `${general} Ferris wheel requests (standard, giant or mini) use the Ferris tier. You'll see the exact amount after we count matching operators, before any payment.`}
+        : `${general} You'll see the exact amount before paying.`}
     </p>
   );
 }

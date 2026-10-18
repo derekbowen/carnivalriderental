@@ -13,6 +13,11 @@ export async function POST(req: Request) {
   if (rateLimited(`start:${clientIp(req) ?? "anon"}`, 20, 10 * 60e3)) return refuse(req, 429, "Too many requests");
   const form = await req.formData();
   const raw = Object.fromEntries([...form.entries()].map(([k, v]) => [k, typeof v === "string" ? v : ""]));
+  // The Connect form's single "What ride?" select: a ride type id, or "class:<id>" for a whole category.
+  const ride = raw.ride ?? "";
+  delete raw.ride;
+  if (ride.startsWith("class:")) raw.rideClass ||= ride.slice("class:".length);
+  else if (ride) raw.rideType ||= ride;
   try {
     const rt = await accessRuntime();
     const { event } = await startEventRequest(rt.db, rt.source, raw);

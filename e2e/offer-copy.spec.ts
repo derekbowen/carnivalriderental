@@ -69,3 +69,16 @@ test("phone layouts: connect, offer, ride page and guide fit the screen", async 
   await offer.screenshot({ path: "test-results/mobile-offer.png" });
   await ctx.close();
 });
+
+test("the Connect form asks only for the ride, city, state, date and email", async ({ page }) => {
+  await page.goto("/connect");
+  const form = page.getByTestId("connect-form");
+  const visible = await form.locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id));
+  expect(visible).toEqual(["rideType", "city", "state", "eventDate", "email"]);
+  for (const gone of ["#eventType", "#zip", "#attendance", "#budgetUsd", "#rideClass"]) await expect(page.locator(gone)).toHaveCount(0);
+  await expect(page.locator("#rideType option", { hasText: "Any kiddie ride" })).toHaveAttribute("value", "class:kiddie");
+  // A page that already chose the ride doesn't ask again.
+  await page.goto("/connect?type=carousel");
+  expect(await page.getByTestId("connect-form").locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id))).toEqual(["city", "state", "eventDate", "email"]);
+});
+

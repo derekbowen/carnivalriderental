@@ -116,7 +116,7 @@ test("standard requests stay $99 (even when matched operators own Ferris wheels)
   await submit(page, "/connect?type=carousel");
   await expectOffer(page, "Event Access", "$99");
   await page.goto("/connect");
-  await page.selectOption("#rideClass", "kiddie");
+  await page.selectOption("#rideType", "class:kiddie");
   await fillAndSubmit(page);
   await expectOffer(page, "Event Access", "$99");
   await expect(page.locator("main")).not.toContainText("$199");
