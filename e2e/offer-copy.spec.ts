@@ -82,3 +82,15 @@ test("the Connect form asks only for the ride, city, state, date and email", asy
   expect(await page.getByTestId("connect-form").locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id))).toEqual(["city", "state", "eventDate", "email"]);
 });
 
+
+test("the event date is optional: a search without one goes through and says so", async ({ page }) => {
+  await page.goto("/connect?type=carousel");
+  await expect(page.locator("#eventDate")).not.toHaveAttribute("required", /.*/);
+  await page.fill("#city", "Columbus");
+  await page.selectOption("#state", "OH");
+  await page.fill("#email", "no-date@fastmail.com");
+  await page.getByRole("button", { name: "See matching operators" }).click();
+  await expect(page).toHaveURL(/\/connect\/[0-9a-f-]{36}$/);
+  await expect(page.locator("main")).toContainText("Columbus, OH · date not set.");
+  await expect(page.locator("main")).not.toContainText("null");
+});

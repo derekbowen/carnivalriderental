@@ -31,7 +31,7 @@ export interface ConnectPricing {
  * Event form → POST /api/access/start (fetch via ProtectedForm for BotID; still posts natively without
  * JS). Founder 2026-10-18: only what matching and the pass need. The ride (one select: a ride type, or
  * "class:<id>" for a whole category, mapped by the start route; hidden when the page already chose
- * it), city and state, the date and an email. Event type, ZIP, attendance and budget stay optional on
+ * it), city and state, an optional date (blank is stored as NULL) and an email. Event type, ZIP, attendance and budget stay optional on
  * the server and are no longer asked for; an occasion page still passes its event type along.
  */
 export function ConnectForm({ prefill, today, error, pricing }: { prefill: ConnectPrefill; today: string; error?: string | null; pricing?: ConnectPricing | null }) {
@@ -69,7 +69,7 @@ export function ConnectForm({ prefill, today, error, pricing }: { prefill: Conne
             {US_STATES.map((s) => <option key={s.abbr} value={s.abbr.toUpperCase()}>{s.name}</option>)}
           </select>
         </div>
-        <div><label className="label" htmlFor="eventDate">Event date</label><input className="input" id="eventDate" name="eventDate" type="date" min={today} required /></div>
+        <div><label className="label" htmlFor="eventDate">Event date <span className="font-normal text-muted">(optional)</span></label><input className="input" id="eventDate" name="eventDate" type="date" min={today} /><p className="mt-1 text-xs text-muted">Not sure yet? Leave it blank.</p></div>
         <div><label className="label" htmlFor="email">Your email</label><input className="input" id="email" name="email" type="email" required autoComplete="email" /><p className="mt-1 text-xs text-muted">We send your matches and pass link here. No account or password.</p></div>
       </div>
       <button type="submit" className="btn-primary w-full sm:w-auto">See matching operators</button>

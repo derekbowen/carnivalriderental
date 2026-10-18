@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS access_products (
 CREATE TABLE IF NOT EXISTS access_event_requests (
   id TEXT PRIMARY KEY,
   email TEXT NOT NULL,
-  event_date TEXT NOT NULL,
+  -- YYYY-MM-DD, or NULL when the customer left it blank (optional since 2026-10-18; db.ts PG_ALTERS).
+  event_date TEXT,
   city TEXT NOT NULL,
   state TEXT NOT NULL,
   zip TEXT,

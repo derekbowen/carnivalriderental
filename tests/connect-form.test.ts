@@ -14,7 +14,7 @@ async function submit(fields: Record<string, string>) {
   for (const [k, v] of Object.entries({ ...BASE, ...fields })) form.set(k, v);
   const res = await start(new Request(`${SITE}/api/access/start`, { method: "POST", headers: { origin: SITE }, body: form }));
   expect([303, 302, 200]).toContain(res.status);
-  const rows = await (await accessDb()).query(`SELECT ride_type, ride_class, event_type, zip, attendance, budget_cents FROM access_event_requests ORDER BY created_at DESC LIMIT 1`);
+  const rows = await (await accessDb()).query(`SELECT ride_type, ride_class, event_type, event_date, zip, attendance, budget_cents FROM access_event_requests ORDER BY created_at DESC LIMIT 1`);
   return rows[0];
 }
 
@@ -30,6 +30,15 @@ describe("Connect form: one ride select, four fields", () => {
 
   it("a specific ride searches that ride type", async () => {
     expect(await submit({ ride: "carousel" })).toMatchObject({ ride_type: "carousel", ride_class: null });
+  });
+
+  it("the date is optional: blank is stored as no date, a past date is still refused", async () => {
+    const row = await submit({ ride: "carousel", eventDate: "" });
+    expect(row).toMatchObject({ ride_type: "carousel", event_date: null });
+    const form = new FormData();
+    for (const [k, v] of Object.entries({ ...BASE, eventDate: "2020-01-01", ride: "carousel" })) form.set(k, v);
+    const res = await start(new Request(`${SITE}/api/access/start`, { method: "POST", headers: { origin: SITE }, body: form }));
+    expect(res.headers.get("location") ?? (await res.text())).toContain("error=invalid");
   });
 
   it("'Any carnival ride' and the dropped fields leave them empty; a page's own ride wins", async () => {

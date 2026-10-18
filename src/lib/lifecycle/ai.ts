@@ -26,7 +26,7 @@ export function factsFor(v: LifecycleVars) {
   return {
     city: v.city,
     state: v.state,
-    eventDate: longDate(v.eventDate),
+    eventDate: v.eventDate ? longDate(v.eventDate) : "not set yet",
     eventType: v.eventType,
     ride: v.ride,
     ridePlural: v.ridePlural,

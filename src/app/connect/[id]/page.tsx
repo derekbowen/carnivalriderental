@@ -81,7 +81,7 @@ export default async function MatchesPage({ params, searchParams }: { params: Pr
               : `${n} direct operator match${n === 1 ? "" : "es"} for your ${typeLabel} request`}
       </h1>
       <p className="mt-3 max-w-2xl text-ink-soft" data-testid="match-summary">
-        {event.city}, {event.state} · {event.eventDate}. Operators are independent companies based within {radius} miles with matching equipment and at least one working contact channel. Each company counts once, however many rides it lists. We don&rsquo;t know their calendars, so this is not availability.
+        {event.city}, {event.state} · {event.eventDate ?? "date not set"}. Operators are independent companies based within {radius} miles with matching equipment and at least one working contact channel. Each company counts once, however many rides it lists. We don&rsquo;t know their calendars, so this is not availability.
       </p>
       {origin && (
         <p role="status" className="mt-4 max-w-2xl rounded-lg border border-line bg-accent-wash px-4 py-3 text-sm" data-testid="alternative-notice" data-kind={origin.offer.kind}>

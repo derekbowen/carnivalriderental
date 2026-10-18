@@ -23,7 +23,8 @@ export interface Lead {
   createdAt: string;
   email: string;
   team: boolean;
-  eventDate: string;
+  /** YYYY-MM-DD, or null when the customer left it blank. */
+  eventDate: string | null;
   eventType: string | null;
   city: string;
   state: string;
@@ -92,7 +93,7 @@ export async function leadsReport(db: Sql, days: number, opts: { now?: Date; lim
       createdAt: String(r.created_at),
       email,
       team: isTeamAddress(email),
-      eventDate: String(r.event_date),
+      eventDate: r.event_date ? String(r.event_date) : null,
       eventType: eventTypeNoun(r.event_type ? String(r.event_type) : null),
       city: String(r.city),
       state: String(r.state),

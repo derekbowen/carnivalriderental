@@ -37,11 +37,11 @@ export function magicLinkEmail(p: { passUrl: string; productName: string }): { s
 }
 
 /** Team notification: a customer asked for a manual search (their own request details; no operator data). */
-export function manualSearchEmail(p: { ride: string; city: string; state: string; zip: string | null; eventDate: string; eventType: string | null; attendance: number | null; budgetCents: number | null; customerEmail: string; requestId: string; exactOperators: number; offersShown: number }): { subject: string; html: string; text: string } {
+export function manualSearchEmail(p: { ride: string; city: string; state: string; zip: string | null; eventDate: string | null; eventType: string | null; attendance: number | null; budgetCents: number | null; customerEmail: string; requestId: string; exactOperators: number; offersShown: number }): { subject: string; html: string; text: string } {
   const rows: [string, string][] = [
     ["Ride", p.ride],
     ["Where", `${p.city}, ${p.state}${p.zip ? ` ${p.zip}` : ""}`],
-    ["Event date", p.eventDate],
+    ["Event date", p.eventDate ?? "Not set yet"],
     ["Event type", p.eventType ?? "not given"],
     ["Attendance", p.attendance === null ? "not given" : p.attendance.toLocaleString("en-US")],
     ["Budget", p.budgetCents === null ? "not given" : `$${(p.budgetCents / 100).toLocaleString("en-US")}`],
@@ -50,7 +50,7 @@ export function manualSearchEmail(p: { ride: string; city: string; state: string
     ["Alternatives shown", String(p.offersShown)],
     ["Request id", p.requestId],
   ];
-  const subject = `Manual search: ${p.ride} near ${p.city}, ${p.state} (${p.eventDate})`;
+  const subject = `Manual search: ${p.ride} near ${p.city}, ${p.state} (${p.eventDate ?? "date not set"})`;
   const text = [`A customer asked us to search by hand (free). Reply to them at ${p.customerEmail}.`, ...rows.map(([k, v]) => `${k}: ${v}`)].join("\n");
   const html = `<p>A customer asked us to search by hand (free).</p><table>${rows.map(([k, v]) => `<tr><td style="padding:2px 12px 2px 0;color:#666">${esc(k)}</td><td>${esc(v)}</td></tr>`).join("")}</table>`;
   return { subject, html, text };

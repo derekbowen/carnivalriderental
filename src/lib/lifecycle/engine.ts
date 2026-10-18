@@ -86,7 +86,8 @@ export async function duePlans(db: AccessDb, now = new Date()): Promise<Plan[]> 
     const inactive = t - (lastActivity.get(email) ?? t) >= HOUR;
     const latest = reqs[0]; // newest first: an older search the customer replaced is never chased
     const age = t - Date.parse(String(latest.created_at));
-    if (latest.status !== "matched" || String(latest.event_date) < today) continue;
+    // No date yet counts as upcoming; a past date stops every sales email.
+    if (latest.status !== "matched" || (latest.event_date && String(latest.event_date) < today)) continue;
     if (latest.source_path === CONCIERGE_SOURCE_PATH && !(await chatFollowupConsent(db, await withOrigins(db, String(latest.id))))) continue;
     const options: Candidate[] = [];
     const base = { email, eventRequestId: String(latest.id), passId: null };

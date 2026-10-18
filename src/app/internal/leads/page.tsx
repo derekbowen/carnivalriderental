@@ -71,7 +71,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
                   <td className="whitespace-nowrap px-4 py-3 tabular-nums">{day(l.createdAt)}{l.team && <span className="ml-1 text-xs text-muted">(test)</span>}</td>
                   <td className="px-4 py-3"><a href={replyHref(l)} className="font-medium underline">{l.email}</a><p className="text-xs text-muted">via {l.via}</p></td>
                   <td className="px-4 py-3">
-                    <p>{l.eventType ? l.eventType.charAt(0).toUpperCase() + l.eventType.slice(1) : "Event"} · {eventDay(l.eventDate)}</p>
+                    <p>{l.eventType ? l.eventType.charAt(0).toUpperCase() + l.eventType.slice(1) : "Event"} · {l.eventDate ? eventDay(l.eventDate) : "Date not set"}</p>
                     <p className="text-xs text-muted">{l.city}, {l.state}{l.zip ? ` ${l.zip}` : ""}{l.attendance ? ` · ${l.attendance.toLocaleString("en-US")} people` : ""}{l.budgetCents ? ` · budget ${formatPrice(l.budgetCents, "usd")}` : ""}</p>
                   </td>
                   <td className="px-4 py-3">{l.ride}</td>

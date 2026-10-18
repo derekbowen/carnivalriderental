@@ -39,7 +39,8 @@ const optionalCount = (max: number) =>
 
 export const eventRequestInput = z.object({
   email: z.string().trim().toLowerCase().email().max(200),
-  eventDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  // Optional since 2026-10-18: blank means "not sure yet" and is stored as NULL.
+  eventDate: z.string().trim().regex(/^\d{4}-\d{2}-\d{2}$/).optional().or(z.literal("")).transform((v) => v || null),
   city: z.string().trim().min(1).max(80),
   state: z.string().trim().toUpperCase().refine((s) => STATE_CODES.has(s), "Choose a state"),
   zip: z.string().trim().regex(/^\d{5}$/).optional().or(z.literal("")).transform((v) => v || null),
@@ -56,7 +57,8 @@ export type EventRequestInput = z.infer<typeof eventRequestInput>;
 export interface EventRequest {
   id: string;
   email: string;
-  eventDate: string;
+  /** YYYY-MM-DD, or null when the customer didn't set it. */
+  eventDate: string | null;
   city: string;
   state: string;
   zip: string | null;
@@ -82,7 +84,7 @@ const rowToEvent = (r: Row): EventRequest => ({
   sourcePath: r.source_path ? String(r.source_path) : null,
   id: String(r.id),
   email: String(r.email),
-  eventDate: String(r.event_date),
+  eventDate: r.event_date ? String(r.event_date) : null,
   city: String(r.city),
   state: String(r.state),
   zip: r.zip ? String(r.zip) : null,
@@ -138,7 +140,7 @@ export async function startEventRequest(db: AccessDb, source: OperatorSource, ra
   if (!parsed.success) throw new AccessError("invalid", parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; "));
   const input = parsed.data;
   const today = (opts.today ?? (() => new Date().toISOString().slice(0, 10)))();
-  if (input.eventDate < today) throw new AccessError("invalid", "eventDate: pick a date from today onwards");
+  if (input.eventDate && input.eventDate < today) throw new AccessError("invalid", "eventDate: pick a date from today onwards");
   const criteria = resolveCriteria({ listingId: input.listingId, rideType: input.rideType, rideClass: input.rideClass });
   const product = await productForTier(db, criteria.tier);
   if (!product) throw tierUnavailable(criteria.tier);
@@ -380,7 +382,7 @@ export async function createCheckout(db: AccessDb, gateway: StripeGateway, event
     amountCents: product.priceCents,
     currency: product.currency,
     productName: product.name,
-    productDescription: `${product.description} Contact details for ${contactsPhrase(product.unlockLimit, event.matchedOperators)}, within ${product.validityDays} days. ${event.city}, ${event.state}, ${event.eventDate}.`,
+    productDescription: `${product.description} Contact details for ${contactsPhrase(product.unlockLimit, event.matchedOperators)}, within ${product.validityDays} days. ${event.city}, ${event.state}${event.eventDate ? `, ${event.eventDate}` : ""}.`,
     successUrl: `${siteUrl}/api/access/return?p=${id}&cs={CHECKOUT_SESSION_ID}`,
     cancelUrl: event.sourcePath === CONCIERGE_SOURCE_PATH && conciergeEnabled() ? `${siteUrl}/concierge?cancelled=1` : `${siteUrl}/connect/${event.id}?cancelled=1`,
   });
@@ -450,7 +452,7 @@ export async function activatePurchase(db: AccessDb, purchaseId: string, verifie
     const link = await issueMagicLink(db, result.pass.id);
     await sendNow(
       result.pass.email,
-      passEmail({ passUrl: `${opts.siteUrl}/pass/open?t=${link.token}`, productName: product?.name ?? "Event Access", amountLabel: formatPrice(result.purchase.amountCents, result.purchase.currency), unlockLimit: result.pass.unlockLimit, matched: event?.matchedOperators ?? 0, expiresOn: result.pass.expiresAt.slice(0, 10), eventSummary: event ? `${event.city}, ${event.state} on ${event.eventDate}` : "" }),
+      passEmail({ passUrl: `${opts.siteUrl}/pass/open?t=${link.token}`, productName: product?.name ?? "Event Access", amountLabel: formatPrice(result.purchase.amountCents, result.purchase.currency), unlockLimit: result.pass.unlockLimit, matched: event?.matchedOperators ?? 0, expiresOn: result.pass.expiresAt.slice(0, 10), eventSummary: event ? `${event.city}, ${event.state}${event.eventDate ? ` on ${event.eventDate}` : ""}` : "" }),
       `pass:${result.pass.id}:welcome`,
     );
   }

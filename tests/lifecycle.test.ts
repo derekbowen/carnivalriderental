@@ -73,6 +73,22 @@ describe("lifecycle rules", () => {
     expect(templatesOf(await duePlans(db, later(49 * HOUR)))).toEqual([]);
   });
 
+  it("no event date counts as upcoming: the follow-ups still go out, and render without a date", async () => {
+    const { sellable, event } = await startEventRequest(db, source, { ...request, eventDate: "" }, { cache: memoryContactCache() });
+    expect(sellable).toBe(true);
+    expect(event.eventDate).toBeNull();
+    expect(templatesOf(await duePlans(db, later(61 * MIN)))).toEqual(["search_abandonment_1h"]);
+    expect(templatesOf(await duePlans(db, later(25 * HOUR)))).toEqual(["search_abandonment_24h"]);
+    const vars: LifecycleVars = {
+      city: "Riverside", state: "CA", eventDate: null, eventType: "school carnival or fundraiser", ride: "Ferris wheel", ridePlural: "Ferris wheels", alternativeTo: null,
+      operators: 7, nearestMiles: 16, radiusMiles: 200, listings: [], nearby: [], product: { name: "Ferris Wheel Event Access", price: "$199", unlockLimit: 5, validityDays: 30 },
+      pass: null, ctaUrl: `${SITE}/connect/x`, unsubscribeUrl: `${SITE}/api/email/unsubscribe?e=a&t=b`, postalAddress: "PO Box 1, Austin, TX 78701", intro: null,
+    };
+    const nextDay = renderLifecycle("search_abandonment_24h", vars);
+    expect(nextDay.text).toContain("If you're still working on rides for your school carnival or fundraiser, your search is saved.");
+    expect(nextDay.text).not.toMatch(/\bDate\b|null|undefined|Invalid/);
+  });
+
   it("a started checkout gets the checkout email instead of the search one", async () => {
     const { event } = await startEventRequest(db, source, request, { cache: memoryContactCache() });
     await createCheckout(db, fakeStripe(SITE), event.id, SITE);

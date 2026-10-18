@@ -40,7 +40,8 @@ export interface LifecycleVars {
   city: string;
   state: string;
   /** YYYY-MM-DD */
-  eventDate: string;
+  /** YYYY-MM-DD, or null when the customer didn't set a date. */
+  eventDate: string | null;
   /** "school carnival or fundraiser"; null → "event". */
   eventType: string | null;
   /** Singular, sentence-ready: "kiddie train", "Ferris wheel", "carnival ride". */
@@ -132,7 +133,7 @@ export function defaultIntro(t: LifecycleTemplate, v: LifecycleVars): string {
     case "search_abandonment_1h":
       return `You were looking at ${v.ride} options for your event in ${v.city} earlier.`;
     case "search_abandonment_24h":
-      return `If you're still working on rides for ${longDate(v.eventDate)}, your search is saved.`;
+      return `If you're still working on rides for ${v.eventDate ? longDate(v.eventDate) : eventPhrase(v)}, your search is saved.`;
     case "checkout_abandonment_1h":
       return `You found ${ops(v.operators)} with ${v.ridePlural} for your event in ${v.city}. Your search is saved if you'd like to continue.`;
     case "purchased_no_unlock_2h":
@@ -147,7 +148,7 @@ export function renderLifecycle(t: LifecycleTemplate, v: LifecycleVars): Rendere
   const facts: [string, string][] = [
     ["Ride", `${v.ride.charAt(0).toUpperCase()}${v.ride.slice(1)}${altNote(v)}`],
     ["Where", `${v.city}, ${v.state}`],
-    ["Date", longDate(v.eventDate)],
+    ...(v.eventDate ? ([["Date", longDate(v.eventDate)]] as [string, string][]) : []),
     ...(v.eventType ? ([["Event", v.eventType.charAt(0).toUpperCase() + v.eventType.slice(1)]] as [string, string][]) : []),
   ];
   const why = commercial ? "You're receiving this because you searched for carnival rides on our site with this email address." : "You're receiving this because of your request on our site.";

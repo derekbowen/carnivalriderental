@@ -57,7 +57,7 @@ export default async function PassPage({ params, searchParams }: { params: Promi
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <p className="eyebrow" data-testid="pass-product">{product.name} · {formatPrice(purchase.amountCents, purchase.currency)} paid, one time</p>
       <h1 className="mt-2 text-4xl">Your operator contacts for {event.city}, {event.state}</h1>
-      <p className="mt-2 text-ink-soft">{typeLabel} · {event.eventDate} · pass valid until {pass.expiresAt.slice(0, 10)}</p>
+      <p className="mt-2 text-ink-soft">{typeLabel} · {event.eventDate ?? "date not set"} · pass valid until {pass.expiresAt.slice(0, 10)}</p>
       <div className="mt-5 flex flex-wrap gap-3 text-sm" data-testid="pass-status">
         <span className="rounded-full bg-surface px-3 py-1.5 font-semibold ring-1 ring-line">{pass.unlockedCount} of {available} unlocked</span>
         <span className="rounded-full bg-surface px-3 py-1.5 ring-1 ring-line">{remaining} remaining</span>

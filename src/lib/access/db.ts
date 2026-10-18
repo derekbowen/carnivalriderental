@@ -37,6 +37,14 @@ const SCHEMA = fs.readFileSync(path.join(process.cwd(), "src/lib/access/schema.s
 const CONCIERGE_SCHEMA = fs.readFileSync(path.join(process.cwd(), "src/lib/access/schema-concierge.sql"), "utf8");
 const split = (sql: string) => sql.split(/;\s*\n/).map((s) => s.replace(/^\s*--.*$/gm, "").trim()).filter(Boolean);
 const statements = () => split(SCHEMA);
+/**
+ * Postgres-only changes to tables that already exist (CREATE TABLE IF NOT EXISTS never alters them).
+ * Each is idempotent and best effort: a failure is logged, never fatal to the connection.
+ */
+const PG_ALTERS = [
+  // 2026-10-18: the event date is optional on the Connect form.
+  "ALTER TABLE access_event_requests ALTER COLUMN event_date DROP NOT NULL",
+];
 /** Tables created by schema-concierge.sql (RLS on, no PUBLIC grants on Postgres). */
 export const CONCIERGE_TABLES = ["concierge_sessions", "concierge_requests", "access_lifecycle_events", "access_attribution"] as const;
 
@@ -98,6 +106,7 @@ async function postgresDb(url: string): Promise<AccessDb> {
   const client = await pool.connect();
   try {
     for (const s of statements()) await client.query(s);
+    for (const s of PG_ALTERS) await client.query(s).catch((e: Error) => console.error("[access] schema alter failed:", e.message));
   } finally {
     client.release();
   }

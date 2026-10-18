@@ -87,3 +87,7 @@ The product sells from `minimum_matches` (3) while the unlock limit is 5, and ab
 - Per-search surfaces use `contactsPhrase(unlockLimit, matched)` (`lib/access/count-copy.ts`): the `/connect/[id]` offer ("for N matching operator contacts"), the Stripe line item description, the event-form offer, the pass email and the lifecycle emails. The pass page counts against `available = min(unlock limit, matched)`; the purchase still snapshots the product's unlock limit.
 - Tests: `tests/contact-count.test.ts`, `e2e/offer-copy.spec.ts`, `e2e/access.spec.ts`.
 
+## Short Connect form, optional date (2026-10-18)
+
+Founder: the form asked too much (about 10 visitors opened it, one submitted). It now asks for the ride (one select; `class:<id>` for a whole category, mapped in `/api/access/start`), city, state, an optional event date and an email. Event type, ZIP, attendance and budget are no longer asked for (still accepted by the server; occasion pages pass their event type). `access_event_requests.event_date` is nullable: `schema.sql` for new databases, `PG_ALTERS` in `db.ts` (idempotent, best effort) and a one-off migration applied to the production ledger on 2026-10-18. A blank date shows as "date not set"; lifecycle sales emails treat it as upcoming (a past date still stops them); a past date is still refused at submit. Tests: `tests/connect-form.test.ts`, `tests/lifecycle.test.ts`, `e2e/offer-copy.spec.ts`.
+
