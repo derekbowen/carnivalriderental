@@ -10,6 +10,7 @@ import { CITIES, PSEO_INVENTORY, ridesNear, type NearRide } from "../inventory";
 import { STATE_CENTERS } from "../taxonomy/state-centers";
 import { MATCH_RADIUS_MILES, MAX_MATCHED_OPERATORS } from "./config";
 import { channelsOf, isContactable, type ContactChannels, type OperatorSource } from "./contacts";
+import { isHeldOperator } from "./holds";
 import { resolveCriteria, type AccessTier } from "./pricing";
 
 export interface MatchInput {
@@ -96,6 +97,8 @@ export async function matchOperators(input: MatchInput, source: OperatorSource, 
     byOperator.set(op, [...(byOperator.get(op) ?? []), c]);
   }
 
+  // Held operators (holds.ts) keep their public listings but are never counted or sold.
+  for (const op of [...byOperator.keys()]) if (isHeldOperator(op)) byOperator.delete(op);
   const ids = [...byOperator.keys()];
   const cached = await cache.get(ids);
   const flags = new Map(cached);
