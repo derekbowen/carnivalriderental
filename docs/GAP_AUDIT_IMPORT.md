@@ -53,9 +53,9 @@ Dry run (2026-10-18), all with 0 blocking issues:
 3. Create the accounts:
    ```sh
    npm run import:companies -- --target live                                       # dry run
-   npm run import:companies -- --apply --target live --confirm-live "CarnivalRental"
+   npm run import:companies -- --apply --target live --confirm-live "CarnivalRental" --approve-users --founder-go
    ```
-   Existing accounts report `exists`, which rebuilds the Live mapping. New accounts are created anonymous.
+   Existing accounts report `exists`, which rebuilds the Live mapping. New accounts are created anonymous. `--approve-users` is needed because Live answers `409 user-pending-approval` to listings by pending authors; it approves only unclaimed accounts this import created.
 4. Create the listings:
    ```sh
    npm run import:listings -- --target live
@@ -63,7 +63,7 @@ Dry run (2026-10-18), all with 0 blocking issues:
    ```
 5. Add photos and publish. The new rides never existed in Test, so their photos come from the operator's page. `--from-source` is limited to the gap-audit rows (the workbook's `source.gapAudit.listingIds`) and needs `--founder-go` on Live:
    ```sh
-   npm run import:photos -- --from-source --target live                             # dry run
+   npm run import:photos -- --from-source --target live --confirm-live "CarnivalRental"   # dry run
    npm run import:photos -- --apply --approve --from-source --founder-go --target live --confirm-live "CarnivalRental"
    npm run import:photos -- --approve-remaining --founder-go --target live --confirm-live "CarnivalRental"   # rides without a photo
    ```
@@ -75,6 +75,7 @@ Dry run (2026-10-18), all with 0 blocking issues:
    npm run inventory:validate
    npm run migrate:live -- verify    # anonymous read-back: no leaks
    ```
+   Without the local Test snapshot (`imports/migration/test-public.json`), verify checks the Live side only and says so; gap-audit rides are never compared with Test.
    Then run the full checks and deploy.
 
 ## Operator ride text
