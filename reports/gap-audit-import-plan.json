@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-18T09:41:17.550Z",
+  "generatedAt": "2026-10-18T09:55:36.763Z",
   "audit": {
     "file": "carnival-gap-audit (2026-10-06)",
     "companiesNew": 539,
@@ -11,6 +11,7 @@
     "listings": 799,
     "listingsWithPhoto": 628,
     "listingsAtNewCompanies": 346,
+    "operatorTextAvailable": 491,
     "skipped": {
       "ride at an existing company without a placeable HQ": 21,
       "ride at a company the audit flags inactive, renamed or historical": 42,

@@ -113,7 +113,11 @@ export function companyWords(names: (string | null | undefined)[]): string[] {
   return [...new Set(names.flatMap((n) => (n ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9']+/)).map((w) => w.replace(/'s$/, "")).filter((w) => w.length >= 4 && !GENERIC.has(w)))];
 }
 
-export function cleanSummary(text: string, avoid: string[] = [], opts: { keepHeight?: boolean; maxChars?: number } = {}): string {
+/** A clause that only states the rider height, or only the ride's dimensions. */
+const HEIGHT_CLAUSE = /height requirements?|\bmust be \d+|\d+\s*("|\u2033|in\b|inch(es)?)\s*(tall\s*)?(to ride|minimum|or taller|with an adult|alone)/i;
+const SIZE_CLAUSE = /\bdimensions?:|\bfootprint\b|\d+\s*('|\u2032|ft\b|feet)\s*(long|length|wide|width|depth|x|\u00d7)/i;
+
+export function cleanSummary(text: string, avoid: string[] = [], opts: { keepHeight?: boolean; keepSize?: boolean; maxChars?: number } = {}): string {
   // Split into clauses at sentence ends and semicolons, but not after an abbreviation ("Dept.", "Co.").
   const clauses = text
     .replace(/\s+/g, " ")
@@ -122,8 +126,9 @@ export function cleanSummary(text: string, avoid: string[] = [], opts: { keepHei
     .map((c) => c.replace(/\u0000/g, "."))
     .map((c) => c.replace(SOURCE_TALK, "").replace(/\s*[;,]\s*$/, "").trim())
     .filter((c) => c.split(" ").length >= 2 && !CLAIM.test(c) && !NOTE.test(c) && !/https?:\/\/|www\./i.test(c))
-    // A minimum height is stated once, from the parsed value (kept in the text when there is none).
-    .filter((c) => opts.keepHeight || !/\d+\s*("|in\b|inches)\s*(to ride|minimum|or taller)/i.test(c))
+    // Height and size are stated once, from the parsed values (kept in the text when there are none).
+    .filter((c) => opts.keepHeight || !HEIGHT_CLAUSE.test(c))
+    .filter((c) => opts.keepSize || !SIZE_CLAUSE.test(c))
     .filter((c) => !avoid.some((w) => new RegExp(`\\b${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(c)));
   const out: string[] = [];
   for (const c of clauses.map((x) => x.charAt(0).toUpperCase() + x.slice(1)).map((x) => (/[.!?]$/.test(x) ? x : `${x}.`))) {
@@ -139,7 +144,8 @@ const CLASS_NOUN: Record<string, string> = { kiddie: "Kiddie ride", family: "Fam
 export function describeRide(r: CsvRow, cls: string, avoid: string[] = [], operatorText = ""): string {
   const parts: string[] = [];
   const keepHeight = !inches(r.minimum_height ?? "");
-  const summary = cleanSummary(operatorText, avoid, { keepHeight, maxChars: 1200 }) || cleanSummary(r.description ?? "", avoid, { keepHeight });
+  const keepSize = !(feet(r.footprint_length ?? "") || feet(r.footprint_width ?? "") || feet(r.ride_height ?? ""));
+  const summary = cleanSummary(operatorText, avoid, { keepHeight, keepSize, maxChars: 1200 }) || cleanSummary(r.description ?? "", avoid, { keepHeight, keepSize });
   parts.push(summary || `${CLASS_NOUN[cls] ?? "Carnival ride"} listed by an independent operator.`);
   const minIn = inches(r.minimum_height ?? "");
   if (minIn) parts.push(`Rider rules: minimum height ${minIn} in.`);

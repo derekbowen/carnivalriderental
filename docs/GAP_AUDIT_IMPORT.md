@@ -84,7 +84,20 @@ Dry run (2026-10-18), all with 0 blocking issues:
 - no link following, and blocked pages left blank;
 - emails, phone numbers and links removed before saving.
 
-The merge prefers this text over the audit's one-line summary. The same filters apply (claims, research notes, the operator's name), and descriptions are capped at about 1,200 characters.
+The merge prefers this text over the audit's one-line summary. The same filters apply:
+- claims, including ownership ("we own our rides") and guarantees;
+- research notes;
+- the operator's name;
+- height and size lines when the audit already recorded those values.
+
+Descriptions are capped at about 1,200 characters.
+
+Result (2026-10-18), across 345 pages fetched:
+- 491 of 798 rides have operator text (296 pages had none, 5 were blocked, 6 errored).
+- Two entries were discarded on review:
+  - one page Firecrawl fetched through a stealth proxy on its own;
+  - one text that named a different ride.
+- 270 rides keep only the class line plus their recorded specs: their pages show nothing beyond a name, a photo or a spec table.
 
 ## Not done yet
 - Contact updates from the audit for existing live accounts: the importers never rewrite accounts, so this needs a separate, reviewed tool.
