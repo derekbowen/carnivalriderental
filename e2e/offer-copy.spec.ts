@@ -70,18 +70,61 @@ test("phone layouts: connect, offer, ride page and guide fit the screen", async 
   await ctx.close();
 });
 
-test("the Connect form asks only for the ride, city, state, date and email", async ({ page }) => {
+test("the Connect form asks only for the email, ride, city, state and date, email first", async ({ page }) => {
   await page.goto("/connect");
   const form = page.getByTestId("connect-form");
   const visible = await form.locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id));
-  expect(visible).toEqual(["rideType", "city", "state", "eventDate", "email"]);
+  expect(visible).toEqual(["email", "rideType", "city", "state", "eventDate"]);
   for (const gone of ["#eventType", "#zip", "#attendance", "#budgetUsd", "#rideClass"]) await expect(page.locator(gone)).toHaveCount(0);
   await expect(page.locator("#rideType option", { hasText: "Any kiddie ride" })).toHaveAttribute("value", "class:kiddie");
   // A page that already chose the ride doesn't ask again.
   await page.goto("/connect?type=carousel");
-  expect(await page.getByTestId("connect-form").locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id))).toEqual(["city", "state", "eventDate", "email"]);
+  expect(await page.getByTestId("connect-form").locator("input:not([type=hidden]), select").evaluateAll((els) => els.map((e) => e.id))).toEqual(["email", "city", "state", "eventDate"]);
 });
 
+test("phone autofill: the email, city and state carry the hints phones use to fill them in", async ({ page }) => {
+  await page.goto("/connect");
+  const email = page.locator("#email");
+  for (const [attr, value] of [["type", "email"], ["autocomplete", "email"], ["inputmode", "email"], ["autocapitalize", "none"], ["autocorrect", "off"], ["spellcheck", "false"]]) await expect(email).toHaveAttribute(attr, value);
+  await expect(page.locator("#city")).toHaveAttribute("autocomplete", "address-level2");
+  await expect(page.locator("#state")).toHaveAttribute("autocomplete", "address-level1");
+  await expect(page.getByTestId("location-guess")).toHaveCount(0);
+});
+
+test("city and state are prefilled from the visitor's approximate location, and say so", async ({ browser }) => {
+  const at = async (headers: Record<string, string>, path = "/connect?type=carousel") => {
+    const ctx = await browser.newContext({ baseURL: "http://localhost:3100", extraHTTPHeaders: headers });
+    const page = await ctx.newPage();
+    await page.goto(path);
+    return { page, ctx };
+  };
+  // A known city: both filled, with the note; the search goes through without typing either.
+  const known = await at({ "x-vercel-ip-country": "US", "x-vercel-ip-country-region": "OH", "x-vercel-ip-city": "Columbus" });
+  await expect(known.page.locator("#city")).toHaveValue("Columbus");
+  await expect(known.page.locator("#state")).toHaveValue("OH");
+  await expect(known.page.getByTestId("location-guess")).toContainText("approximate location");
+  await known.page.fill("#email", "ip-prefill@fastmail.com");
+  await known.page.getByRole("button", { name: "See matching operators" }).click();
+  await expect(known.page).toHaveURL(/\/connect\/[0-9a-f-]{36}$/);
+  await expect(known.page.locator("main")).toContainText("Columbus, OH");
+  await known.ctx.close();
+  // A city we can't place: the state only.
+  const unknown = await at({ "x-vercel-ip-country": "US", "x-vercel-ip-country-region": "TX", "x-vercel-ip-city": "Nowhere%20Junction" });
+  await expect(unknown.page.locator("#city")).toHaveValue("");
+  await expect(unknown.page.locator("#state")).toHaveValue("TX");
+  await unknown.ctx.close();
+  // Outside the US: nothing.
+  const abroad = await at({ "x-vercel-ip-country": "CA", "x-vercel-ip-country-region": "ON", "x-vercel-ip-city": "Toronto" });
+  await expect(abroad.page.locator("#city")).toHaveValue("");
+  await expect(abroad.page.locator("#state")).toHaveValue("");
+  await abroad.ctx.close();
+  // The page's own place wins over the visitor's location, without the note.
+  const page = await at({ "x-vercel-ip-country": "US", "x-vercel-ip-country-region": "OH", "x-vercel-ip-city": "Columbus" }, "/connect?state=texas&city=austin");
+  await expect(page.page.locator("#city")).toHaveValue("Austin");
+  await expect(page.page.locator("#state")).toHaveValue("TX");
+  await expect(page.page.getByTestId("location-guess")).toHaveCount(0);
+  await page.ctx.close();
+});
 
 test("the event date is optional: a search without one goes through and says so", async ({ page }) => {
   await page.goto("/connect?type=carousel");

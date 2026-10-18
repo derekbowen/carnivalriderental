@@ -16,6 +16,8 @@ export interface ConnectPrefill {
   rideClass?: string | null;
   state?: string | null;
   city?: string | null;
+  /** City or state came from the visitor's approximate IP location, not the page: say so, so they check it. */
+  locationGuess?: boolean;
   eventType?: string | null;
   sourcePath?: string | null;
 }
@@ -29,10 +31,12 @@ export interface ConnectPricing {
 
 /**
  * Event form → POST /api/access/start (fetch via ProtectedForm for BotID; still posts natively without
- * JS). Founder 2026-10-18: only what matching and the pass need. The ride (one select: a ride type, or
- * "class:<id>" for a whole category, mapped by the start route; hidden when the page already chose
- * it), city and state, an optional date (blank is stored as NULL) and an email. Event type, ZIP, attendance and budget stay optional on
- * the server and are no longer asked for; an occasion page still passes its event type along.
+ * JS). Founder 2026-10-18: only what matching and the pass need, quickest on a phone. The email comes
+ * first with the autofill hints phones use to offer the saved address; then the ride (one select: a
+ * ride type, or "class:<id>" for a whole category, mapped by the start route; hidden when the page
+ * already chose it), city and state (prefilled from the page or the visitor's approximate location),
+ * and an optional date (blank is stored as NULL). Event type, ZIP, attendance and budget stay optional
+ * on the server and are no longer asked for; an occasion page still passes its event type along.
  */
 export function ConnectForm({ prefill, today, error, pricing }: { prefill: ConnectPrefill; today: string; error?: string | null; pricing?: ConnectPricing | null }) {
   const lockedType = prefill.listingId || prefill.rideType;
@@ -48,6 +52,10 @@ export function ConnectForm({ prefill, today, error, pricing }: { prefill: Conne
       {prefill.eventType && <input type="hidden" name="eventType" value={prefill.eventType} />}
       {prefill.sourcePath && <input type="hidden" name="sourcePath" value={prefill.sourcePath} />}
       <div className="grid gap-4 sm:grid-cols-2">
+        <div className="sm:col-span-2"><label className="label" htmlFor="email">Your email</label>
+          <input className="input" id="email" name="email" type="email" required maxLength={200} autoComplete="email" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" />
+          <p className="mt-1 text-xs text-muted">We send your matches and pass link here. No account or password.</p>
+        </div>
         {!lockedType && (
           <div className="sm:col-span-2"><label className="label" htmlFor="rideType">What ride?</label>
             <select className="input" id="rideType" name="ride" defaultValue={prefill.rideClass ? `class:${prefill.rideClass}` : ""}>
@@ -62,15 +70,15 @@ export function ConnectForm({ prefill, today, error, pricing }: { prefill: Conne
             {pricing && <PriceHint standard={pricing.standard} ferris={pricing.ferris} ferrisTypes={pricing.ferrisTypes} />}
           </div>
         )}
-        <div><label className="label" htmlFor="city">Event city</label><input className="input" id="city" name="city" required maxLength={80} defaultValue={prefill.city ?? ""} autoComplete="address-level2" /></div>
+        <div><label className="label" htmlFor="city">Event city</label><input className="input" id="city" name="city" required maxLength={80} defaultValue={prefill.city ?? ""} autoComplete="address-level2" autoCapitalize="words" enterKeyHint="next" /></div>
         <div><label className="label" htmlFor="state">State</label>
-          <select className="input" id="state" name="state" required defaultValue={prefill.state?.toUpperCase() ?? ""}>
+          <select className="input" id="state" name="state" required defaultValue={prefill.state?.toUpperCase() ?? ""} autoComplete="address-level1">
             <option value="" disabled>Choose</option>
             {US_STATES.map((s) => <option key={s.abbr} value={s.abbr.toUpperCase()}>{s.name}</option>)}
           </select>
         </div>
-        <div><label className="label" htmlFor="eventDate">Event date <span className="font-normal text-muted">(optional)</span></label><input className="input" id="eventDate" name="eventDate" type="date" min={today} /><p className="mt-1 text-xs text-muted">Not sure yet? Leave it blank.</p></div>
-        <div><label className="label" htmlFor="email">Your email</label><input className="input" id="email" name="email" type="email" required autoComplete="email" /><p className="mt-1 text-xs text-muted">We send your matches and pass link here. No account or password.</p></div>
+        {prefill.locationGuess && <p className="-mt-2 text-xs text-muted sm:col-span-2" data-testid="location-guess">Filled in from your approximate location. Change it if your event is somewhere else.</p>}
+        <div className="sm:col-span-2"><label className="label" htmlFor="eventDate">Event date <span className="font-normal text-muted">(optional)</span></label><input className="input" id="eventDate" name="eventDate" type="date" min={today} /><p className="mt-1 text-xs text-muted">Not sure yet? Leave it blank.</p></div>
       </div>
       <button type="submit" className="btn-primary w-full sm:w-auto">See matching operators</button>
       <p className="text-xs text-muted">Free, no payment on this step. Next you&rsquo;ll see how many operators match before deciding anything.</p>

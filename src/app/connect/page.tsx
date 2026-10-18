@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { ConnectForm } from "@/components/access/ConnectForm";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
@@ -6,6 +7,7 @@ import { formatPrice } from "@/lib/access/config";
 import { accessPriceCopy } from "@/lib/access/copy";
 import { CATEGORY_CONTEXT, FERRIS_RIDE_TYPES, tierForRideType } from "@/lib/access/pricing";
 import { activeProductsOrNull } from "@/lib/access/runtime";
+import { visitorPlace } from "@/lib/access/visitor-place";
 import { BRAND } from "@/lib/config";
 import { liveListingIdFor, RIDES, rideTypeFor } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
@@ -48,6 +50,13 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
   const typeLabel = rideType ? rideTypeCopy(rideType, rideTypeFor(rideType)?.name ?? rideType).label : null;
   const sourcePath = [listingId && paths.rideListing(listingId), sp.category && categoryPageById(sp.category) && paths.category(sp.category), sp.occasion && occasion && paths.occasion(occasion.id), sp.state && sp.city && paths.city(sp.state, sp.city), sp.state && !sp.city && paths.state(sp.state)].find(Boolean) as string | undefined;
   const productName = product?.name ?? (tier === "ferris" ? "Ferris Wheel Event Access" : "Event Access");
+  // Where the event is: the page's own place first, else the visitor's approximate location.
+  const pageState = sp.state ? (sp.state.length === 2 ? sp.state.toUpperCase() : stateAbbr(sp.state)) : null;
+  const pageCity = sp.city ? sp.city.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null;
+  const here = pageCity ? { city: null, state: null } : visitorPlace(await headers());
+  const prefillState = pageState ?? here.state;
+  const prefillCity = pageCity ?? (!pageState || pageState === here.state ? here.city : null);
+  const locationGuess = (!pageState && !!here.state) || (!pageCity && !!prefillCity);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -77,7 +86,7 @@ export default async function ConnectPage({ searchParams }: { searchParams: Prom
             </div>
           ) : (
             <div className="mt-8">
-              <ConnectForm prefill={{ listingId: listing?.id ?? null, rideType, rideClass, state: sp.state ? sp.state.length === 2 ? sp.state : stateAbbr(sp.state) : null, city: sp.city ? sp.city.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()) : null, eventType: occasion ? occasionToEventType(occasion.id) : null, sourcePath }} today={new Date().toISOString().slice(0, 10)} error={sp.error ?? null} pricing={pricing} />
+              <ConnectForm prefill={{ listingId: listing?.id ?? null, rideType, rideClass, state: prefillState, city: prefillCity, locationGuess, eventType: occasion ? occasionToEventType(occasion.id) : null, sourcePath }} today={new Date().toISOString().slice(0, 10)} error={sp.error ?? null} pricing={pricing} />
             </div>
           )}
         </div>
