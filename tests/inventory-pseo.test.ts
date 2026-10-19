@@ -1,12 +1,14 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { CITIES, cityBySlugs, cityStats, inventoryCityGate, inventoryRideCityGate, PSEO_INVENTORY, RIDES, ridesNear, rideTypeFor, toCard } from "@/lib/inventory";
+import { publicRideTextSafe } from "@/lib/catalog/ride-description";
 
 describe("inventory snapshot", () => {
-  it("holds no operator identity (no company, city, website, email or description)", () => {
+  it("holds no operator identity (only privacy-approved optional ride descriptions)", () => {
     const raw = fs.readFileSync("src/lib/inventory/rides.json", "utf8");
     const keys = new Set(RIDES.flatMap((r) => Object.keys(r)));
-    for (const k of ["companyName", "companyId", "companyCity", "description", "website", "email", "author"]) expect(keys.has(k)).toBe(false);
+    for (const k of ["companyName", "companyId", "companyCity", "website", "email", "author"]) expect(keys.has(k)).toBe(false);
+    for (const r of RIDES) if (r.description != null) expect(publicRideTextSafe(r.description)).toBe(true);
     expect(raw).not.toMatch(/https?:\/\/(?!sharetribe\.imgix\.net)/);
     expect(raw).not.toMatch(/@[\w-]+\.(com|net|org|us)/);
   });
