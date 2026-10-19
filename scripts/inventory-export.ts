@@ -2,8 +2,9 @@
  * Public inventory snapshot for the pSEO pages: src/lib/inventory/rides.json.
  *
  * Reads ONLY the public Marketplace API (client ID, no secrets), so it can run anywhere, including
- * a build or cron on the pSEO side. Keeps public, non-identifying fields: never the operator's
- * company, city, website or description text (founder decision 2026-10-05). Geolocation is the
+ * a build or cron on the pSEO side. Keeps public, non-identifying fields, including ONLY
+ * reviewed and safety-screened ride descriptions (never raw descriptions or operator identity).
+ * Geolocation is the
  * listing's already-rounded (~11 km) operator base, used only for distance.
  *
  *   npm run inventory:export                    # Test (default)
@@ -12,6 +13,7 @@
 import "./lib/target-env"; // must stay first: `--target live` selects the SHARETRIBE_LIVE_* credentials
 import fs from "node:fs";
 import { rideFacts } from "../src/lib/catalog/operator-search";
+import { approvedRideDescription } from "../src/lib/catalog/ride-description";
 import { rideTypeFor } from "../src/lib/inventory/match";
 import { rateKeyFor } from "../src/lib/pricing/rate-card";
 import { AUTH, MKT } from "./lib/sharetribe-client";
@@ -21,6 +23,8 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export interface InventoryRide {
   id: string;
   title: string;
+  /** Privacy-screened copy only; never original Sharetribe description. */
+  description: string | null;
   rideClass: string | null;
   rideType: string | null;
   rateKey: string;
@@ -39,7 +43,7 @@ export interface InventoryRide {
   const rides: InventoryRide[] = [];
   for (let page = 1; ; page++) {
     const qs = new URLSearchParams({ pub_listingType: "operator-ride-rental", perPage: "100", page: String(page), include: "images", "fields.image": "variants.landscape-crop,variants.square-small" });
-    let body: { data: { id: string; attributes: { title: string; state: string; geolocation?: { lat: number; lng: number }; publicData?: Record<string, unknown>; metadata?: Record<string, unknown> }; relationships?: { images?: { data: { id: string }[] } } }[]; included?: { id: string; type: string; attributes: { variants: Record<string, { url: string }> } }[]; meta: { totalPages: number } };
+    let body: { data: { id: string; attributes: { title: string; description?: string; state: string; geolocation?: { lat: number; lng: number }; publicData?: Record<string, unknown>; metadata?: Record<string, unknown> }; relationships?: { images?: { data: { id: string }[] } } }[]; included?: { id: string; type: string; attributes: { variants: Record<string, { url: string }> } }[]; meta: { totalPages: number } };
     for (let attempt = 0; ; attempt++) {
       const res = await fetch(`${MKT}/listings/query?${qs}`, { headers: { Authorization: `Bearer ${tok}`, Accept: "application/json" } });
       if (res.status === 429 && attempt < 5) {
@@ -59,6 +63,7 @@ export interface InventoryRide {
       rides.push({
         id: l.id,
         title: a.title,
+        description: approvedRideDescription(a.description, a.metadata),
         rideClass: pd.rideClass,
         rideType: rideTypeFor(a.title, pd.rideClass),
         rateKey: rateKeyFor(pd.rideClass, a.title),
@@ -78,7 +83,7 @@ export interface InventoryRide {
   rides.sort((a, b) => a.id.localeCompare(b.id));
   const out = { generatedAt: new Date().toISOString(), source: "Sharetribe Marketplace API (public listing data only)", count: rides.length, rides };
   fs.writeFileSync("src/lib/inventory/rides.json", `${JSON.stringify(out)}\n`);
-  console.log(`Exported ${rides.length} rides; ${rides.filter((r) => r.rideType).length} matched to a ride type; ${rides.filter((r) => r.photo).length} with photos.`);
+  console.log(`Exported ${rides.length} rides; ${rides.filter((r) => r.rideType).length} matched to a ride type; ${rides.filter((r) => r.photo).length} with photos; ${rides.filter((r) => r.description).length} reviewed descriptions.`);
 })().catch((e) => {
   console.error((e as Error).message);
   process.exit(1);
