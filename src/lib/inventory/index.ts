@@ -22,6 +22,8 @@ import testToLiveFile from "./test-to-live.json";
 export interface InventoryRide {
   id: string;
   title: string;
+  /** Optional until the refreshed live inventory snapshot is exported. */
+  description?: string | null;
   rideClass: string | null;
   rideType: string | null;
   rateKey: string;
@@ -193,6 +195,7 @@ export function toCard(r: NearRide | InventoryRide): OperatorCard {
   return {
     id: r.id,
     title: r.title,
+    description: r.description ?? null,
     rideClass: r.rideClass,
     rideClassLabel: r.rideClass ? CLASS_LABEL.get(r.rideClass) ?? null : null,
     homeState: r.homeState?.toUpperCase() ?? null,
