@@ -71,13 +71,32 @@ export function rideOverview(ride: RideCopy): string {
   const article = /^[aeiou]/.test(category) ? "an" : "a";
   const height = ride.facts?.find((f) => f.label === "Minimum rider height")?.value;
   const dimensions = ride.facts?.find((f) => f.label === "Space needed (operator's figure)")?.value;
+  const manufacturer = ride.facts?.find((f) => f.label === "Manufacturer")?.value;
+  const model = ride.facts?.find((f) => f.label === "Model")?.value;
+  const rules = ride.facts?.find((f) => f.label === "Rider rules")?.value;
   const details = [
+    manufacturer ? `The listed manufacturer is ${manufacturer}${model ? `, model ${model}` : ""}.` : model ? `The listed model is ${model}.` : "",
     height ? "Listed minimum rider height: " + height + "." : "",
     dimensions ? "Operator-listed space needed: " + dimensions + "." : "",
+    rules ? `Listed rider restrictions: ${rules.replace(/[.!?]+$/, "")}.` : "",
   ].filter(Boolean);
   return ride.title + " is listed as " + article + " " + category + " by an independent carnival operator. " +
     (details.length ? details.join(" ") + " " : "") +
     "Confirm suitability, event availability and site requirements directly with the operator.";
+}
+
+/** Planning prompts use stated facts and ask about unknowns rather than inventing specifications. */
+export function ridePlanning(ride: RideCopy): { title: string; text: string }[] {
+  const fact = (label: string) => ride.facts?.find((f) => f.label === label)?.value;
+  const space = fact("Space needed (operator's figure)");
+  const height = fact("Minimum rider height");
+  const rules = fact("Rider rules");
+  const served = fact("States served");
+  return [
+    { title: "Check your event site", text: space ? `The listed ride footprint is ${space}. Ask about additional space for queues, fencing, access and setup before choosing a location.` : "Ask for the ride footprint, queue and fencing space, delivery access, and ground requirements before choosing a location." },
+    { title: "Check who can ride", text: [height ? `The listed minimum rider height is ${height}.` : "Ask for the minimum rider height and any adult-accompaniment requirements.", rules ? `The listing also states: ${rules}` : "Confirm any other rider restrictions with the operator."].join(" ") },
+    { title: "Confirm delivery and event costs", text: `${served ? `Listed service area: ${served}. ` : ""}Confirm travel to your venue, availability on your date, operating hours, staffing, power, setup and teardown, and what the rental quote includes.` },
+  ];
 }
 
 /** Short card summaries reuse the same approved text as the detail page. */

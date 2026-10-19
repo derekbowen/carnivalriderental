@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { approvedRideDescription, rideExcerpt, rideOverview } from "@/lib/catalog/ride-description";
+import { approvedRideDescription, rideExcerpt, rideOverview, ridePlanning } from "@/lib/catalog/ride-description";
 import { UNCLAIMED_NOTICE } from "@/lib/operators/claim";
 import { toOperatorCard } from "@/lib/catalog/operator-search";
 
@@ -18,6 +18,25 @@ const listing = (description: string, metadata: Record<string, unknown> = import
 });
 
 describe("public ride description safeguards", () => {
+  it("uses actual specifications in planning guidance without inventing experience or site requirements", () => {
+    const ride = { title: "Black Widow", facts: [
+      { label: "Manufacturer", value: "Eyerly" },
+      { label: "Space needed (operator's figure)", value: "60 ft × 60 ft" },
+      { label: "Minimum rider height", value: "42 in" },
+      { label: "Rider rules", value: '42". No single riders.' },
+      { label: "States served", value: "CA, AZ" },
+    ] };
+    const copy = JSON.stringify(ridePlanning(ride));
+    expect(copy).toContain("60 ft × 60 ft");
+    expect(copy).toContain("No single riders");
+    expect(copy).toContain("CA, AZ");
+    expect(copy).toContain("additional space");
+    expect(rideOverview(ride)).toContain("Eyerly");
+    expect(copy).not.toMatch(/certified|guaranteed|spinning|capacity|240V/i);
+    const sparse = JSON.stringify(ridePlanning({ title: "Unknown ride" }));
+    expect(sparse).toContain("Ask for the ride footprint");
+    expect(sparse).not.toMatch(/42 in|60 ft|CA, AZ/);
+  });
   it("uses anonymous source text while removing the operator claim notice", () => {
     const original = "Guests can steer bumper cars around a dedicated driving area at a carnival or fair.";
     const source = UNCLAIMED_NOTICE + "\n\n" + original;
