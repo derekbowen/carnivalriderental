@@ -20,9 +20,11 @@ const listing = (description: string, metadata: Record<string, unknown> = import
 describe("public ride description safeguards", () => {
   it("uses anonymous source text while removing the operator claim notice", () => {
     const original = "Guests can steer bumper cars around a dedicated driving area at a carnival or fair.";
-    const safe = approvedRideDescription(UNCLAIMED_NOTICE + "\n\n" + original, imported);
+    const source = UNCLAIMED_NOTICE + "\n\n" + original;
+    const reviewed = { ...imported, publicDescriptionReviewedText: source };
+    const safe = approvedRideDescription(source, reviewed);
     expect(safe).toBe(original);
-    const card = toOperatorCard(listing(UNCLAIMED_NOTICE + "\n\n" + original), [], null)!;
+    const card = toOperatorCard(listing(source, reviewed), [], null)!;
     expect(card.description).toBe(original);
     expect(JSON.stringify(card)).not.toContain("has not joined");
   });
@@ -37,7 +39,7 @@ describe("public ride description safeguards", () => {
     "Our office is at 1234 Main Street, Springfield.",
     "Call us today for this amusement ride.",
   ])("rejects identifying or unverified prose: %s", (raw) => {
-    expect(approvedRideDescription(raw, imported)).toBeNull();
+    expect(approvedRideDescription(raw, { ...imported, publicDescriptionReviewedText: raw })).toBeNull();
   });
 
   it("fails closed for claimed, unknown and unapproved sources", () => {
@@ -45,13 +47,15 @@ describe("public ride description safeguards", () => {
     expect(approvedRideDescription(description, { claimStatus: "claimed", importBatch: "x" })).toBeNull();
     expect(approvedRideDescription(description, { claimStatus: "unclaimed" })).toBeNull();
     expect(approvedRideDescription(description, {})).toBeNull();
+    expect(approvedRideDescription(description, imported)).toBeNull();
+    expect(approvedRideDescription(description + " Changed by Cedar Valley.", { ...imported, publicDescriptionReviewedText: description })).toBeNull();
     expect(approvedRideDescription("", imported)).toBeNull();
   });
 
   it("rejects boilerplate summaries and trims long approved prose", () => {
     expect(approvedRideDescription("Family ride listed by an independent operator.", imported)).toBeNull();
     const long = "The ride turns gently in a circle around its center for family entertainment. ".repeat(25);
-    const safe = approvedRideDescription(long, imported);
+    const safe = approvedRideDescription(long, { ...imported, publicDescriptionReviewedText: long });
     expect(safe?.length).toBeLessThanOrEqual(1200);
   });
 

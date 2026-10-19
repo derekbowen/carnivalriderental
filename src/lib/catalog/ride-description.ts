@@ -42,6 +42,9 @@ export function approvedRideDescription(
   // operator may subsequently edit it in the Console, so claimed prose needs separate review.
   if (metadata?.claimStatus !== "unclaimed") return null;
   if (typeof metadata.importBatch !== "string") return null;
+  // Import provenance alone does not prove review. Integration-managed metadata must
+  // approve this exact source; subsequent operator edits automatically lose approval.
+  if (metadata.publicDescriptionReviewedText !== source) return null;
 
   const text = withoutNotice(source).replace(/<[^>]*>/g, " ").replace(/[<>]/g, " ").replace(/\s+/g, " ").trim();
   if (text.length < 24 || text.length > 5000 || CONTACT_OR_CLAIM.some((pattern) => pattern.test(text))) return null;
