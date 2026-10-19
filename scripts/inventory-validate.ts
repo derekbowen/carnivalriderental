@@ -13,8 +13,9 @@ import fs from "node:fs";
 import contract from "../contract/operator-listing-contract.json";
 import rideTypesFile from "../src/lib/taxonomy/ride-types.json";
 import { matchingRideTypes, MATCHED_RIDE_TYPES } from "../src/lib/inventory/match";
+import { publicRideTextSafe } from "../src/lib/catalog/ride-description";
 
-type Ride = { id: string; title: string; rideClass: string | null; rideType: string | null; rateKey: string; homeState: string | null; serviceStates: string[]; lat: number; lng: number; photo: string | null; facts: { label: string; value: string }[]; claimed: boolean };
+type Ride = { id: string; title: string; description?: string | null; rideClass: string | null; rideType: string | null; rateKey: string; homeState: string | null; serviceStates: string[]; lat: number; lng: number; photo: string | null; facts: { label: string; value: string }[]; claimed: boolean };
 const snap = JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: Ride[]; count: number };
 const raw = fs.readFileSync("src/lib/inventory/rides.json", "utf8");
 const problems: string[] = [];
@@ -29,7 +30,7 @@ const missing = [...typeIds].filter((t) => !MATCHED_RIDE_TYPES.includes(t));
 if (extra.length || missing.length) problems.push(`matcher/taxonomy mismatch: extra ${extra.join(",")} missing ${missing.join(",")}`);
 
 const ids = new Set<string>();
-const IDENT_KEYS = ["companyName", "companyId", "companyCity", "description", "website", "email", "phone", "author", "privateData", "protectedData", "owners", "contactName"];
+const IDENT_KEYS = ["companyName", "companyId", "companyCity", "website", "email", "phone", "author", "privateData", "protectedData", "owners", "contactName"];
 for (const r of snap.rides) {
   if (ids.has(r.id)) problems.push(`duplicate id ${r.id}`);
   ids.add(r.id);
@@ -39,6 +40,7 @@ for (const r of snap.rides) {
   if (!Number.isFinite(r.lat) || !Number.isFinite(r.lng)) problems.push(`no coordinates on ${r.id}`);
   if (Math.round(r.lat * 10) !== r.lat * 10 || Math.round(r.lng * 10) !== r.lng * 10) problems.push(`coordinates more precise than 0.1° on ${r.id}`);
   for (const k of Object.keys(r)) if (IDENT_KEYS.includes(k)) problems.push(`identity key ${k} on ${r.id}`);
+  if (r.description != null && !publicRideTextSafe(r.description)) problems.push(`unsafe ride description on ${r.id}`);
   if (r.photo && !r.photo.startsWith("https://sharetribe.imgix.net/")) problems.push(`photo not on Sharetribe CDN: ${r.id}`);
 }
 if (snap.count !== snap.rides.length) problems.push("count mismatch");
@@ -51,7 +53,7 @@ const WB = "imports/company-accounts/source/workbook.json";
 let identityChecked = 0;
 if (fs.existsSync(WB)) {
   const wb = JSON.parse(fs.readFileSync(WB, "utf8")) as { users: { displayName: string; publicData: string; privateData: string }[] };
-  const text = snap.rides.map((r) => [r.title, ...r.facts.map((f) => f.value)].join(" | ")).join("\n").toLowerCase();
+  const text = snap.rides.map((r) => [r.title, r.description ?? "", ...r.facts.map((f) => f.value)].join(" | ")).join("\n").toLowerCase();
   for (const u of wb.users) {
     const pub = JSON.parse(u.publicData || "{}");
     const priv = JSON.parse(u.privateData || "{}");
