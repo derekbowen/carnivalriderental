@@ -1,4 +1,4 @@
-import { UNCLAIMED_NOTICE, withoutNotice } from "../operators/claim";
+import { withoutNotice } from "../operators/claim";
 
 /**
  * Public descriptions are a separate, deliberately conservative projection of Sharetribe text.
