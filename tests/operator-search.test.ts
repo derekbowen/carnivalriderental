@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ipLocation, milesBetween, parseNear, rideFacts, toOperatorCard } from "@/lib/catalog/operator-search";
+import { ipLocation, listingPhotos, milesBetween, parseNear, rideFacts, toOperatorCard } from "@/lib/catalog/operator-search";
 import { paths } from "@/lib/seo/routes";
 
 const listing = (over: Record<string, unknown> = {}, pd: Record<string, unknown> = {}, md: Record<string, unknown> = {}) => ({
@@ -22,6 +22,19 @@ const included = [
 ];
 
 describe("operator search cards", () => {
+  it("keeps every listing photo in order, excludes unrelated images, and uses private-free alt text", () => {
+    const l = listing();
+    l.relationships.images.data = [{ id: "i2" }, { id: "i1" }, { id: "i2" }, { id: "external" }];
+    const photos = listingPhotos(l, [...included,
+      { id: "i2", type: "image", attributes: { variants: { "landscape-crop": { url: "https://sharetribe.imgix.net/x/i2" }, "landscape-crop2x": { url: "https://sharetribe.imgix.net/x/i2-large" } } } },
+      { id: "other-listing", type: "image", attributes: { variants: { "landscape-crop": { url: "https://sharetribe.imgix.net/x/unrelated" } } } },
+      { id: "external", type: "image", attributes: { variants: { "landscape-crop": { url: "https://operator.example/photos/company.jpg" } } } },
+    ]);
+    expect(photos.map((p) => p.src)).toEqual(["https://sharetribe.imgix.net/x/i2-large", "https://sharetribe.imgix.net/x/i1"]);
+    expect(photos.map((p) => p.alt)).toEqual(["Grand Carousel — photo 1", "Grand Carousel — photo 2"]);
+    expect(JSON.stringify(photos)).not.toMatch(/Alamo|San Antonio|unrelated|operator.example/);
+    expect(listingPhotos({ ...l, relationships: {} }, included)).toEqual([]);
+  });
   it("maps public fields and distance; no approved rate means no price (Request a quote)", () => {
     const c = toOperatorCard(listing(), included, { lat: 30.27, lng: -97.74 })!;
     expect(c).toMatchObject({ title: "Grand Carousel", rideClassLabel: "Family ride", homeState: "TX" });

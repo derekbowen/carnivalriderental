@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { ImageOffIcon, MapPinIcon } from "lucide-react";
+import { MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { accessPriceCopy } from "@/lib/access/copy";
 import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { getOperatorListing, type OperatorRideDetail } from "@/lib/catalog/operator-search";
-import { rideExcerpt, rideOverview } from "@/lib/catalog/ride-description";
+import { rideExcerpt, rideOverview, ridePlanning } from "@/lib/catalog/ride-description";
+import { RideGallery } from "@/components/search/RideGallery";
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { RideResult } from "@/components/search/RideResult";
 import { linkedNearbyCities, linkedRideCities, liveListingIdFor, operatorCount, PSEO_INVENTORY, RIDES, rideHome, ridesNear, similarRides, toCard } from "@/lib/inventory";
@@ -85,6 +86,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
   const similar = snap ? similarRides(snap) : [];
   const otherOperators = operatorCount(similar);
   const pricing = accessPriceCopy(await accessProductsForDisplay(), snap?.rideType ?? null);
+  const photos = ride.photos ?? (ride.photo ? [ride.photoLarge ?? ride.photo] : []);
   const crumbs = [...(place?.crumbs ?? [{ name: "Home", path: paths.home() }, { name: "Find a ride", path: paths.search() }]), { name: ride.title, path: paths.rideListing(id) }];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -92,17 +94,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
       <Breadcrumbs items={crumbs} />
     <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
       <div>
-        <div className="mt-4 aspect-[4/3] w-full overflow-hidden rounded-2xl bg-placeholder">
-          {ride.photo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={(ride.photoLarge ?? ride.photo).src} alt={ride.photo.alt} width={800} height={600} className="h-full w-full object-cover" />
-          ) : (
-            <div role="img" aria-label="No photo yet" className="flex h-full w-full flex-col items-center justify-center gap-1 text-ink-soft">
-              <ImageOffIcon className="h-8 w-8 opacity-60" aria-hidden="true" />
-              <span className="text-sm">No photo yet</span>
-            </div>
-          )}
-        </div>
+        <RideGallery key={ride.id} photos={photos} title={ride.title} />
         <div className="mt-7 flex flex-wrap items-center gap-2">
           {ride.rideClassLabel && <span className="rounded-full bg-accent-wash px-3 py-1 text-xs font-semibold text-accent-strong">{ride.rideClassLabel}</span>}
           <span className="rounded-full border border-line px-3 py-1 text-xs font-medium text-muted">Independent operator listing</span>
@@ -115,7 +107,7 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
           <p className="eyebrow">Ride overview</p>
           <h2 id="ride-description-heading" className="mt-2 text-2xl">About {ride.title}</h2>
           <p className="mt-4 whitespace-pre-line text-base leading-8 text-ink-soft" data-testid="ride-description">{rideOverview(ride)}</p>
-          {!ride.description && <p className="mt-3 text-xs text-muted">This listing currently has a limited description. Ask the operator to confirm any requirements specific to the equipment.</p>}
+          {!ride.description && <p className="mt-3 text-xs text-muted">This overview uses the listing&rsquo;s published specifications. Ask the operator about the ride experience and confirm the requirements for your event.</p>}
         </section>
         {ride.facts.length > 0 && (
           <section className="mt-7" aria-labelledby="ride-specifications-heading">
@@ -131,16 +123,37 @@ export default async function RideListingPage({ params }: { params: Promise<P> }
           </section>
         )}
         <p className="mt-4 text-xs text-muted">Specifications are sourced from published ride information. Verify rider requirements, dimensions, travel, availability and site needs directly with the operator.</p>
+        <section className="mt-8" aria-labelledby="ride-planning-heading" data-testid="ride-planning">
+          <p className="eyebrow">Plan your rental</p>
+          <h2 id="ride-planning-heading" className="mt-2 text-2xl">Could {ride.title} work for your event?</h2>
+          <div className="mt-4 space-y-4">
+            {ridePlanning(ride).map((item) => (
+              <div key={item.title} className="rounded-2xl border border-line bg-surface p-5">
+                <h3 className="font-semibold">{item.title}</h3>
+                <p className="mt-2 text-sm leading-7 text-ink-soft">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
       <aside className="space-y-4 lg:pt-10">
         <div className="card p-5">
           <p className="eyebrow">Get in touch</p>
           <p className="mt-2 text-lg font-semibold">{ride.price ?? REQUEST_A_QUOTE}</p>
           {!ride.price && <p className="mt-1 text-xs text-muted">The operator prices your event once they know your date, location, hours and site.</p>}
-          <Link href={paths.connectListing(ride.id)} className="btn-primary mt-4 w-full">Connect with operators</Link>
-          <p className="mt-2 text-xs text-muted">Share your event date and location to find matching ride operators.</p>
+          <Link href={paths.connectListing(ride.id)} className="btn-primary mt-4 w-full">Find operators for my event</Link>
+          <p className="mt-2 text-xs text-muted">Check matching operators before you pay.</p>
+          <ol className="mt-4 list-decimal space-y-3 pl-5 text-sm leading-6 text-ink-soft" data-testid="access-steps">
+            <li>Tell us your event location, date and ride needs.</li>
+            <li>See how many operators match. Decide whether to purchase Event Access.</li>
+            <li>Use your access to unlock operator contact details, ask about this ride and compare rental quotes directly.</li>
+          </ol>
           <p className="mt-3 text-sm font-semibold" data-testid="access-price">{pricing.ctaLine}</p>
           <p className="mt-2 text-xs text-muted" data-testid="access-terms">{pricing.tier === "ferris" ? "Ferris wheel requests use Ferris Wheel Event Access. " : ""}Event Access gives you direct contact details for {pricing.product ? `up to ${pricing.product.unlockLimit} ` : ""}matching operators, and you see exactly how many match before you pay. You contact them directly, compare quotes and arrange the rental. The fee is for contact access only: no commission or markup on the rental price, and nothing here is a booking.</p>
+        </div>
+        <div className="card p-5 text-sm">
+          <p className="font-semibold">What your access covers</p>
+          <p className="mt-2 leading-6 text-ink-soft">{pricing.terms} A match does not confirm that this ride is available on your date. <Link href="/access-policy" className="font-semibold text-accent-strong underline">Read the Event Access policy</Link>.</p>
         </div>
         {otherOperators > 0 && typeLabel && (
           <div className="card p-5" data-testid="similar-operators">
