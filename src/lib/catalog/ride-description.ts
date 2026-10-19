@@ -15,13 +15,21 @@ const CONTACT_OR_CLAIM = [
   /\b[\w-]+\.(?:com|net|org|us|biz|info|co)\b/i,
   /(?:^|\s)@\w{3,}\b/,
   /\b(?:\+?1[\s.-]?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}\b/,
+  /\b\d{3}[-.\s]\d{4}\b/,
   /\b\d{1,5}\s+(?:[A-Za-z]+\s+){0,3}(?:Street|St\.|Road|Rd\.|Avenue|Ave\.|Boulevard|Blvd\.|Drive|Dr\.|Lane|Ln\.)\b/i,
   /\b(?:call|text|email|contact|follow|visit)\s+(?:us|me|our|the company|at)\b/i,
   /\b(?:operated|owned|provided|managed|run)\s+by\b/i,
+  /\b(?:we|our company|the operator)\s+(?:own|owns|operate|operates|provide|provides|rent|rents)\b/i,
   /\b(?:LLC|L\.L\.C\.|Inc\.?|Corp\.?|Corporation|Ltd\.?)\b/i,
   /\b[A-Z][\w'-]+(?:\s+[A-Z][\w'-]+){0,3}\s+(?:Amusements|Attractions|Enterprises|Productions|Entertainment|Shows)\b/,
   /\b(?:guaranteed|certified|licensed|fully insured|always available|book now|reserve now|lowest price)\b/i,
 ];
+
+/** Shared readback check for snapshot exports. It deliberately rejects all suspicious strings. */
+export function publicRideTextSafe(source: unknown): source is string {
+  return typeof source === "string" && source.trim().length >= 24 && source.length <= 1200 &&
+    !/[<>]/.test(source) && !CONTACT_OR_CLAIM.some((pattern) => pattern.test(source));
+}
 
 /** Fail closed on identifiers and claims; do not silently show only part of a sensitive sentence. */
 export function approvedRideDescription(
@@ -33,16 +41,17 @@ export function approvedRideDescription(
   // Unclaimed imported listings carry the reviewed, anonymous version of the text. A claimed
   // operator may subsequently edit it in the Console, so claimed prose needs separate review.
   if (metadata?.claimStatus !== "unclaimed") return null;
-  if (typeof metadata.importBatch !== "string" && !source.trim().startsWith(UNCLAIMED_NOTICE)) return null;
+  if (typeof metadata.importBatch !== "string") return null;
 
   const text = withoutNotice(source).replace(/<[^>]*>/g, " ").replace(/[<>]/g, " ").replace(/\s+/g, " ").trim();
   if (text.length < 24 || text.length > 5000 || CONTACT_OR_CLAIM.some((pattern) => pattern.test(text))) return null;
   if (/^(?:kiddie|family|major|spectacular|carnival|water|dark|other)\s+(?:ride|attraction)\s+listed by an independent operator\.?$/i.test(text)) return null;
 
   const length = Math.max(60, Math.min(1200, Math.floor(maxChars)));
-  if (text.length <= length) return text;
-  const head = text.slice(0, length - 1).replace(/\s+\S*$/, "").trimEnd();
-  return (head || text.slice(0, length - 1)) + "…";
+  const result = text.length <= length ? text : (
+    (text.slice(0, length - 1).replace(/\s+\S*$/, "").trimEnd() || text.slice(0, length - 1)) + "…"
+  );
+  return publicRideTextSafe(result) ? result : null;
 }
 
 interface RideCopy {
