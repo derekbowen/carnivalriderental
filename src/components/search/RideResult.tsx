@@ -1,6 +1,7 @@
 import { ImageOffIcon, MapPinIcon } from "lucide-react";
 import Link from "next/link";
 import type { OperatorCard } from "@/lib/catalog/operator-search";
+import { rideExcerpt } from "@/lib/catalog/ride-description";
 import { paths } from "@/lib/seo/routes";
 
 /**
@@ -30,7 +31,8 @@ export function RideResult({ card }: { card: OperatorCard }) {
             {[card.miles !== null ? `Operator ~${card.miles.toLocaleString("en-US")} mi away` : null, card.homeState ? `based in ${card.homeState}` : null].filter(Boolean).join(", ")}
           </p>
         )}
-        <div className="mt-auto pt-4">
+        <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink-soft" data-testid="ride-excerpt">{rideExcerpt(card, 155)}</p>
+        <div className="mt-auto pt-5">
           {/* Price slot: an operator-approved figure, else nothing (the operator prices the event). */}
           {card.price && <p className="text-sm font-semibold" data-testid="card-price">{card.price}</p>}
           <Link href={paths.connectListing(card.id)} className={`btn-primary w-full ${card.price ? "mt-3" : ""}`}>Connect with operators</Link>
