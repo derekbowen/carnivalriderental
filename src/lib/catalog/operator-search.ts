@@ -1,5 +1,6 @@
 import contract from "../../../contract/operator-listing-contract.json";
 import { listingPriceLabel } from "../pricing/public-price";
+import { approvedRideDescription } from "./ride-description";
 
 /**
  * Read side for OPERATOR ride listings (listing type operator-ride-rental), used by the /s search
@@ -30,6 +31,8 @@ export interface LatLng {
 export interface OperatorCard {
   id: string;
   title: string;
+  /** Reviewed public ride prose only; never the original unreviewed operator description. */
+  description: string | null;
   rideClass: string | null;
   rideClassLabel: string | null;
   /**
@@ -63,6 +66,7 @@ interface ApiListing {
   type: string;
   attributes: {
     title?: string;
+    description?: string;
     state?: string;
     deleted?: boolean;
     geolocation?: { lat: number; lng: number } | null;
@@ -106,6 +110,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   return {
     id: l.id,
     title,
+    description: approvedRideDescription(a.description, a.metadata),
     rideClass,
     rideClassLabel: rideClass ? CLASS_LABEL.get(rideClass) ?? null : null,
     homeState: str(pd.homeState)?.toUpperCase() ?? null,
@@ -183,7 +188,7 @@ export async function searchOperatorListings(q: { origin: LatLng; page?: number;
 }
 
 export interface OperatorRideDetail extends OperatorCard {
-  /** Approved public facts only (contract publicFields); never description text, company or city. */
+  /** Approved public facts only (contract publicFields); no operator identity or contact. */
   facts: { label: string; value: string }[];
 }
 
