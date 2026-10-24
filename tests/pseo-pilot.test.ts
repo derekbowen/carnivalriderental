@@ -29,7 +29,7 @@ describe("indexing pilot allowlist", () => {
     // No two pilot pages fall in the same near-duplicate group.
     const heads = JSON.parse(fs.readFileSync("reports/pseo-duplicates.json", "utf8")).groupHeadOf as Record<string, string>;
     for (const p of PSEO_PILOT.paths) expect(heads[p] ?? p, p).toBe(p);
-  });
+  }, 30_000); // evaluates every route's gate on the full snapshot
 
   it("when enabled it stands in for copy approval on listed paths only, never for the environment or supply gates", async () => {
     vi.doMock("@/lib/inventory/pilot", () => ({
@@ -92,19 +92,19 @@ describe("near-duplicate gate (only group heads can be indexed)", () => {
     vi.stubEnv("APP_ENV", "production");
     vi.stubEnv("PUBLIC_INDEXING", "true");
     const inv = await import("@/lib/inventory");
-    const head = inv.cityBySlugs("california", "san-jose")!;
-    const member = inv.cityBySlugs("california", "san-francisco")!;
+    const head = inv.cityBySlugs("california", "san-francisco")!;
+    const member = inv.cityBySlugs("california", "oakland")!;
     expect(inv.inventoryCityGate(head)).toEqual({ indexable: true, reasons: [] });
     const g = inv.inventoryCityGate(member);
     expect(g.indexable).toBe(false);
     expect(g.reasons.join()).toMatch(/near-duplicate/);
-    const meta = inv.inventoryMetadata({ path: "/california/san-francisco", title: "t", description: "d", gate: g });
+    const meta = inv.inventoryMetadata({ path: "/california/oakland", title: "t", description: "d", gate: g });
     expect(meta.robots).toEqual({ index: false, follow: true });
-    expect(meta.alternates?.canonical).toMatch(/\/california\/san-francisco$/);
+    expect(meta.alternates?.canonical).toMatch(/\/california\/oakland$/);
     const routes = inv.inventoryRoutes();
     const eligible = JSON.parse(fs.readFileSync("src/lib/inventory/index-eligible.json", "utf8"));
     expect(routes.filter((r) => r.gate.indexable).length).toBe(eligible.count);
-  });
+  }, 30_000); // evaluates every route's gate on the full snapshot
 
   it("a stale list blocks indexing everywhere", async () => {
     approveAll();

@@ -21,6 +21,10 @@ the supported APIs** with the existing importers (`import:companies`, `import:li
 | `SHARETRIBE_LIVE_CLIENT_ID` | Live Marketplace API app (`467a9abe…`, public) |
 | `SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID/_SECRET` | Live Integration API app (`5ef8fcd2…`) |
 
+On 2026-10-18 the founder created two more Live applications for the gap-audit import session:
+"Clside again" (Integration API, `84c26b8a…`) and "Claude" (Marketplace API, `311f42a0…`). Production
+(Vercel) still uses the two above; the new pair can be revoked in Console once no session needs it.
+
 Scripts select Live only with `--target live` (`scripts/lib/target-env.ts`), and every write asserts
 the marketplace name first (`--confirm-live "CarnivalRental"`, and the Integration and Marketplace
 clients must name the same marketplace). `scripts/live-migration.ts` reads Live through the

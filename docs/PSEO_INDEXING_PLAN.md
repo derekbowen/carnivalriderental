@@ -1,6 +1,6 @@
 # Inventory pSEO: controlled indexing plan (prepared 2026-10-05; first cohort and second wave released 2026-10-14)
 
-Status 2026-10-14: **1,000 URLs are indexable** (section 8: wave 1's 13 plus wave 2's 987), an exact list on the Live inventory, each still behind its supply, near-duplicate and environment gates. Everything else stays `noindex`. Sections 1–6 are the history and the gate design; section 7 is the first cohort; section 8 is the current state. Payment readiness is a separate decision and does not gate or unlock SEO.
+Status 2026-10-18: **1,000 URLs are indexable** (section 8: wave 1's 13 plus wave 2's 987; wave 2 refreshed on the 4,512-ride snapshot), an exact list on the Live inventory, each still behind its supply, near-duplicate and environment gates. Everything else stays `noindex`. Sections 1–6 are the history and the gate design; section 7 is the first cohort; section 8 is the current state. Payment readiness is a separate decision and does not gate or unlock SEO.
 
 ## 1. Current state (verified on carnivalriderental.us)
 
@@ -227,6 +227,13 @@ that already pass every gate unchanged. No threshold, radius or duplicate rule w
 
 Of 2,321 gated city and ride + city candidates, the strongest were taken first, ranked by distinct
 contactable operators, then rides. The lowest selected page still has **6** contactable operators.
+
+**Refresh on the 2026-10-18 snapshot (gap-audit import, 4,512 rides).** The new rides regrouped the
+near-duplicate map, and 132 wave-2 pages stopped being their group's head. The founder chose to
+refill to 1,000 rather than let the set shrink: `wave --size 1000 --keep` kept the 851 pages that
+still pass every gate and added the 132 strongest gated candidates. A plain re-run would have
+re-ranked everything and swapped 288. Same rules, same cap; the cohort manifest shows 1,000 of
+1,000 eligible under production gates.
 
 | Indexed set | URLs |
 |---|---|

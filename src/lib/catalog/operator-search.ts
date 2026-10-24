@@ -1,5 +1,6 @@
 import contract from "../../../contract/operator-listing-contract.json";
 import { listingPriceLabel } from "../pricing/public-price";
+import { approvedRideDescription } from "./ride-description";
 
 /**
  * Read side for OPERATOR ride listings (listing type operator-ride-rental), used by the /s search
@@ -30,6 +31,8 @@ export interface LatLng {
 export interface OperatorCard {
   id: string;
   title: string;
+  /** Reviewed public ride prose only; never the original unreviewed operator description. */
+  description: string | null;
   rideClass: string | null;
   rideClassLabel: string | null;
   /**
@@ -63,6 +66,7 @@ interface ApiListing {
   type: string;
   attributes: {
     title?: string;
+    description?: string;
     state?: string;
     deleted?: boolean;
     geolocation?: { lat: number; lng: number } | null;
@@ -106,6 +110,7 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   return {
     id: l.id,
     title,
+    description: approvedRideDescription(a.description, a.metadata),
     rideClass,
     rideClassLabel: rideClass ? CLASS_LABEL.get(rideClass) ?? null : null,
     homeState: str(pd.homeState)?.toUpperCase() ?? null,
@@ -183,8 +188,25 @@ export async function searchOperatorListings(q: { origin: LatLng; page?: number;
 }
 
 export interface OperatorRideDetail extends OperatorCard {
-  /** Approved public facts only (contract publicFields); never description text, company or city. */
+  /** Only this listing's images; never source captions or author information. */
+  photos?: { src: string; alt: string }[];
+  /** Approved public facts only (contract publicFields); no operator identity or contact. */
   facts: { label: string; value: string }[];
+}
+
+/** Preserve listing order, ignore unrelated included images and reject external URLs. */
+export function listingPhotos(l: ApiListing, included: ApiIncluded[]): { src: string; alt: string }[] {
+  const images = new Map(included.filter((x) => x.type === "image").map((x) => [x.id, x]));
+  const seen = new Set<string>();
+  return (l.relationships?.images?.data ?? []).flatMap(({ id }) => {
+    const variants = images.get(id)?.attributes.variants;
+    const src = [variants?.["landscape-crop2x"]?.url, variants?.["landscape-crop"]?.url, variants?.["square-small"]?.url].find((value) => {
+      try { return !!value && new URL(value).origin === "https://sharetribe.imgix.net"; } catch { return false; }
+    });
+    if (!src || seen.has(src)) return [];
+    seen.add(src);
+    return [{ src, alt: `${l.attributes.title ?? "Ride"} — photo ${seen.size}` }];
+  });
 }
 
 const STATE_NAMES_UPPER = (codes: unknown) => (Array.isArray(codes) ? codes.filter((c) => typeof c === "string").map((c: string) => c.toUpperCase()) : []);
@@ -212,7 +234,7 @@ export async function getOperatorListing(id: string): Promise<OperatorRideDetail
     const body = await apiGet("/listings/show", { id });
     if (Array.isArray(body.data)) return null;
     const card = toOperatorCard(body.data, body.included ?? [], null);
-    return card ? { ...card, facts: rideFacts(body.data.attributes.publicData ?? {}) } : null;
+    return card ? { ...card, photos: listingPhotos(body.data, body.included ?? []), facts: rideFacts(body.data.attributes.publicData ?? {}) } : null;
   } catch {
     return null;
   }

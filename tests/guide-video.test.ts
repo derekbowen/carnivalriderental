@@ -28,7 +28,7 @@ describe("guide videos", () => {
     });
 
     it(`${g.id}: captions are valid WebVTT, in order, and say exactly the transcript`, () => {
-      const vtt = fs.readFileSync(file(v.captions), "utf8");
+      const vtt = fs.readFileSync(file(v.captions), "utf8").replace(/\r\n/g, "\n");
       expect(vtt.startsWith("WEBVTT")).toBe(true);
       const cues = [...vtt.matchAll(/(\d\d:\d\d:\d\d\.\d{3}) --> (\d\d:\d\d:\d\d\.\d{3})\n([^\n]+)/g)].map((m) => ({ start: seconds(m[1]), end: seconds(m[2]), text: m[3] }));
       expect(cues.length).toBeGreaterThan(10);

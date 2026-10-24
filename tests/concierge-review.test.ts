@@ -119,7 +119,7 @@ describe("chat → event requests", () => {
 
   it("no exact match: the chat points to the alternatives page instead of a dead end", async () => {
     const { session } = await conversation(db);
-    await saveLead(db, session, { ...emptyLead, eventDate: "2030-06-01", city: "Riverside", state: "CA", requestedRides: [{ rideType: "trackless-train", quantity: 1 }] });
+    await saveLead(db, session, { ...emptyLead, eventDate: "2030-06-01", city: "Fresno", state: "CA", requestedRides: [{ rideType: "trackless-train", quantity: 1 }] });
     const r = await captureEmail(rt(), session, EMAIL, false, deps());
     expect(r.emailed).toBe(false);
     expect(r.alternativesUrl).toBe(`/connect/${r.eventId}`);

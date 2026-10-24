@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04",
+  "generatedAt": "2026-10-18",
   "held": [
     {
       "externalId": "campy-amusements--ferris-wheel",
@@ -28,6 +28,10 @@
     {
       "externalId": "sunshine-shows--rock-star",
       "issue": "description contains a research note; public text names a person from the company's private contacts"
+    },
+    {
+      "externalId": "paradise-amusements--carousel",
+      "issue": "title or public data names the company (only the description is anonymised)"
     }
   ]
 }

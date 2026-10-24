@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-10-14T11:30:54.823Z",
-  "inventoryGeneratedAt": "2026-10-14T08:49:48.868Z",
+  "generatedAt": "2026-10-18T15:27:47.108Z",
+  "inventoryGeneratedAt": "2026-10-18T11:49:11.783Z",
   "status": "NOT ENABLED: candidates for a later wave, each needs its own go",
   "criteria": [
     "meets the supply gate (city ≥ 10 rides within 200 mi; ride + city ≥ 5 matching rides)",
@@ -10,369 +10,369 @@
   ],
   "excludedByReason": {
     "city": {
-      "nearDuplicateNotHead": 1068,
-      "candidate": 155,
-      "fewerThan3ContactableOperators": 32,
-      "thin": 6
+      "nearDuplicateNotHead": 1066,
+      "candidate": 192,
+      "fewerThan3ContactableOperators": 21,
+      "thin": 45
     },
     "ride-city": {
-      "nearDuplicateNotHead": 13893,
-      "candidate": 1183,
-      "fewerThan3ContactableOperators": 34
+      "nearDuplicateNotHead": 17795,
+      "candidate": 1828,
+      "fewerThan3ContactableOperators": 35
     }
   },
   "nextCityCandidates": [
     {
+      "path": "/tennessee/maryville",
+      "family": "city",
+      "rides": 202,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/georgia/roswell",
+      "family": "city",
+      "rides": 182,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/north-carolina/charlotte",
+      "family": "city",
+      "rides": 178,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/south-carolina/spartanburg",
+      "family": "city",
+      "rides": 177,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/south-carolina/rock-hill",
+      "family": "city",
+      "rides": 169,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/california/atascadero",
+      "family": "city",
+      "rides": 295,
+      "operators": 11,
+      "contactableOperators": 9
+    },
+    {
       "path": "/texas/college-station",
       "family": "city",
-      "rides": 158,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 228,
+      "operators": 9,
+      "contactableOperators": 9
     },
     {
       "path": "/texas/killeen",
       "family": "city",
-      "rides": 158,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 228,
+      "operators": 9,
+      "contactableOperators": 9
     },
     {
-      "path": "/tennessee/oak-ridge",
+      "path": "/texas/leander",
       "family": "city",
-      "rides": 153,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 228,
+      "operators": 9,
+      "contactableOperators": 9
     },
     {
-      "path": "/virginia/newport-news",
+      "path": "/tennessee/cleveland",
       "family": "city",
-      "rides": 145,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 178,
+      "operators": 9,
+      "contactableOperators": 9
     },
     {
-      "path": "/virginia/petersburg",
+      "path": "/georgia/athens",
       "family": "city",
-      "rides": 140,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 174,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/south-carolina/sumter",
+      "family": "city",
+      "rides": 173,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/georgia/augusta",
+      "family": "city",
+      "rides": 172,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/georgia/statesboro",
+      "family": "city",
+      "rides": 172,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/south-carolina/greenville",
+      "family": "city",
+      "rides": 172,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/north-carolina/greensboro",
+      "family": "city",
+      "rides": 166,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/north-carolina/winston-salem",
+      "family": "city",
+      "rides": 166,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/tennessee/farragut",
+      "family": "city",
+      "rides": 165,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/north-carolina/asheville",
+      "family": "city",
+      "rides": 157,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/north-carolina/hickory",
+      "family": "city",
+      "rides": 157,
+      "operators": 9,
+      "contactableOperators": 9
+    },
+    {
+      "path": "/california/dinuba",
+      "family": "city",
+      "rides": 397,
+      "operators": 10,
+      "contactableOperators": 8
+    },
+    {
+      "path": "/texas/huntsville",
+      "family": "city",
+      "rides": 217,
+      "operators": 8,
+      "contactableOperators": 8
     },
     {
       "path": "/virginia/lynchburg",
       "family": "city",
-      "rides": 139,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 180,
+      "operators": 8,
+      "contactableOperators": 8
     },
     {
-      "path": "/virginia/suffolk",
+      "path": "/virginia/newport-news",
       "family": "city",
-      "rides": 137,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 177,
+      "operators": 8,
+      "contactableOperators": 8
     },
     {
-      "path": "/minnesota/prior-lake",
+      "path": "/georgia/warner-robins",
       "family": "city",
-      "rides": 133,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/minnesota/brooklyn-park",
-      "family": "city",
-      "rides": 129,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/minnesota/coon-rapids",
-      "family": "city",
-      "rides": 129,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/south-carolina/columbia",
-      "family": "city",
-      "rides": 127,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/north-carolina/gastonia",
-      "family": "city",
-      "rides": 120,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/arizona/kingman",
-      "family": "city",
-      "rides": 193,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/chandler",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/flagstaff",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/mesa",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/peoria",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/phoenix",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/arizona/tucson",
-      "family": "city",
-      "rides": 147,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/missouri/springfield",
-      "family": "city",
-      "rides": 143,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/tennessee/franklin",
-      "family": "city",
-      "rides": 142,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/tennessee/clarksville",
-      "family": "city",
-      "rides": 138,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/alabama/gadsden",
-      "family": "city",
-      "rides": 135,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/alabama/opelika",
-      "family": "city",
-      "rides": 135,
-      "operators": 5,
-      "contactableOperators": 5
-    },
-    {
-      "path": "/georgia/columbus",
-      "family": "city",
-      "rides": 135,
-      "operators": 5,
-      "contactableOperators": 5
+      "rides": 167,
+      "operators": 8,
+      "contactableOperators": 8
     }
   ],
   "nextRideCityCandidates": [
     {
-      "path": "/california/visalia/fun-house",
-      "family": "ride-city",
-      "rides": 20,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/california/calexico/fun-house",
-      "family": "ride-city",
-      "rides": 19,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/michigan/jackson/family-coaster",
-      "family": "ride-city",
-      "rides": 17,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/arizona/yuma/fun-house",
-      "family": "ride-city",
-      "rides": 16,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/illinois/champaign/family-coaster",
-      "family": "ride-city",
-      "rides": 14,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/california/el-centro/fun-house",
-      "family": "ride-city",
-      "rides": 13,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/indiana/indianapolis/family-coaster",
-      "family": "ride-city",
-      "rides": 13,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/pennsylvania/erie/paratrooper",
-      "family": "ride-city",
-      "rides": 13,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/california/ridgecrest/fun-house",
-      "family": "ride-city",
-      "rides": 12,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/michigan/port-huron/kiddie-cars",
-      "family": "ride-city",
-      "rides": 12,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
       "path": "/california/santa-maria/giant-slide",
       "family": "ride-city",
-      "rides": 11,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 19,
+      "operators": 13,
+      "contactableOperators": 11
     },
     {
-      "path": "/california/tulare/giant-slide",
+      "path": "/ohio/cincinnati/ferris-wheel",
       "family": "ride-city",
-      "rides": 11,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/kentucky/bowling-green/ferris-wheel",
-      "family": "ride-city",
-      "rides": 11,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/michigan/flint/kiddie-cars",
-      "family": "ride-city",
-      "rides": 11,
-      "operators": 6,
-      "contactableOperators": 6
-    },
-    {
-      "path": "/wisconsin/la-crosse/fun-house",
-      "family": "ride-city",
-      "rides": 11,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 19,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
       "path": "/california/hanford/giant-slide",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 18,
+      "operators": 13,
+      "contactableOperators": 11
     },
     {
-      "path": "/indiana/evansville/kiddie-cars",
+      "path": "/maryland/bowie/kiddie-cars",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 17,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
-      "path": "/iowa/iowa-city/fun-house",
+      "path": "/ohio/newark/carousel",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 17,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
-      "path": "/kentucky/louisville/carousel",
+      "path": "/michigan/rochester-hills/ferris-wheel",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 14,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
-      "path": "/new-hampshire/rochester/kiddie-cars",
+      "path": "/ohio/brunswick/carousel",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 14,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
-      "path": "/ohio/canton/fun-house",
+      "path": "/ohio/lancaster/sizzler-style-ride",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 12,
+      "operators": 11,
+      "contactableOperators": 11
     },
     {
-      "path": "/tennessee/oak-ridge/ferris-wheel",
+      "path": "/pennsylvania/state-college/round-up",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 12,
+      "operators": 12,
+      "contactableOperators": 11
     },
     {
-      "path": "/virginia/winchester/fun-house",
+      "path": "/california/hanford/ferris-wheel",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 27,
+      "operators": 12,
+      "contactableOperators": 10
     },
     {
-      "path": "/west-virginia/charleston/kiddie-cars",
+      "path": "/massachusetts/leominster/kiddie-cars",
       "family": "ride-city",
-      "rides": 10,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 21,
+      "operators": 11,
+      "contactableOperators": 10
     },
     {
-      "path": "/arizona/yuma/ferris-wheel",
+      "path": "/pennsylvania/york/fun-house",
       "family": "ride-city",
-      "rides": 9,
-      "operators": 6,
-      "contactableOperators": 6
+      "rides": 21,
+      "operators": 11,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/wisconsin/green-bay/fun-house",
+      "family": "ride-city",
+      "rides": 18,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/ohio/massillon/fun-house",
+      "family": "ride-city",
+      "rides": 16,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/ohio/wooster/fun-house",
+      "family": "ride-city",
+      "rides": 16,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/rhode-island/providence/paratrooper",
+      "family": "ride-city",
+      "rides": 15,
+      "operators": 11,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/pennsylvania/williamsport/paratrooper",
+      "family": "ride-city",
+      "rides": 14,
+      "operators": 12,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/tennessee/oak-ridge/giant-slide",
+      "family": "ride-city",
+      "rides": 14,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/illinois/aurora/gravitron",
+      "family": "ride-city",
+      "rides": 12,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/illinois/champaign/kiddie-train",
+      "family": "ride-city",
+      "rides": 12,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/new-york/elmira/gravitron",
+      "family": "ride-city",
+      "rides": 12,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/south-carolina/columbia/giant-slide",
+      "family": "ride-city",
+      "rides": 12,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/indiana/franklin/kiddie-motorcycles",
+      "family": "ride-city",
+      "rides": 11,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/iowa/davenport/gravitron",
+      "family": "ride-city",
+      "rides": 11,
+      "operators": 10,
+      "contactableOperators": 10
+    },
+    {
+      "path": "/michigan/ann-arbor/sizzler-style-ride",
+      "family": "ride-city",
+      "rides": 11,
+      "operators": 10,
+      "contactableOperators": 10
     }
   ]
 }
