@@ -277,3 +277,38 @@ and redeploy.
 **Rollback.**
 - Everything: `PUBLIC_INDEXING=false` and redeploy.
 - Wave 2 only: empty `paths` and `categoryPaths` in `indexing-wave-2.json` and redeploy. Wave 1 stays.
+
+## 9. Third wave: event pages and buyer guides (2026-10-24)
+
+**Authorization.** Founder instruction, 2026-10-24, after the Search Console review: "Open wedding pages" and "Ferris wheel content + guides". Recorded in `WAVE_3` (`src/lib/inventory/pilot.ts`). Content review: automated checks only, NOT a page-by-page review by the founder.
+
+**Search Console evidence (Oct 9–22).**
+- 431 impressions and 10 clicks, average position 28.
+- "rent ferris wheel for wedding": 29 impressions at position 6.8 and no clicks, with no page written for it.
+- Private-party, birthday and corporate Ferris wheel searches also appear.
+
+**Opened (8 URLs).**
+- Event pages: `/events/weddings`, `/events/birthday-parties`, `/events/backyard-parties`, `/events/company-picnics`.
+- Buyer guides:
+  - `/guides/how-to-rent-carnival-rides`;
+  - `/guides/ride-owner-vs-rental-broker`;
+  - `/guides/ferris-wheel-rental-cost` (new);
+  - `/guides/ferris-wheel-wedding-rental` (new).
+- Until now the guides followed the site default, which is noindex, and were not in the sitemap.
+
+**Gates.**
+- `occasionGate` accepts the exact allowlisted path in place of approved copy. Its supply is now the operator inventory of the page's suggested categories: the page shows that inventory, while the managed catalog it used to count is retired.
+- `guideGate` has no supply gate.
+- Both need `PUBLIC_INDEXING` on and APP_ENV production.
+- State versions (`/events/{id}/{state}`) are unchanged and stay closed.
+
+**Also on 2026-10-24.**
+- Search-matched titles and descriptions: homepage, Ferris wheel and carousel hubs, and the city and ride + city descriptions. Canonical URLs are unchanged.
+- The wedding page leads with "Ferris wheel and carousel rentals for weddings" and links its guides.
+
+**IndexNow.** `npm run seo:indexnow -- --submit` sends exactly the sitemap's pages to Bing. Bing shares IndexNow submissions with the other participating engines.
+- The key is the public file `public/<key>.txt`.
+- Run it after any deploy that opens pages.
+
+**Rollback.**
+- Empty `WAVE_3.eventPaths` and `WAVE_3.guidePaths`, then redeploy.

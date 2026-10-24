@@ -6,6 +6,7 @@ import { checkSlugNamespaces, RESERVED_TOP_LEVEL } from "@/lib/seo/namespaces";
 import { paths } from "@/lib/seo/routes";
 import { cardFromCatalog } from "@/lib/catalog/card";
 import { breadcrumbs, graph, itemList, rentalService, serializeJsonLd } from "@/lib/seo/structured-data";
+import { GUIDES } from "@/lib/content/guides";
 import occasionsJson from "@/lib/taxonomy/occasions.json";
 import rideTypesJson from "@/lib/taxonomy/ride-types.json";
 import { checkTaxonomies, occasionById, OCCASIONS, RIDE_TYPES, schemas, stateBySlug, US_STATES, type Occasion } from "@/lib/taxonomy";
@@ -98,13 +99,25 @@ describe("live supply + gates", () => {
     expect(stateGate(TX, snap(live(n), "test-harness-file")).reasons.join()).toMatch(/supply source/);
   });
 
-  it("occasion pages need approved copy and supply in suggested categories", () => {
+  it("occasion pages need approved copy (or the wave 3 allowlist) and supply in suggested categories", () => {
+    // Closed with indexing off, whatever the supply.
+    expect(occasionGate(approved("weddings"), snap(live(5))).indexable).toBe(false);
     indexingOn();
-    const draft = occasionById("weddings")!;
-    expect(occasionGate(draft, snap(live(5))).reasons).toContain("occasion copy not approved");
-    const ok = approved("weddings");
-    expect(occasionGate(ok, snap(live(5))).indexable).toBe(true);
-    expect(occasionGate(ok, snap(live(5, { categoryId: "thrill-rides" }))).indexable).toBe(false);
+    // A draft that is not on the allowlist stays closed.
+    expect(occasionGate(occasionById("bar-mitzvahs")!, snap(live(5))).reasons).toContain("occasion copy not approved");
+    // Wave 3 (founder 2026-10-24) opens the listed event pages with draft copy; supply is the operator
+    // inventory of the suggested categories (the retired managed catalog can be empty).
+    for (const id of ["weddings", "birthday-parties", "backyard-parties", "company-picnics"]) {
+      expect(occasionById(id)!.reviewStatus, id).toBe("draft");
+      expect(occasionGate(occasionById(id)!, snap([])), id).toEqual({ indexable: true, reasons: [] });
+    }
+    expect(occasionGate(approved("weddings"), snap(live(5, { categoryId: "thrill-rides" }))).indexable).toBe(true);
+  });
+
+  it("the wedding page leads with Ferris wheels and carousels and links its guides", () => {
+    const w = occasionById("weddings")!;
+    expect(w.headline).toBe("Ferris wheel and carousel rentals for weddings");
+    expect(w.guides).toEqual(["ferris-wheel-wedding-rental", "ferris-wheel-rental-cost"]);
   });
 
   it("occasion + state needs both parents and local suggested supply", () => {
@@ -119,7 +132,7 @@ describe("live supply + gates", () => {
 
   it("enumerates every state, occasion and combination with canonical paths", () => {
     const routes = pseoRoutes(snap([]));
-    expect(routes).toHaveLength(5 + 51 + OCCASIONS.length + OCCASIONS.length * 51); // 5 pilot category hubs
+    expect(routes).toHaveLength(GUIDES.length + 5 + 51 + OCCASIONS.length + OCCASIONS.length * 51); // guides, 5 pilot category hubs
     expect(routes.some((r) => r.path === "/new-york/bar-mitzvahs")).toBe(true);
     expect(routes.every((r) => !r.gate.indexable)).toBe(true);
   });

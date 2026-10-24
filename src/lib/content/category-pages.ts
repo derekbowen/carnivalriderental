@@ -31,6 +31,8 @@ export interface CategoryPage {
   quoteChecklist: string[];
   faqs: { q: string; a: string }[];
   related: string[];
+  /** Buyer guides linked from the hub (ids in lib/content/guides.ts). */
+  guides?: string[];
   reviewStatus: "draft" | "approved";
 }
 
@@ -50,8 +52,9 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     theme: "ferris",
     name: "Ferris wheels",
     h1: "Ferris wheel rentals",
-    metaTitle: "Ferris wheel rentals for events",
-    metaDescription: "Rent a Ferris wheel for a festival, civic celebration, wedding or corporate event, from independent operators you contact directly.",
+    // Search Console 2026-10-24: "rent a ferris wheel", "ferris wheel rental", wedding and cost searches.
+    metaTitle: "Ferris Wheel Rental for Weddings, Festivals and Events",
+    metaDescription: "Rent a Ferris wheel for a wedding, festival or corporate event. Browse mini, standard and giant wheels from operators near you and see how many match, free.",
     intro:
       "A Ferris wheel gives a festival, civic celebration or large corporate event a landmark guests can see from across the grounds. Browse the wheels operators have listed, then use Event Access to reach the ones near your date and site.",
     heroAlt: "Illustration of a Ferris wheel lit up against an evening city skyline",
@@ -63,12 +66,16 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     },
     quoteChecklist: ["Event dates and operating hours", "Site address and ground surface", "Space available, including anything overhead", "Expected attendance and guest ages", "Power available near the setup area"],
     faqs: [
+      { q: "How much does it cost to rent a Ferris wheel?", a: "Each operator sets its own price and quotes per event, after hearing your date, location, hours and site. The wheel, the travel distance, the crew and power all change the quote, so compare what each quote includes, not just the total." },
+      { q: "Can I rent a Ferris wheel for a wedding?", a: "Yes, if your venue allows it and has the space and access a wheel needs. Check with the venue first, then contact operators near it with your date, the setup spot and your guest count." },
+      { q: "What kinds of Ferris wheel can I rent?", a: "Listings range from mini wheels for young children to standard fair wheels and giant wheels for large festivals. Ask the operator to confirm the exact wheel, its footprint and its height for your site." },
       { q: "How much space does a Ferris wheel need?", a: "It depends on the model — wheels range from compact units to large festival attractions. Tell the operator the size of your area and any overhead obstructions; they confirm what fits before quoting." },
       { q: "Can you tell me the wheel's height and how many people it carries?", a: "Only the operator can confirm a specific wheel's height and capacity. We show the verified facts from the listing and leave the rest unconfirmed rather than estimate them." },
       OPERATED_FAQ("Ferris wheel"),
       BOOKED_FAQ("Ferris wheel"),
     ],
     related: ["carousels", "swing-rides", "thrill-rides"],
+    guides: ["ferris-wheel-rental-cost", "ferris-wheel-wedding-rental", "how-to-rent-carnival-rides"],
     reviewStatus: "draft",
   },
   {
@@ -77,8 +84,9 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     theme: "carousel",
     name: "Carousels",
     h1: "Carousel and merry-go-round rentals",
-    metaTitle: "Carousel and merry-go-round rentals",
-    metaDescription: "Rent a carousel (merry-go-round) for a family day, holiday market, wedding or community event, from independent operators you contact directly.",
+    // Search Console 2026-10-24: "merry go round rental", "carousel rent", "rent a merry go round".
+    metaTitle: "Carousel and Merry-Go-Round Rental for Events",
+    metaDescription: "Rent a carousel or merry-go-round for a wedding, family day, holiday market or community event, from operators near you. See how many match, free.",
     intro:
       "A carousel — many people call it a merry-go-round — is an all-ages ride that suits family days, holiday markets, weddings and community events. Browse the carousels operators have listed, then use Event Access to reach the ones near your event.",
     heroAlt: "Illustration of a classic carousel with a scalloped canopy and carved horses",
@@ -92,10 +100,13 @@ export const CATEGORY_PAGES: CategoryPage[] = [
     faqs: [
       { q: "Is a merry-go-round the same as a carousel?", a: "For event rentals, yes — the two names are used for the same kind of ride. Search for either and you are in the right place; we list them all under carousel rentals." },
       { q: "Can a carousel be set up indoors?", a: "Sometimes. It depends on the model, the room's height, the floor and the way in. Tell the operator about the room and they confirm before quoting." },
+      { q: "How much does it cost to rent a carousel?", a: "Each operator sets its own price and quotes per event, after hearing your date, location, hours and site. Travel, setup, crew and power all change the quote, so compare what each quote includes." },
+      { q: "Can I rent a carousel for a wedding?", a: "Yes, if the venue allows it and has a firm, level spot with access for the trailers. Check with the venue first, then contact operators with your date, the setup spot and your guest count." },
       OPERATED_FAQ("carousel"),
       BOOKED_FAQ("carousel"),
     ],
     related: ["kiddie-rides", "ferris-wheels", "swing-rides"],
+    guides: ["how-to-rent-carnival-rides", "ferris-wheel-wedding-rental"],
     reviewStatus: "draft",
   },
   {

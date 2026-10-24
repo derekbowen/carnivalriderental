@@ -28,6 +28,10 @@ const occasion = z
     searchPhrases: z.array(z.string().min(3)).min(1),
     intro: z.string().min(40).max(400),
     related: z.array(z.string().regex(SLUG)),
+    /** National page title when the generic "Carnival ride rentals for {plural}" undersells what people search for. */
+    headline: z.string().min(10).max(60).optional(),
+    /** Buyer guides linked from the event page (ids in lib/content/guides.ts). */
+    guides: z.array(z.string().regex(SLUG)).optional(),
     reviewStatus,
   })
   .strict();

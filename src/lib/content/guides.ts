@@ -170,7 +170,10 @@ export const GUIDES: Guide[] = [
       { group: "Logistics", questions: ["Arrival and departure times?", "Power needed or provided?", "Access and parking needs for vehicles?", "Who provides fencing, lighting or ticketing if needed?"] },
       { group: "Risk", questions: ["Certificate of insurance and limits?", "Current inspections or certifications where required?", "Weather and cancellation policy?", "Who signs the contract, and when?"] },
     ],
-    related: [{ id: "ride-owner-vs-rental-broker", text: "Not sure whether a company owns the ride it is quoting? Read ride owner vs. rental broker: what’s the difference, with questions about ownership, crews, insurance and inspections." }],
+    related: [
+      { id: "ride-owner-vs-rental-broker", text: "Not sure whether a company owns the ride it is quoting? Read ride owner vs. rental broker: what’s the difference, with questions about ownership, crews, insurance and inspections." },
+      { id: "ferris-wheel-rental-cost", text: "Renting a Ferris wheel? How much does it cost to rent a Ferris wheel explains what changes the quote and how to compare quotes." },
+    ],
     faq: [
       { q: "How far in advance should I contact operators?", a: "As early as you can for weekend dates in spring, summer and fall, and for holidays. Operators book a season at a time, and the first company you reach may already be committed on your date, which is a good reason to contact several." },
       { q: "Should I contact more than one operator?", a: "Yes. Equipment, service areas, crews and prices differ, and availability on a specific date is only known to the operator. Comparing two or three quotes with the same checklist is the most reliable way to judge value." },
@@ -306,6 +309,168 @@ export const GUIDES: Guide[] = [
       { q: "Do you verify that operators own their rides?", a: "No. Listings come from independent ride operators, and we don’t verify the ownership of each ride. Ask each operator the ownership questions in this guide before you sign." },
     ],
     related: [{ id: "how-to-rent-carnival-rides", text: "Ready to call operators? How to rent carnival rides covers what to have ready and what to ask about transport, power, staffing, permits and weather, with a quote checklist." }],
+  },
+  {
+    // Search Console 2026-10-24: "ferris wheel rental cost", "how much to rent a ferris wheel" and similar.
+    id: "ferris-wheel-rental-cost",
+    title: "How much does it cost to rent a Ferris wheel?",
+    metaTitle: "How Much Does It Cost to Rent a Ferris Wheel?",
+    metaDescription: "Ferris wheel rental prices are set by each operator, per event. What changes the quote (the wheel, travel, days and hours, crew, power, permits) and how to compare quotes like for like.",
+    intro:
+      "There is no standard price list for renting a Ferris wheel. Each operator quotes per event, after hearing your date, location, hours and site, and two quotes for the same day can differ a lot because they include different things. This guide explains what changes a Ferris wheel quote, what to ask about what's included, and how to compare quotes like for like. Carnival Ride Rental doesn't set or collect rental prices: you get quotes directly from the operators.",
+    sections: [
+      {
+        id: "what-changes-the-price",
+        heading: "What changes the price",
+        intro: "These are the parts of a Ferris wheel quote that change the most from one event to the next.",
+        items: [
+          "The wheel itself: a mini wheel for young children, a standard fair wheel and a giant wheel are very different pieces of equipment to move, set up and run",
+          "Distance: the wheel travels on trucks and trailers from the operator's base, so travel time and fuel are often part of the quote",
+          "Days and hours: how many days the wheel stays on site, and how many hours a day it runs",
+          "Setup and teardown: a larger wheel takes longer to build and take down, which can add crew time",
+          "Crew: the attendants who load riders and run the wheel throughout your event",
+          "Power: whether the operator brings a generator and fuel, or needs power on site",
+          "Your date: weekends, holidays and the spring-to-fall fair season are when operators are busiest",
+        ],
+      },
+      {
+        id: "whats-included",
+        heading: "Questions to ask about what's included",
+        intro: "Ask every operator the same questions, so a short quote and a complete one don't look alike.",
+        items: [
+          "Are delivery, setup and teardown included, or quoted separately?",
+          "Are ride attendants included for the whole event, and what does it cost if the event runs long?",
+          "Is a generator and its fuel included, or do you need power on site?",
+          "Is there a charge for a second day, or for running into the evening?",
+          "Who arranges any permit or inspection the venue or city requires, and is that included?",
+          "Can you provide a certificate of insurance, and is there a charge to name my venue on it?",
+          "How much is the deposit, and when does it become non-refundable?",
+        ],
+      },
+      {
+        id: "how-to-compare",
+        heading: "How to compare Ferris wheel quotes",
+        intro: "A low headline price can leave out what another quote includes. Compare the whole event, not the rate.",
+        items: [
+          "Write the answers from each operator side by side, using the same questions",
+          "Compare the total for your event, not an hourly or daily rate on its own",
+          "Check which wheel each quote is for, and ask for photos of the actual unit",
+          "Confirm the space, ground and access the wheel needs before you compare prices",
+        ],
+      },
+      {
+        id: "how-we-fit",
+        heading: "Getting quotes through Carnival Ride Rental",
+        intro: "We list Ferris wheels from independent ride operators and show you, free, how many match your event.",
+        items: [
+          "Event Access gives you the contact details of matching operators, so you can ask each one for a quote",
+          "We charge a one-time access fee and take no commission or markup on the rental price",
+          "Prices, dates and terms are agreed directly between you and each operator",
+        ],
+      },
+    ],
+    checklistTitle: "Ferris wheel quote checklist",
+    checklistIntro: "Send every operator the same details and ask the same questions, then compare the answers side by side.",
+    checklist: [
+      { group: "The wheel", questions: ["Which wheel is quoted, and can I see photos of it?", "How much space and overhead clearance does it need?"] },
+      { group: "Price", questions: ["What does the total include?", "Any travel, setup, extra-day or overtime charges?", "Deposit amount and refund terms?"] },
+      { group: "On the day", questions: ["How many attendants, and for how long?", "Generator and fuel, or site power?", "Who handles permits and inspections?"] },
+      { group: "Paperwork", questions: ["Certificate of insurance before the event?", "Venue named on the certificate?"] },
+    ],
+    faq: [
+      { q: "Why won’t anyone give me a Ferris wheel price online?", a: "Because the price depends on your date, location, site and hours. Most operators quote after hearing those details, so have them ready and you will get quotes faster." },
+      { q: "Does the size of the wheel change the price?", a: "It can, because a larger wheel takes more to transport, set up and staff. Ask each operator to quote the wheel that suits your space and your guests, and compare like with like." },
+      { q: "Does Carnival Ride Rental set the price?", a: "No. Operators set their own prices and quote you directly. We charge a one-time Event Access fee for their contact details and take no commission or markup on the rental." },
+      { q: "How far ahead should I ask for quotes?", a: "As early as you can, especially for weekends in spring, summer and fall. Only the operator knows whether a wheel is free on your date, which is a good reason to contact several." },
+    ],
+    related: [
+      { id: "ferris-wheel-wedding-rental", text: "Planning a wheel for a wedding? Renting a Ferris wheel for a wedding covers the venue, space, timing and questions to ask." },
+      { id: "how-to-rent-carnival-rides", text: "Renting other rides too? How to rent carnival rides covers what to ask about transport, power, staffing, permits and weather." },
+    ],
+  },
+  {
+    // Search Console 2026-10-24: "rent ferris wheel for wedding" ranks on page one with no page written for it.
+    id: "ferris-wheel-wedding-rental",
+    title: "Renting a Ferris wheel for a wedding",
+    metaTitle: "Renting a Ferris Wheel for a Wedding: What to Know",
+    metaDescription: "Planning a Ferris wheel at your wedding? What to check with your venue, the space, access and power a wheel needs, timing around the reception, and the questions to ask operators.",
+    intro:
+      "A Ferris wheel at a wedding gives guests a ride and gives you photos with a view. It is also a large piece of equipment arriving at a venue that may never have hosted one, so the planning starts with the venue. This guide covers what to check with your venue, what an operator will need from you, and the questions to ask before you sign. Requirements vary by wheel, operator, venue and location, so treat every item as something to confirm.",
+    sections: [
+      {
+        id: "venue",
+        heading: "Start with your venue",
+        intro: "Ask the venue these before you contact operators. Their answers decide what is possible.",
+        items: [
+          "Does the venue allow amusement rides on its grounds?",
+          "Where could a wheel stand, and is the ground there firm and level?",
+          "Can trucks and trailers reach that spot, and when can they arrive and leave?",
+          "Does the venue need insurance paperwork or other documents from the ride operator?",
+          "Are there rules on noise, lighting or a finish time for the evening?",
+        ],
+      },
+      {
+        id: "space-access-power",
+        heading: "Space, access and power",
+        intro: "An operator needs these details to tell you which wheel fits.",
+        items: [
+          "The size of the area, and anything overhead such as trees, wires, tents or a roof line",
+          "The route from the road to the setup spot, including gates, slopes and tight turns",
+          "Whether there is power near the spot, or whether the operator should bring a generator",
+          "Where the wheel would sit in view of the reception, if photos of it matter to you",
+        ],
+      },
+      {
+        id: "timing",
+        heading: "Timing on the day",
+        intro: "A wheel is built before guests arrive and taken down after they leave.",
+        items: [
+          "How long before the ceremony does your crew need to arrive and set up?",
+          "Can the wheel run during the reception only, and which hours are included?",
+          "Does setup or teardown have to happen outside the venue’s event hours?",
+          "What happens to the plan if weather stops the wheel?",
+        ],
+      },
+      {
+        id: "guests",
+        heading: "Your guests",
+        intro: "Tell the operator who will ride, so they can suggest a wheel and staffing that suit your reception.",
+        items: [
+          "Roughly how many guests you expect, and whether children will ride",
+          "Whether guests in formal wear, or with limited mobility, are likely to want a ride",
+          "Whether the wheel should run for the whole reception or for a set time",
+        ],
+      },
+      {
+        id: "operator-questions",
+        heading: "Questions to ask each operator",
+        intro: "Ask these of every operator you contact and compare the answers side by side.",
+        items: [
+          "Which wheel do you suggest for our space and guest count, and can I see photos of it?",
+          "Are attendants included for the whole time the wheel runs?",
+          "Can you provide a certificate of insurance for our venue before the event?",
+          "Who arranges any permit or inspection the venue or city requires?",
+          "What deposit do you need, and what are your cancellation and weather terms?",
+        ],
+      },
+    ],
+    checklistTitle: "What to have ready before you call",
+    checklistIntro: "Operators quote faster when you can answer these on the first call.",
+    checklist: [
+      { group: "The day", questions: ["Wedding date?", "Ceremony and reception times?", "Expected number of guests?"] },
+      { group: "The venue", questions: ["Has the venue approved a ride?", "Setup spot size and anything overhead?", "Access route for trucks and trailers?"] },
+      { group: "Power and paperwork", questions: ["Power near the setup spot?", "Venue's requirements for vendor insurance?"] },
+    ],
+    faq: [
+      { q: "Can you rent a Ferris wheel for a wedding?", a: "Yes. Some operators rent Ferris wheels for private events, including weddings. Whether one fits depends on your venue’s rules, the space and the access, so check those first, then contact operators near the venue." },
+      { q: "How much does a wedding Ferris wheel cost?", a: "Each operator quotes per event, after hearing your date, venue, hours and site. How much does it cost to rent a Ferris wheel explains what changes the quote and how to compare quotes." },
+      { q: "How far ahead should we contact operators?", a: "As soon as your date and venue are set. Wedding season overlaps with the busiest months for fairs and festivals, and only the operator knows whether a wheel is free on your date." },
+      { q: "Could a carousel work instead?", a: "It is another option couples consider, and it suits all ages. The same venue, space, access and power questions apply, so ask them of carousel operators too." },
+    ],
+    related: [
+      { id: "ferris-wheel-rental-cost", text: "Comparing quotes? How much does it cost to rent a Ferris wheel explains what changes the price and what to ask about what's included." },
+      { id: "how-to-rent-carnival-rides", text: "Adding other rides? How to rent carnival rides covers transport, power, staffing, permits and weather." },
+    ],
   },
 ];
 

@@ -2,6 +2,7 @@ import type { CatalogRecord } from "../catalog/normalize";
 import type { CatalogSnapshot } from "../catalog/source";
 import { publicIndexingEnabled } from "../config";
 import { CATEGORY_PAGES, type CategoryPage } from "../content/category-pages";
+import { GUIDES } from "../content/guides";
 import { OCCASIONS, US_STATES, type Occasion, type UsState } from "../taxonomy";
 import type { GateResult } from "./publication";
 import { paths } from "./routes";
@@ -63,10 +64,17 @@ export function stateGate(state: UsState, snap: CatalogSnapshot): GateResult {
   return result(reasons);
 }
 
+/**
+ * National event page (/events/{id}): approved copy (or the exact path in the approved indexing cohort,
+ * pilot.ts) + enough real supply in the suggested categories. Supply is what the page shows: the
+ * operator inventory of those categories (the managed catalog is retired; its live offerings still
+ * count when there are any).
+ */
 export function occasionGate(o: Occasion, snap: CatalogSnapshot): GateResult {
-  const reasons = common(snap);
-  if (o.reviewStatus !== "approved") reasons.push("occasion copy not approved");
-  const n = countable(snap, { categories: o.suggestedCategories });
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (o.reviewStatus !== "approved" && !inPilot(paths.occasion(o.id))) reasons.push("occasion copy not approved");
+  const n = Math.max(countable(snap, { categories: o.suggestedCategories }), o.suggestedCategories.reduce((sum, c) => sum + categoryInventoryCount(c), 0));
   if (n < PSEO_THRESHOLDS.occasionMinOfferings) reasons.push(`${n} live offerings in suggested categories (need ${PSEO_THRESHOLDS.occasionMinOfferings})`);
   return result(reasons);
 }
@@ -96,8 +104,17 @@ export function categoryHubGate(page: CategoryPage, snap: CatalogSnapshot): Gate
 }
 
 /** Every catalog-driven route with its gate (5 category hubs + 51 + 75 + 75×51 today). */
+/** Buyer guide (/guides/{id}): only the exact paths in the approved indexing cohort (pilot.ts, wave 3). No supply gate. */
+export function guideGate(id: string): GateResult {
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (!inPilot(paths.guide(id))) reasons.push("not in the approved indexing cohort");
+  return result(reasons);
+}
+
 export function pseoRoutes(snap: CatalogSnapshot): { path: string; family: string; gate: GateResult }[] {
   const out: { path: string; family: string; gate: GateResult }[] = [];
+  for (const g of GUIDES) out.push({ path: paths.guide(g.id), family: "guide", gate: guideGate(g.id) });
   for (const c of CATEGORY_PAGES) out.push({ path: paths.category(c.id), family: "category", gate: categoryHubGate(c, snap) });
   for (const s of US_STATES) out.push({ path: paths.state(s.slug), family: "state", gate: stateGate(s, snap) });
   for (const o of OCCASIONS) out.push({ path: paths.occasion(o.id), family: "occasion", gate: occasionGate(o, snap) });

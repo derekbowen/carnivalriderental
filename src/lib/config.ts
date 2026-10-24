@@ -63,4 +63,4 @@ export const SOCIAL_LINKS = [
 ] as const;
 
 /** Site-wide default description: the customer's intent (rent a ride) first, then what we do. */
-export const SITE_DESCRIPTION = "Browse carnival rides from independent operators across the U.S.: Ferris wheels, thrill rides, family rides and more. Connect directly with matching companies.";
+export const SITE_DESCRIPTION = "Find Ferris wheels, carousels and carnival rides listed by independent operators near your event. See how many match for free, then contact them directly.";

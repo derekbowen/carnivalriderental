@@ -40,6 +40,7 @@
     "photos:gaps": "tsx scripts/photo-gaps.ts",
     "pseo:report": "tsx scripts/pseo-report.ts",
     "pseo:duplicates": "tsx scripts/pseo-duplicates.ts",
+    "seo:indexnow": "tsx scripts/indexnow.ts",
     "access:migrate": "tsx --env-file-if-exists=.env.local scripts/access-migrate.ts",
     "migrate:live": "tsx --env-file-if-exists=.env.local scripts/live-migration.ts",
     "lifecycle:preview": "tsx scripts/lifecycle-preview.ts"

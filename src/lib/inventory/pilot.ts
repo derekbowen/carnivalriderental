@@ -47,7 +47,24 @@ export const PSEO_PILOT = {
   paths: [...FIRST_COHORT_PATHS, ...WAVE_2.paths] as readonly string[],
 } as const;
 
-const ALLOWED = new Set([...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths]);
+/**
+ * Wave 3 (2026-10-24): pages people already reach from Google, from the Search Console review of that
+ * day. Event pages and buyer guides are their own families, outside the 1,000-URL city / ride + city
+ * set above. Each event page still passes its supply gate on every build (occasionGate); guides have
+ * no supply gate (guideGate).
+ */
+export const WAVE_3 = {
+  authorization:
+    'Founder instruction, 2026-10-24, after the Search Console review ("Open wedding pages", "Ferris wheel content + guides"): ' +
+    "open the wedding page and the event pages matching searches the site already appears for, and the buyer guides.",
+  contentReview: "Automated checks (tests, the release crawl); NOT reviewed page by page by the founder.",
+  // Searches seen: "rent ferris wheel for wedding", "private party ferris wheel rental", "train rental for birthday party",
+  // "ferris wheel rental for corporate events".
+  eventPaths: ["/events/weddings", "/events/birthday-parties", "/events/backyard-parties", "/events/company-picnics"],
+  guidePaths: ["/guides/how-to-rent-carnival-rides", "/guides/ride-owner-vs-rental-broker", "/guides/ferris-wheel-rental-cost", "/guides/ferris-wheel-wedding-rental"],
+} as const;
+
+const ALLOWED = new Set([...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths, ...WAVE_3.eventPaths, ...WAVE_3.guidePaths]);
 
 export function inPilot(path: string): boolean {
   return PSEO_PILOT.enabled && ALLOWED.has(path);

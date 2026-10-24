@@ -21,7 +21,8 @@ import { US_STATES, type Faq } from "@/lib/taxonomy";
 // Live inventory near the visitor (approximate IP location), so the page renders per request.
 export const dynamic = "force-dynamic";
 
-const TITLE = `Carnival Ride Rentals Nationwide | ${BRAND.name}`;
+// Search Console 2026-10-24: most impressions are Ferris wheel searches; name both in the title (≤ 60 characters).
+const TITLE = `Carnival Ride & Ferris Wheel Rentals | ${BRAND.name}`;
 
 export function generateMetadata() {
   const gate = coreHubGate("/");

@@ -3,15 +3,16 @@ import { ArrowRightIcon, CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs, FaqSection, JsonLd, LinkGrid } from "@/components/pseo";
-import { BRAND } from "@/lib/config";
 import { GUIDES, guideById } from "@/lib/content/guides";
 import { FOOTER_EVENTS, FOOTER_RIDE_TYPES } from "@/lib/seo/footer-links";
-import { canonicalUrl, paths } from "@/lib/seo/routes";
+import { seoMetadata } from "@/lib/seo/metadata";
+import { guideGate } from "@/lib/seo/pseo";
+import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
 /**
- * Buyer education: free, public, substantial. Indexability follows the site default (layout.tsx):
- * noindex until PUBLIC_INDEXING opens; nothing here is in the pSEO allowlist or sitemap.
+ * Buyer education: free, public, substantial. Indexable only for the exact paths in the approved
+ * indexing cohort (pilot.ts, wave 3) with public indexing on (guideGate); those are in the sitemap.
  */
 export const dynamicParams = false;
 
@@ -24,7 +25,7 @@ export function generateStaticParams(): P[] {
 export async function generateMetadata({ params }: { params: Promise<P> }): Promise<Metadata> {
   const g = guideById((await params).guide);
   if (!g) return {};
-  return { title: `${g.metaTitle} | ${BRAND.name}`, description: g.metaDescription, alternates: { canonical: canonicalUrl(paths.guide(g.id)) } };
+  return seoMetadata({ path: paths.guide(g.id), title: g.metaTitle, description: g.metaDescription, gate: guideGate(g.id) });
 }
 
 export default async function GuidePage({ params }: { params: Promise<P> }) {
@@ -108,7 +109,7 @@ export default async function GuidePage({ params }: { params: Promise<P> }) {
 
           {related.length > 0 && (
             <section className="mt-12 rounded-2xl border border-line bg-surface p-5" aria-labelledby="related-guides-heading" data-testid="related-guides">
-              <h2 id="related-guides-heading" className="text-2xl">Related guide</h2>
+              <h2 id="related-guides-heading" className="text-2xl">{related.length > 1 ? "Related guides" : "Related guide"}</h2>
               {related.map((r) => (
                 <p key={r.id} className="mt-2 leading-relaxed text-ink-soft">{r.text} <Link href={r.href} className="font-semibold text-accent-strong hover:underline">{r.title} →</Link></p>
               ))}

@@ -7,6 +7,7 @@ import type { OperatorCard } from "@/lib/catalog/operator-search";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import type { CategoryPage, CategoryTheme } from "@/lib/content/category-pages";
 import { categoryPageById } from "@/lib/content/category-pages";
+import { guideById } from "@/lib/content/guides";
 import { cityBySlugs, PSEO_INVENTORY, rideTypesInCategory, ridesNear, type TypeStats } from "@/lib/inventory";
 import { PSEO_PILOT } from "@/lib/inventory/pilot";
 import { CATEGORY_CONTEXT } from "@/lib/access/pricing";
@@ -249,7 +250,8 @@ export function CategoryHub({
         {/* 6. FAQs (JSON-LD mirrors these exactly) */}
         <FaqSection faq={faqs} />
 
-        {/* 7. Related categories and locations */}
+        {/* 7. Buyer guides, related categories and locations */}
+        <LinkGrid title="Buyer guides" links={(page.guides ?? []).flatMap((id) => { const g = guideById(id); return g ? [{ href: paths.guide(g.id), label: g.title }] : []; })} />
         <LinkGrid title="Related ride types" links={related.map((r) => ({ href: paths.category(r.id), label: r.h1 }))} />
         <LinkGrid
           title={`Where to find a ${page.singular}`}

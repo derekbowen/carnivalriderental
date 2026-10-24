@@ -1,3 +1,4 @@
+import { guideById } from "@/lib/content/guides";
 import type { CatalogSnapshot } from "@/lib/catalog/source";
 import { getContent } from "@/lib/content";
 import { supplyFor } from "@/lib/seo/pseo";
@@ -15,7 +16,7 @@ import { CTA_BODY, RequestCta } from "./RequestCta";
 export function occasionCopy(o: Occasion, s?: UsState) {
   const where = s ? ` in ${s.name}` : "";
   return {
-    title: `Carnival ride rentals for ${o.plural}${where}`,
+    title: !s && o.headline ? o.headline : `Carnival ride rentals for ${o.plural}${where}`,
     description: `Rent carnival rides for ${o.plural}${where}: Ferris wheels, carousels, swing, kiddie and family rides from independent operators, priced per event by the operator.`,
   };
 }
@@ -103,6 +104,8 @@ export function OccasionPage({ o, s, snap }: { o: Occasion; s?: UsState; snap: C
         <h2 className="text-2xl">Planning notes</h2>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-ink-soft">{group.planningNotes.map((n) => <li key={n}>{n}</li>)}</ul>
       </section>
+
+      <LinkGrid title="Buyer guides" links={[...(o.guides ?? []), "how-to-rent-carnival-rides"].flatMap((id, i, all) => { const g = all.indexOf(id) === i ? guideById(id) : undefined; return g ? [{ href: paths.guide(g.id), label: g.title }] : []; })} />
 
       {s ? (
         <>

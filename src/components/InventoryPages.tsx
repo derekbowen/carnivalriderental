@@ -55,7 +55,7 @@ export function cityCopy(c: PlaceCity) {
   return {
     title: `Carnival Ride Rentals Near ${c.name}, ${c.stateAbbr}`,
     description: s.total > 0
-      ? fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event: ${fmt(s.total)} ride listings from operators within ${R} miles.`, "Connect directly with the ride operators who list them."])
+      ? fitDescription([`Rent carnival rides near ${c.name}, ${c.stateAbbr}: ${fmt(s.total)} ride listings from operators within ${R} miles.`, "See how many match your event for free, then contact them directly."])
       : fitDescription([`Carnival rides for your ${c.name}, ${c.stateAbbr} event.`, "Tell us your date and city to see which operators can serve your event."]),
   };
 }
@@ -143,7 +143,7 @@ export function rideCityCopy(c: PlaceCity, t: RideType) {
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === t.id).length;
   return {
     title: `${titleCase(copy.label)} Rentals Near ${c.name}, ${c.stateAbbr}`,
-    description: fitDescription([`${copy.label} rentals for your ${c.name}, ${c.stateAbbr} event: ${countNoun(n, copy)} from operators within ${R} miles.`, "Connect directly with the ride operators who list them."]),
+    description: fitDescription([`${copy.label} rental near ${c.name}, ${c.stateAbbr}: ${countNoun(n, copy)} from operators within ${R} miles.`, "See how many match your event for free, then contact them directly."]),
   };
 }
 

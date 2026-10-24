@@ -10,11 +10,11 @@ import { conciergeEnabled } from "@/lib/concierge/flags";
 export function generateMetadata(): Metadata {
   return {
     metadataBase: new URL(siteUrl()),
-    title: { default: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, template: `%s` },
+    title: { default: `Carnival Ride & Ferris Wheel Rentals | ${BRAND.name}`, template: `%s` },
     description: SITE_DESCRIPTION,
     applicationName: BRAND.name,
-    openGraph: { type: "website", siteName: BRAND.name, locale: "en_US", url: siteUrl(), title: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, description: SITE_DESCRIPTION, images: [{ url: "/brand/carnival-ride-rental-logo.png", alt: BRAND.name }] },
-    twitter: { card: "summary", title: `Carnival Ride Rentals Nationwide | ${BRAND.name}`, description: SITE_DESCRIPTION, images: ["/brand/carnival-ride-rental-logo.png"] },
+    openGraph: { type: "website", siteName: BRAND.name, locale: "en_US", url: siteUrl(), title: `Carnival Ride & Ferris Wheel Rentals | ${BRAND.name}`, description: SITE_DESCRIPTION, images: [{ url: "/brand/carnival-ride-rental-logo.png", alt: BRAND.name }] },
+    twitter: { card: "summary", title: `Carnival Ride & Ferris Wheel Rentals | ${BRAND.name}`, description: SITE_DESCRIPTION, images: ["/brand/carnival-ride-rental-logo.png"] },
     // Default for every page: noindex. Only a page whose own publication gate passes (seoMetadata,
     // inventoryMetadata, coreHubGate) sets index; with indexing on, everything else stays crawlable
     // (follow) so crawlers can read its noindex.

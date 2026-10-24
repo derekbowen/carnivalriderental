@@ -40,9 +40,19 @@ describe("buyer guides", () => {
     expect(g.sections.map((s) => s.id)).toEqual(["direct-rental", "brokered-rental", "ownership", "crew", "insurance", "inspections", "how-we-fit"]);
     for (const id of ["ownership", "crew", "insurance", "inspections"]) expect(g.sections.find((s) => s.id === id)!.items.every((i) => i.endsWith("?")), id).toBe(true);
     expect(g.related?.map((r) => r.id)).toEqual(["how-to-rent-carnival-rides"]);
-    expect(guideById("how-to-rent-carnival-rides")!.related?.map((r) => r.id)).toEqual(["ride-owner-vs-rental-broker"]);
+    expect(guideById("how-to-rent-carnival-rides")!.related?.map((r) => r.id)).toEqual(["ride-owner-vs-rental-broker", "ferris-wheel-rental-cost"]);
     // The broker material lives in one guide only (no duplicate section in how-to-rent).
     expect(guideById("how-to-rent-carnival-rides")!.sections.some((s) => /broker/i.test(s.heading))).toBe(false);
     expect(textOf(g)).toContain("We don’t verify who owns each ride");
+  });
+
+  it("the Ferris wheel cost and wedding guides quote no prices and link to each other", () => {
+    const cost = guideById("ferris-wheel-rental-cost")!;
+    const wedding = guideById("ferris-wheel-wedding-rental")!;
+    for (const g of [cost, wedding]) expect(textOf(g), g.id).not.toMatch(/\d/);
+    expect(cost.related?.map((r) => r.id)).toContain("ferris-wheel-wedding-rental");
+    expect(wedding.related?.map((r) => r.id)).toContain("ferris-wheel-rental-cost");
+    for (const id of ["whats-included"]) expect(cost.sections.find((s) => s.id === id)!.items.every((i) => i.endsWith("?")), id).toBe(true);
+    for (const id of ["venue", "timing", "operator-questions"]) expect(wedding.sections.find((s) => s.id === id)!.items.every((i) => i.endsWith("?")), id).toBe(true);
   });
 });

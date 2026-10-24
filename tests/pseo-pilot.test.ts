@@ -51,6 +51,32 @@ describe("indexing pilot allowlist", () => {
   });
 });
 
+describe("wave 3: event pages and buyer guides (founder 2026-10-24)", () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+
+  it("records its authorization, lists only real pages, and opens them only with indexing on", async () => {
+    const { WAVE_3, inPilot } = await import("@/lib/inventory/pilot");
+    const { GUIDES } = await import("@/lib/content/guides");
+    const { OCCASIONS } = await import("@/lib/taxonomy");
+    const { paths } = await import("@/lib/seo/routes");
+    const { guideGate } = await import("@/lib/seo/pseo");
+    expect(WAVE_3.authorization).toMatch(/Founder instruction, 2026-10-24/);
+    expect(WAVE_3.contentReview).toMatch(/NOT reviewed page by page by the founder/);
+    const events = new Set(OCCASIONS.map((o) => paths.occasion(o.id)));
+    for (const p of WAVE_3.eventPaths) expect(events.has(p), p).toBe(true);
+    const guides = new Set(GUIDES.map((g) => paths.guide(g.id)));
+    expect([...WAVE_3.guidePaths].sort()).toEqual([...guides].sort());
+    for (const p of [...WAVE_3.eventPaths, ...WAVE_3.guidePaths]) expect(inPilot(p), p).toBe(true);
+    // Only the listed event pages: the state versions and other events stay out.
+    expect(inPilot("/events/weddings/texas")).toBe(false);
+    expect(inPilot("/events/bar-mitzvahs")).toBe(false);
+    expect(guideGate("ferris-wheel-rental-cost").indexable).toBe(false);
+    vi.stubEnv("APP_ENV", "production");
+    vi.stubEnv("PUBLIC_INDEXING", "true");
+    expect(guideGate("ferris-wheel-rental-cost")).toEqual({ indexable: true, reasons: [] });
+  });
+});
+
 describe("near-duplicate gate (only group heads can be indexed)", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); vi.doUnmock("@/lib/inventory/index-eligible.json"); });
   const approveAll = () => vi.doMock("@/lib/inventory/pilot", () => ({ PSEO_PILOT: { enabled: true, paths: [] }, inPilot: () => true }));
