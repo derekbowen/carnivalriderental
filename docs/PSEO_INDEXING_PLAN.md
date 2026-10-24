@@ -316,6 +316,10 @@ and redeploy.
 **IndexNow.** `npm run seo:indexnow -- --submit` sends exactly the sitemap's pages to Bing. Bing shares IndexNow submissions with the other participating engines.
 - The key is the public file `public/<key>.txt`.
 - Run it after any deploy that opens pages.
+- First run (2026-10-24, after deploy `c4ca14f`): HTTP 403 for all 1,008 URLs, meaning the key could not be validated.
+  - Vercel's security checkpoint challenges every automated fetch of the site, including the key file (429, `x-vercel-mitigated: challenge`), so IndexNow's verifier most likely never reached it.
+  - Fallback: in Bing Webmaster Tools, import the site from Google Search Console, then submit `/sitemap.xml`.
+  - Rerun the script once the key file loads without a challenge.
 
 **Rollback.**
 - Empty `WAVE_3.eventPaths` and `WAVE_3.guidePaths`, then redeploy.
