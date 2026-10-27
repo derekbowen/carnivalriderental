@@ -21,7 +21,8 @@ const out = {
     total: CITIES.length + rideCity.length,
   },
   meetSupplyThreshold: { city: city.filter(supplyOk).length, rideCity: rideCity.filter(supplyOk).length },
-  // Founder decision 2026-10-05: only near-duplicate group heads may ever be indexed.
+  // Founder decision 2026-10-05: only near-duplicate group heads indexed. Superseded by open indexing
+  // (founder 2026-10-27, src/lib/inventory/pilot.ts), which skips this gate; kept for the rollback.
   eligibleAfterNearDuplicateGate: {
     city: city.filter((r) => supplyOk(r) && !r.gate.reasons.some((x) => x.startsWith("near-duplicate"))).length,
     rideCity: rideCity.filter((r) => supplyOk(r) && !r.gate.reasons.some((x) => x.startsWith("near-duplicate"))).length,

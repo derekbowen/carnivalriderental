@@ -1,5 +1,6 @@
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { seoMetadata } from "@/lib/seo/metadata";
+import { sitePageGate } from "@/lib/seo/pseo";
 import { paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { OCCASION_GROUPS, OCCASIONS } from "@/lib/taxonomy";
@@ -8,12 +9,12 @@ export const revalidate = 3600;
 
 const title = "Carnival ride rentals for every kind of event";
 
-/** Index of occasion hubs. A navigation page: it is never in the sitemap and stays noindex. */
+/** Index of occasion hubs: a navigation page, indexable like the other site pages (sitePageGate). */
 export const metadata = seoMetadata({
   path: paths.occasions(),
   title,
   description: "Carnival ride rentals for birthdays, bar and bat mitzvahs, weddings, school carnivals, company picnics, festivals and more.",
-  gate: { indexable: false, reasons: ["navigation index"] },
+  gate: sitePageGate(paths.occasions()),
 });
 
 export default function EventsIndex() {

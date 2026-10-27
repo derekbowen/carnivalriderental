@@ -48,7 +48,7 @@ The funnel is **Find → Evaluate → Connect**:
 - Pricing and limits for Event Access live in configuration (`access_products`), never hard-coded in copy or logic. Old purchases keep the terms they were bought with.
 - Payments are server-verified (Stripe webhook or server-side session retrieval). A success redirect alone proves nothing. Idempotent processing; concurrency-safe unlock counting.
 - Inventory ingestion (company import, listing import, photo provenance, validation, anonymisation, claim) is a first-class capability and must keep its controls: deduplication, source provenance, operator identity resolution, image rights, taxonomy consistency.
-- SEO: existing canonical URLs never change; the indexing gates in `src/lib/inventory` and `src/lib/seo/publication.ts` stay; nothing is mass-indexed because of this pivot.
+- SEO: existing canonical URLs never change; the indexing gates in `src/lib/inventory` and `src/lib/seo/publication.ts` stay; nothing is mass-indexed because of this pivot. Later, separately: every public page with enough supply was opened to indexing (founder decision 2026-10-27, `docs/PSEO_INDEXING_PLAN.md` §10).
 
 ## Economics
 

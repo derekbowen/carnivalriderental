@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
-import { paths } from "@/lib/seo/routes";
+import { sitePageRobots } from "@/lib/seo/pseo";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = { title: `Privacy policy | ${BRAND.name}`, robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: `Privacy policy | ${BRAND.name}`, alternates: { canonical: canonicalUrl(paths.privacy()) }, robots: sitePageRobots(paths.privacy()) };
 
 /** Plain disclosure of what we collect and why. Not legal advice; counsel should review before launch. */
 export default function PrivacyPage() {

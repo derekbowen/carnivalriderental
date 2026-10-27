@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { BRAND, SOCIAL_LINKS } from "@/lib/config";
-import { paths } from "@/lib/seo/routes";
+import { sitePageRobots } from "@/lib/seo/pseo";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = { title: `Contact | ${BRAND.name}`, robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: `Contact | ${BRAND.name}`, alternates: { canonical: canonicalUrl(paths.contact()) }, robots: sitePageRobots(paths.contact()) };
 
 export default function ContactPage() {
   const crumbs = [{ name: "Home", path: paths.home() }, { name: "Contact", path: paths.contact() }];

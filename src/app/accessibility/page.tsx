@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
-import { paths } from "@/lib/seo/routes";
+import { sitePageRobots } from "@/lib/seo/pseo";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = { title: `Accessibility | ${BRAND.name}`, robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: `Accessibility | ${BRAND.name}`, alternates: { canonical: canonicalUrl(paths.accessibility()) }, robots: sitePageRobots(paths.accessibility()) };
 
 /** What we aim for, where we know we fall short, and how to reach us. Kept honest: no conformance claim we have not tested. */
 export default function AccessibilityPage() {

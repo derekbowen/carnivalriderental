@@ -6,8 +6,9 @@ import { GUIDES } from "../content/guides";
 import { OCCASIONS, US_STATES, type Occasion, type UsState } from "../taxonomy";
 import type { GateResult } from "./publication";
 import { paths } from "./routes";
-import { categoryInventoryCount } from "../inventory";
-import { inPilot } from "../inventory/pilot";
+import { categoryInventoryCount, ridesNear, rideTypesInCategory, stateInventoryCount } from "../inventory";
+import { approvedForIndexing } from "../inventory/pilot";
+import { STATE_CENTERS } from "../taxonomy/state-centers";
 
 /**
  * Gates for the taxonomy-driven page families (state hub, occasion hub, occasion + state).
@@ -48,70 +49,91 @@ function countable(snap: CatalogSnapshot, f: SupplyFilter): number {
   return supplyFor(snap, f).filter((r) => !r.isTestSample).length;
 }
 
-function common(snap: CatalogSnapshot): string[] {
-  const reasons: string[] = [];
-  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (snap.source !== "sharetribe-marketplace-api") reasons.push(`supply source is ${snap.source}, not the live catalog`);
-  return reasons;
+function environment(): string[] {
+  return publicIndexingEnabled() ? [] : ["public indexing disabled in this environment"];
 }
 
 const result = (reasons: string[]): GateResult => ({ indexable: reasons.length === 0, reasons: [...new Set(reasons)] });
 
+/**
+ * State hub (/{state}): approved for indexing (pilot.ts) + enough real supply. Supply is what the page
+ * shows: operator inventory based in or serving the state (the managed catalog is retired; its live
+ * offerings still count when there are any).
+ */
 export function stateGate(state: UsState, snap: CatalogSnapshot): GateResult {
-  const reasons = common(snap);
-  const n = countable(snap, { stateCode: state.code });
+  const reasons = environment();
+  if (!approvedForIndexing(paths.state(state.slug))) reasons.push("state page not approved for indexing");
+  const n = Math.max(countable(snap, { stateCode: state.code }), stateInventoryCount(state.code));
   if (n < PSEO_THRESHOLDS.stateMinOfferings) reasons.push(`${n} live offerings accept requests in ${state.abbr} (need ${PSEO_THRESHOLDS.stateMinOfferings})`);
   return result(reasons);
 }
 
 /**
- * National event page (/events/{id}): approved copy (or the exact path in the approved indexing cohort,
- * pilot.ts) + enough real supply in the suggested categories. Supply is what the page shows: the
+ * National event page (/events/{id}): approved copy or approved for indexing (pilot.ts) + enough real
+ * supply in the suggested categories. Supply is what the page shows: the
  * operator inventory of those categories (the managed catalog is retired; its live offerings still
  * count when there are any).
  */
 export function occasionGate(o: Occasion, snap: CatalogSnapshot): GateResult {
-  const reasons: string[] = [];
-  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (o.reviewStatus !== "approved" && !inPilot(paths.occasion(o.id))) reasons.push("occasion copy not approved");
+  const reasons = environment();
+  if (o.reviewStatus !== "approved" && !approvedForIndexing(paths.occasion(o.id))) reasons.push("occasion copy not approved");
   const n = Math.max(countable(snap, { categories: o.suggestedCategories }), o.suggestedCategories.reduce((sum, c) => sum + categoryInventoryCount(c), 0));
   if (n < PSEO_THRESHOLDS.occasionMinOfferings) reasons.push(`${n} live offerings in suggested categories (need ${PSEO_THRESHOLDS.occasionMinOfferings})`);
   return result(reasons);
 }
 
+/** Operator rides of an occasion's suggested ride types near a state's centre: the rides /{state}/{occasion} shows. */
+function occasionStateInventoryCount(o: Occasion, state: UsState): number {
+  const centre = STATE_CENTERS[state.code];
+  if (!centre) return 0;
+  const types = new Set(o.suggestedCategories.flatMap((id) => rideTypesInCategory(id).map((t) => t.id)));
+  return ridesNear(centre[0], centre[1]).filter((r) => r.rideType && types.has(r.rideType)).length;
+}
+
+/** Event + state (/{state}/{occasion}): both parents indexable + enough suggested supply near the state. */
 export function occasionStateGate(o: Occasion, state: UsState, snap: CatalogSnapshot): GateResult {
-  const reasons = common(snap);
+  const reasons = environment();
   if (!occasionGate(o, snap).indexable) reasons.push("parent occasion page not indexable");
   if (!stateGate(state, snap).indexable) reasons.push("parent state page not indexable");
-  const n = countable(snap, { stateCode: state.code, categories: o.suggestedCategories });
+  const n = Math.max(countable(snap, { stateCode: state.code, categories: o.suggestedCategories }), occasionStateInventoryCount(o, state));
   if (n < PSEO_THRESHOLDS.occasionStateMinOfferings) reasons.push(`${n} live suggested offerings accept requests in ${state.abbr} (need ${PSEO_THRESHOLDS.occasionStateMinOfferings})`);
   return result(reasons);
 }
 
 /**
- * Category hub (/categories/{id}): approved copy (or the exact path in the approved indexing cohort,
- * pilot.ts) + enough real supply. Supply is what the hub shows: the operator inventory snapshot of
+ * Category hub (/categories/{id}): approved copy or approved for indexing (pilot.ts) + enough real
+ * supply. Supply is what the hub shows: the operator inventory snapshot of
  * the category (the managed catalog is retired; its live offerings still count when there are any).
  * Visual theme plays no part.
  */
 export function categoryHubGate(page: CategoryPage, snap: CatalogSnapshot): GateResult {
-  const reasons: string[] = [];
-  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (page.reviewStatus !== "approved" && !inPilot(paths.category(page.id))) reasons.push("category copy not approved");
+  const reasons = environment();
+  if (page.reviewStatus !== "approved" && !approvedForIndexing(paths.category(page.id))) reasons.push("category copy not approved");
   const n = Math.max(countable(snap, { categories: [page.id] }), categoryInventoryCount(page.id));
   if (n < PSEO_THRESHOLDS.categoryMinOfferings) reasons.push(`${n} live offerings in ${page.id} (need ${PSEO_THRESHOLDS.categoryMinOfferings})`);
   return result(reasons);
 }
 
-/** Every catalog-driven route with its gate (5 category hubs + 51 + 75 + 75×51 today). */
-/** Buyer guide (/guides/{id}): only the exact paths in the approved indexing cohort (pilot.ts, wave 3). No supply gate. */
+/** Buyer guide (/guides/{id}): approved for indexing (pilot.ts). No supply gate. */
 export function guideGate(id: string): GateResult {
-  const reasons: string[] = [];
-  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!inPilot(paths.guide(id))) reasons.push("not in the approved indexing cohort");
+  const reasons = environment();
+  if (!approvedForIndexing(paths.guide(id))) reasons.push("not in the approved indexing cohort");
   return result(reasons);
 }
 
+/** Site pages with no supply of their own: the events index, legal and contact pages. */
+export const SITE_PAGES: readonly string[] = [paths.occasions(), paths.terms(), paths.privacy(), paths.accessibility(), paths.accessPolicy(), paths.contact()];
+
+export function sitePageGate(path: string): GateResult {
+  const reasons = environment();
+  if (!approvedForIndexing(path)) reasons.push("not approved for indexing");
+  return result(reasons);
+}
+export const sitePageRoutes = () => SITE_PAGES.map((path) => ({ path, family: "site", gate: sitePageGate(path) }));
+/** Robots for a site page: index when its gate passes; links are always followed. */
+export const sitePageRobots = (path: string) => (sitePageGate(path).indexable ? { index: true, follow: true } : { index: false, follow: true });
+
+/** Every catalog-driven route with its gate (guides, 5 category hubs, 51 states, 75 events, 75×51 events by state). */
 export function pseoRoutes(snap: CatalogSnapshot): { path: string; family: string; gate: GateResult }[] {
   const out: { path: string; family: string; gate: GateResult }[] = [];
   for (const g of GUIDES) out.push({ path: paths.guide(g.id), family: "guide", gate: guideGate(g.id) });

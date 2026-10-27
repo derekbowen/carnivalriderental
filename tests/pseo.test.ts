@@ -88,30 +88,36 @@ describe("live supply + gates", () => {
     expect(stateGate(TX, snap(live(10))).indexable).toBe(false);
   });
 
-  it("state page needs enough live, non-test offerings accepting requests there", () => {
+  it("state page needs enough supply: operator inventory in the state, or live non-test offerings accepting requests there", () => {
     indexingOn();
     const n = PSEO_THRESHOLDS.stateMinOfferings;
-    expect(stateGate(TX, snap(live(n))).indexable).toBe(true);
-    expect(stateGate(TX, snap(live(n - 1))).indexable).toBe(false);
-    expect(stateGate(TX, snap(live(n, { isTestSample: true }))).indexable).toBe(false);
-    expect(stateGate(TX, snap(live(n, { requestableStates: ["ok"] }))).indexable).toBe(false);
+    // Texas has operator inventory, so the (retired) managed catalog can be empty.
+    expect(stateGate(TX, snap([]))).toEqual({ indexable: true, reasons: [] });
+    // Alaska has none: only enough live, non-test managed offerings accepting requests there qualify it.
+    const AK = stateBySlug("alaska")!;
+    const ak = (k: number, over: Partial<CatalogRecord> = {}) => snap(live(k, { requestableStates: ["ak"], ...over }));
+    expect(stateGate(AK, snap([])).indexable).toBe(false);
+    expect(stateGate(AK, ak(n)).indexable).toBe(true);
+    expect(stateGate(AK, ak(n - 1)).indexable).toBe(false);
+    expect(stateGate(AK, ak(n, { isTestSample: true })).indexable).toBe(false);
+    expect(stateGate(AK, snap(live(n))).indexable).toBe(false); // accepting requests in Texas only
     // Harness / error sources never count, even with enough records.
-    expect(stateGate(TX, snap(live(n), "test-harness-file")).reasons.join()).toMatch(/supply source/);
+    expect(stateGate(AK, snap(live(n, { requestableStates: ["ak"] }), "test-harness-file")).indexable).toBe(false);
   });
 
-  it("occasion pages need approved copy (or the wave 3 allowlist) and supply in suggested categories", () => {
+  it("occasion pages are open (open indexing, founder 2026-10-27) and need supply in suggested categories", () => {
     // Closed with indexing off, whatever the supply.
     expect(occasionGate(approved("weddings"), snap(live(5))).indexable).toBe(false);
     indexingOn();
-    // A draft that is not on the allowlist stays closed.
-    expect(occasionGate(occasionById("bar-mitzvahs")!, snap(live(5))).reasons).toContain("occasion copy not approved");
-    // Wave 3 (founder 2026-10-24) opens the listed event pages with draft copy; supply is the operator
-    // inventory of the suggested categories (the retired managed catalog can be empty).
-    for (const id of ["weddings", "birthday-parties", "backyard-parties", "company-picnics"]) {
-      expect(occasionById(id)!.reviewStatus, id).toBe("draft");
-      expect(occasionGate(occasionById(id)!, snap([])), id).toEqual({ indexable: true, reasons: [] });
+    // Draft copy is approved for indexing; supply is the operator inventory of the suggested categories
+    // (the retired managed catalog can be empty). The waves-only rules are tested in pseo-pilot.test.ts.
+    for (const o of OCCASIONS) {
+      expect(o.reviewStatus, o.id).toBe("draft");
+      expect(occasionGate(o, snap([])), o.id).toEqual({ indexable: true, reasons: [] });
     }
-    expect(occasionGate(approved("weddings"), snap(live(5, { categoryId: "thrill-rides" }))).indexable).toBe(true);
+    // An occasion whose suggested categories have no supply at all stays noindex.
+    const none = { ...approved("weddings"), suggestedCategories: ["no-inventory-category"] } as Occasion;
+    expect(occasionGate(none, snap([])).reasons.join()).toMatch(/0 live offerings in suggested categories/);
   });
 
   it("the wedding page leads with Ferris wheels and carousels and links its guides", () => {
@@ -120,14 +126,17 @@ describe("live supply + gates", () => {
     expect(w.guides).toEqual(["ferris-wheel-wedding-rental", "ferris-wheel-rental-cost"]);
   });
 
-  it("occasion + state needs both parents and local suggested supply", () => {
+  it("occasion + state needs both parents and suggested supply near the state (what the page shows)", () => {
     indexingOn();
     const o = approved("weddings");
-    expect(occasionStateGate(o, TX, snap(live(5))).indexable).toBe(true);
-    const elsewhere = snap([...live(5, { requestableStates: ["az"] }), ...live(5, { categoryId: "thrill-rides" })]);
-    const g = occasionStateGate(o, TX, elsewhere);
+    // Operator inventory near Texas: the managed catalog can be empty.
+    expect(occasionStateGate(o, TX, snap([]))).toEqual({ indexable: true, reasons: [] });
+    // Alaska: no inventory nearby, and offerings elsewhere or in other categories don't count.
+    const AK = stateBySlug("alaska")!;
+    const elsewhere = snap([...live(5, { requestableStates: ["az"] }), ...live(5, { categoryId: "thrill-rides", requestableStates: ["ak"] })]);
+    const g = occasionStateGate(o, AK, elsewhere);
     expect(g.indexable).toBe(false);
-    expect(g.reasons.some((r) => r.includes("live suggested offerings accept requests in TX"))).toBe(true);
+    expect(g.reasons.some((r) => r.includes("live suggested offerings accept requests in AK"))).toBe(true);
   });
 
   it("enumerates every state, occasion and combination with canonical paths", () => {

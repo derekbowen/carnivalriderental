@@ -24,12 +24,10 @@ process.env.SITE_URL = SITE;
   const key = keyFile.replace(/\.txt$/, "");
   if (fs.readFileSync(`public/${keyFile}`, "utf8").trim() !== key) throw new Error(`public/${keyFile} must contain exactly its own key`);
 
-  const { coreRoutes, directoryRoutes, inventoryRoutes } = await import("../src/lib/inventory");
-  const { pseoRoutes } = await import("../src/lib/seo/pseo");
-  const { allSeoRoutes } = await import("../src/lib/seo/publication");
+  const { sitemapRoutes } = await import("../src/lib/seo/sitemap-routes");
   const { canonicalUrl } = await import("../src/lib/seo/routes");
   const empty = { records: [], rejected: [], fetchedAt: new Date().toISOString(), source: "sharetribe-marketplace-api" as const };
-  const routes = [...coreRoutes(), ...allSeoRoutes(), ...pseoRoutes(empty), ...inventoryRoutes(), ...directoryRoutes()].filter((r) => r.gate.indexable);
+  const routes = sitemapRoutes(empty).filter((r) => r.gate.indexable);
   const urls = [...new Set(routes.map((r) => canonicalUrl(r.path)))];
   const byFamily = routes.reduce<Record<string, number>>((a, r) => ((a[r.family] = (a[r.family] ?? 0) + 1), a), {});
   console.log(`${urls.length} indexable URLs ${JSON.stringify(byFamily)}`);

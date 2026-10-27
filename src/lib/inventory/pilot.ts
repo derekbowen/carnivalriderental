@@ -69,3 +69,23 @@ const ALLOWED = new Set([...PSEO_PILOT.paths, ...PSEO_PILOT.corePaths, ...WAVE_3
 export function inPilot(path: string): boolean {
   return PSEO_PILOT.enabled && ALLOWED.has(path);
 }
+
+/**
+ * Open indexing (2026-10-27): every public page is approved for indexing, not only the waves above,
+ * and near-duplicate city pages are no longer held back. It replaces copy approval, the allowlists
+ * and the near-duplicate gate, nothing else: public indexing must still be on for the environment,
+ * each page must still meet its supply floor (thin pages stay noindex), and private pages (connect,
+ * pass, internal, API, search results, previews) stay noindex whatever this says.
+ * Rollback: set `enabled` to false and redeploy; the waves above apply again.
+ */
+export const OPEN_INDEXING = {
+  enabled: true,
+  authorization:
+    'Founder instruction, 2026-10-27, after the Search Console overview (412 indexed, 4,417 not indexed): "unleash it, undo all no index".',
+  contentReview: "Automated checks (tests, privacy guards, the release crawl); NOT reviewed page by page by the founder.",
+} as const;
+
+/** The approval part of every page gate: open indexing, or the exact path in an approved wave. */
+export function approvedForIndexing(path: string): boolean {
+  return OPEN_INDEXING.enabled || inPilot(path);
+}

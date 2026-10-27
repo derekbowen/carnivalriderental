@@ -8,13 +8,13 @@
 import { milesBetween, type OperatorCard } from "../catalog/operator-search";
 import { publicIndexingEnabled } from "../config";
 import type { GateResult } from "../seo/publication";
-import { canonicalUrl } from "../seo/routes";
+import { canonicalUrl, paths } from "../seo/routes";
 import { stateBySlug, US_STATES } from "../taxonomy";
 import rideTypesFile from "../taxonomy/ride-types.json";
 import contract from "../../../contract/operator-listing-contract.json";
 import citiesFile from "../geo/cities.json";
 import eligibleFile from "./index-eligible.json";
-import { inPilot } from "./pilot";
+import { approvedForIndexing, OPEN_INDEXING } from "./pilot";
 import operatorsFile from "./operators.json";
 import ridesFile from "./rides.json";
 import testToLiveFile from "./test-to-live.json";
@@ -122,6 +122,14 @@ export function typeStatsForState(stateCode: string): TypeStats[] {
   return RIDE_TYPES.filter((t) => byType.has(t.id))
     .map((t) => ({ type: t, count: byType.get(t.id)!.length, operators: operatorCount(byType.get(t.id)!), photo: byType.get(t.id)!.find((r) => r.photo)?.photo ?? null }))
     .sort((a, b) => b.count - a.count || a.type.id.localeCompare(b.type.id));
+}
+
+const stateCountCache = new Map<string, number>();
+/** Inventory rides based in or serving a state: the supply a state page shows (memoised; the snapshot is fixed per build). */
+export function stateInventoryCount(stateCode: string): number {
+  let n = stateCountCache.get(stateCode);
+  if (n === undefined) stateCountCache.set(stateCode, (n = typeStatsForState(stateCode).reduce((sum, t) => sum + t.count, 0)));
+  return n;
 }
 
 /**
@@ -331,18 +339,18 @@ export function duplicateGateReason(path: string): string | null {
 }
 
 /**
- * Indexable only when ALL hold: public indexing on for the environment; the template copy is
- * founder-approved OR the exact path is on the enabled pilot allowlist (pilot.ts); and the page
- * meets its supply threshold; and the page is the head of its near-duplicate group. The pilot never
- * bypasses the environment, supply or near-duplicate gates.
+ * Indexable only when ALL hold: public indexing on for the environment; the page is approved for
+ * indexing (open indexing, or the template copy approved, or the exact path in an approved wave:
+ * pilot.ts); the page meets its supply threshold; and, unless open indexing is on, the page is the
+ * head of its near-duplicate group. Approval never bypasses the environment or supply gates.
  */
 export function inventoryCityGate(c: City): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryCityPath(c))) reasons.push("city template copy not founder-approved");
+  if (!PSEO_INVENTORY.copyApproved && !approvedForIndexing(inventoryCityPath(c))) reasons.push("city template copy not founder-approved");
   const total = ridesNear(c.lat, c.lng).length;
   if (total < PSEO_INVENTORY.cityMinRides) reasons.push(`only ${total} rides within ${PSEO_INVENTORY.radiusMiles} mi`);
-  else {
+  else if (!OPEN_INDEXING.enabled) {
     const dup = duplicateGateReason(inventoryCityPath(c));
     if (dup) reasons.push(dup);
   }
@@ -352,10 +360,10 @@ export function inventoryCityGate(c: City): GateResult {
 export function inventoryRideCityGate(c: City, rideType: string): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!PSEO_INVENTORY.copyApproved && !inPilot(inventoryRideCityPath(c, rideType))) reasons.push("ride + city template copy not founder-approved");
+  if (!PSEO_INVENTORY.copyApproved && !approvedForIndexing(inventoryRideCityPath(c, rideType))) reasons.push("ride + city template copy not founder-approved");
   const n = ridesNear(c.lat, c.lng).filter((r) => r.rideType === rideType).length;
   if (n < PSEO_INVENTORY.rideCityMinRides) reasons.push(`only ${n} matching rides within ${PSEO_INVENTORY.radiusMiles} mi`);
-  else {
+  else if (!OPEN_INDEXING.enabled) {
     const dup = duplicateGateReason(inventoryRideCityPath(c, rideType));
     if (dup) reasons.push(dup);
   }
@@ -371,29 +379,48 @@ export function inventoryRideCityGate(c: City, rideType: string): GateResult {
 export function coreHubGate(path: string): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!inPilot(path)) reasons.push("not in the approved indexing cohort");
+  if (!approvedForIndexing(path)) reasons.push("not in the approved indexing cohort");
   if (RIDES.length < PSEO_INVENTORY.cityMinRides) reasons.push(`only ${RIDES.length} rides in the inventory snapshot`);
   return gate(reasons);
 }
 export const coreRoutes = (): { path: string; family: string; gate: GateResult }[] => ["/", "/rides"].map((path) => ({ path, family: "core", gate: coreHubGate(path) }));
 
-/** Inventory rides in a category (the supply a category hub shows). */
+const categoryCountCache = new Map<string, number>();
+/** Inventory rides in a category (the supply a category hub shows; memoised, the snapshot is fixed per build). */
 export function categoryInventoryCount(categoryId: string): number {
-  const types = new Set(rideTypesInCategory(categoryId).map((t) => t.id));
-  return RIDES.filter((r) => r.rideType && types.has(r.rideType)).length;
+  let n = categoryCountCache.get(categoryId);
+  if (n === undefined) {
+    const types = new Set(rideTypesInCategory(categoryId).map((t) => t.id));
+    categoryCountCache.set(categoryId, (n = RIDES.filter((r) => r.rideType && types.has(r.rideType)).length));
+  }
+  return n;
 }
 
 /** Site directory pages (/directory, /directory/{state}): same environment and approval gates. */
 export function directoryGate(): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!PSEO_INVENTORY.copyApproved) reasons.push("directory not founder-approved");
+  if (!PSEO_INVENTORY.copyApproved && !OPEN_INDEXING.enabled) reasons.push("directory not founder-approved");
   return gate(reasons);
 }
 export function directoryRoutes(): { path: string; family: string; gate: GateResult }[] {
   const g = directoryGate();
   return [{ path: "/directory", family: "directory", gate: g }, ...US_STATES.map((s) => ({ path: `/directory/${s.slug}`, family: "directory", gate: g }))];
 }
+
+/**
+ * Ride listing pages (/s/{id}): one page per listing, with its own photo, facts and description.
+ * Same environment and approval gates as the other families; a listing that left the catalog 404s.
+ */
+export function rideListingGate(id: string): GateResult {
+  const reasons: string[] = [];
+  if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
+  if (!approvedForIndexing(paths.rideListing(id))) reasons.push("ride listing pages not approved for indexing");
+  return gate(reasons);
+}
+/** Every listing in the inventory snapshot, with its gate. For the sitemap. */
+export const listingRoutes = (): { path: string; family: string; gate: GateResult }[] =>
+  RIDES.map((r) => ({ path: paths.rideListing(r.id), family: "listing", gate: rideListingGate(r.id) }));
 
 /** Every inventory page that would exist (has supply), with its gate. For the sitemap and docs. */
 export function inventoryRoutes(): { path: string; family: string; gate: GateResult }[] {

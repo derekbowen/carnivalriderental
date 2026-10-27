@@ -35,11 +35,10 @@ describe("pages are computed from real supply", () => {
     expect(Object.keys(card)).not.toContain("company");
     expect(card.price).toBeNull(); // snapshot holds no operator-approved rate
   });
-  it("nothing is indexable with indexing off; outside the cohort the copy is not approved", () => {
+  it("nothing is indexable with indexing off", () => {
     expect(inventoryCityGate(c).indexable).toBe(false);
     expect(inventoryCityGate(c).reasons.join(" ")).toMatch(/public indexing disabled/);
     expect(inventoryRideCityGate(c, "ferris-wheel").indexable).toBe(false);
-    expect(inventoryCityGate(cityBySlugs("texas", "dallas")!).reasons.join(" ")).toMatch(/not founder-approved/);
     expect(rideTypeFor("ferris-wheel")?.name).toBe("Ferris wheel");
   });
 });

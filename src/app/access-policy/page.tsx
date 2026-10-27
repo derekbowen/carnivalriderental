@@ -5,10 +5,11 @@ import { DEFAULT_PRODUCT, formatPrice } from "@/lib/access/config";
 import { bothTiersSentence } from "@/lib/access/copy";
 import { accessProductsForDisplay } from "@/lib/access/runtime";
 import { BRAND } from "@/lib/config";
-import { paths } from "@/lib/seo/routes";
+import { sitePageRobots } from "@/lib/seo/pseo";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = { title: `Event Access policy | ${BRAND.name}`, robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: `Event Access policy | ${BRAND.name}`, alternates: { canonical: canonicalUrl(paths.accessPolicy()) }, robots: sitePageRobots(paths.accessPolicy()) };
 
 /**
  * Plain commercial disclosure of what Event Access buys. Figures come from the product rows

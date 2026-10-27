@@ -1,9 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getCatalog } from "@/lib/catalog/source";
-import { pseoRoutes } from "@/lib/seo/pseo";
-import { allSeoRoutes } from "@/lib/seo/publication";
 import { canonicalUrl } from "@/lib/seo/routes";
-import { coreRoutes, directoryRoutes, inventoryRoutes } from "@/lib/inventory";
+import { sitemapRoutes } from "@/lib/seo/sitemap-routes";
 
 export const revalidate = 600;
 
@@ -15,7 +13,7 @@ export const revalidate = 600;
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const snap = await getCatalog();
-  const urls = [...coreRoutes(), ...allSeoRoutes(), ...pseoRoutes(snap), ...inventoryRoutes(), ...directoryRoutes()]
+  const urls = sitemapRoutes(snap)
     .filter((r) => r.gate.indexable)
     .map((r) => canonicalUrl(r.path));
   return [...new Set(urls)].map((url) => ({ url }));

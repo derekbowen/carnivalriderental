@@ -108,9 +108,8 @@ describe("category hub gate", () => {
     production();
     expect(categoryHubGate(bare, snap([])).indexable).toBe(false);
     expect(categoryHubGate({ ...bare, reviewStatus: "approved" }, snap([])).indexable).toBe(false);
-    expect(categoryHubGate({ ...bare, theme: "thrill" }, snap(Array.from({ length: n }, () => rec({ categoryId: "no-inventory-category" })))).reasons).toContain("category copy not approved");
-    // Draft hubs outside the indexed set stay unapproved however much inventory they show.
-    expect(categoryHubGate({ ...categoryPageById("carousels")!, id: "not-in-the-indexed-set" }, snap([])).reasons).toContain("category copy not approved");
+    expect(categoryHubGate({ ...bare, theme: "thrill" }, snap([])).indexable).toBe(false);
+    // Without open indexing, draft hubs outside the indexed set stay unapproved (pseo-pilot.test.ts).
   });
 
   it("approved copy + enough real supply in the category → indexable; test samples and other categories don't count", () => {
@@ -121,13 +120,13 @@ describe("category hub gate", () => {
     expect(categoryHubGate(ok, snap(Array.from({ length: n }, () => rec({ categoryId: "carousels" })))).indexable).toBe(false);
   });
 
-  it("the Ferris hub is approved only as an exact cohort path and is supplied by the operator inventory it shows", () => {
+  it("the Ferris hub (draft copy) is open and supplied by the operator inventory it shows", () => {
     production();
     expect(ferris.reviewStatus).toBe("draft");
     expect(categoryHubGate(ferris, snap([]))).toEqual({ indexable: true, reasons: [] });
   });
 
-  it("the other four hubs are approved only as exact wave-2 paths, each with its own inventory supply", () => {
+  it("the other four hubs (draft copy) are open, each with its own inventory supply", () => {
     production();
     for (const id of ["carousels", "swing-rides", "thrill-rides", "kiddie-rides"]) {
       const page = categoryPageById(id)!;

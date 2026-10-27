@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Breadcrumbs, JsonLd } from "@/components/pseo";
 import { BRAND } from "@/lib/config";
-import { paths } from "@/lib/seo/routes";
+import { sitePageRobots } from "@/lib/seo/pseo";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 import { pageGraph } from "@/lib/seo/structured-data";
 
-export const metadata: Metadata = { title: `Terms of Use | ${BRAND.name}`, robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: `Terms of Use | ${BRAND.name}`, alternates: { canonical: canonicalUrl(paths.terms()) }, robots: sitePageRobots(paths.terms()) };
 
 /** Straightforward commercial terms. Not legal advice; counsel should review before launch (see LAUNCH_STATUS.md). */
 export default function TermsPage() {

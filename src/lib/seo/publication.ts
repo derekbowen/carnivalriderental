@@ -1,5 +1,6 @@
 import { publicIndexingEnabled } from "../config";
 import { getContent, getVerifiedCoverage } from "../content";
+import { approvedForIndexing } from "../inventory/pilot";
 import { OPERATOR_PROGRAM } from "../operators/program";
 import type { RideCategory, RideOffering, ServiceLocation } from "../content/types";
 import { paths } from "./routes";
@@ -59,11 +60,11 @@ export function rideCityGate(ride: RideOffering, location: ServiceLocation): Gat
   return result([...new Set(reasons)]);
 }
 
-/** The operator program page: indexable only once the founder approves its copy. */
+/** The operator program page: indexable once the founder approves its copy or opens indexing (pilot.ts). */
 export function operatorPageGate(): GateResult {
   const reasons: string[] = [];
   if (!publicIndexingEnabled()) reasons.push("public indexing disabled in this environment");
-  if (!OPERATOR_PROGRAM.copyApproved) reasons.push("operator page copy not approved");
+  if (!OPERATOR_PROGRAM.copyApproved && !approvedForIndexing(paths.operators())) reasons.push("operator page copy not approved");
   return result(reasons);
 }
 

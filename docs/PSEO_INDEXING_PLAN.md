@@ -307,7 +307,7 @@ and redeploy.
 - `occasionGate` accepts the exact allowlisted path in place of approved copy. Its supply is now the operator inventory of the page's suggested categories: the page shows that inventory, while the managed catalog it used to count is retired.
 - `guideGate` has no supply gate.
 - Both need `PUBLIC_INDEXING` on and APP_ENV production.
-- State versions (`/events/{id}/{state}`) are unchanged and stay closed.
+- State versions (`/{state}/{id}`) were unchanged and stayed closed (opened 2026-10-27, section 10).
 
 **Also on 2026-10-24.**
 - Search-matched titles and descriptions: homepage, Ferris wheel and carousel hubs, and the city and ride + city descriptions. Canonical URLs are unchanged.
@@ -323,3 +323,63 @@ and redeploy.
 
 **Rollback.**
 - Empty `WAVE_3.eventPaths` and `WAVE_3.guidePaths`, then redeploy.
+
+## 10. Open indexing: every public page (2026-10-27)
+
+**Authorization.** Founder instruction, 2026-10-27, after the Search Console overview (412 indexed, 4,417 not indexed): "unleash it, undo all no index". Recorded in `OPEN_INDEXING` (`src/lib/inventory/pilot.ts`).
+
+**Content review.** Automated checks only (tests, privacy guards, the release crawl). The founder did not review the pages one by one.
+
+**What changed.** One switch, `OPEN_INDEXING.enabled`, approves every public page. It replaces, for every page:
+- copy approval (`PSEO_INVENTORY.copyApproved`, `OPERATOR_PROGRAM.copyApproved` and the occasion and category `reviewStatus`, all of which stay as they were);
+- the wave allowlists;
+- the near-duplicate gate (`index-eligible.json`), which no longer holds back nearby city pages.
+
+The gates call it through `approvedForIndexing(path)`.
+
+**What did not change.**
+- `PUBLIC_INDEXING` and APP_ENV production are still required.
+- Every family keeps its supply floor, so thin pages stay noindex (without a canonical for inventory pages):
+  - city: 10 rides within 200 mi;
+  - ride + city: 5;
+  - state, event, event + state and category hub: 3;
+  - core hubs: 10 in the snapshot.
+- Private pages stay noindex and out of the sitemap whatever the switch says: connect, pass, internal, API, requests, concierge, search results (`/s`, filtered `/rides`) and previews.
+- The managed-catalog gates in `publication.ts` (demo fixtures, record status, verified specs) are unchanged.
+
+**Supply now counted from the operator inventory each page shows** (the managed catalog is retired):
+- state pages: rides based in or serving the state;
+- event + state pages: rides of the event's suggested ride types within 200 mi of the state's centre.
+
+The retired catalog's live offerings still count when there are any.
+
+**Newly open families.**
+- Ride listings (`/s/{id}`), now with a self-canonical.
+- State pages.
+- Every event page and event + state page.
+- The directory.
+- The operator program page.
+- The events index, legal and contact pages (`SITE_PAGES`).
+
+**Size.** 29,602 indexable URLs, all in one sitemap (the protocol limit is 50,000):
+
+| Family | Pages |
+|---|---|
+| Core | 2 |
+| Operator page | 1 |
+| Guides | 4 |
+| Category hubs | 5 |
+| States | 50 |
+| Events | 75 |
+| Event + state | 2,965 |
+| Cities | 1,467 |
+| Ride + city | 20,463 |
+| Directory | 52 |
+| Ride listings | 4,512 |
+| Site pages | 6 |
+
+**One list.** `sitemapRoutes()` (`src/lib/seo/sitemap-routes.ts`) feeds the sitemap, `npm run seo:indexnow` and `scripts/verify-release.ts` (`--sample N` checks every Nth URL).
+
+**Risk the founder accepted.** Most of the new URLs are near-duplicates: neighbouring cities share most listings, and event + state pages share their template. Google may index only some of them or pick its own canonical, and a large share of similar pages can weigh on how the whole site ranks. Watch Search Console's Pages report ("Duplicate, Google chose different canonical", "Crawled – currently not indexed") over the next weeks.
+
+**Rollback.** Set `OPEN_INDEXING.enabled` to false and redeploy. Waves 1–3 apply again, the near-duplicate gate returns, and the rollback tests in `tests/pseo-pilot.test.ts` cover that state.

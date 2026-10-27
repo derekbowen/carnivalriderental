@@ -9,12 +9,12 @@ import { rideExcerpt, rideOverview, ridePlanning } from "@/lib/catalog/ride-desc
 import { RideGallery } from "@/components/search/RideGallery";
 import { Breadcrumbs, JsonLd, LinkGrid } from "@/components/pseo";
 import { RideResult } from "@/components/search/RideResult";
-import { linkedNearbyCities, linkedRideCities, liveListingIdFor, operatorCount, PSEO_INVENTORY, RIDES, rideHome, ridesNear, similarRides, toCard } from "@/lib/inventory";
+import { linkedNearbyCities, linkedRideCities, liveListingIdFor, operatorCount, PSEO_INVENTORY, RIDES, rideHome, rideListingGate, ridesNear, similarRides, toCard } from "@/lib/inventory";
 import { rideTypeCopy } from "@/lib/inventory/ride-type-copy";
 import { pageGraph } from "@/lib/seo/structured-data";
 import { BRAND } from "@/lib/config";
 import { REQUEST_A_QUOTE } from "@/lib/pricing/public-price";
-import { paths } from "@/lib/seo/routes";
+import { canonicalUrl, paths } from "@/lib/seo/routes";
 
 export const revalidate = 60;
 
@@ -41,7 +41,8 @@ export async function generateMetadata({ params }: { params: Promise<P> }): Prom
   return {
     title: ride ? `${ride.title} | ${BRAND.name}` : BRAND.name,
     description: ride ? rideExcerpt(ride, 155) : undefined,
-    robots: { index: false, follow: true },
+    ...(ride ? { alternates: { canonical: canonicalUrl(paths.rideListing(id)) } } : {}),
+    robots: ride && rideListingGate(id).indexable ? { index: true, follow: true } : { index: false, follow: true },
   };
 }
 

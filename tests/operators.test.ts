@@ -59,11 +59,14 @@ describe("operator program page", () => {
     expect(OPERATOR_PROGRAM.rentalCommissionPct).toBe(0);
   });
 
-  it("is never indexable until the copy is approved", () => {
+  it("is open with open indexing (founder 2026-10-27), never outside production", () => {
     const env = { ...process.env };
+    expect(operatorPageGate().indexable).toBe(false);
     process.env.APP_ENV = "production";
     process.env.PUBLIC_INDEXING = "true";
-    expect(operatorPageGate()).toEqual({ indexable: false, reasons: ["operator page copy not approved"] });
+    // Copy approval stays false; open indexing approves the page (the waves-only rule: pseo-pilot.test.ts).
+    expect(OPERATOR_PROGRAM.copyApproved).toBe(false);
+    expect(operatorPageGate()).toEqual({ indexable: true, reasons: [] });
     process.env = env;
   });
 });

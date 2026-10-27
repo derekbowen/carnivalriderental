@@ -17,15 +17,13 @@
     "rideCity": 20463
   },
   "eligibleAfterNearDuplicateGate": {
-    "city": 401,
-    "rideCity": 2668
+    "city": 1467,
+    "rideCity": 20463
   },
   "indexableNow": 0,
   "sitemapUrls": 0,
   "noindexNow": 22043,
   "blockingReasons": [
-    "public indexing disabled in this environment",
-    "city template copy not founder-approved",
-    "ride + city template copy not founder-approved"
+    "public indexing disabled in this environment"
   ]
 }

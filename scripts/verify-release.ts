@@ -1,17 +1,18 @@
 /**
- * Release verification for the first indexing cohort, against a running site.
+ * Release verification of the indexed set, against a running site.
  *
- *   npx tsx scripts/verify-release.ts https://carnivalriderental.us     # production
- *   npx tsx scripts/verify-release.ts http://localhost:3200             # local production build
+ *   npx tsx scripts/verify-release.ts https://carnivalriderental.us               # production, every URL
+ *   npx tsx scripts/verify-release.ts https://carnivalriderental.us --sample 25   # every 25th sitemap URL
+ *   npx tsx scripts/verify-release.ts http://localhost:3200                       # local production build
  *
  * Checks, and writes reports/release-verification-<host>.json:
  * - robots.txt: no blanket Disallow, private paths disallowed, the real sitemap advertised;
- * - sitemap.xml lists exactly the eligible indexed set (reports/indexing-cohort.json: wave 1 + wave 2),
- *   as canonical production URLs, no query strings, no lastmod stamped from the build;
- * - every sitemap URL (fetched 8 at a time): 200, indexable in HTML and headers, self-canonical, no
- *   private contact data, no Offer/price in JSON-LD;
- * - samples of every excluded family answer noindex (or 404 / auth) and are not in the sitemap,
- *   including near-duplicate non-heads and gated pages not yet authorized (from the committed reports);
+ * - sitemap.xml lists exactly the indexable set the gates compute for production (sitemapRoutes, with
+ *   the retired managed catalog empty), as canonical production URLs, no query strings, no lastmod;
+ * - every sitemap URL, or every Nth with --sample N (fetched 8 at a time): 200, indexable in HTML and
+ *   headers, self-canonical, no private contact data, no Offer/price in JSON-LD;
+ * - pages that stay out answer noindex (or 404 / auth) and are not in the sitemap: search results,
+ *   filtered hubs, the request form and a city with too few rides nearby;
  * - old Test listing URLs answer 308 to the same listing in Live;
  * - Event Access is open on production (live Stripe keys): the event form renders, no "opening soon".
  */
@@ -19,11 +20,10 @@ import fs from "node:fs";
 
 const base = (process.argv[2] ?? "https://carnivalriderental.us").replace(/\/$/, "");
 const CANONICAL = "https://carnivalriderental.us";
-const cohort = JSON.parse(fs.readFileSync("reports/indexing-cohort.json", "utf8")) as { cohort: { path: string; eligible: boolean }[] };
+const sampleArg = process.argv.indexOf("--sample");
+const SAMPLE = sampleArg > 0 ? Math.max(1, Number(process.argv[sampleArg + 1]) || 1) : 1;
 const rides = JSON.parse(fs.readFileSync("src/lib/inventory/rides.json", "utf8")) as { rides: { id: string }[] };
 const testToLive = JSON.parse(fs.readFileSync("src/lib/inventory/test-to-live.json", "utf8")) as { map: Record<string, string> };
-const dupes = JSON.parse(fs.readFileSync("reports/pseo-duplicates.json", "utf8")) as { groupHeadOf: Record<string, string> };
-const expansion = JSON.parse(fs.readFileSync("reports/indexing-expansion.json", "utf8")) as { nextCityCandidates: { path: string }[]; nextRideCityCandidates: { path: string }[] };
 
 const results: { check: string; ok: boolean; detail?: string }[] = [];
 const check = (name: string, ok: boolean, detail?: string) => {
@@ -52,6 +52,11 @@ const canonicalOf = (html: string) => /<link rel="canonical" href="([^"]*)"/i.ex
 const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{3}\)?[-. ]\d{3}[-. ]\d{4}\b/, /claimStatus|importExternalId|companyId|contactEmail|privateData|protectedData/];
 
 (async () => {
+  // The expected indexed set: the gates, evaluated as production (the same list the sitemap and IndexNow use).
+  Object.assign(process.env, { APP_ENV: "production", PUBLIC_INDEXING: "true", SITE_URL: CANONICAL });
+  const { sitemapRoutes } = await import("../src/lib/seo/sitemap-routes");
+  const { inventoryRoutes } = await import("../src/lib/inventory");
+  const routes = sitemapRoutes({ records: [], rejected: [], fetchedAt: "", source: "sharetribe-marketplace-api" });
   // robots.txt
   const robots = (await get("/robots.txt")).text;
   check("robots.txt has no blanket Disallow", !/^Disallow: \/\s*$/m.test(robots));
@@ -61,17 +66,17 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
   // sitemap
   const sm = await get("/sitemap.xml");
   const locs = [...sm.text.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  const expected = cohort.cohort.filter((c) => c.eligible).map((c) => `${CANONICAL}${c.path === "/" ? "" : c.path}`);
+  const expected = routes.filter((r) => r.gate.indexable).map((r) => `${CANONICAL}${r.path === "/" ? "" : r.path}`);
   const norm = (u: string) => u.replace(/\/$/, "");
   const got = new Set(locs.map(norm));
   const want = new Set(expected.map(norm));
   check("sitemap.xml answers 200", sm.status === 200);
-  check("sitemap lists exactly the eligible cohort", got.size === want.size && [...want].every((u) => got.has(u)), `listed ${got.size}, expected ${want.size}; missing ${[...want].filter((u) => !got.has(u)).join(" ") || "none"}; extra ${[...got].filter((u) => !want.has(u)).join(" ") || "none"}`);
+  check("sitemap lists exactly the indexable set", got.size === want.size && [...want].every((u) => got.has(u)), `listed ${got.size}, expected ${want.size}; missing ${[...want].filter((u) => !got.has(u)).join(" ") || "none"}; extra ${[...got].filter((u) => !want.has(u)).join(" ") || "none"}`);
   check("sitemap URLs are canonical HTTPS production URLs without query strings", locs.every((u) => u.startsWith(`${CANONICAL}`) && !u.includes("?")));
   check("sitemap carries no build-time lastmod", !sm.text.includes("<lastmod>"));
 
-  // every indexed URL, 8 at a time (results reported in sitemap order)
-  const pageChecks = await pool(locs, 8, async (u) => {
+  // every indexed URL (or every Nth), 8 at a time (results reported in sitemap order)
+  const pageChecks = await pool(locs.filter((_, i) => i % SAMPLE === 0), 8, async (u) => {
     const path = u.replace(CANONICAL, "") || "/";
     const r = await get(path);
     const robotsMeta = metaRobots(r.text) ?? "";
@@ -84,18 +89,11 @@ const PRIVATE = [/mailto:(?!support@|claims@|hello@|notifications@)/i, /\b\(?\d{
   });
   for (const c of pageChecks) check(`${c.path}: 200, index, self-canonical, no private data, no Offer`, c.ok, c.ok ? undefined : c.detail);
 
-  // excluded families: noindex and not listed
+  // pages that stay out: noindex and not listed
   const live = rides.rides[0]?.id;
-  // Geo samples that must stay out: near-duplicate non-heads (never indexable) and the strongest gated
-  // pages not yet authorized (next in reports/indexing-expansion.json).
-  const nonHeads = Object.entries(dupes.groupHeadOf).filter(([p, h]) => p !== h);
-  const geoExcluded = [
-    nonHeads.find(([p]) => p.split("/").length === 3)?.[0],
-    nonHeads.find(([p]) => p.split("/").length === 4)?.[0],
-    expansion.nextCityCandidates[0]?.path,
-    expansion.nextRideCityCandidates[0]?.path,
-  ].filter((p): p is string => !!p);
-  const excluded = ["/s", `/s/${live}`, "/s?type=ferris-wheel", "/rides?category=ferris-wheels", ...geoExcluded, "/ohio", "/directory", "/directory/ohio", "/guides/how-to-rent-carnival-rides", "/events", "/operators", "/connect", "/connect?listing=" + live, "/privacy"];
+  // A city with too few rides nearby (a supply floor: noindex whatever the approval).
+  const thin = inventoryRoutes().find((r) => r.family === "city" && r.gate.reasons.some((x) => x.startsWith("only ")))?.path;
+  const excluded = ["/s", "/s?type=ferris-wheel", "/rides?category=ferris-wheels", ...(thin ? [thin] : []), "/connect", "/connect?listing=" + live];
   for (const path of excluded) {
     const r = await get(path);
     const robotsMeta = metaRobots(r.text) ?? "";

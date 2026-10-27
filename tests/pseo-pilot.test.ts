@@ -1,6 +1,23 @@
 import fs from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+/**
+ * The pilot module with open indexing switched off (the rollback state, pilot.ts): only paths that
+ * `allowed` accepts are approved, as under the waves.
+ */
+const mockWaves = (allowed: (p: string) => boolean) =>
+  vi.doMock("@/lib/inventory/pilot", async () => ({
+    ...(await vi.importActual<typeof import("@/lib/inventory/pilot")>("@/lib/inventory/pilot")),
+    OPEN_INDEXING: { enabled: false },
+    inPilot: allowed,
+    approvedForIndexing: allowed,
+  }));
+const production = () => {
+  vi.stubEnv("APP_ENV", "production");
+  vi.stubEnv("PUBLIC_INDEXING", "true");
+};
+const PRIVATE = /^\/(connect|pass|internal|api|requests|request|concierge|preview)(\/|$)|^\/s(\?|$)|\?/;
+
 describe("indexing pilot allowlist", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); });
 
@@ -31,11 +48,8 @@ describe("indexing pilot allowlist", () => {
     for (const p of PSEO_PILOT.paths) expect(heads[p] ?? p, p).toBe(p);
   }, 30_000); // evaluates every route's gate on the full snapshot
 
-  it("when enabled it stands in for copy approval on listed paths only, never for the environment or supply gates", async () => {
-    vi.doMock("@/lib/inventory/pilot", () => ({
-      PSEO_PILOT: { enabled: true, paths: ["/ohio/columbus", "/alaska/anchorage"] },
-      inPilot: (p: string) => ["/ohio/columbus", "/alaska/anchorage"].includes(p),
-    }));
+  it("with open indexing off, it stands in for copy approval on listed paths only, never for the environment or supply gates", async () => {
+    mockWaves((p) => ["/ohio/columbus", "/alaska/anchorage"].includes(p));
     const inv = await import("@/lib/inventory");
     const columbus = inv.cityBySlugs("ohio", "columbus")!;
     const anchorage = inv.cityBySlugs("alaska", "anchorage")!;
@@ -77,9 +91,10 @@ describe("wave 3: event pages and buyer guides (founder 2026-10-24)", () => {
   });
 });
 
-describe("near-duplicate gate (only group heads can be indexed)", () => {
+describe("near-duplicate gate (with open indexing off, only group heads can be indexed)", () => {
   afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); vi.doUnmock("@/lib/inventory/index-eligible.json"); });
-  const approveAll = () => vi.doMock("@/lib/inventory/pilot", () => ({ PSEO_PILOT: { enabled: true, paths: [] }, inPilot: () => true }));
+  // Every path approved but open indexing off: the near-duplicate gate is what remains.
+  const approveAll = () => mockWaves(() => true);
 
   it("the eligible list matches the current snapshot", async () => {
     const eligible = JSON.parse(fs.readFileSync("src/lib/inventory/index-eligible.json", "utf8"));
@@ -115,5 +130,90 @@ describe("near-duplicate gate (only group heads can be indexed)", () => {
     const g = inv.inventoryCityGate(inv.cityBySlugs("california", "san-jose")!);
     expect(g.indexable).toBe(false);
     expect(g.reasons.join()).toMatch(/stale/);
+  });
+});
+
+describe("open indexing (founder 2026-10-27)", () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+
+  it("records its authorization and its content review separately", async () => {
+    const { OPEN_INDEXING } = await import("@/lib/inventory/pilot");
+    expect(OPEN_INDEXING.enabled).toBe(true);
+    expect(OPEN_INDEXING.authorization).toMatch(/Founder instruction, 2026-10-27/);
+    expect(OPEN_INDEXING.authorization).toMatch(/undo all no index/);
+    expect(OPEN_INDEXING.contentReview).toMatch(/NOT reviewed page by page by the founder/);
+  });
+
+  it("opens every public page with supply, keeps thin pages noindex without a canonical, and nothing outside production", async () => {
+    const inv = await import("@/lib/inventory");
+    const pseo = await import("@/lib/seo/pseo");
+    const { operatorPageGate } = await import("@/lib/seo/publication");
+    const { sitemapRoutes } = await import("@/lib/seo/sitemap-routes");
+    const { stateBySlug, occasionById } = await import("@/lib/taxonomy");
+    const empty = { records: [], rejected: [], fetchedAt: "", source: "sharetribe-marketplace-api" as const };
+    expect(sitemapRoutes(empty).filter((r) => r.gate.indexable)).toEqual([]);
+    production();
+    // A near-duplicate of a nearby city page is now indexable, self-canonical.
+    const oakland = inv.cityBySlugs("california", "oakland")!;
+    const g = inv.inventoryCityGate(oakland);
+    expect(g).toEqual({ indexable: true, reasons: [] });
+    expect(inv.inventoryMetadata({ path: "/california/oakland", title: "t", description: "d", gate: g })).toMatchObject({ robots: { index: true, follow: true }, alternates: { canonical: expect.stringMatching(/\/california\/oakland$/) } });
+    // A city with too few rides nearby stays noindex with no canonical.
+    const thin = inv.cityBySlugs("colorado", "arvada")!;
+    const tg = inv.inventoryCityGate(thin);
+    expect(tg.indexable).toBe(false);
+    expect(tg.reasons.join()).toMatch(/^only \d+ rides/);
+    const tm = inv.inventoryMetadata({ path: "/colorado/arvada", title: "t", description: "d", gate: tg });
+    expect(tm.robots).toEqual({ index: false, follow: false });
+    expect(tm.alternates).toBeUndefined();
+    // Ride listings, states, events by state, the operator page, directory and site pages.
+    expect(inv.rideListingGate(inv.RIDES[0].id)).toEqual({ indexable: true, reasons: [] });
+    expect(pseo.stateGate(stateBySlug("texas")!, empty)).toEqual({ indexable: true, reasons: [] });
+    expect(pseo.stateGate(stateBySlug("alaska")!, empty).indexable).toBe(false); // no rides there
+    expect(pseo.occasionStateGate(occasionById("bar-mitzvahs")!, stateBySlug("texas")!, empty)).toEqual({ indexable: true, reasons: [] });
+    expect(operatorPageGate()).toEqual({ indexable: true, reasons: [] });
+    expect(inv.directoryGate()).toEqual({ indexable: true, reasons: [] });
+    for (const p of pseo.SITE_PAGES) expect(pseo.sitePageGate(p), p).toEqual({ indexable: true, reasons: [] });
+  }, 30_000);
+
+  it("the sitemap list holds every listing, fits one sitemap file and never names a private page", async () => {
+    production();
+    const inv = await import("@/lib/inventory");
+    const { sitemapRoutes } = await import("@/lib/seo/sitemap-routes");
+    const routes = sitemapRoutes({ records: [], rejected: [], fetchedAt: "", source: "sharetribe-marketplace-api" });
+    const open = routes.filter((r) => r.gate.indexable).map((r) => r.path);
+    expect(new Set(open).size).toBe(open.length);
+    expect(open.length).toBeLessThanOrEqual(50_000); // the sitemap protocol limit per file
+    for (const r of inv.RIDES) expect(open.includes(`/s/${r.id}`), r.id).toBe(true);
+    expect(open.filter((p) => PRIVATE.test(p))).toEqual([]);
+    // The only reasons left are supply floors (and the managed catalog's own record checks).
+    for (const r of routes.filter((x) => !x.gate.indexable)) {
+      for (const reason of r.gate.reasons) expect(reason, r.path).toMatch(/^only \d+|\(need \d+\)|parent .* not indexable|no indexable ride offerings|demo fixture|record status|description below|placeholder images|no verified|no sourced local|no verified coverage/);
+    }
+  }, 30_000);
+});
+
+describe("rollback: with open indexing off, only the waves are approved", () => {
+  afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock("@/lib/inventory/pilot"); });
+
+  it("closes every page outside the waves again", async () => {
+    mockWaves((p) => p === "/guides/how-to-rent-carnival-rides");
+    production();
+    const inv = await import("@/lib/inventory");
+    const pseo = await import("@/lib/seo/pseo");
+    const { operatorPageGate } = await import("@/lib/seo/publication");
+    const { categoryPageById } = await import("@/lib/content/category-pages");
+    const { stateBySlug, occasionById } = await import("@/lib/taxonomy");
+    const empty = { records: [], rejected: [], fetchedAt: "", source: "sharetribe-marketplace-api" as const };
+    expect(inv.inventoryCityGate(inv.cityBySlugs("texas", "dallas")!).reasons.join(" ")).toMatch(/not founder-approved/);
+    expect(inv.rideListingGate(inv.RIDES[0].id).indexable).toBe(false);
+    expect(inv.directoryGate().reasons).toContain("directory not founder-approved");
+    expect(pseo.stateGate(stateBySlug("texas")!, empty).reasons).toContain("state page not approved for indexing");
+    expect(pseo.occasionGate(occasionById("bar-mitzvahs")!, empty).reasons).toContain("occasion copy not approved");
+    expect(pseo.occasionStateGate(occasionById("bar-mitzvahs")!, stateBySlug("texas")!, empty).indexable).toBe(false);
+    expect(pseo.categoryHubGate({ ...categoryPageById("carousels")!, id: "not-in-the-indexed-set" }, empty).reasons).toContain("category copy not approved");
+    expect(operatorPageGate()).toEqual({ indexable: false, reasons: ["operator page copy not approved"] });
+    expect(pseo.sitePageGate("/privacy").indexable).toBe(false);
+    expect(pseo.guideGate("how-to-rent-carnival-rides")).toEqual({ indexable: true, reasons: [] });
   });
 });
