@@ -320,6 +320,7 @@ and redeploy.
   - Vercel's security checkpoint challenges every automated fetch of the site, including the key file (429, `x-vercel-mitigated: challenge`), so IndexNow's verifier most likely never reached it.
   - Fallback: in Bing Webmaster Tools, import the site from Google Search Console, then submit `/sitemap.xml`.
   - Rerun the script once the key file loads without a challenge.
+- Second run (2026-10-27, after deploy `b9c390c`): HTTP 200 for all 29,602 URLs in three batches. The key validated, so the 403 above was transient.
 
 **Rollback.**
 - Empty `WAVE_3.eventPaths` and `WAVE_3.guidePaths`, then redeploy.
