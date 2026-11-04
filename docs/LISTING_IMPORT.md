@@ -75,6 +75,50 @@ Listings exist without this, but Console can't display or edit the operator fiel
    - `minRiderHeightIn`, `footprintLengthFt`, `footprintWidthFt`, `rideHeightFt`: Number.
 3. Run `npm run sharetribe:inspect`. The importer then stops warning.
 
+## Photo recovery (2026-11-04)
+
+Founder: "fix it.. make the photos appear". The basis is unchanged: the founder decision of 2026-10-05 to use the operator website photo and remove it on request.
+
+**Audit of the 4,512 snapshot rides (2026-11-04):**
+- 4,069 have a photo, and every one loads.
+- 443 have none:
+  - 232 from the gap audit (171 with no source photo, 61 failed downloads);
+  - 211 older rides (`reports/photo-gaps.json`).
+- 17 photos were placeholder graphics copied from operator sites: 11 grey camera icons, 5 "Photo Coming Soon" cards and 1 "COMING SOON" overlay.
+- 1 photo was a flyer printing the operator's website.
+
+**Hidden on the site now.** These 18 images read as no photo everywhere: `src/lib/catalog/hidden-images.ts`, keyed by the image id in the CDN path. Add an id there to hide another one.
+
+**Importer safeguards** (all runs):
+- WebP, AVIF/HEIC, BMP and TIFF are converted to JPEG (ImageMagick).
+- Placeholders are rejected:
+  - by file name (`coming-soon`, `no-image`, `placeholder`, …);
+  - by look (`scripts/lib/image-tools.ts`): 4 colours or fewer, or close to a known placeholder in `scripts/lib/placeholder-signatures.json`. Calibrated on all 4,069 photos: it flags exactly the 17 placeholders and no real photo.
+
+**Recovery run** (needs the Live credentials, below). It reads Live directly, so no workbook or mapping is needed. It covers every imported listing that is published or pending and shows no photo: no image, or only a placeholder this importer added. Operators' own uploads, claimed accounts, takedowns and operator-created listings are never touched.
+
+```sh
+npm run import:photos -- --recover --target live --confirm-live "CarnivalRental"              # dry run: counts by reason
+npm run import:photos -- --recover --discover --target live --confirm-live "CarnivalRental"   # rides with no recorded photo: search their ride page
+# review imports/photos/carnivalrental/discovered/sheet-*.jpg (gitignored: operator URLs), then:
+npm run import:photos -- --recover --approve-discovered all --reject-discovered <listingId>,… --target live --confirm-live "CarnivalRental"
+npm run import:photos -- --recover --apply --founder-go --use-discovered --target live --confirm-live "CarnivalRental"
+npm run inventory:export -- --target live && npm run inventory:operators -- --target live && npm run inventory:validate
+```
+
+- **Recorded source photos** are retried with the new conversion and checks.
+- **Rides without a recorded photo** get a candidate from their own ride page (`discoverRideImage`):
+  - an `<img>` whose alt text or file name names the ride;
+  - or the page's og:image when the page is about the ride.
+- **Candidates are uploaded only after review.** Reject any that shows another ride, a logo, or a flyer or watermark naming the operator.
+- **Provenance:** every upload records its source, the ride page and how it was found.
+- **Sites that refuse automated downloads** (403, 406, 503 or bot checks) are respected, not worked around. Those rides keep the no-photo tile until the operator adds a photo.
+
+**Credentials.** Add these to the cloud environment's settings (environment variables), then start a new session:
+- `SHARETRIBE_LIVE_CLIENT_ID`;
+- `SHARETRIBE_LIVE_INTEGRATION_CLIENT_ID`;
+- `SHARETRIBE_LIVE_INTEGRATION_CLIENT_SECRET`.
+
 ## Not approved yet
 
 - the operator transaction process;

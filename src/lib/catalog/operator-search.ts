@@ -1,5 +1,6 @@
 import contract from "../../../contract/operator-listing-contract.json";
 import { listingPriceLabel } from "../pricing/public-price";
+import { isHiddenImage } from "./hidden-images";
 import { approvedRideDescription } from "./ride-description";
 
 /**
@@ -101,9 +102,10 @@ export function toOperatorCard(l: ApiListing, included: ApiIncluded[], origin: L
   if (l.type !== "listing" || a.deleted || a.state !== "published" || !title || pd.listingType !== OPERATOR_LISTING_TYPE) return null;
   if (a.metadata?.requestDesk === true || a.metadata?.qa === true) return null; // the request desk and QA fixtures are not rides
   const byKey = new Map(included.map((i) => [`${i.type}/${i.id}`, i]));
-  const imageId = l.relationships?.images?.data?.[0]?.id;
-  const image = imageId ? byKey.get(`image/${imageId}`) : undefined;
-  const photoUrl = image?.attributes.variants?.["landscape-crop"]?.url ?? image?.attributes.variants?.["square-small"]?.url ?? null;
+  // The first image that isn't hidden: placeholder graphics and identifying images read as no photo.
+  const cardUrl = (i: ApiIncluded | undefined) => i?.attributes.variants?.["landscape-crop"]?.url ?? i?.attributes.variants?.["square-small"]?.url ?? null;
+  const image = (l.relationships?.images?.data ?? []).map((d) => byKey.get(`image/${d.id}`)).find((i) => cardUrl(i) && !isHiddenImage(cardUrl(i)) && !isHiddenImage(i?.attributes.variants?.["landscape-crop2x"]?.url));
+  const photoUrl = cardUrl(image);
   const largeUrl = image?.attributes.variants?.["landscape-crop2x"]?.url ?? null;
   const rideClass = isRideClass(str(pd.rideClass) ?? undefined) ? (pd.rideClass as string) : null;
   const geo = a.geolocation && Number.isFinite(a.geolocation.lat) && Number.isFinite(a.geolocation.lng) ? a.geolocation : null;
@@ -203,7 +205,7 @@ export function listingPhotos(l: ApiListing, included: ApiIncluded[]): { src: st
     const src = [variants?.["landscape-crop2x"]?.url, variants?.["landscape-crop"]?.url, variants?.["square-small"]?.url].find((value) => {
       try { return !!value && new URL(value).origin === "https://sharetribe.imgix.net"; } catch { return false; }
     });
-    if (!src || seen.has(src)) return [];
+    if (!src || seen.has(src) || isHiddenImage(src)) return [];
     seen.add(src);
     return [{ src, alt: `${l.attributes.title ?? "Ride"} — photo ${seen.size}` }];
   });

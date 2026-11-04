@@ -6,6 +6,7 @@
  * are computed, never written. Operator identity is not in the snapshot at all.
  */
 import { milesBetween, type OperatorCard } from "../catalog/operator-search";
+import { isHiddenImage } from "../catalog/hidden-images";
 import { publicIndexingEnabled } from "../config";
 import type { GateResult } from "../seo/publication";
 import { canonicalUrl, paths } from "../seo/routes";
@@ -52,7 +53,8 @@ export interface RideType {
   categoryId?: string;
 }
 
-export const RIDES = (ridesFile as { rides: InventoryRide[] }).rides;
+// A hidden image (a placeholder graphic copied as the photo, or one naming the operator) reads as no photo.
+export const RIDES = (ridesFile as { rides: InventoryRide[] }).rides.map((r) => (isHiddenImage(r.photo) || isHiddenImage(r.thumb) ? { ...r, photo: null, thumb: null } : r));
 
 /**
  * Listing ids from the Test marketplace (the catalog before the 2026-10-14 Live cutover) → the same
